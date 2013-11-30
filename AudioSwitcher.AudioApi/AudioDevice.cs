@@ -6,6 +6,13 @@ namespace AudioSwitcher.AudioApi
 {
     public abstract class AudioDevice : IAudioDevice
     {
+        protected AudioDevice(AudioController controller)
+        {
+            Controller = controller;
+        }
+
+        public AudioController Controller { get; private set; }
+
         public abstract Guid ID { get; }
 
         public abstract string Description { get; }
@@ -32,9 +39,21 @@ namespace AudioSwitcher.AudioApi
 
         public abstract int Volume { get; set; }
 
-        public abstract bool SetAsDefault();
+        /// <summary>
+        ///     Set this device as the the default device
+        /// </summary>
+        public virtual bool SetAsDefault()
+        {
+            return Controller.SetDefaultDevice(this);
+        }
 
-        public abstract bool SetAsDefaultCommunications();
+        /// <summary>
+        ///     Set this device as the default communication device
+        /// </summary>
+        public virtual bool SetAsDefaultCommunications()
+        {
+            return Controller.SetDefaultCommunicationsDevice(this);
+        }
 
         public abstract bool Mute();
 

@@ -7,11 +7,6 @@ namespace AudioSwitcher.AudioApi
     /// </summary>
     public class AudioDeviceChangedEventArgs : EventArgs
     {
-        /// <summary>
-        ///     Constructor
-        /// </summary>
-        /// <param name="dev"></param>
-        /// <param name="type"></param>
         public AudioDeviceChangedEventArgs(AudioDevice dev, AudioDeviceEventType type)
         {
             Device = dev;
@@ -24,7 +19,7 @@ namespace AudioSwitcher.AudioApi
         public AudioDevice Device { get; private set; }
 
         /// <summary>
-        ///     Get the change type
+        ///     The type of event
         /// </summary>
         public AudioDeviceEventType EventType { get; private set; }
     }
