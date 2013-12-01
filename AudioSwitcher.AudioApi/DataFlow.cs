@@ -1,9 +1,12 @@
-﻿namespace AudioSwitcher.AudioApi
+﻿using System;
+
+namespace AudioSwitcher.AudioApi
 {
     /// <summary>
     ///     The EDataFlow enumeration defines constants that indicate the direction
     ///     in which audio data flows between an audio endpoint device and an application
     /// </summary>
+    [Flags]
     public enum DataFlow
     {
         /// <summary>

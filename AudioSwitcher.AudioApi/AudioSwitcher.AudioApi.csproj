@@ -42,6 +42,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AudioContext.cs" />
     <Compile Include="AudioController.cs" />
     <Compile Include="AudioController.Generic.cs" />
     <Compile Include="AudioDevice.cs" />
@@ -90,10 +91,13 @@
     <Compile Include="Internal\PropertyStore.cs" />
     <Compile Include="Internal\PropertyStoreProperty.cs" />
     <Compile Include="Internal\PropVariant.cs" />
+    <Compile Include="IPreferredDeviceManager.cs" />
+    <Compile Include="PreferredDeviceManager.cs" />
     <Compile Include="Role.cs" />
     <Compile Include="Internal\PropertyKeys.cs" />
     <Compile Include="Internal\Utils\HResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System\SystemAudioContext.cs" />
     <Compile Include="System\SystemAudioController.cs" />
     <Compile Include="System\SystemAudioDevice.cs" />
     <Compile Include="System\SystemDeviceEnumerator.cs" />

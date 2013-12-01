@@ -1,5 +1,5 @@
-﻿using System.Runtime.InteropServices;
-// This has been modified for use by Audio Switcher
+﻿// This has been modified for use by Audio Switcher
+using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.Interfaces;
 
 namespace AudioSwitcher.AudioApi

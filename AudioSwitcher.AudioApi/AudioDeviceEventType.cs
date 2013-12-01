@@ -1,7 +1,7 @@
 ﻿namespace AudioSwitcher.AudioApi
 {
     /// <summary>
-    /// The type of change raised
+    ///     The type of change raised
     /// </summary>
     public enum AudioDeviceEventType
     {

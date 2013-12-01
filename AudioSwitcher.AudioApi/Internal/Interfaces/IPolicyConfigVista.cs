@@ -27,7 +27,6 @@ namespace AudioSwitcher.AudioApi.Interfaces
         int GetMixFormat(string pszDeviceName, WAVEFORMATEX waveFormat);
 
         // not available on Windows 7, use method from IPolicyConfig
-
         [PreserveSig]
         int GetDeviceFormat(string pszDeviceName, int bDefault, WAVEFORMATEX ppFormat);
 
@@ -38,22 +37,18 @@ namespace AudioSwitcher.AudioApi.Interfaces
         int GetProcessingPeriod(string pszDeviceName, int input2, long long1, long long2);
 
         // not available on Windows 7, use method from IPolicyConfig
-
         [PreserveSig]
         int SetProcessingPeriod(string pszDeviceName, long long1);
 
         // not available on Windows 7, use method from IPolicyConfig
-
         [PreserveSig]
         int GetShareMode(string pszDeviceName, DeviceShareMode devShareMode);
 
         // not available on Windows 7, use method from IPolicyConfig
-
         [PreserveSig]
         int SetShareMode(string pszDeviceName, DeviceShareMode shareMode);
 
         // not available on Windows 7, use method from IPolicyConfig
-
         [PreserveSig]
         int GetPropertyValue(string pszDeviceName, out PropertyKey propKey, out PropVariant propVariant);
 

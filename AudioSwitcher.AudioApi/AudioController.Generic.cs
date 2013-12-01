@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi
 {
-
     [ComVisible(false)]
     public abstract class AudioController<T> : AudioController
         where T : AudioDevice
     {
         protected AudioController(IDeviceEnumerator<T> devEnum)
+            : base(devEnum)
         {
-            DeviceEnumerator = devEnum;
-            DeviceEnumerator.AudioDeviceChanged += DeviceEnumerator_AudioDeviceChanged;
         }
 
         protected new IDeviceEnumerator<T> DeviceEnumerator
@@ -40,11 +37,6 @@ namespace AudioSwitcher.AudioApi
         public new T DefaultRecordingCommDevice
         {
             get { return base.DefaultRecordingCommDevice as T; }
-        }
-
-        private void DeviceEnumerator_AudioDeviceChanged(object sender, AudioDeviceChangedEventArgs e)
-        {
-            OnAudioDeviceChanged(sender, e);
         }
 
         public new IEnumerable<T> GetPlaybackDevices(DeviceState deviceState = DefaultDeviceStateFilter)

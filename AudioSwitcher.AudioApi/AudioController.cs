@@ -8,9 +8,18 @@ namespace AudioSwitcher.AudioApi
     [ComVisible(false)]
     public abstract class AudioController
     {
-        protected const DeviceState DefaultDeviceStateFilter = DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled;
+        protected const DeviceState DefaultDeviceStateFilter =
+            DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled;
+
+        protected AudioController(IDeviceEnumerator enumerator)
+        {
+            DeviceEnumerator = enumerator;
+            DeviceEnumerator.AudioDeviceChanged += DeviceEnumerator_AudioDeviceChanged;
+        }
 
         protected IDeviceEnumerator DeviceEnumerator { get; set; }
+
+        public AudioContext Context { get; internal set; }
 
         public virtual AudioDevice DefaultPlaybackDevice
         {
@@ -34,11 +43,17 @@ namespace AudioSwitcher.AudioApi
 
         public virtual event AudioDeviceChangedHandler AudioDeviceChanged;
 
-        protected virtual void OnAudioDeviceChanged(object sender, AudioDeviceChangedEventArgs e)
+        private void DeviceEnumerator_AudioDeviceChanged(object sender, AudioDeviceChangedEventArgs e)
         {
             //Bubble the event
             if (AudioDeviceChanged != null)
                 AudioDeviceChanged(sender, e);
+
+            OnAudioDeviceChanged(sender, e);
+        }
+
+        protected virtual void OnAudioDeviceChanged(object sender, AudioDeviceChangedEventArgs e)
+        {
         }
 
         public IEnumerable<AudioDevice> GetPlaybackDevices(DeviceState deviceState = DefaultDeviceStateFilter)

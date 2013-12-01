@@ -9,8 +9,8 @@ namespace AudioSwitcher.AudioApi.System
     {
         private Guid? _id;
 
-        internal SystemAudioDevice(MMDevice device, IDeviceEnumerator<SystemAudioDevice> controller)
-            : base(controller)
+        internal SystemAudioDevice(MMDevice device, IDeviceEnumerator<SystemAudioDevice> enumerator)
+            : base(enumerator)
         {
             if (device == null)
                 throw new ArgumentNullException("device", "Device cannot be null. Something bad went wrong");
