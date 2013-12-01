@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.Interfaces;
 
-namespace AudioSwitcher.AudioApi
+namespace AudioSwitcher.AudioApi.System
 {
     /// <summary>
     ///     Enumerates Windwows System Devices.

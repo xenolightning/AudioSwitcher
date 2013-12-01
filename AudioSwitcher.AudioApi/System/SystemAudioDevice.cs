@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace AudioSwitcher.AudioApi
+namespace AudioSwitcher.AudioApi.System
 {
     [ComVisible(false)]
     public sealed class SystemAudioDevice : AudioDevice
