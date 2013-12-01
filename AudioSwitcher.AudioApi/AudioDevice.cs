@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using NAudio.CoreAudioApi;
 
 namespace AudioSwitcher.AudioApi
 {

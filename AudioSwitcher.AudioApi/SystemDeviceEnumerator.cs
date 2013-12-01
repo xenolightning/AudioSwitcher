@@ -3,8 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using NAudio.CoreAudioApi;
-using NAudio.CoreAudioApi.Interfaces;
+using AudioSwitcher.AudioApi.Interfaces;
 
 namespace AudioSwitcher.AudioApi
 {
