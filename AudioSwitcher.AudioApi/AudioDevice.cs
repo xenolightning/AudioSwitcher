@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using NAudio.CoreAudioApi;
 
 namespace AudioSwitcher.AudioApi
 {
+    [ComVisible(false)]
     public abstract class AudioDevice : IAudioDevice
     {
-        protected AudioDevice(AudioController controller)
+        protected AudioDevice(IDeviceEnumerator enumerator)
         {
-            Controller = controller;
+            Enumerator = enumerator;
         }
 
-        public AudioController Controller { get; private set; }
+        public IDeviceEnumerator Enumerator { get; private set; }
 
         public abstract Guid ID { get; }
 
@@ -44,7 +46,7 @@ namespace AudioSwitcher.AudioApi
         /// </summary>
         public virtual bool SetAsDefault()
         {
-            return Controller.SetDefaultDevice(this);
+            return Enumerator.SetDefaultDevice(this);
         }
 
         /// <summary>
@@ -52,7 +54,7 @@ namespace AudioSwitcher.AudioApi
         /// </summary>
         public virtual bool SetAsDefaultCommunications()
         {
-            return Controller.SetDefaultCommunicationsDevice(this);
+            return Enumerator.SetDefaultCommunicationsDevice(this);
         }
 
         public abstract bool Mute();

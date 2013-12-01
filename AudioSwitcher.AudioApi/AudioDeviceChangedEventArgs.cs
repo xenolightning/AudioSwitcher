@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi
 {
     /// <summary>
     ///     Event args passed back when an attribute on a device changes
     /// </summary>
+    [ComVisible(false)]
     public class AudioDeviceChangedEventArgs : EventArgs
     {
         public AudioDeviceChangedEventArgs(AudioDevice dev, AudioDeviceEventType type)

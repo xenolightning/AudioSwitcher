@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Drawing;
-using AudioSwitcher.AudioApi.NAudio;
+using System.Runtime.InteropServices;
 using NAudio.CoreAudioApi;
 
 namespace AudioSwitcher.AudioApi
 {
-    public class SystemAudioDevice : AudioDevice
+    [ComVisible(false)]
+    public sealed class SystemAudioDevice : AudioDevice
     {
         private Guid? _id;
 
-        internal SystemAudioDevice(MMDevice device, AudioController<SystemAudioDevice> controller)
+        internal SystemAudioDevice(MMDevice device, IDeviceEnumerator<SystemAudioDevice> controller)
             : base(controller)
         {
             if (device == null)
@@ -43,7 +44,7 @@ namespace AudioSwitcher.AudioApi
             {
                 if (Device == null)
                     return "Unknown";
-                return Device.GetDeviceFriendlyName();
+                return Device.DeviceFriendlyName;
             }
         }
 
@@ -53,7 +54,7 @@ namespace AudioSwitcher.AudioApi
             {
                 if (Device == null)
                     return "Unknown";
-                return Device.GetDeviceName();
+                return Device.DeviceName;
             }
         }
 
@@ -63,7 +64,7 @@ namespace AudioSwitcher.AudioApi
             {
                 if (Device == null)
                     return "Unknown";
-                return Device.GetSystemName();
+                return Device.SystemName;
             }
         }
 
@@ -72,7 +73,7 @@ namespace AudioSwitcher.AudioApi
             get
             {
                 if (Device != null)
-                    return Device.GetDeviceFriendlyName();
+                    return Device.DeviceFriendlyName;
                 return "Unknown Device";
             }
         }
@@ -81,8 +82,8 @@ namespace AudioSwitcher.AudioApi
         {
             get
             {
-                return Controller.DefaultPlaybackDevice.ID == ID
-                       || Controller.DefaultRecordingDevice.ID == ID;
+                return Enumerator.DefaultPlaybackDevice.ID == ID
+                       || Enumerator.DefaultRecordingDevice.ID == ID;
             }
         }
 
@@ -90,8 +91,8 @@ namespace AudioSwitcher.AudioApi
         {
             get
             {
-                return Controller.DefaultCommunicationsPlaybackDevice.ID == ID
-                       || Controller.DefaultCommunicationsRecordingDevice.ID == ID;
+                return Enumerator.DefaultCommunicationsPlaybackDevice.ID == ID
+                       || Enumerator.DefaultCommunicationsRecordingDevice.ID == ID;
             }
         }
 
@@ -121,7 +122,7 @@ namespace AudioSwitcher.AudioApi
         }
 
         /// <summary>
-        /// The volume level on a scale between 0-100
+        ///     The volume level on a scale between 0-100
         /// </summary>
         public override int Volume
         {
@@ -174,7 +175,7 @@ namespace AudioSwitcher.AudioApi
 
         public override Icon GetIcon(int width, int height)
         {
-            string path = Environment.ExpandEnvironmentVariables(Device.GetIconPath());
+            string path = Environment.ExpandEnvironmentVariables(Device.IconPath);
             string[] iconAdr = path.Split(',');
 
             if (iconAdr.Length > 1)
