@@ -30,19 +30,18 @@ namespace AudioSwitcher.AudioApi
     /// </summary>
     internal class AudioEndpointVolumeChannels
     {
-        private readonly IAudioEndpointVolume _AudioEndPointVolume;
-        private readonly AudioEndpointVolumeChannel[] _Channels;
+        private readonly IAudioEndpointVolume _audioEndPointVolume;
+        private readonly AudioEndpointVolumeChannel[] _channels;
 
         internal AudioEndpointVolumeChannels(IAudioEndpointVolume parent)
         {
-            int ChannelCount;
-            _AudioEndPointVolume = parent;
+            _audioEndPointVolume = parent;
 
-            ChannelCount = Count;
-            _Channels = new AudioEndpointVolumeChannel[ChannelCount];
-            for (int i = 0; i < ChannelCount; i++)
+            int channelCount = Count;
+            _channels = new AudioEndpointVolumeChannel[channelCount];
+            for (int i = 0; i < channelCount; i++)
             {
-                _Channels[i] = new AudioEndpointVolumeChannel(_AudioEndPointVolume, i);
+                _channels[i] = new AudioEndpointVolumeChannel(_audioEndPointVolume, i);
             }
         }
 
@@ -54,7 +53,7 @@ namespace AudioSwitcher.AudioApi
             get
             {
                 int result;
-                Marshal.ThrowExceptionForHR(_AudioEndPointVolume.GetChannelCount(out result));
+                Marshal.ThrowExceptionForHR(_audioEndPointVolume.GetChannelCount(out result));
                 return result;
             }
         }
@@ -64,7 +63,7 @@ namespace AudioSwitcher.AudioApi
         /// </summary>
         public AudioEndpointVolumeChannel this[int index]
         {
-            get { return _Channels[index]; }
+            get { return _channels[index]; }
         }
     }
 }

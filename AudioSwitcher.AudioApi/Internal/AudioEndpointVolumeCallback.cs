@@ -35,11 +35,11 @@ namespace AudioSwitcher.AudioApi
     // to show up in the public API. 
     internal class AudioEndpointVolumeCallback : IAudioEndpointVolumeCallback
     {
-        private readonly AudioEndpointVolume parent;
+        private readonly AudioEndpointVolume _parent;
 
         internal AudioEndpointVolumeCallback(AudioEndpointVolume parent)
         {
-            this.parent = parent;
+            _parent = parent;
         }
 
         public void OnNotify(IntPtr notifyData)
@@ -70,7 +70,7 @@ namespace AudioSwitcher.AudioApi
             //Create combined structure and Fire Event in parent class.
             var notificationData = new AudioVolumeNotificationData(data.guidEventContext, data.bMuted,
                 data.fMasterVolume, voldata);
-            parent.FireNotification(notificationData);
+            _parent.FireNotification(notificationData);
         }
     }
 }

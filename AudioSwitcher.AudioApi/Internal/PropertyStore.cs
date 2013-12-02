@@ -80,12 +80,12 @@ namespace AudioSwitcher.AudioApi
         {
             get
             {
-                PropVariant result;
                 for (int i = 0; i < Count; i++)
                 {
                     PropertyKey ikey = Get(i);
                     if ((ikey.formatId == key.formatId) && (ikey.propertyId == key.propertyId))
                     {
+                        PropVariant result;
                         Marshal.ThrowExceptionForHR(storeInterface.GetValue(ref ikey, out result));
                         return new PropertyStoreProperty(ikey, result);
                     }

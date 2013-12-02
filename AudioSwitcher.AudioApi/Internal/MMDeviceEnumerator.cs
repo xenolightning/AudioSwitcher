@@ -69,9 +69,9 @@ namespace AudioSwitcher.AudioApi
         /// <returns>Device</returns>
         public MMDevice GetDefaultAudioEndpoint(DataFlow dataFlow, Role role)
         {
-            IMMDevice _Device = null;
-            Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(dataFlow, role, out _Device));
-            return new MMDevice(_Device);
+            IMMDevice device;
+            Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(dataFlow, role, out device));
+            return new MMDevice(device);
         }
 
         /// <summary>
@@ -81,9 +81,9 @@ namespace AudioSwitcher.AudioApi
         /// <returns>Device</returns>
         public MMDevice GetDevice(string ID)
         {
-            IMMDevice _Device = null;
-            Marshal.ThrowExceptionForHR(_realEnumerator.GetDevice(ID, out _Device));
-            return new MMDevice(_Device);
+            IMMDevice device;
+            Marshal.ThrowExceptionForHR(_realEnumerator.GetDevice(ID, out device));
+            return new MMDevice(device);
         }
 
         public void RegisterEndpointNotificationCallback(IMMNotificationClient client)
