@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 
 namespace AudioSwitcher.AudioApi
 {
@@ -41,8 +40,5 @@ namespace AudioSwitcher.AudioApi
 
         bool ToggleMute();
 
-        Icon GetIcon();
-
-        Icon GetIcon(int width, int height);
     }
 }

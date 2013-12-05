@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.System
@@ -105,16 +104,6 @@ namespace AudioSwitcher.AudioApi.System
             get { return Device.DataFlow; }
         }
 
-        public override bool IsPlaybackDevice
-        {
-            get { return Device.DataFlow == DataFlow.Render || Device.DataFlow == DataFlow.All; }
-        }
-
-        public override bool IsRecordingDevice
-        {
-            get { return Device.DataFlow == DataFlow.Capture || Device.DataFlow == DataFlow.All; }
-        }
-
         public override bool IsMuted
         {
             get { return Device.AudioEndpointVolume.Mute; }
@@ -159,31 +148,6 @@ namespace AudioSwitcher.AudioApi.System
         {
             Device.AudioEndpointVolume.Mute = false;
             return Device.AudioEndpointVolume.Mute;
-        }
-
-        public override bool ToggleMute()
-        {
-            Device.AudioEndpointVolume.Mute = !Device.AudioEndpointVolume.Mute;
-            return Device.AudioEndpointVolume.Mute;
-        }
-
-        public override Icon GetIcon()
-        {
-            return GetIcon(32, 32);
-        }
-
-        public override Icon GetIcon(int width, int height)
-        {
-            string path = Environment.ExpandEnvironmentVariables(Device.IconPath);
-            string[] iconAdr = path.Split(',');
-
-            if (iconAdr.Length > 1)
-            {
-                var hIconEx = new IntPtr[1];
-                NativeMethods.ExtractIconEx(iconAdr[0], int.Parse(iconAdr[1]), hIconEx, null, 1);
-                return Icon.FromHandle(hIconEx[0]);
-            }
-            return null;
         }
 
         /// <summary>

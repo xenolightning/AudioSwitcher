@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi
@@ -24,17 +23,38 @@ namespace AudioSwitcher.AudioApi
 
         public abstract string FullName { get; }
 
-        public abstract bool IsDefaultDevice { get; }
+        public virtual bool IsDefaultDevice
+        {
+            get
+            {
+                return Enumerator.DefaultPlaybackDevice.ID == ID
+                       || Enumerator.DefaultRecordingDevice.ID == ID;
+            }
+        }
 
-        public abstract bool IsDefaultCommunicationsDevice { get; }
+        public virtual bool IsDefaultCommunicationsDevice
+        {
+            get
+            {
+                return Enumerator.DefaultCommunicationsPlaybackDevice.ID == ID
+                       || Enumerator.DefaultCommunicationsRecordingDevice.ID == ID;
+            }
+        }
 
         public abstract DeviceState State { get; }
 
         public abstract DataFlow DataFlow { get; }
 
-        public abstract bool IsPlaybackDevice { get; }
 
-        public abstract bool IsRecordingDevice { get; }
+        public virtual bool IsPlaybackDevice
+        {
+            get { return DataFlow == DataFlow.Render || DataFlow == DataFlow.All; }
+        }
+
+        public virtual bool IsRecordingDevice
+        {
+            get { return DataFlow == DataFlow.Capture || DataFlow == DataFlow.All; }
+        }
 
         public abstract bool IsMuted { get; }
 
@@ -60,10 +80,15 @@ namespace AudioSwitcher.AudioApi
 
         public abstract bool UnMute();
 
-        public abstract bool ToggleMute();
+        public virtual bool ToggleMute()
+        {
+            if (IsMuted)
+                UnMute();
+            else
+                Mute();
 
-        public abstract Icon GetIcon();
+            return IsMuted;
+        }
 
-        public abstract Icon GetIcon(int width, int height);
     }
 }

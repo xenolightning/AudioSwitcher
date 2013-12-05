@@ -56,6 +56,11 @@ namespace AudioSwitcher.AudioApi
         {
         }
 
+        public IEnumerable<AudioDevice> GetAllDevices(DeviceState deviceState = DefaultDeviceStateFilter)
+        {
+            return DeviceEnumerator.GetAudioDevices(DataFlow.All, deviceState);
+        }
+
         public IEnumerable<AudioDevice> GetPlaybackDevices(DeviceState deviceState = DefaultDeviceStateFilter)
         {
             return DeviceEnumerator.GetAudioDevices(DataFlow.Render, deviceState);
