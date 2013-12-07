@@ -48,6 +48,10 @@
     <Compile Include="AudioDeviceChangedEventArgs.cs" />
     <Compile Include="AudioDeviceChangedHandler.cs" />
     <Compile Include="AudioDeviceEventType.cs" />
+    <Compile Include="Debug\DebugAudioContext.cs" />
+    <Compile Include="Debug\DebugAudioController.cs" />
+    <Compile Include="Debug\DebugAudioDevice.cs" />
+    <Compile Include="Debug\DebugDeviceEnumerator.cs" />
     <Compile Include="IAudioDevice.cs" />
     <Compile Include="IDeviceEnumerator.cs" />
     <Compile Include="Internal\NativeMethods.cs" />
