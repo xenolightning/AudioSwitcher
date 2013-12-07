@@ -32,7 +32,7 @@ namespace AudioSwitcher.AudioApi.System
             get { return GetDefaultAudioDevice(DataFlow.Render, Role.Console | Role.Multimedia); }
         }
 
-        public SystemAudioDevice DefaultPlaybackCommDevice
+        public SystemAudioDevice DefaultCommunicationsPlaybackDevice
         {
             get { return GetDefaultAudioDevice(DataFlow.Render, Role.Communications); }
         }
@@ -42,7 +42,7 @@ namespace AudioSwitcher.AudioApi.System
             get { return GetDefaultAudioDevice(DataFlow.Capture, Role.Console | Role.Multimedia); }
         }
 
-        public SystemAudioDevice DefaultRecordingCommDevice
+        public SystemAudioDevice DefaultCommunicationsRecordingDevice
         {
             get { return GetDefaultAudioDevice(DataFlow.Capture, Role.Communications); }
         }
@@ -54,7 +54,7 @@ namespace AudioSwitcher.AudioApi.System
 
         AudioDevice IDeviceEnumerator.DefaultCommunicationsPlaybackDevice
         {
-            get { return DefaultPlaybackCommDevice; }
+            get { return DefaultCommunicationsPlaybackDevice; }
         }
 
         AudioDevice IDeviceEnumerator.DefaultRecordingDevice
@@ -64,7 +64,7 @@ namespace AudioSwitcher.AudioApi.System
 
         AudioDevice IDeviceEnumerator.DefaultCommunicationsRecordingDevice
         {
-            get { return DefaultRecordingCommDevice; }
+            get { return DefaultCommunicationsRecordingDevice; }
         }
 
         AudioDevice IDeviceEnumerator.GetAudioDevice(Guid id)
@@ -188,10 +188,10 @@ namespace AudioSwitcher.AudioApi.System
             }
         }
 
-        public IEnumerable<SystemAudioDevice> GetAudioDevices(DataFlow dataflow, DeviceState eRole)
+        public IEnumerable<SystemAudioDevice> GetAudioDevices(DataFlow dataflow, DeviceState state)
         {
             return
-                InnerEnumerator.EnumerateAudioEndPoints(dataflow, eRole)
+                InnerEnumerator.EnumerateAudioEndPoints(dataflow, state)
                     .Select((x, y) => new SystemAudioDevice(x, this));
         }
 

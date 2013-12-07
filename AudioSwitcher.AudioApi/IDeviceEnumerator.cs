@@ -21,7 +21,7 @@ namespace AudioSwitcher.AudioApi
 
         AudioDevice GetDefaultAudioDevice(DataFlow dataflow, Role eRole);
 
-        IEnumerable<AudioDevice> GetAudioDevices(DataFlow dataflow, DeviceState eRole);
+        IEnumerable<AudioDevice> GetAudioDevices(DataFlow dataflow, DeviceState state);
 
         bool SetDefaultDevice(AudioDevice dev);
 
@@ -34,17 +34,17 @@ namespace AudioSwitcher.AudioApi
     {
         new T DefaultPlaybackDevice { get; }
 
-        T DefaultPlaybackCommDevice { get; }
+        new T DefaultCommunicationsPlaybackDevice { get; }
 
         new T DefaultRecordingDevice { get; }
 
-        T DefaultRecordingCommDevice { get; }
+        new T DefaultCommunicationsRecordingDevice { get; }
 
         new T GetAudioDevice(Guid id);
 
         new T GetDefaultAudioDevice(DataFlow dataflow, Role eRole);
 
-        new IEnumerable<T> GetAudioDevices(DataFlow dataflow, DeviceState eRole);
+        new IEnumerable<T> GetAudioDevices(DataFlow dataflow, DeviceState state);
 
         bool SetDefaultDevice(T dev);
 
