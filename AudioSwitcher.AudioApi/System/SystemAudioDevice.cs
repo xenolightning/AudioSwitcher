@@ -76,6 +76,16 @@ namespace AudioSwitcher.AudioApi.System
             }
         }
 
+        public override string IconPath
+        {
+            get
+            {
+                if (Device != null)
+                    return Device.IconPath;
+                return "Unknown";
+            }
+        }
+
         public override bool IsDefaultDevice
         {
             get
@@ -110,11 +120,21 @@ namespace AudioSwitcher.AudioApi.System
         }
 
         /// <summary>
-        ///     The volume level on a scale between 0-100
+        ///     The volume level on a scale between 0-100. Returns -1 if end point does not have volume
         /// </summary>
         public override int Volume
         {
-            get { return (int) Math.Round(Device.AudioEndpointVolume.MasterVolumeLevelScalar*100, 0); }
+            get
+            {
+                try
+                {
+                    return (int) Math.Round(Device.AudioEndpointVolume.MasterVolumeLevelScalar*100, 0);
+                }
+                catch
+                {
+                    return -1;
+                }
+            }
             set
             {
                 if (value < 0)
@@ -122,7 +142,7 @@ namespace AudioSwitcher.AudioApi.System
                 else if (value > 100)
                     value = 100;
 
-                float val = (float) value/100;
+                float val = (float)value / 100;
 
                 Device.AudioEndpointVolume.MasterVolumeLevelScalar = val;
 
@@ -159,7 +179,7 @@ namespace AudioSwitcher.AudioApi.System
         {
             string[] dev = systemDeviceId.Replace("{", "")
                 .Replace("}", "")
-                .Split(new[] {'.'}, StringSplitOptions.RemoveEmptyEntries);
+                .Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
             return new Guid(dev[dev.Length - 1]);
         }
     }

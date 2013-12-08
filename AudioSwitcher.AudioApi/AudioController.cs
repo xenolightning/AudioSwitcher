@@ -15,6 +15,8 @@ namespace AudioSwitcher.AudioApi
         {
             DeviceEnumerator = enumerator;
             DeviceEnumerator.AudioDeviceChanged += DeviceEnumerator_AudioDeviceChanged;
+
+            enumerator.Controller = this;
         }
 
         protected IDeviceEnumerator DeviceEnumerator { get; set; }

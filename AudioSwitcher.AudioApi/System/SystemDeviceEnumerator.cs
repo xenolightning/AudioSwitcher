@@ -19,13 +19,19 @@ namespace AudioSwitcher.AudioApi.System
         internal MMDeviceEnumerator InnerEnumerator;
         private ConcurrentBag<SystemAudioDevice> _deviceCache = new ConcurrentBag<SystemAudioDevice>();
 
+        public event AudioDeviceChangedHandler AudioDeviceChanged;
+
         public SystemDeviceEnumerator()
         {
             InnerEnumerator = new MMDeviceEnumerator();
             InnerEnumerator.RegisterEndpointNotificationCallback(this);
         }
 
-        public event AudioDeviceChangedHandler AudioDeviceChanged;
+        public AudioController Controller
+        {
+            get;
+            set;
+        }
 
         public SystemAudioDevice DefaultPlaybackDevice
         {

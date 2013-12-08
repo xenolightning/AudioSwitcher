@@ -8,13 +8,8 @@ namespace AudioSwitcher.AudioApi
     /// </summary>
     public abstract class PreferredDeviceManager : IPreferredDeviceManager
     {
-        protected PreferredDeviceManager(AudioController controller)
-        {
-            Controller = controller;
-        }
 
-        public AudioController Controller { get; private set; }
-        public AudioContext Context { get; internal set; }
+        public AudioContext Context { get; set; }
 
         public abstract IEnumerable<AudioDevice> PreferredDevices { get; }
 

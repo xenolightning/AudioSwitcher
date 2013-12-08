@@ -7,6 +7,8 @@ namespace AudioSwitcher.AudioApi
     [ComVisible(false)]
     public interface IDeviceEnumerator
     {
+        AudioController Controller { get; set; }
+
         AudioDevice DefaultPlaybackDevice { get; }
 
         AudioDevice DefaultCommunicationsPlaybackDevice { get; }

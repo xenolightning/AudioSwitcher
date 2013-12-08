@@ -9,13 +9,13 @@
             private set;
         }
 
-        public PreferredDeviceManager PreferredDeviceManager
+        public IPreferredDeviceManager PreferredDeviceManager
         {
             get;
             private set;
         }
 
-        protected AudioContext(AudioController controller, PreferredDeviceManager preferredDeviceManager)
+        protected AudioContext(AudioController controller, IPreferredDeviceManager preferredDeviceManager)
         {
             Controller = controller;
             PreferredDeviceManager = preferredDeviceManager;

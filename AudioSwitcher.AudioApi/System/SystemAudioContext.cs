@@ -7,7 +7,7 @@
         {
         }
 
-        public SystemAudioContext(PreferredDeviceManager preferredDeviceManager)
+        public SystemAudioContext(IPreferredDeviceManager preferredDeviceManager)
             : base(new SystemAudioController(), preferredDeviceManager)
         {
         }

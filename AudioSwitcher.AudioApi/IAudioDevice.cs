@@ -14,6 +14,8 @@ namespace AudioSwitcher.AudioApi
 
         string FullName { get; }
 
+        string IconPath { get; }
+
         bool IsDefaultDevice { get; }
 
         bool IsDefaultCommunicationsDevice { get; }
