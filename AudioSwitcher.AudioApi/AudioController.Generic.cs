@@ -26,7 +26,7 @@ namespace AudioSwitcher.AudioApi
 
         public new T DefaultPlaybackCommDevice
         {
-            get { return base.DefaultPlaybackCommDevice as T; }
+            get { return base.DefaultPlaybackCommunicationsDevice as T; }
         }
 
         public new T DefaultRecordingDevice
@@ -36,7 +36,7 @@ namespace AudioSwitcher.AudioApi
 
         public new T DefaultRecordingCommDevice
         {
-            get { return base.DefaultRecordingCommDevice as T; }
+            get { return base.DefaultRecordingCommunicationsDevice as T; }
         }
 
         public new IEnumerable<T> GetPlaybackDevices(DeviceState deviceState = DefaultDeviceStateFilter)

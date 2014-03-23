@@ -28,7 +28,7 @@ namespace AudioSwitcher.AudioApi
             get { return DeviceEnumerator.DefaultPlaybackDevice; }
         }
 
-        public virtual AudioDevice DefaultPlaybackCommDevice
+        public virtual AudioDevice DefaultPlaybackCommunicationsDevice
         {
             get { return DeviceEnumerator.DefaultCommunicationsPlaybackDevice; }
         }
@@ -38,7 +38,7 @@ namespace AudioSwitcher.AudioApi
             get { return DeviceEnumerator.DefaultRecordingDevice; }
         }
 
-        public virtual AudioDevice DefaultRecordingCommDevice
+        public virtual AudioDevice DefaultRecordingCommunicationsDevice
         {
             get { return DeviceEnumerator.DefaultCommunicationsRecordingDevice; }
         }
