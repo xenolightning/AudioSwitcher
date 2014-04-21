@@ -226,8 +226,26 @@ namespace AudioSwitcher.AudioApi.System
                     AudioDeviceEventType.Removed));
         }
 
+        private Tuple<string, DataFlow, Role, DateTime> _lastEvent;
+
         void IMMNotificationClient.OnDefaultDeviceChanged(DataFlow flow, Role role, string deviceId)
         {
+            //Need to do some event filtering here, there's a scenario where
+            //multiple default device changed are raised when one playback device changes.
+            //This is correct functionality, but I want to limit it to one event per device
+            //Console === Multimedia device for my purpose
+            //Assume any events that happen within 200ms are the same
+            if (_lastEvent != null 
+                && _lastEvent.Item1 == deviceId
+                && _lastEvent.Item2 == flow
+                && (role == Role.Console || role == Role.Multimedia)
+                && DateTime.Now.Subtract(_lastEvent.Item4).Milliseconds < 200)
+            {
+                return;
+            }
+
+            _lastEvent = new Tuple<string, DataFlow, Role, DateTime>(deviceId, flow, role, DateTime.Now);
+
             if (role == Role.Console || role == Role.Multimedia)
                 OnAudioDeviceChanged(
                     new AudioDeviceChangedEventArgs(GetAudioDevice(SystemAudioDevice.SystemIDToGuid(deviceId)),
