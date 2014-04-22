@@ -2,16 +2,17 @@
 
 namespace AudioSwitcher.AudioApi.Interfaces
 {
+    // ReSharper disable once InconsistentNaming
+    [StructLayout(LayoutKind.Sequential)]
     internal struct WAVEFORMATEX
     {
-        private ushort cbSize; /* the count in bytes of the size of */
-        private uint nAvgBytesPerSec; /* for buffer estimation */
-        private ushort nBlockAlign; /* block size of data */
-        private ushort nChannels; /* number of channels (i.e. mono, stereo...) */
-        private uint nSamplesPerSec; /* sample rate */
-        private ushort wBitsPerSample; /* number of bits per sample of mono data */
-        private ushort wFormatTag; /* format type */
-        /* extra information (after cbSize) */
+        ushort wFormatTag;
+        ushort nChannels;
+        uint nSamplesPerSec;
+        uint nAvgBytesPerSec;
+        ushort nBlockAlign;
+        ushort wBitsPerSample;
+        ushort cbSize;
     }
 
     internal enum DeviceShareMode

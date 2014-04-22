@@ -24,7 +24,7 @@ namespace AudioSwitcher.AudioApi
             get { return base.DefaultPlaybackDevice as T; }
         }
 
-        public new T DefaultPlaybackCommDevice
+        public T DefaultPlaybackCommDevice
         {
             get { return base.DefaultPlaybackCommunicationsDevice as T; }
         }
@@ -34,7 +34,7 @@ namespace AudioSwitcher.AudioApi
             get { return base.DefaultRecordingDevice as T; }
         }
 
-        public new T DefaultRecordingCommDevice
+        public T DefaultRecordingCommDevice
         {
             get { return base.DefaultRecordingCommunicationsDevice as T; }
         }
