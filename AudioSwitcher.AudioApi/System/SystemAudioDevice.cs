@@ -54,6 +54,10 @@ namespace AudioSwitcher.AudioApi.System
                     return "Unknown";
                 return Device.DeviceName;
             }
+            set
+            {
+                Device.DeviceName = value;
+            }
         }
 
         public override string SystemName
@@ -128,7 +132,7 @@ namespace AudioSwitcher.AudioApi.System
             {
                 try
                 {
-                    return (int) Math.Round(Device.AudioEndpointVolume.MasterVolumeLevelScalar*100, 0);
+                    return (int)Math.Round(Device.AudioEndpointVolume.MasterVolumeLevelScalar * 100, 0);
                 }
                 catch
                 {

@@ -27,6 +27,7 @@ namespace AudioSwitcher.AudioApi.Isolated
         public override string ShortName
         {
             get { return shortName; }
+            set{}
         }
 
         public string systemName;

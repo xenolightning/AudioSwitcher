@@ -52,6 +52,7 @@ namespace AudioSwitcher.AudioApi
         public object Value
         {
             get { return propertyValue.Value; }
+            set { propertyValue.Value = value; }
         }
     }
 }

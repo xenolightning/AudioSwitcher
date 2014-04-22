@@ -64,7 +64,7 @@ namespace AudioSwitcher.AudioApi
         //BSTRBLOB bstrblobVal;
         [FieldOffset(8)] private Blob blobVal;
         //LPSTR pszVal;
-        [FieldOffset(8)] private readonly IntPtr pointerValue; //LPWSTR 
+        [FieldOffset(8)] private IntPtr pointerValue; //LPWSTR 
         //IUnknown* punkVal;
         /*IDispatch* pdispVal;
         IStream* pStream;
@@ -197,6 +197,13 @@ namespace AudioSwitcher.AudioApi
                         return (Guid) Marshal.PtrToStructure(pointerValue, typeof (Guid));
                 }
                 throw new NotImplementedException("PropVariant " + ve);
+            }
+            set
+            {
+                if (value is string && this.DataType == VarEnum.VT_LPWSTR)
+                {
+                    pointerValue = Marshal.StringToBSTR(value as string);
+                }
             }
         }
 

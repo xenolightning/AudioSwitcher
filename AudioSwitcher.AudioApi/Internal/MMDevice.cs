@@ -54,7 +54,7 @@ namespace AudioSwitcher.AudioApi
         private void GetPropertyInformation()
         {
             IPropertyStore propstore;
-            Marshal.ThrowExceptionForHR(deviceInterface.OpenPropertyStore(StorageAccessMode.Read, out propstore));
+            Marshal.ThrowExceptionForHR(deviceInterface.OpenPropertyStore(StorageAccessMode.ReadWrite, out propstore));
             propertyStore = new PropertyStore(propstore);
         }
 
@@ -132,7 +132,7 @@ namespace AudioSwitcher.AudioApi
                 }
                 if (propertyStore.Contains(PropertyKeys.PKEY_Device_FriendlyName))
                 {
-                    return (string) propertyStore[PropertyKeys.PKEY_Device_FriendlyName].Value;
+                    return (string)propertyStore[PropertyKeys.PKEY_Device_FriendlyName].Value;
                 }
                 return "Unknown";
             }
@@ -151,7 +151,7 @@ namespace AudioSwitcher.AudioApi
                 }
                 if (propertyStore.Contains(PropertyKeys.PKEY_DeviceInterface_FriendlyName))
                 {
-                    return (string) propertyStore[PropertyKeys.PKEY_DeviceInterface_FriendlyName].Value;
+                    return (string)propertyStore[PropertyKeys.PKEY_DeviceInterface_FriendlyName].Value;
                 }
                 return "Unknown";
             }
@@ -171,7 +171,7 @@ namespace AudioSwitcher.AudioApi
 
                     if (propertyStore.Contains(PropertyKeys.PKEY_Device_Icon))
                     {
-                        return (string) propertyStore[PropertyKeys.PKEY_Device_Icon].Value;
+                        return (string)propertyStore[PropertyKeys.PKEY_Device_Icon].Value;
                     }
                     return "Unknown";
                 }
@@ -195,9 +195,22 @@ namespace AudioSwitcher.AudioApi
                 }
                 if (propertyStore.Contains(PropertyKeys.PKEY_Device_Description))
                 {
-                    return (string) propertyStore[PropertyKeys.PKEY_Device_Description].Value;
+                    return (string)propertyStore[PropertyKeys.PKEY_Device_Description].Value;
                 }
                 return DeviceFriendlyName;
+            }
+            set
+            {
+                if (propertyStore == null)
+                {
+                    GetPropertyInformation();
+                }
+                if (propertyStore.Contains(PropertyKeys.PKEY_Device_Description))
+                {
+                    propertyStore.SetValue(PropertyKeys.PKEY_Device_Description, value);
+                    //var pi = propertyStore[PropertyKeys.PKEY_Device_Description];
+                    //propertyStore[PropertyKeys.PKEY_Device_Description] = pi;
+                }
             }
         }
 
@@ -214,7 +227,7 @@ namespace AudioSwitcher.AudioApi
                 }
                 if (propertyStore.Contains(PropertyKeys.PKEY_System_Name))
                 {
-                    return (string) propertyStore[PropertyKeys.PKEY_System_Name].Value;
+                    return (string)propertyStore[PropertyKeys.PKEY_System_Name].Value;
                 }
                 return "Unknown";
             }

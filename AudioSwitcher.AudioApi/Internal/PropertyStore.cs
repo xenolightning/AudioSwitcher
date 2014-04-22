@@ -92,6 +92,17 @@ namespace AudioSwitcher.AudioApi
                 }
                 return null;
             }
+            set
+            {
+                for (int i = 0; i < Count; i++)
+                {
+                    PropertyKey ikey = Get(i);
+                    if ((ikey.formatId == key.formatId) && (ikey.propertyId == key.propertyId))
+                    {
+                        SetValue(ikey, value.Value);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -135,6 +146,22 @@ namespace AudioSwitcher.AudioApi
             PropertyKey key = Get(index);
             Marshal.ThrowExceptionForHR(storeInterface.GetValue(ref key, out result));
             return result;
+        }
+
+        /// <summary>
+        ///     Sets property value of the property
+        /// </summary>
+        /// <returns>Property value</returns>
+        public void SetValue(PropertyKey key, object value)
+        {
+            if (!Contains(key))
+                return;
+
+            PropVariant result;
+            Marshal.ThrowExceptionForHR(storeInterface.GetValue(ref key, out result));
+            result.Value = value;
+            Marshal.ThrowExceptionForHR(storeInterface.SetValue(ref key, ref result));
+            storeInterface.Commit();
         }
     }
 }

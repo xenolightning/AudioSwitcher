@@ -17,7 +17,7 @@ namespace AudioSwitcher.AudioApi
 
         public abstract string Description { get; }
 
-        public abstract string ShortName { get; }
+        public abstract string ShortName { get; set; }
 
         public abstract string SystemName { get; }
 
