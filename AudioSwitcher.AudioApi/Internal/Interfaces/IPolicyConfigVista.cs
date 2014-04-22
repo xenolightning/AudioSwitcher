@@ -6,13 +6,13 @@ namespace AudioSwitcher.AudioApi.Interfaces
     [StructLayout(LayoutKind.Sequential)]
     internal struct WAVEFORMATEX
     {
-        ushort wFormatTag;
-        ushort nChannels;
-        uint nSamplesPerSec;
-        uint nAvgBytesPerSec;
-        ushort nBlockAlign;
-        ushort wBitsPerSample;
-        ushort cbSize;
+        private readonly ushort wFormatTag;
+        private readonly ushort nChannels;
+        private readonly uint nSamplesPerSec;
+        private readonly uint nAvgBytesPerSec;
+        private readonly ushort nBlockAlign;
+        private readonly ushort wBitsPerSample;
+        private readonly ushort cbSize;
     }
 
     internal enum DeviceShareMode

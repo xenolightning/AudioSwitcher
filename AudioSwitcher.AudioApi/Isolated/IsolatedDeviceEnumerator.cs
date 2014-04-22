@@ -2,19 +2,17 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.System;
 
 namespace AudioSwitcher.AudioApi.Isolated
 {
     public sealed class DebugSystemDeviceEnumerator : IDeviceEnumerator<IsolatedAudioDevice>
     {
-
         private readonly ConcurrentBag<IsolatedAudioDevice> _devices;
-        private Guid _defaultPlaybackDeviceID;
         private Guid _defaultPlaybackCommDeviceID;
-        private Guid _defaultRecordingDeviceID;
+        private Guid _defaultPlaybackDeviceID;
         private Guid _defaultRecordingCommDeviceID;
+        private Guid _defaultRecordingDeviceID;
 
 
         public DebugSystemDeviceEnumerator()
@@ -30,7 +28,10 @@ namespace AudioSwitcher.AudioApi.Isolated
             _defaultRecordingDeviceID = devEnum.DefaultRecordingDevice.ID;
             _defaultRecordingCommDeviceID = devEnum.DefaultCommunicationsRecordingDevice.ID;
 
-            foreach (var sysDev in devEnum.GetAudioDevices(DataFlow.All, DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled))
+            foreach (
+                SystemAudioDevice sysDev in
+                    devEnum.GetAudioDevices(DataFlow.All,
+                        DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled))
             {
                 var dev = new IsolatedAudioDevice(this)
                 {
@@ -47,11 +48,7 @@ namespace AudioSwitcher.AudioApi.Isolated
             }
         }
 
-        public AudioController Controller
-        {
-            get;
-            set;
-        }
+        public AudioController Controller { get; set; }
 
         public IsolatedAudioDevice DefaultPlaybackDevice
         {
@@ -112,7 +109,8 @@ namespace AudioSwitcher.AudioApi.Isolated
                 _defaultPlaybackDeviceID = dev.ID;
                 return true;
             }
-            else if (dev.IsRecordingDevice)
+
+            if (dev.IsRecordingDevice)
             {
                 _defaultRecordingDeviceID = dev.ID;
                 return true;
@@ -128,7 +126,8 @@ namespace AudioSwitcher.AudioApi.Isolated
                 _defaultPlaybackCommDeviceID = dev.ID;
                 return true;
             }
-            else if (dev.IsRecordingDevice)
+
+            if (dev.IsRecordingDevice)
             {
                 _defaultRecordingCommDeviceID = dev.ID;
                 return true;
@@ -139,46 +138,46 @@ namespace AudioSwitcher.AudioApi.Isolated
 
         AudioDevice IDeviceEnumerator.DefaultPlaybackDevice
         {
-            get { return this.DefaultPlaybackDevice; }
+            get { return DefaultPlaybackDevice; }
         }
 
         AudioDevice IDeviceEnumerator.DefaultCommunicationsPlaybackDevice
         {
-            get { return this.DefaultCommunicationsPlaybackDevice; }
+            get { return DefaultCommunicationsPlaybackDevice; }
         }
 
         AudioDevice IDeviceEnumerator.DefaultRecordingDevice
         {
-            get { return this.DefaultRecordingDevice; }
+            get { return DefaultRecordingDevice; }
         }
 
         AudioDevice IDeviceEnumerator.DefaultCommunicationsRecordingDevice
         {
-            get { return this.DefaultCommunicationsRecordingDevice; }
+            get { return DefaultCommunicationsRecordingDevice; }
         }
 
         public event AudioDeviceChangedHandler AudioDeviceChanged;
 
         AudioDevice IDeviceEnumerator.GetAudioDevice(Guid id)
         {
-            return this.GetAudioDevice(id);
+            return GetAudioDevice(id);
         }
 
         AudioDevice IDeviceEnumerator.GetDefaultAudioDevice(DataFlow dataflow, Role eRole)
         {
-            return this.GetDefaultAudioDevice(dataflow, eRole);
+            return GetDefaultAudioDevice(dataflow, eRole);
         }
 
         IEnumerable<AudioDevice> IDeviceEnumerator.GetAudioDevices(DataFlow dataflow, DeviceState state)
         {
-            return this.GetAudioDevices(dataflow, state);
+            return GetAudioDevices(dataflow, state);
         }
 
         public bool SetDefaultDevice(AudioDevice dev)
         {
             var device = dev as IsolatedAudioDevice;
             if (device != null)
-                return this.SetDefaultDevice(device);
+                return SetDefaultDevice(device);
 
             return false;
         }
@@ -187,7 +186,7 @@ namespace AudioSwitcher.AudioApi.Isolated
         {
             var device = dev as IsolatedAudioDevice;
             if (device != null)
-                return this.SetDefaultDevice(device);
+                return SetDefaultDevice(device);
 
             return false;
         }

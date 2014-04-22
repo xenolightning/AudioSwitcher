@@ -91,6 +91,5 @@ namespace AudioSwitcher.AudioApi
 
             return IsMuted;
         }
-
     }
 }

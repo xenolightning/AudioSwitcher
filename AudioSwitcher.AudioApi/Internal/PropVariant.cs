@@ -200,7 +200,7 @@ namespace AudioSwitcher.AudioApi
             }
             set
             {
-                if (value is string && this.DataType == VarEnum.VT_LPWSTR)
+                if (value is string && DataType == VarEnum.VT_LPWSTR)
                 {
                     pointerValue = Marshal.StringToBSTR(value as string);
                 }

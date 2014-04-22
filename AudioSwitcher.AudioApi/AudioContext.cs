@@ -2,19 +2,6 @@
 {
     public abstract class AudioContext
     {
-
-        public AudioController Controller
-        {
-            get;
-            private set;
-        }
-
-        public IPreferredDeviceManager PreferredDeviceManager
-        {
-            get;
-            private set;
-        }
-
         protected AudioContext(AudioController controller, IPreferredDeviceManager preferredDeviceManager)
         {
             Controller = controller;
@@ -26,5 +13,9 @@
             if (PreferredDeviceManager != null)
                 PreferredDeviceManager.Context = this;
         }
+
+        public AudioController Controller { get; private set; }
+
+        public IPreferredDeviceManager PreferredDeviceManager { get; private set; }
     }
 }

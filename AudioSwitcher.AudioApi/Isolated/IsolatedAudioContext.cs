@@ -1,10 +1,7 @@
-﻿using AudioSwitcher.AudioApi;
-
-namespace AudioSwitcher.AudioApi.Isolated
+﻿namespace AudioSwitcher.AudioApi.Isolated
 {
     public class IsolatedAudioContext : AudioContext
     {
-
         public IsolatedAudioContext()
             : this(null)
         {
@@ -14,6 +11,5 @@ namespace AudioSwitcher.AudioApi.Isolated
             : base(new IsolatedAudioController(), preferredDeviceManager)
         {
         }
-
     }
 }

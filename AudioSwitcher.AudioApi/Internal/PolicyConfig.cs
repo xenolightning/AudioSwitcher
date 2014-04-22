@@ -1,4 +1,5 @@
 ﻿// This has been modified for use by Audio Switcher
+
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.Interfaces;
 

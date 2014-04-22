@@ -41,6 +41,5 @@ namespace AudioSwitcher.AudioApi
         bool UnMute();
 
         bool ToggleMute();
-
     }
 }

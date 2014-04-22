@@ -19,19 +19,15 @@ namespace AudioSwitcher.AudioApi.System
         internal MMDeviceEnumerator InnerEnumerator;
         private ConcurrentBag<SystemAudioDevice> _deviceCache = new ConcurrentBag<SystemAudioDevice>();
 
-        public event AudioDeviceChangedHandler AudioDeviceChanged;
-
         public SystemDeviceEnumerator()
         {
             InnerEnumerator = new MMDeviceEnumerator();
             InnerEnumerator.RegisterEndpointNotificationCallback(this);
         }
 
-        public AudioController Controller
-        {
-            get;
-            set;
-        }
+        public event AudioDeviceChangedHandler AudioDeviceChanged;
+
+        public AudioController Controller { get; set; }
 
         public SystemAudioDevice DefaultPlaybackDevice
         {
@@ -205,6 +201,8 @@ namespace AudioSwitcher.AudioApi.System
 
         #region IMMNotif Members
 
+        private Tuple<string, DataFlow, Role, DateTime> _lastEvent;
+
         void IMMNotificationClient.OnDeviceStateChanged(string deviceId, DeviceState newState)
         {
             OnAudioDeviceChanged(
@@ -226,8 +224,6 @@ namespace AudioSwitcher.AudioApi.System
                     AudioDeviceEventType.Removed));
         }
 
-        private Tuple<string, DataFlow, Role, DateTime> _lastEvent;
-
         void IMMNotificationClient.OnDefaultDeviceChanged(DataFlow flow, Role role, string deviceId)
         {
             //Need to do some event filtering here, there's a scenario where
@@ -235,7 +231,7 @@ namespace AudioSwitcher.AudioApi.System
             //This is correct functionality, but I want to limit it to one event per device
             //Console === Multimedia device for my purpose
             //Assume any events that happen within 200ms are the same
-            if (_lastEvent != null 
+            if (_lastEvent != null
                 && _lastEvent.Item1 == deviceId
                 && _lastEvent.Item2 == flow
                 && (role == Role.Console || role == Role.Multimedia)

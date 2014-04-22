@@ -54,10 +54,7 @@ namespace AudioSwitcher.AudioApi.System
                     return "Unknown";
                 return Device.DeviceName;
             }
-            set
-            {
-                Device.DeviceName = value;
-            }
+            set { Device.DeviceName = value; }
         }
 
         public override string SystemName
@@ -132,7 +129,7 @@ namespace AudioSwitcher.AudioApi.System
             {
                 try
                 {
-                    return (int)Math.Round(Device.AudioEndpointVolume.MasterVolumeLevelScalar * 100, 0);
+                    return (int) Math.Round(Device.AudioEndpointVolume.MasterVolumeLevelScalar*100, 0);
                 }
                 catch
                 {
@@ -146,7 +143,7 @@ namespace AudioSwitcher.AudioApi.System
                 else if (value > 100)
                     value = 100;
 
-                float val = (float)value / 100;
+                float val = (float) value/100;
 
                 Device.AudioEndpointVolume.MasterVolumeLevelScalar = val;
 
@@ -183,7 +180,7 @@ namespace AudioSwitcher.AudioApi.System
         {
             string[] dev = systemDeviceId.Replace("{", "")
                 .Replace("}", "")
-                .Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                .Split(new[] {'.'}, StringSplitOptions.RemoveEmptyEntries);
             return new Guid(dev[dev.Length - 1]);
         }
     }
