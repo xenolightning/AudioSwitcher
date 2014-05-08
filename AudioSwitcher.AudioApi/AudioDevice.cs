@@ -13,7 +13,9 @@ namespace AudioSwitcher.AudioApi
 
         public IDeviceEnumerator Enumerator { get; private set; }
 
-        public abstract Guid ID { get; }
+        public abstract Guid Id { get; }
+
+        public abstract string SystemId { get; }
 
         public abstract string Description { get; }
 
@@ -29,8 +31,8 @@ namespace AudioSwitcher.AudioApi
         {
             get
             {
-                return Enumerator.DefaultPlaybackDevice.ID == ID
-                       || Enumerator.DefaultRecordingDevice.ID == ID;
+                return Enumerator.DefaultPlaybackDevice.Id == Id
+                       || Enumerator.DefaultRecordingDevice.Id == Id;
             }
         }
 
@@ -38,8 +40,8 @@ namespace AudioSwitcher.AudioApi
         {
             get
             {
-                return Enumerator.DefaultCommunicationsPlaybackDevice.ID == ID
-                       || Enumerator.DefaultCommunicationsRecordingDevice.ID == ID;
+                return Enumerator.DefaultCommunicationsPlaybackDevice.Id == Id
+                       || Enumerator.DefaultCommunicationsRecordingDevice.Id == Id;
             }
         }
 

@@ -17,11 +17,11 @@ namespace AudioSwitcher.AudioApi
 
         AudioDevice PreviousRecordingDevice();
 
-        void AddDevice(AudioDevice ad, int position = 0);
+        void AddDevice(IAudioDevice ad, int position = 0);
 
-        void RemoveDevice(AudioDevice ad);
+        void RemoveDevice(IAudioDevice ad);
 
-        bool IsPreferredDevice(AudioDevice ad);
+        bool IsPreferredDevice(IAudioDevice ad);
 
         void Save(Stream s);
 

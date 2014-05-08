@@ -20,11 +20,11 @@ namespace AudioSwitcher.AudioApi
 
         public abstract AudioDevice PreviousRecordingDevice();
 
-        public abstract void AddDevice(AudioDevice ad, int position = 0);
+        public abstract void AddDevice(IAudioDevice ad, int position = 0);
 
-        public abstract void RemoveDevice(AudioDevice ad);
+        public abstract void RemoveDevice(IAudioDevice ad);
 
-        public abstract bool IsPreferredDevice(AudioDevice ad);
+        public abstract bool IsPreferredDevice(IAudioDevice ad);
 
         public abstract void Save(Stream s);
 

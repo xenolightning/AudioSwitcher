@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace AudioSwitcher.AudioApi.System
+namespace AudioSwitcher.AudioApi.CoreAudio
 {
     [ComVisible(false)]
-    public sealed class SystemAudioDevice : AudioDevice
+    public sealed class CoreAudioDevice : AudioDevice
     {
         private Guid? _id;
 
-        internal SystemAudioDevice(MMDevice device, IDeviceEnumerator<SystemAudioDevice> enumerator)
+        internal CoreAudioDevice(MMDevice device, IDeviceEnumerator<CoreAudioDevice> enumerator)
             : base(enumerator)
         {
             if (device == null)
@@ -25,7 +25,7 @@ namespace AudioSwitcher.AudioApi.System
         /// <summary>
         ///     Unique identifier for this device
         /// </summary>
-        public override Guid ID
+        public override Guid Id
         {
             get
             {
@@ -33,6 +33,17 @@ namespace AudioSwitcher.AudioApi.System
                     _id = SystemIDToGuid(Device.ID);
 
                 return _id.Value;
+            }
+        }
+
+        public override string SystemId
+        {
+            get
+            {
+                if (Device == null)
+                    return String.Empty;
+
+                return Device.ID;
             }
         }
 
@@ -91,8 +102,8 @@ namespace AudioSwitcher.AudioApi.System
         {
             get
             {
-                return Enumerator.DefaultPlaybackDevice.ID == ID
-                       || Enumerator.DefaultRecordingDevice.ID == ID;
+                return Enumerator.DefaultPlaybackDevice.Id == Id
+                       || Enumerator.DefaultRecordingDevice.Id == Id;
             }
         }
 
@@ -100,8 +111,8 @@ namespace AudioSwitcher.AudioApi.System
         {
             get
             {
-                return Enumerator.DefaultCommunicationsPlaybackDevice.ID == ID
-                       || Enumerator.DefaultCommunicationsRecordingDevice.ID == ID;
+                return Enumerator.DefaultCommunicationsPlaybackDevice.Id == Id
+                       || Enumerator.DefaultCommunicationsRecordingDevice.Id == Id;
             }
         }
 
@@ -129,7 +140,7 @@ namespace AudioSwitcher.AudioApi.System
             {
                 try
                 {
-                    return (int) Math.Round(Device.AudioEndpointVolume.MasterVolumeLevelScalar*100, 0);
+                    return (int)Math.Round(Device.AudioEndpointVolume.MasterVolumeLevelScalar * 100, 0);
                 }
                 catch
                 {
@@ -143,7 +154,7 @@ namespace AudioSwitcher.AudioApi.System
                 else if (value > 100)
                     value = 100;
 
-                float val = (float) value/100;
+                float val = (float)value / 100;
 
                 Device.AudioEndpointVolume.MasterVolumeLevelScalar = val;
 
@@ -180,7 +191,7 @@ namespace AudioSwitcher.AudioApi.System
         {
             string[] dev = systemDeviceId.Replace("{", "")
                 .Replace("}", "")
-                .Split(new[] {'.'}, StringSplitOptions.RemoveEmptyEntries);
+                .Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
             return new Guid(dev[dev.Length - 1]);
         }
     }

@@ -19,9 +19,14 @@ namespace AudioSwitcher.AudioApi.Isolated
         {
         }
 
-        public override Guid ID
+        public override Guid Id
         {
             get { return id; }
+        }
+
+        public override string SystemId
+        {
+            get { return Id.ToString(); }
         }
 
         public override string Description

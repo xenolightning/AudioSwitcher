@@ -5,21 +5,21 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.Interfaces;
 
-namespace AudioSwitcher.AudioApi.System
+namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
     ///     Enumerates Windwows System Devices.
     ///     Stores the current devices in memory to avoid calling the COM library when not requried
     /// </summary>
     [ComVisible(false)]
-    public sealed class SystemDeviceEnumerator : IDeviceEnumerator<SystemAudioDevice>, IMMNotificationClient,
+    public sealed class CoreAudioDeviceEnumerator : IDeviceEnumerator<CoreAudioDevice>, IMMNotificationClient,
         IDisposable
     {
         private readonly object _mutex = new object();
         internal MMDeviceEnumerator InnerEnumerator;
-        private ConcurrentBag<SystemAudioDevice> _deviceCache = new ConcurrentBag<SystemAudioDevice>();
+        private ConcurrentBag<CoreAudioDevice> _deviceCache = new ConcurrentBag<CoreAudioDevice>();
 
-        public SystemDeviceEnumerator()
+        public CoreAudioDeviceEnumerator()
         {
             InnerEnumerator = new MMDeviceEnumerator();
             InnerEnumerator.RegisterEndpointNotificationCallback(this);
@@ -29,22 +29,22 @@ namespace AudioSwitcher.AudioApi.System
 
         public AudioController Controller { get; set; }
 
-        public SystemAudioDevice DefaultPlaybackDevice
+        public CoreAudioDevice DefaultPlaybackDevice
         {
             get { return GetDefaultAudioDevice(DataFlow.Render, Role.Console | Role.Multimedia); }
         }
 
-        public SystemAudioDevice DefaultCommunicationsPlaybackDevice
+        public CoreAudioDevice DefaultCommunicationsPlaybackDevice
         {
             get { return GetDefaultAudioDevice(DataFlow.Render, Role.Communications); }
         }
 
-        public SystemAudioDevice DefaultRecordingDevice
+        public CoreAudioDevice DefaultRecordingDevice
         {
             get { return GetDefaultAudioDevice(DataFlow.Capture, Role.Console | Role.Multimedia); }
         }
 
-        public SystemAudioDevice DefaultCommunicationsRecordingDevice
+        public CoreAudioDevice DefaultCommunicationsRecordingDevice
         {
             get { return GetDefaultAudioDevice(DataFlow.Capture, Role.Communications); }
         }
@@ -97,10 +97,10 @@ namespace AudioSwitcher.AudioApi.System
         {
             lock (_mutex)
             {
-                _deviceCache = new ConcurrentBag<SystemAudioDevice>();
+                _deviceCache = new ConcurrentBag<CoreAudioDevice>();
                 foreach (MMDevice mDev in InnerEnumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.All))
                 {
-                    _deviceCache.Add(new SystemAudioDevice(mDev, this));
+                    _deviceCache.Add(new CoreAudioDevice(mDev, this));
                 }
             }
         }
@@ -113,26 +113,26 @@ namespace AudioSwitcher.AudioApi.System
 
         #region IDevEnum Members
 
-        public SystemAudioDevice GetAudioDevice(Guid id)
+        public CoreAudioDevice GetAudioDevice(Guid id)
         {
             lock (_mutex)
             {
                 RefreshSystemDevices();
-                return _deviceCache.FirstOrDefault(x => x.ID == id);
+                return _deviceCache.FirstOrDefault(x => x.Id == id);
             }
         }
 
         public bool SetDefaultDevice(AudioDevice dev)
         {
-            return SetDefaultDevice(dev as SystemAudioDevice);
+            return SetDefaultDevice(dev as CoreAudioDevice);
         }
 
         public bool SetDefaultCommunicationsDevice(AudioDevice dev)
         {
-            return SetDefaultCommunicationsDevice(dev as SystemAudioDevice);
+            return SetDefaultCommunicationsDevice(dev as CoreAudioDevice);
         }
 
-        public bool SetDefaultDevice(SystemAudioDevice dev)
+        public bool SetDefaultDevice(CoreAudioDevice dev)
         {
             if (dev == null)
                 return false;
@@ -154,7 +154,7 @@ namespace AudioSwitcher.AudioApi.System
             }
         }
 
-        public bool SetDefaultCommunicationsDevice(SystemAudioDevice dev)
+        public bool SetDefaultCommunicationsDevice(CoreAudioDevice dev)
         {
             if (dev == null)
                 return false;
@@ -176,7 +176,7 @@ namespace AudioSwitcher.AudioApi.System
             }
         }
 
-        public SystemAudioDevice GetDefaultAudioDevice(DataFlow dataflow, Role eRole)
+        public CoreAudioDevice GetDefaultAudioDevice(DataFlow dataflow, Role eRole)
         {
             lock (_mutex)
             {
@@ -190,11 +190,11 @@ namespace AudioSwitcher.AudioApi.System
             }
         }
 
-        public IEnumerable<SystemAudioDevice> GetAudioDevices(DataFlow dataflow, DeviceState state)
+        public IEnumerable<CoreAudioDevice> GetAudioDevices(DataFlow dataflow, DeviceState state)
         {
             return
                 InnerEnumerator.EnumerateAudioEndPoints(dataflow, state)
-                    .Select((x, y) => new SystemAudioDevice(x, this));
+                    .Select((x, y) => new CoreAudioDevice(x, this));
         }
 
         #endregion
@@ -206,21 +206,21 @@ namespace AudioSwitcher.AudioApi.System
         void IMMNotificationClient.OnDeviceStateChanged(string deviceId, DeviceState newState)
         {
             OnAudioDeviceChanged(
-                new AudioDeviceChangedEventArgs(GetAudioDevice(SystemAudioDevice.SystemIDToGuid(deviceId)),
+                new AudioDeviceChangedEventArgs(GetAudioDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                     AudioDeviceEventType.StateChanged));
         }
 
         void IMMNotificationClient.OnDeviceAdded(string deviceId)
         {
             OnAudioDeviceChanged(
-                new AudioDeviceChangedEventArgs(GetAudioDevice(SystemAudioDevice.SystemIDToGuid(deviceId)),
+                new AudioDeviceChangedEventArgs(GetAudioDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                     AudioDeviceEventType.Added));
         }
 
         void IMMNotificationClient.OnDeviceRemoved(string deviceId)
         {
             OnAudioDeviceChanged(
-                new AudioDeviceChangedEventArgs(GetAudioDevice(SystemAudioDevice.SystemIDToGuid(deviceId)),
+                new AudioDeviceChangedEventArgs(GetAudioDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                     AudioDeviceEventType.Removed));
         }
 
@@ -244,18 +244,18 @@ namespace AudioSwitcher.AudioApi.System
 
             if (role == Role.Console || role == Role.Multimedia)
                 OnAudioDeviceChanged(
-                    new AudioDeviceChangedEventArgs(GetAudioDevice(SystemAudioDevice.SystemIDToGuid(deviceId)),
+                    new AudioDeviceChangedEventArgs(GetAudioDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                         AudioDeviceEventType.DefaultDevice));
             else if (role == Role.Communications)
                 OnAudioDeviceChanged(
-                    new AudioDeviceChangedEventArgs(GetAudioDevice(SystemAudioDevice.SystemIDToGuid(deviceId)),
+                    new AudioDeviceChangedEventArgs(GetAudioDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                         AudioDeviceEventType.DefaultCommunicationsDevice));
         }
 
         void IMMNotificationClient.OnPropertyValueChanged(string deviceId, PropertyKey key)
         {
             OnAudioDeviceChanged(
-                new AudioDeviceChangedEventArgs(GetAudioDevice(SystemAudioDevice.SystemIDToGuid(deviceId)),
+                new AudioDeviceChangedEventArgs(GetAudioDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                     AudioDeviceEventType.PropertyChanged));
         }
 

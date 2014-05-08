@@ -5,7 +5,7 @@ namespace AudioSwitcher.AudioApi
     /// <summary>
     ///     PROPERTYKEY is defined in wtypes.h
     /// </summary>
-    internal struct PropertyKey
+    public struct PropertyKey
     {
         /// <summary>
         ///     Format ID

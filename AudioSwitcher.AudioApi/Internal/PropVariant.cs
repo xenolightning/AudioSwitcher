@@ -35,7 +35,7 @@ namespace AudioSwitcher.AudioApi
     ///     contains a union so we have to do an explicit layout
     /// </summary>
     [StructLayout(LayoutKind.Explicit)]
-    internal struct PropVariant
+    public struct PropVariant
     {
         [FieldOffset(0)] private short vt;
         [FieldOffset(2)] private readonly short wReserved1;

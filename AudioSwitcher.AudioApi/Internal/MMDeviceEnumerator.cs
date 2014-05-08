@@ -32,7 +32,7 @@ namespace AudioSwitcher.AudioApi
     /// </summary>
     internal class MMDeviceEnumerator
     {
-        private readonly IMMDeviceEnumerator _realEnumerator;
+        internal readonly IMMDeviceEnumerator _realEnumerator;
 
         /// <summary>
         ///     Creates a new MM Device Enumerator

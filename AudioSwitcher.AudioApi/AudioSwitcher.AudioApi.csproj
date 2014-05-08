@@ -33,8 +33,7 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>AudioSwitcherApi.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -48,6 +47,7 @@
     <Compile Include="AudioDeviceChangedEventArgs.cs" />
     <Compile Include="AudioDeviceChangedHandler.cs" />
     <Compile Include="AudioDeviceEventType.cs" />
+    <Compile Include="Extensions\AudioDeviceExtensions.cs" />
     <Compile Include="Isolated\IsolatedAudioContext.cs" />
     <Compile Include="Isolated\IsolatedAudioController.cs" />
     <Compile Include="Isolated\IsolatedAudioDevice.cs" />
@@ -100,10 +100,13 @@
     <Compile Include="Internal\PropertyKeys.cs" />
     <Compile Include="Internal\Utils\HResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="System\SystemAudioContext.cs" />
-    <Compile Include="System\SystemAudioController.cs" />
-    <Compile Include="System\SystemAudioDevice.cs" />
-    <Compile Include="System\SystemDeviceEnumerator.cs" />
+    <Compile Include="CoreAudio\CoreAudioContext.cs" />
+    <Compile Include="CoreAudio\CoreAudioController.cs" />
+    <Compile Include="CoreAudio\CoreAudioDevice.cs" />
+    <Compile Include="CoreAudio\CoreAudioDeviceEnumerator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AudioSwitcherApi.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
