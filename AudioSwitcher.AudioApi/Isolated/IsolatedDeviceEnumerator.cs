@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using AudioSwitcher.AudioApi.System;
+using AudioSwitcher.AudioApi.CoreAudio;
 
 namespace AudioSwitcher.AudioApi.Isolated
 {
@@ -22,20 +22,20 @@ namespace AudioSwitcher.AudioApi.Isolated
             //Get a copy of the current system audio devices
             //then create a copy of the current state of the system
             //this allows us to "debug" macros against a "test" system
-            var devEnum = new SystemDeviceEnumerator();
-            _defaultPlaybackDeviceID = devEnum.DefaultPlaybackDevice.ID;
-            _defaultPlaybackCommDeviceID = devEnum.DefaultCommunicationsPlaybackDevice.ID;
-            _defaultRecordingDeviceID = devEnum.DefaultRecordingDevice.ID;
-            _defaultRecordingCommDeviceID = devEnum.DefaultCommunicationsRecordingDevice.ID;
+            var devEnum = new CoreAudioDeviceEnumerator();
+            _defaultPlaybackDeviceID = devEnum.DefaultPlaybackDevice.Id;
+            _defaultPlaybackCommDeviceID = devEnum.DefaultCommunicationsPlaybackDevice.Id;
+            _defaultRecordingDeviceID = devEnum.DefaultRecordingDevice.Id;
+            _defaultRecordingCommDeviceID = devEnum.DefaultCommunicationsRecordingDevice.Id;
 
             foreach (
-                SystemAudioDevice sysDev in
+                CoreAudioDevice sysDev in
                     devEnum.GetAudioDevices(DataFlow.All,
                         DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled))
             {
                 var dev = new IsolatedAudioDevice(this)
                 {
-                    id = sysDev.ID,
+                    id = sysDev.Id,
                     description = sysDev.Description,
                     shortName = sysDev.ShortName,
                     systemName = sysDev.SystemName,
@@ -52,27 +52,27 @@ namespace AudioSwitcher.AudioApi.Isolated
 
         public IsolatedAudioDevice DefaultPlaybackDevice
         {
-            get { return _devices.FirstOrDefault(x => x.ID == _defaultPlaybackDeviceID); }
+            get { return _devices.FirstOrDefault(x => x.Id == _defaultPlaybackDeviceID); }
         }
 
         public IsolatedAudioDevice DefaultCommunicationsPlaybackDevice
         {
-            get { return _devices.FirstOrDefault(x => x.ID == _defaultPlaybackCommDeviceID); }
+            get { return _devices.FirstOrDefault(x => x.Id == _defaultPlaybackCommDeviceID); }
         }
 
         public IsolatedAudioDevice DefaultRecordingDevice
         {
-            get { return _devices.FirstOrDefault(x => x.ID == _defaultRecordingDeviceID); }
+            get { return _devices.FirstOrDefault(x => x.Id == _defaultRecordingDeviceID); }
         }
 
         public IsolatedAudioDevice DefaultCommunicationsRecordingDevice
         {
-            get { return _devices.FirstOrDefault(x => x.ID == _defaultRecordingCommDeviceID); }
+            get { return _devices.FirstOrDefault(x => x.Id == _defaultRecordingCommDeviceID); }
         }
 
         public IsolatedAudioDevice GetAudioDevice(Guid id)
         {
-            return _devices.FirstOrDefault(x => x.ID == id);
+            return _devices.FirstOrDefault(x => x.Id == id);
         }
 
         public IsolatedAudioDevice GetDefaultAudioDevice(DataFlow dataflow, Role eRole)
@@ -106,13 +106,13 @@ namespace AudioSwitcher.AudioApi.Isolated
         {
             if (dev.IsPlaybackDevice)
             {
-                _defaultPlaybackDeviceID = dev.ID;
+                _defaultPlaybackDeviceID = dev.Id;
                 return true;
             }
 
             if (dev.IsRecordingDevice)
             {
-                _defaultRecordingDeviceID = dev.ID;
+                _defaultRecordingDeviceID = dev.Id;
                 return true;
             }
 
@@ -123,13 +123,13 @@ namespace AudioSwitcher.AudioApi.Isolated
         {
             if (dev.IsPlaybackDevice)
             {
-                _defaultPlaybackCommDeviceID = dev.ID;
+                _defaultPlaybackCommDeviceID = dev.Id;
                 return true;
             }
 
             if (dev.IsRecordingDevice)
             {
-                _defaultRecordingCommDeviceID = dev.ID;
+                _defaultRecordingCommDeviceID = dev.Id;
                 return true;
             }
 

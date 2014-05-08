@@ -4,7 +4,11 @@ namespace AudioSwitcher.AudioApi
 {
     public interface IAudioDevice
     {
-        Guid ID { get; }
+        IDeviceEnumerator Enumerator { get; }
+
+        Guid Id { get; }
+
+        string SystemId { get; }
 
         string Description { get; }
 

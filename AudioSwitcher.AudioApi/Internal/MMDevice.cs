@@ -34,7 +34,7 @@ namespace AudioSwitcher.AudioApi
     {
         #region Variables
 
-        private readonly IMMDevice deviceInterface;
+        internal readonly IMMDevice DeviceInterface;
         private AudioEndpointVolume audioEndpointVolume;
         private AudioMeterInformation audioMeterInformation;
         private PropertyStore propertyStore;
@@ -54,14 +54,14 @@ namespace AudioSwitcher.AudioApi
         private void GetPropertyInformation()
         {
             IPropertyStore propstore;
-            Marshal.ThrowExceptionForHR(deviceInterface.OpenPropertyStore(StorageAccessMode.ReadWrite, out propstore));
+            Marshal.ThrowExceptionForHR(DeviceInterface.OpenPropertyStore(StorageAccessMode.ReadWrite, out propstore));
             propertyStore = new PropertyStore(propstore);
         }
 
         private void GetAudioMeterInformation()
         {
             object result;
-            Marshal.ThrowExceptionForHR(deviceInterface.Activate(ref IID_IAudioMeterInformation, ClsCtx.ALL, IntPtr.Zero,
+            Marshal.ThrowExceptionForHR(DeviceInterface.Activate(ref IID_IAudioMeterInformation, ClsCtx.ALL, IntPtr.Zero,
                 out result));
             audioMeterInformation = new AudioMeterInformation(result as IAudioMeterInformation);
         }
@@ -69,7 +69,7 @@ namespace AudioSwitcher.AudioApi
         private void GetAudioEndpointVolume()
         {
             object result;
-            Marshal.ThrowExceptionForHR(deviceInterface.Activate(ref IID_IAudioEndpointVolume, ClsCtx.ALL, IntPtr.Zero,
+            Marshal.ThrowExceptionForHR(DeviceInterface.Activate(ref IID_IAudioEndpointVolume, ClsCtx.ALL, IntPtr.Zero,
                 out result));
             audioEndpointVolume = new AudioEndpointVolume(result as IAudioEndpointVolume);
         }
@@ -267,7 +267,7 @@ namespace AudioSwitcher.AudioApi
             get
             {
                 string result;
-                Marshal.ThrowExceptionForHR(deviceInterface.GetId(out result));
+                Marshal.ThrowExceptionForHR(DeviceInterface.GetId(out result));
                 return result;
             }
         }
@@ -280,7 +280,7 @@ namespace AudioSwitcher.AudioApi
             get
             {
                 DataFlow result;
-                var ep = deviceInterface as IMMEndpoint;
+                var ep = DeviceInterface as IMMEndpoint;
                 ep.GetDataFlow(out result);
                 return result;
             }
@@ -294,7 +294,7 @@ namespace AudioSwitcher.AudioApi
             get
             {
                 DeviceState result;
-                Marshal.ThrowExceptionForHR(deviceInterface.GetState(out result));
+                Marshal.ThrowExceptionForHR(DeviceInterface.GetState(out result));
                 return result;
             }
         }
@@ -305,7 +305,7 @@ namespace AudioSwitcher.AudioApi
 
         internal MMDevice(IMMDevice realDevice)
         {
-            deviceInterface = realDevice;
+            DeviceInterface = realDevice;
         }
 
         #endregion

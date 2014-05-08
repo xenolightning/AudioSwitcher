@@ -75,7 +75,7 @@ namespace AudioSwitcher.AudioApi
 
         public virtual AudioDevice GetAudioDevice(Guid id, DeviceState state = DefaultDeviceStateFilter)
         {
-            return DeviceEnumerator.GetAudioDevices(DataFlow.All, state).FirstOrDefault(dev => dev.ID == id);
+            return DeviceEnumerator.GetAudioDevices(DataFlow.All, state).FirstOrDefault(dev => dev.Id == id);
         }
 
         public virtual bool SetDefaultDevice(AudioDevice dev)

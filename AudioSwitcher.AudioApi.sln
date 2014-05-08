@@ -5,6 +5,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi", "A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi.Tests", "AudioSwitcher.AudioApi.Tests\AudioSwitcher.AudioApi.Tests.csproj", "{A4170B87-C5B3-48AE-8784-05FCE4E20E0E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi.Hooking", "AudioSwitcher.AudioApi.Hooking\AudioSwitcher.AudioApi.Hooking.csproj", "{B590E447-E7F2-43DE-B3F3-3A60F493DC98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HookingSample", "Samples\HookingSample\HookingSample.csproj", "{76DFBA7D-2CD7-4BD7-AA1E-0295DD1FB263}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +23,14 @@ Global
 		{A4170B87-C5B3-48AE-8784-05FCE4E20E0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4170B87-C5B3-48AE-8784-05FCE4E20E0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4170B87-C5B3-48AE-8784-05FCE4E20E0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B590E447-E7F2-43DE-B3F3-3A60F493DC98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B590E447-E7F2-43DE-B3F3-3A60F493DC98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B590E447-E7F2-43DE-B3F3-3A60F493DC98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B590E447-E7F2-43DE-B3F3-3A60F493DC98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76DFBA7D-2CD7-4BD7-AA1E-0295DD1FB263}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76DFBA7D-2CD7-4BD7-AA1E-0295DD1FB263}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76DFBA7D-2CD7-4BD7-AA1E-0295DD1FB263}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76DFBA7D-2CD7-4BD7-AA1E-0295DD1FB263}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
