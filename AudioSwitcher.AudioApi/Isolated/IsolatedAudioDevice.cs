@@ -24,7 +24,7 @@ namespace AudioSwitcher.AudioApi.Isolated
             get { return id; }
         }
 
-        public override string SystemId
+        public override string RealId
         {
             get { return Id.ToString(); }
         }

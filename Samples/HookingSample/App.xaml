@@ -1,0 +1,10 @@
+﻿<Application x:Class="HookingSample.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <Geometry x:Key="Arrow">F1M-756.543,-2951.94L-775.412,-2933.06 -775.278,-2932.93 -765.046,-2932.93 -747.577,-2950.4 -742.327,-2955.65 -764.908,-2978.23 -775.412,-2978.23 -756.543,-2959.36 -806.328,-2959.36 -806.328,-2951.94 -756.543,-2951.94z</Geometry>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

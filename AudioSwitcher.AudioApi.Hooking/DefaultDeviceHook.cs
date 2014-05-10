@@ -8,7 +8,7 @@ using EasyHook;
 
 namespace AudioSwitcher.AudioApi.Hooking
 {
-    public class DefaultDeviceHook : IHook
+    public class DefaultDeviceHook : IHook, IDisposable
     {
         private readonly Func<DataFlow, Role, string> _systemDeviceId;
         private readonly int _processId;
@@ -184,6 +184,11 @@ namespace AudioSwitcher.AudioApi.Hooking
                     return self.GetDefaultAudioEndpoint(dataflow, role, out ppendpoint);
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            this.UnHook();
         }
     }
 }
