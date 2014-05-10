@@ -67,8 +67,16 @@
       <Link>EasyHook32.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\lib\NetFX4.0\EasyHook32Svc.exe">
+      <Link>EasyHook32Svc.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\lib\NetFX4.0\EasyHook64.dll">
       <Link>EasyHook64.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\lib\NetFX4.0\EasyHook64Svc.exe">
+      <Link>EasyHook64Svc.exe</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

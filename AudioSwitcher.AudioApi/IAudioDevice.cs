@@ -8,7 +8,7 @@ namespace AudioSwitcher.AudioApi
 
         Guid Id { get; }
 
-        string SystemId { get; }
+        string RealId { get; }
 
         string Description { get; }
 

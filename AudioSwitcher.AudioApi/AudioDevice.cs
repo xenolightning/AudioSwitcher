@@ -15,7 +15,7 @@ namespace AudioSwitcher.AudioApi
 
         public abstract Guid Id { get; }
 
-        public abstract string SystemId { get; }
+        public abstract string RealId { get; }
 
         public abstract string Description { get; }
 

@@ -36,7 +36,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public override string SystemId
+        public override string RealId
         {
             get
             {
