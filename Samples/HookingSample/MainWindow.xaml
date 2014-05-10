@@ -7,9 +7,11 @@
     xmlns:hookingSample="clr-namespace:HookingSample"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=hookingSample:MainWindow, IsDesignTimeCreatable=True}"
-    Title="MainWindow" 
+    Title="Audio Director" 
     Height="550" 
     Width="600" 
+    MinWidth="550"
+    MinHeight="450"
     Closing="Window_Closing"
     >
     <Grid>
