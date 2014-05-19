@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi.Hook
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HookingSample", "Samples\HookingSample\HookingSample.csproj", "{2294421F-9911-434B-81EA-E1155D1B272B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{A1D8776F-71F0-4ECF-8EBE-AB1BD671E0B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,5 +36,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2294421F-9911-434B-81EA-E1155D1B272B} = {A1D8776F-71F0-4ECF-8EBE-AB1BD671E0B7}
 	EndGlobalSection
 EndGlobal

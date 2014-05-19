@@ -2,7 +2,7 @@
 
 namespace AudioSwitcher.AudioApi.Isolated
 {
-    public class IsolatedAudioDevice : AudioDevice
+    public class IsolatedDevice : Device
     {
         public DataFlow dataFlow;
         public string description;
@@ -14,7 +14,7 @@ namespace AudioSwitcher.AudioApi.Isolated
         public DeviceState state;
         public string systemName;
 
-        public IsolatedAudioDevice(IDeviceEnumerator enumerator)
+        public IsolatedDevice(IDeviceEnumerator enumerator)
             : base(enumerator)
         {
         }

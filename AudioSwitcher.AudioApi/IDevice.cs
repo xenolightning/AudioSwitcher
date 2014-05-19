@@ -2,7 +2,7 @@
 
 namespace AudioSwitcher.AudioApi
 {
-    public interface IAudioDevice
+    public interface IDevice
     {
         IDeviceEnumerator Enumerator { get; }
 

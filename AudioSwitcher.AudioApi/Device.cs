@@ -4,9 +4,9 @@ using System.Runtime.InteropServices;
 namespace AudioSwitcher.AudioApi
 {
     [ComVisible(false)]
-    public abstract class AudioDevice : IAudioDevice
+    public abstract class Device : IDevice
     {
-        protected AudioDevice(IDeviceEnumerator enumerator)
+        protected Device(IDeviceEnumerator enumerator)
         {
             Enumerator = enumerator;
         }

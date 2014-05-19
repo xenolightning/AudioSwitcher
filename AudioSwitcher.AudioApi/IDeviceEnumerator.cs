@@ -7,49 +7,26 @@ namespace AudioSwitcher.AudioApi
     [ComVisible(false)]
     public interface IDeviceEnumerator
     {
-        AudioController Controller { get; set; }
+        Controller Controller { get; set; }
 
-        AudioDevice DefaultPlaybackDevice { get; }
+        Device DefaultPlaybackDevice { get; }
 
-        AudioDevice DefaultCommunicationsPlaybackDevice { get; }
+        Device DefaultCommunicationsPlaybackDevice { get; }
 
-        AudioDevice DefaultRecordingDevice { get; }
+        Device DefaultRecordingDevice { get; }
 
-        AudioDevice DefaultCommunicationsRecordingDevice { get; }
+        Device DefaultCommunicationsRecordingDevice { get; }
 
         event AudioDeviceChangedHandler AudioDeviceChanged;
 
-        AudioDevice GetAudioDevice(Guid id);
+        Device GetDevice(Guid id);
 
-        AudioDevice GetDefaultAudioDevice(DataFlow dataflow, Role eRole);
+        Device GetDefaultDevice(DataFlow dataflow, Role eRole);
 
-        IEnumerable<AudioDevice> GetAudioDevices(DataFlow dataflow, DeviceState state);
+        IEnumerable<Device> GetDevices(DataFlow dataflow, DeviceState state);
 
-        bool SetDefaultDevice(AudioDevice dev);
+        bool SetDefaultDevice(Device dev);
 
-        bool SetDefaultCommunicationsDevice(AudioDevice dev);
-    }
-
-    [ComVisible(false)]
-    public interface IDeviceEnumerator<T> : IDeviceEnumerator
-        where T : AudioDevice
-    {
-        new T DefaultPlaybackDevice { get; }
-
-        new T DefaultCommunicationsPlaybackDevice { get; }
-
-        new T DefaultRecordingDevice { get; }
-
-        new T DefaultCommunicationsRecordingDevice { get; }
-
-        new T GetAudioDevice(Guid id);
-
-        new T GetDefaultAudioDevice(DataFlow dataflow, Role eRole);
-
-        new IEnumerable<T> GetAudioDevices(DataFlow dataflow, DeviceState state);
-
-        bool SetDefaultDevice(T dev);
-
-        bool SetDefaultCommunicationsDevice(T dev);
+        bool SetDefaultCommunicationsDevice(Device dev);
     }
 }

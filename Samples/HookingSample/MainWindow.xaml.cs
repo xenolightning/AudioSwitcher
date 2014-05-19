@@ -7,8 +7,6 @@ using System.Windows;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
 using AudioSwitcher.AudioApi.Hooking;
-using DataFlow = AudioSwitcher.AudioApi.Hooking.ComObjects.DataFlow;
-using Role = AudioSwitcher.AudioApi.Hooking.ComObjects.Role;
 
 namespace HookingSample
 {
@@ -19,7 +17,7 @@ namespace HookingSample
     {
         private DefaultDeviceHook _hook;
         private Process _selectedProcess;
-        private IAudioDevice _selectedAudioDevice;
+        private IDevice _selectedAudioDevice;
 
         public ObservableCollection<Process> Processes
         {
@@ -27,7 +25,7 @@ namespace HookingSample
             private set;
         }
 
-        public ObservableCollection<IAudioDevice> AudioDevices
+        public ObservableCollection<IDevice> AudioDevices
         {
             get;
             private set;
@@ -43,7 +41,7 @@ namespace HookingSample
             }
         }
 
-        public IAudioDevice SelectedAudioDevice
+        public IDevice SelectedAudioDevice
         {
             get { return _selectedAudioDevice; }
             set
@@ -61,7 +59,7 @@ namespace HookingSample
             }
         }
 
-        public CoreAudioContext AudioContext
+        public CoreAudioController Controller
         {
             get;
             private set;
@@ -83,9 +81,9 @@ namespace HookingSample
             InitializeComponent();
 
             Processes = new ObservableCollection<Process>();
-            AudioDevices = new ObservableCollection<IAudioDevice>();
+            AudioDevices = new ObservableCollection<IDevice>();
 
-            AudioContext = new CoreAudioContext();
+            Controller = new CoreAudioController();
 
             this.DataContext = this;
         }
@@ -129,7 +127,7 @@ namespace HookingSample
                 return sId;
             });
             Hook.Hook();
-            AudioContext.Controller.SetDefaultDevice(AudioContext.Controller.DefaultPlaybackDevice);
+            Controller.SetDefaultDevice(Controller.DefaultPlaybackDevice);
         }
 
         private void UnHook()
@@ -138,7 +136,7 @@ namespace HookingSample
             {
                 Hook.Dispose();
                 Hook = null;
-                AudioContext.Controller.SetDefaultDevice(AudioContext.Controller.DefaultPlaybackDevice);
+                Controller.SetDefaultDevice(Controller.DefaultPlaybackDevice);
             }
         }
 
@@ -146,7 +144,7 @@ namespace HookingSample
         {
             Dispatcher.BeginInvoke((Action)(() =>
             {
-                var devices = AudioContext.Controller.GetPlaybackDevices(DeviceState.Active);
+                var devices = Controller.GetPlaybackDevices(DeviceState.Active);
                 AudioDevices.Clear();
                 foreach (var d in devices.OrderBy(x => x.ShortName))
                 {

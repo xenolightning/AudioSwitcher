@@ -27,61 +27,61 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public event AudioDeviceChangedHandler AudioDeviceChanged;
 
-        public AudioController Controller { get; set; }
+        public Controller Controller { get; set; }
 
         public CoreAudioDevice DefaultPlaybackDevice
         {
-            get { return GetDefaultAudioDevice(DataFlow.Render, Role.Console | Role.Multimedia); }
+            get { return GetDefaultDevice(DataFlow.Render, Role.Console | Role.Multimedia); }
         }
 
         public CoreAudioDevice DefaultCommunicationsPlaybackDevice
         {
-            get { return GetDefaultAudioDevice(DataFlow.Render, Role.Communications); }
+            get { return GetDefaultDevice(DataFlow.Render, Role.Communications); }
         }
 
         public CoreAudioDevice DefaultRecordingDevice
         {
-            get { return GetDefaultAudioDevice(DataFlow.Capture, Role.Console | Role.Multimedia); }
+            get { return GetDefaultDevice(DataFlow.Capture, Role.Console | Role.Multimedia); }
         }
 
         public CoreAudioDevice DefaultCommunicationsRecordingDevice
         {
-            get { return GetDefaultAudioDevice(DataFlow.Capture, Role.Communications); }
+            get { return GetDefaultDevice(DataFlow.Capture, Role.Communications); }
         }
 
-        AudioDevice IDeviceEnumerator.DefaultPlaybackDevice
+        Device IDeviceEnumerator.DefaultPlaybackDevice
         {
             get { return DefaultPlaybackDevice; }
         }
 
-        AudioDevice IDeviceEnumerator.DefaultCommunicationsPlaybackDevice
+        Device IDeviceEnumerator.DefaultCommunicationsPlaybackDevice
         {
             get { return DefaultCommunicationsPlaybackDevice; }
         }
 
-        AudioDevice IDeviceEnumerator.DefaultRecordingDevice
+        Device IDeviceEnumerator.DefaultRecordingDevice
         {
             get { return DefaultRecordingDevice; }
         }
 
-        AudioDevice IDeviceEnumerator.DefaultCommunicationsRecordingDevice
+        Device IDeviceEnumerator.DefaultCommunicationsRecordingDevice
         {
             get { return DefaultCommunicationsRecordingDevice; }
         }
 
-        AudioDevice IDeviceEnumerator.GetAudioDevice(Guid id)
+        Device IDeviceEnumerator.GetDevice(Guid id)
         {
-            return GetAudioDevice(id);
+            return GetDevice(id);
         }
 
-        AudioDevice IDeviceEnumerator.GetDefaultAudioDevice(DataFlow dataflow, Role eRole)
+        Device IDeviceEnumerator.GetDefaultDevice(DataFlow dataflow, Role eRole)
         {
-            return GetDefaultAudioDevice(dataflow, eRole);
+            return GetDefaultDevice(dataflow, eRole);
         }
 
-        IEnumerable<AudioDevice> IDeviceEnumerator.GetAudioDevices(DataFlow dataflow, DeviceState eRole)
+        IEnumerable<Device> IDeviceEnumerator.GetDevices(DataFlow dataflow, DeviceState eRole)
         {
-            return GetAudioDevices(dataflow, eRole);
+            return GetDevices(dataflow, eRole);
         }
 
         public void Dispose()
@@ -113,7 +113,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         #region IDevEnum Members
 
-        public CoreAudioDevice GetAudioDevice(Guid id)
+        public CoreAudioDevice GetDevice(Guid id)
         {
             lock (_mutex)
             {
@@ -122,12 +122,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public bool SetDefaultDevice(AudioDevice dev)
+        public bool SetDefaultDevice(Device dev)
         {
             return SetDefaultDevice(dev as CoreAudioDevice);
         }
 
-        public bool SetDefaultCommunicationsDevice(AudioDevice dev)
+        public bool SetDefaultCommunicationsDevice(Device dev)
         {
             return SetDefaultCommunicationsDevice(dev as CoreAudioDevice);
         }
@@ -176,7 +176,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public CoreAudioDevice GetDefaultAudioDevice(DataFlow dataflow, Role eRole)
+        public CoreAudioDevice GetDefaultDevice(DataFlow dataflow, Role eRole)
         {
             lock (_mutex)
             {
@@ -190,7 +190,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public IEnumerable<CoreAudioDevice> GetAudioDevices(DataFlow dataflow, DeviceState state)
+        public IEnumerable<CoreAudioDevice> GetDevices(DataFlow dataflow, DeviceState state)
         {
             return
                 InnerEnumerator.EnumerateAudioEndPoints(dataflow, state)
@@ -206,21 +206,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         void IMMNotificationClient.OnDeviceStateChanged(string deviceId, DeviceState newState)
         {
             OnAudioDeviceChanged(
-                new AudioDeviceChangedEventArgs(GetAudioDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
+                new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                     AudioDeviceEventType.StateChanged));
         }
 
         void IMMNotificationClient.OnDeviceAdded(string deviceId)
         {
             OnAudioDeviceChanged(
-                new AudioDeviceChangedEventArgs(GetAudioDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
+                new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                     AudioDeviceEventType.Added));
         }
 
         void IMMNotificationClient.OnDeviceRemoved(string deviceId)
         {
             OnAudioDeviceChanged(
-                new AudioDeviceChangedEventArgs(GetAudioDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
+                new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                     AudioDeviceEventType.Removed));
         }
 
@@ -244,18 +244,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             if (role == Role.Console || role == Role.Multimedia)
                 OnAudioDeviceChanged(
-                    new AudioDeviceChangedEventArgs(GetAudioDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
+                    new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                         AudioDeviceEventType.DefaultDevice));
             else if (role == Role.Communications)
                 OnAudioDeviceChanged(
-                    new AudioDeviceChangedEventArgs(GetAudioDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
+                    new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                         AudioDeviceEventType.DefaultCommunicationsDevice));
         }
 
         void IMMNotificationClient.OnPropertyValueChanged(string deviceId, PropertyKey key)
         {
             OnAudioDeviceChanged(
-                new AudioDeviceChangedEventArgs(GetAudioDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
+                new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                     AudioDeviceEventType.PropertyChanged));
         }
 

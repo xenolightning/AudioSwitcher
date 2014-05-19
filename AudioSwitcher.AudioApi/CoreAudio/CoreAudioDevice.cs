@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
     [ComVisible(false)]
-    public sealed class CoreAudioDevice : AudioDevice
+    public sealed class CoreAudioDevice : Device
     {
         private Guid? _id;
 

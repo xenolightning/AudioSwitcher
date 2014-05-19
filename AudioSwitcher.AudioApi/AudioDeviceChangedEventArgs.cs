@@ -9,7 +9,7 @@ namespace AudioSwitcher.AudioApi
     [ComVisible(false)]
     public class AudioDeviceChangedEventArgs : EventArgs
     {
-        public AudioDeviceChangedEventArgs(AudioDevice dev, AudioDeviceEventType type)
+        public AudioDeviceChangedEventArgs(Device dev, AudioDeviceEventType type)
         {
             Device = dev;
             EventType = type;
@@ -18,7 +18,7 @@ namespace AudioSwitcher.AudioApi
         /// <summary>
         ///     Device that fired this event
         /// </summary>
-        public AudioDevice Device { get; private set; }
+        public Device Device { get; private set; }
 
         /// <summary>
         ///     The type of event
