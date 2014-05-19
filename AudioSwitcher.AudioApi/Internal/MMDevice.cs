@@ -69,6 +69,9 @@ namespace AudioSwitcher.AudioApi
         private void GetAudioEndpointVolume()
         {
             object result;
+            if (State == DeviceState.NotPresent || State == DeviceState.Unplugged)
+                return;
+
             Marshal.ThrowExceptionForHR(DeviceInterface.Activate(ref IID_IAudioEndpointVolume, ClsCtx.ALL, IntPtr.Zero,
                 out result));
             audioEndpointVolume = new AudioEndpointVolume(result as IAudioEndpointVolume);

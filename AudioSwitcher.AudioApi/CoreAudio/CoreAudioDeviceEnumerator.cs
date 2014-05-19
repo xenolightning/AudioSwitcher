@@ -3,6 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.Interfaces;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
@@ -98,17 +100,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             lock (_mutex)
             {
                 _deviceCache = new ConcurrentBag<CoreAudioDevice>();
-                foreach (MMDevice mDev in InnerEnumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.All))
+                foreach (var mDev in InnerEnumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.All))
                 {
-                    _deviceCache.Add(new CoreAudioDevice(mDev, this));
+                    var dev = new CoreAudioDevice(mDev, this);
+                    _deviceCache.Add(dev);
                 }
             }
         }
 
-        public void OnAudioDeviceChanged(AudioDeviceChangedEventArgs e)
+        public void RaiseAudioDeviceChanged(object sender, AudioDeviceChangedEventArgs e)
         {
             if (AudioDeviceChanged != null)
-                AudioDeviceChanged(e.Device, e);
+                AudioDeviceChanged(this, e);
         }
 
         #region IDevEnum Members
@@ -201,60 +204,62 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         #region IMMNotif Members
 
-        private Tuple<string, DataFlow, Role, DateTime> _lastEvent;
-
         void IMMNotificationClient.OnDeviceStateChanged(string deviceId, DeviceState newState)
         {
-            OnAudioDeviceChanged(
+            RaiseAudioDeviceChanged(this,
                 new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                     AudioDeviceEventType.StateChanged));
         }
 
         void IMMNotificationClient.OnDeviceAdded(string deviceId)
         {
-            OnAudioDeviceChanged(
+            RaiseAudioDeviceChanged(this,
                 new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                     AudioDeviceEventType.Added));
         }
 
         void IMMNotificationClient.OnDeviceRemoved(string deviceId)
         {
-            OnAudioDeviceChanged(
+            RaiseAudioDeviceChanged(this,
                 new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                     AudioDeviceEventType.Removed));
         }
+
+
+        readonly ConcurrentDictionary<string, bool> _processingIds = new ConcurrentDictionary<string, bool>();
 
         void IMMNotificationClient.OnDefaultDeviceChanged(DataFlow flow, Role role, string deviceId)
         {
             //Need to do some event filtering here, there's a scenario where
             //multiple default device changed are raised when one playback device changes.
             //This is correct functionality, but I want to limit it to one event per device
-            //Console === Multimedia device for my purpose
-            //Assume any events that happen within 200ms are the same
-            if (_lastEvent != null
-                && _lastEvent.Item1 == deviceId
-                && _lastEvent.Item2 == flow
-                && (role == Role.Console || role == Role.Multimedia)
-                && DateTime.Now.Subtract(_lastEvent.Item4).Milliseconds < 200)
+            //this is specific to Audio Switcher only. You could theorectically want an event 
+            //signalling a non default then a default update
+
+            lock (_processingIds)
             {
-                return;
+                if (_processingIds.ContainsKey(deviceId))
+                    return;
+
+                _processingIds.TryAdd(deviceId, true);
             }
 
-            _lastEvent = new Tuple<string, DataFlow, Role, DateTime>(deviceId, flow, role, DateTime.Now);
-
             if (role == Role.Console || role == Role.Multimedia)
-                OnAudioDeviceChanged(
+                RaiseAudioDeviceChanged(this,
                     new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                         AudioDeviceEventType.DefaultDevice));
             else if (role == Role.Communications)
-                OnAudioDeviceChanged(
+                RaiseAudioDeviceChanged(this,
                     new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                         AudioDeviceEventType.DefaultCommunicationsDevice));
+
+            bool temp;
+            _processingIds.TryRemove(deviceId, out temp);
         }
 
         void IMMNotificationClient.OnPropertyValueChanged(string deviceId, PropertyKey key)
         {
-            OnAudioDeviceChanged(
+            RaiseAudioDeviceChanged(this,
                 new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
                     AudioDeviceEventType.PropertyChanged));
         }

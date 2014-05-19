@@ -81,5 +81,7 @@ namespace AudioSwitcher.AudioApi.Isolated
         {
             return isMuted = false;
         }
+
+        public override event AudioDeviceChangedHandler VolumeChanged;
     }
 }

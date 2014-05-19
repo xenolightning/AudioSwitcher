@@ -93,7 +93,8 @@
     <Compile Include="Internal\PropertyStore.cs" />
     <Compile Include="Internal\PropertyStoreProperty.cs" />
     <Compile Include="Internal\PropVariant.cs" />
-    <Compile Include="PreferredDevices\IPreferredDeviceManager.cs" />
+    <Compile Include="Plugins\IPreferredDeviceManager.cs" />
+    <Compile Include="Plugins\SystemEventLog.cs" />
     <Compile Include="Role.cs" />
     <Compile Include="Internal\PropertyKeys.cs" />
     <Compile Include="Internal\Utils\HResult.cs" />
@@ -105,6 +106,7 @@
   <ItemGroup>
     <None Include="AudioSwitcherApi.pfx" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

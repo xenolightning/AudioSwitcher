@@ -1,10 +1,11 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
     [ComVisible(false)]
-    public sealed class CoreAudioDevice : Device
+    public sealed class CoreAudioDevice : Device, INotifyPropertyChanged
     {
         private Guid? _id;
 
@@ -15,6 +16,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 throw new ArgumentNullException("device", "Device cannot be null. Something bad went wrong");
 
             Device = device;
+            if (Device.AudioEndpointVolume != null)
+                Device.AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
+        }
+
+        void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
+        {
+            RaiseVolumeChanged();
+        }
+
+        private void RaiseVolumeChanged()
+        {
+            if (VolumeChanged != null)
+                VolumeChanged(this, new AudioDeviceChangedEventArgs(this, AudioDeviceEventType.Volume));
+
+            OnPropertyChanged("Volume");
         }
 
         /// <summary>
@@ -182,6 +198,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return Device.AudioEndpointVolume.Mute;
         }
 
+        public override event AudioDeviceChangedHandler VolumeChanged;
+
         /// <summary>
         ///     Extracts the unique GUID Identifier for a Windows System Device
         /// </summary>
@@ -193,6 +211,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 .Replace("}", "")
                 .Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
             return new Guid(dev[dev.Length - 1]);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -49,7 +49,6 @@ namespace AudioSwitcher.AudioApi
 
         public abstract DataFlow DataFlow { get; }
 
-
         public virtual bool IsPlaybackDevice
         {
             get { return DataFlow == DataFlow.Render || DataFlow == DataFlow.All; }
@@ -93,5 +92,7 @@ namespace AudioSwitcher.AudioApi
 
             return IsMuted;
         }
+
+        public abstract event AudioDeviceChangedHandler VolumeChanged;
     }
 }

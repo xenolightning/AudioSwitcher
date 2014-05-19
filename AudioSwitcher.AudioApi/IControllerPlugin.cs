@@ -19,5 +19,9 @@ namespace AudioSwitcher.AudioApi
             set;
         }
 
+        void OnRegister();
+
+        void OnUnregister();
+
     }
 }

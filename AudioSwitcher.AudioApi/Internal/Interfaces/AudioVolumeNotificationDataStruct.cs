@@ -21,16 +21,17 @@
 */
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.Interfaces
 {
-    internal struct AudioVolumeNotificationDataStruct
+    public struct AudioVolumeNotificationDataStruct
     {
-        public float ChannelVolume;
+        public Guid guidEventContext;
         public bool bMuted;
         public float fMasterVolume;
-        public Guid guidEventContext;
         public uint nChannels;
+        public float ChannelVolume;
 
         //Code Should Compile at warning level4 without any warnings,
         //However this struct will give us Warning CS0649: Field [Fieldname]

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AudioSwitcher.AudioApi.PreferredDevices
+namespace AudioSwitcher.AudioApi.Plugins
 {
     public interface IPreferredDeviceManager : IControllerPlugin
     {
