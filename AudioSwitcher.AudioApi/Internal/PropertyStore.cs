@@ -31,15 +31,29 @@ namespace AudioSwitcher.AudioApi
     /// </summary>
     internal class PropertyStore
     {
+        internal enum Mode
+        {
+            Read,
+            ReadWrite,
+            Write
+        }
+
         private readonly IPropertyStore storeInterface;
+        private readonly Mode _accessMode;
 
         /// <summary>
         ///     Creates a new property store
         /// </summary>
         /// <param name="store">IPropertyStore COM interface</param>
-        internal PropertyStore(IPropertyStore store)
+        internal PropertyStore(IPropertyStore store, Mode accessMode)
         {
             storeInterface = store;
+            _accessMode = accessMode;
+        }
+
+        public Mode AccessMode
+        {
+            get { return _accessMode; }
         }
 
         /// <summary>
@@ -94,6 +108,9 @@ namespace AudioSwitcher.AudioApi
             }
             set
             {
+                if (AccessMode == Mode.Read)
+                    return;
+
                 for (int i = 0; i < Count; i++)
                 {
                     PropertyKey ikey = Get(i);
@@ -154,6 +171,9 @@ namespace AudioSwitcher.AudioApi
         /// <returns>Property value</returns>
         public void SetValue(PropertyKey key, object value)
         {
+            if (AccessMode == Mode.Read)
+                return;
+
             if (!Contains(key))
                 return;
 

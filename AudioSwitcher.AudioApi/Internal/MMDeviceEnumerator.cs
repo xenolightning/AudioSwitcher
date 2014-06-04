@@ -22,6 +22,7 @@
 // updated for use in NAudio
 
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.Interfaces;
 
@@ -69,9 +70,18 @@ namespace AudioSwitcher.AudioApi
         /// <returns>Device</returns>
         public MMDevice GetDefaultAudioEndpoint(DataFlow dataFlow, Role role)
         {
-            IMMDevice device;
-            Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(dataFlow, role, out device));
-            return new MMDevice(device);
+            try
+            {
+                IMMDevice device;
+                Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(dataFlow, role, out device));
+                return new MMDevice(device);
+            }
+            catch
+            {
+                Debug.WriteLine("Device does not exist");
+            }
+
+            return null;
         }
 
         /// <summary>

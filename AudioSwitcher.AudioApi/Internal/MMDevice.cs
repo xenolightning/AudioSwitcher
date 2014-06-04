@@ -22,6 +22,7 @@
 // modified for NAudio
 
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.Interfaces;
 
@@ -54,8 +55,17 @@ namespace AudioSwitcher.AudioApi
         private void GetPropertyInformation()
         {
             IPropertyStore propstore;
-            Marshal.ThrowExceptionForHR(DeviceInterface.OpenPropertyStore(StorageAccessMode.ReadWrite, out propstore));
-            propertyStore = new PropertyStore(propstore);
+            try
+            {
+                Marshal.ThrowExceptionForHR(DeviceInterface.OpenPropertyStore(StorageAccessMode.ReadWrite, out propstore));
+                propertyStore = new PropertyStore(propstore, PropertyStore.Mode.ReadWrite);
+            }
+            catch
+            {
+                Debug.WriteLine("Cannot open property store in write mode");
+                Marshal.ThrowExceptionForHR(DeviceInterface.OpenPropertyStore(StorageAccessMode.Read, out propstore));
+                propertyStore = new PropertyStore(propstore, PropertyStore.Mode.Read);
+            }
         }
 
         private void GetAudioMeterInformation()

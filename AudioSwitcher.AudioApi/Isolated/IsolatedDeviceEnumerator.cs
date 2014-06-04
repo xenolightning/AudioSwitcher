@@ -23,10 +23,10 @@ namespace AudioSwitcher.AudioApi.Isolated
             //then create a copy of the current state of the system
             //this allows us to "debug" macros against a "test" system
             var devEnum = new CoreAudioDeviceEnumerator();
-            _defaultPlaybackDeviceID = devEnum.DefaultPlaybackDevice.Id;
-            _defaultPlaybackCommDeviceID = devEnum.DefaultCommunicationsPlaybackDevice.Id;
-            _defaultRecordingDeviceID = devEnum.DefaultRecordingDevice.Id;
-            _defaultRecordingCommDeviceID = devEnum.DefaultCommunicationsRecordingDevice.Id;
+            _defaultPlaybackDeviceID = devEnum.DefaultPlaybackDevice == null ? Guid.Empty : devEnum.DefaultPlaybackDevice.Id;
+            _defaultPlaybackCommDeviceID = devEnum.DefaultCommunicationsPlaybackDevice == null ? Guid.Empty : devEnum.DefaultCommunicationsPlaybackDevice.Id;
+            _defaultRecordingDeviceID = devEnum.DefaultRecordingDevice == null ? Guid.Empty : devEnum.DefaultRecordingDevice.Id;
+            _defaultRecordingCommDeviceID = devEnum.DefaultCommunicationsRecordingDevice == null ? Guid.Empty : devEnum.DefaultCommunicationsRecordingDevice.Id;
 
             foreach (
                 CoreAudioDevice sysDev in
