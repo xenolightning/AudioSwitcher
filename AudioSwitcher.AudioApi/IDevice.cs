@@ -30,7 +30,7 @@ namespace AudioSwitcher.AudioApi
 
         bool IsPlaybackDevice { get; }
 
-        bool IsRecordingDevice { get; }
+        bool IsCaptureDevice { get; }
 
         bool IsMuted { get; }
 

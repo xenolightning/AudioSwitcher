@@ -40,7 +40,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controller.cs" />
+    <Compile Include="AudioController.cs" />
     <Compile Include="Controller.Generic.cs" />
     <Compile Include="IDeviceEnumerator.Generic.cs" />
     <Compile Include="Device.cs" />
@@ -48,7 +48,7 @@
     <Compile Include="AudioDeviceChangedHandler.cs" />
     <Compile Include="AudioDeviceEventType.cs" />
     <Compile Include="IControllerPlugin.cs" />
-    <Compile Include="Isolated\IsolatedController.cs" />
+    <Compile Include="Isolated\IsolatedAudioController.cs" />
     <Compile Include="Isolated\IsolatedDevice.cs" />
     <Compile Include="Isolated\IsolatedDeviceEnumerator.cs" />
     <Compile Include="IDevice.cs" />

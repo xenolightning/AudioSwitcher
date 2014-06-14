@@ -12,9 +12,9 @@ namespace AudioSwitcher.AudioApi
 
         new T DefaultCommunicationsPlaybackDevice { get; }
 
-        new T DefaultRecordingDevice { get; }
+        new T DefaultCaptureDevice { get; }
 
-        new T DefaultCommunicationsRecordingDevice { get; }
+        new T DefaultCommunicationsCaptureDevice { get; }
 
         new T GetDevice(Guid id);
 

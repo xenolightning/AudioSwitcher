@@ -1,8 +1,8 @@
 ﻿namespace AudioSwitcher.AudioApi.Isolated
 {
-    public class IsolatedController : Controller<IsolatedDevice>
+    public class IsolatedAudioController : AudioController<IsolatedDevice>
     {
-        public IsolatedController()
+        public IsolatedAudioController()
             : base(new DebugSystemDeviceEnumerator())
         {
             this.DeviceEnumerator.AudioDeviceChanged += DeviceEnumerator_AudioDeviceChanged;

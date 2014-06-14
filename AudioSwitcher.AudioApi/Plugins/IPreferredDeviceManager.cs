@@ -10,9 +10,9 @@ namespace AudioSwitcher.AudioApi.Plugins
 
         IDevice PreviousPlaybackDevice();
 
-        IDevice NextRecordingDevice();
+        IDevice NextCaptureDevice();
 
-        IDevice PreviousRecordingDevice();
+        IDevice PreviousCaptureDevice();
 
         void AddDevice(IDevice ad, int position = 0);
 

@@ -32,7 +32,7 @@ namespace AudioSwitcher.AudioApi
             get
             {
                 return Enumerator.DefaultPlaybackDevice.Id == Id
-                       || Enumerator.DefaultRecordingDevice.Id == Id;
+                       || Enumerator.DefaultCaptureDevice.Id == Id;
             }
         }
 
@@ -41,7 +41,7 @@ namespace AudioSwitcher.AudioApi
             get
             {
                 return Enumerator.DefaultCommunicationsPlaybackDevice.Id == Id
-                       || Enumerator.DefaultCommunicationsRecordingDevice.Id == Id;
+                       || Enumerator.DefaultCommunicationsCaptureDevice.Id == Id;
             }
         }
 
@@ -54,7 +54,7 @@ namespace AudioSwitcher.AudioApi
             get { return DataFlow == DataFlow.Render || DataFlow == DataFlow.All; }
         }
 
-        public virtual bool IsRecordingDevice
+        public virtual bool IsCaptureDevice
         {
             get { return DataFlow == DataFlow.Capture || DataFlow == DataFlow.All; }
         }

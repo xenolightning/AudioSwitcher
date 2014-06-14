@@ -11,8 +11,8 @@ namespace AudioSwitcher.AudioApi.Isolated
         private readonly ConcurrentBag<IsolatedDevice> _devices;
         private Guid _defaultPlaybackCommDeviceID;
         private Guid _defaultPlaybackDeviceID;
-        private Guid _defaultRecordingCommDeviceID;
-        private Guid _defaultRecordingDeviceID;
+        private Guid _defaultCaptureCommDeviceID;
+        private Guid _defaultCaptureDeviceID;
 
 
         public DebugSystemDeviceEnumerator()
@@ -25,8 +25,8 @@ namespace AudioSwitcher.AudioApi.Isolated
             var devEnum = new CoreAudioDeviceEnumerator();
             _defaultPlaybackDeviceID = devEnum.DefaultPlaybackDevice == null ? Guid.Empty : devEnum.DefaultPlaybackDevice.Id;
             _defaultPlaybackCommDeviceID = devEnum.DefaultCommunicationsPlaybackDevice == null ? Guid.Empty : devEnum.DefaultCommunicationsPlaybackDevice.Id;
-            _defaultRecordingDeviceID = devEnum.DefaultRecordingDevice == null ? Guid.Empty : devEnum.DefaultRecordingDevice.Id;
-            _defaultRecordingCommDeviceID = devEnum.DefaultCommunicationsRecordingDevice == null ? Guid.Empty : devEnum.DefaultCommunicationsRecordingDevice.Id;
+            _defaultCaptureDeviceID = devEnum.DefaultCaptureDevice == null ? Guid.Empty : devEnum.DefaultCaptureDevice.Id;
+            _defaultCaptureCommDeviceID = devEnum.DefaultCommunicationsCaptureDevice == null ? Guid.Empty : devEnum.DefaultCommunicationsCaptureDevice.Id;
 
             foreach (
                 CoreAudioDevice sysDev in
@@ -48,7 +48,7 @@ namespace AudioSwitcher.AudioApi.Isolated
             }
         }
 
-        public Controller Controller { get; set; }
+        public AudioController AudioController { get; set; }
 
         public IsolatedDevice DefaultPlaybackDevice
         {
@@ -60,14 +60,14 @@ namespace AudioSwitcher.AudioApi.Isolated
             get { return _devices.FirstOrDefault(x => x.Id == _defaultPlaybackCommDeviceID); }
         }
 
-        public IsolatedDevice DefaultRecordingDevice
+        public IsolatedDevice DefaultCaptureDevice
         {
-            get { return _devices.FirstOrDefault(x => x.Id == _defaultRecordingDeviceID); }
+            get { return _devices.FirstOrDefault(x => x.Id == _defaultCaptureDeviceID); }
         }
 
-        public IsolatedDevice DefaultCommunicationsRecordingDevice
+        public IsolatedDevice DefaultCommunicationsCaptureDevice
         {
-            get { return _devices.FirstOrDefault(x => x.Id == _defaultRecordingCommDeviceID); }
+            get { return _devices.FirstOrDefault(x => x.Id == _defaultCaptureCommDeviceID); }
         }
 
         public IsolatedDevice GetDevice(Guid id)
@@ -81,9 +81,9 @@ namespace AudioSwitcher.AudioApi.Isolated
             {
                 case DataFlow.Capture:
                     if (eRole == Role.Console || eRole == Role.Multimedia)
-                        return DefaultRecordingDevice;
+                        return DefaultCaptureDevice;
 
-                    return DefaultCommunicationsRecordingDevice;
+                    return DefaultCommunicationsCaptureDevice;
                 case DataFlow.Render:
                     if (eRole == Role.Console || eRole == Role.Multimedia)
                         return DefaultPlaybackDevice;
@@ -110,9 +110,9 @@ namespace AudioSwitcher.AudioApi.Isolated
                 return true;
             }
 
-            if (dev.IsRecordingDevice)
+            if (dev.IsCaptureDevice)
             {
-                _defaultRecordingDeviceID = dev.Id;
+                _defaultCaptureDeviceID = dev.Id;
                 return true;
             }
 
@@ -127,9 +127,9 @@ namespace AudioSwitcher.AudioApi.Isolated
                 return true;
             }
 
-            if (dev.IsRecordingDevice)
+            if (dev.IsCaptureDevice)
             {
-                _defaultRecordingCommDeviceID = dev.Id;
+                _defaultCaptureCommDeviceID = dev.Id;
                 return true;
             }
 
@@ -146,14 +146,14 @@ namespace AudioSwitcher.AudioApi.Isolated
             get { return DefaultCommunicationsPlaybackDevice; }
         }
 
-        Device IDeviceEnumerator.DefaultRecordingDevice
+        Device IDeviceEnumerator.DefaultCaptureDevice
         {
-            get { return DefaultRecordingDevice; }
+            get { return DefaultCaptureDevice; }
         }
 
-        Device IDeviceEnumerator.DefaultCommunicationsRecordingDevice
+        Device IDeviceEnumerator.DefaultCommunicationsCaptureDevice
         {
-            get { return DefaultCommunicationsRecordingDevice; }
+            get { return DefaultCommunicationsCaptureDevice; }
         }
 
         public event AudioDeviceChangedHandler AudioDeviceChanged;

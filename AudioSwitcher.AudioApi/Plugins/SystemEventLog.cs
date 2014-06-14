@@ -17,7 +17,7 @@ namespace AudioSwitcher.AudioApi.Plugins
             get { return "SystemEventLog"; }
         }
 
-        public Controller Controller
+        public AudioController AudioController
         {
             get;
             set;
@@ -25,7 +25,7 @@ namespace AudioSwitcher.AudioApi.Plugins
 
         public void OnRegister()
         {
-            Controller.AudioDeviceChanged += ControllerOnAudioDeviceChanged;
+            AudioController.AudioDeviceChanged += ControllerOnAudioDeviceChanged;
         }
 
         private void ControllerOnAudioDeviceChanged(object sender, AudioDeviceChangedEventArgs e)
@@ -40,7 +40,7 @@ namespace AudioSwitcher.AudioApi.Plugins
 
         public void OnUnregister()
         {
-            Controller.AudioDeviceChanged -= ControllerOnAudioDeviceChanged;
+            AudioController.AudioDeviceChanged -= ControllerOnAudioDeviceChanged;
         }
     }
 }

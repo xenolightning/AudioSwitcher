@@ -13,7 +13,7 @@ namespace AudioSwitcher.AudioApi
             get;
         }
 
-        Controller Controller
+        AudioController AudioController
         {
             get;
             set;

@@ -5,10 +5,10 @@ using System.Runtime.InteropServices;
 namespace AudioSwitcher.AudioApi
 {
     [ComVisible(false)]
-    public abstract class Controller<T> : Controller
+    public abstract class AudioController<T> : AudioController
         where T : Device
     {
-        protected Controller(IDeviceEnumerator<T> devEnum)
+        protected AudioController(IDeviceEnumerator<T> devEnum)
             : base(devEnum)
         {
         }
@@ -29,14 +29,14 @@ namespace AudioSwitcher.AudioApi
             get { return base.DefaultPlaybackCommunicationsDevice as T; }
         }
 
-        public new T DefaultRecordingDevice
+        public new T DefaultCaptureDevice
         {
-            get { return base.DefaultRecordingDevice as T; }
+            get { return base.DefaultCaptureDevice as T; }
         }
 
-        public T DefaultRecordingCommDevice
+        public T DefaultCaptureCommDevice
         {
-            get { return base.DefaultRecordingCommunicationsDevice as T; }
+            get { return base.DefaultCaptureCommunicationsDevice as T; }
         }
 
         public new IEnumerable<T> GetPlaybackDevices(DeviceState deviceState = DefaultDeviceStateFilter)
@@ -44,7 +44,7 @@ namespace AudioSwitcher.AudioApi
             return DeviceEnumerator.GetDevices(DataFlow.Render, deviceState);
         }
 
-        public new IEnumerable<T> GetRecordingDevices(DeviceState deviceState = DefaultDeviceStateFilter)
+        public new IEnumerable<T> GetCaptureDevices(DeviceState deviceState = DefaultDeviceStateFilter)
         {
             return DeviceEnumerator.GetDevices(DataFlow.Capture, deviceState);
         }

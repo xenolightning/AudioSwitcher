@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 namespace AudioSwitcher.AudioApi
 {
     [ComVisible(false)]
-    public abstract class Controller
+    public abstract class AudioController
     {
         protected const DeviceState DefaultDeviceStateFilter =
             DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled;
@@ -18,17 +18,17 @@ namespace AudioSwitcher.AudioApi
             get { return _plugins; }
         } 
 
-        protected Controller(IDeviceEnumerator enumerator)
+        protected AudioController(IDeviceEnumerator enumerator)
         {
             DeviceEnumerator = enumerator;
             DeviceEnumerator.AudioDeviceChanged += DeviceEnumerator_AudioDeviceChanged;
 
-            enumerator.Controller = this;
+            enumerator.AudioController = this;
         }
 
         public bool AddPlugin(IControllerPlugin plugin)
         {
-            if (plugin == null || plugin.Controller != null || _plugins.Contains(plugin))
+            if (plugin == null || plugin.AudioController != null || _plugins.Contains(plugin))
                 return false;
 
             _plugins.Add(plugin);
@@ -68,14 +68,14 @@ namespace AudioSwitcher.AudioApi
             get { return DeviceEnumerator.DefaultCommunicationsPlaybackDevice; }
         }
 
-        public virtual Device DefaultRecordingDevice
+        public virtual Device DefaultCaptureDevice
         {
-            get { return DeviceEnumerator.DefaultRecordingDevice; }
+            get { return DeviceEnumerator.DefaultCaptureDevice; }
         }
 
-        public virtual Device DefaultRecordingCommunicationsDevice
+        public virtual Device DefaultCaptureCommunicationsDevice
         {
-            get { return DeviceEnumerator.DefaultCommunicationsRecordingDevice; }
+            get { return DeviceEnumerator.DefaultCommunicationsCaptureDevice; }
         }
 
         public event AudioDeviceChangedHandler AudioDeviceChanged;
@@ -103,7 +103,7 @@ namespace AudioSwitcher.AudioApi
             return DeviceEnumerator.GetDevices(DataFlow.Render, deviceState);
         }
 
-        public IEnumerable<Device> GetRecordingDevices(DeviceState deviceState = DefaultDeviceStateFilter)
+        public IEnumerable<Device> GetCaptureDevices(DeviceState deviceState = DefaultDeviceStateFilter)
         {
             return DeviceEnumerator.GetDevices(DataFlow.Capture, deviceState);
         }

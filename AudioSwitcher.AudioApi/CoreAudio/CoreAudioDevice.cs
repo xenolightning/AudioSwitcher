@@ -119,7 +119,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get
             {
                 return Enumerator.DefaultPlaybackDevice.Id == Id
-                       || Enumerator.DefaultRecordingDevice.Id == Id;
+                       || Enumerator.DefaultCaptureDevice.Id == Id;
             }
         }
 
@@ -128,7 +128,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get
             {
                 return Enumerator.DefaultCommunicationsPlaybackDevice.Id == Id
-                       || Enumerator.DefaultCommunicationsRecordingDevice.Id == Id;
+                       || Enumerator.DefaultCommunicationsCaptureDevice.Id == Id;
             }
         }
 
@@ -144,7 +144,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public override bool IsMuted
         {
-            get { return Device.AudioEndpointVolume.Mute; }
+            get
+            {
+                if (Device.AudioEndpointVolume == null)
+                    return false;
+
+                return Device.AudioEndpointVolume.Mute;
+            }
         }
 
         /// <summary>
