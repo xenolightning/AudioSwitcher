@@ -8,7 +8,7 @@ using AudioSwitcher.AudioApi.Threading;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    public static class ComThread
+    internal static class ComThread
     {
 
         private static ComTaskScheduler _comScheduler = new ComTaskScheduler();

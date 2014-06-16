@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi.Threading
 {
-    public sealed class ComTaskScheduler : TaskScheduler, IDisposable
+    internal sealed class ComTaskScheduler : TaskScheduler, IDisposable
     {
         /// <summary>Stores the queued tasks to be executed by our pool of STA threads.</summary>
         private BlockingCollection<Task> _tasks;
