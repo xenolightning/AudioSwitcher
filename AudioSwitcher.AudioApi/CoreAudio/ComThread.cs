@@ -13,6 +13,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private static ComTaskScheduler _comScheduler = new ComTaskScheduler();
 
+        public static bool InvokeRequired
+        {
+            get { return Thread.CurrentThread.ManagedThreadId != TaskScheduler.ThreadId; }
+        }
+
         public static ComTaskScheduler TaskScheduler
         {
             get { return _comScheduler; }
@@ -20,7 +25,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public static void Invoke(Action action)
         {
-            if (Thread.CurrentThread.ManagedThreadId == TaskScheduler.ThreadId)
+            if (!InvokeRequired)
             {
                 action();
                 return;
@@ -36,7 +41,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public static T Invoke<T>(Func<T> func)
         {
-            if (Thread.CurrentThread.ManagedThreadId == TaskScheduler.ThreadId)
+            if (!InvokeRequired)
                 return func();
 
             return BeginInvoke(func).Result;

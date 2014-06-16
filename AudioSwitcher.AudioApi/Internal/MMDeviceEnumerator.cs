@@ -24,6 +24,7 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using AudioSwitcher.AudioApi.CoreAudio;
 using AudioSwitcher.AudioApi.Interfaces;
 
 namespace AudioSwitcher.AudioApi
@@ -33,7 +34,7 @@ namespace AudioSwitcher.AudioApi
     /// </summary>
     internal class MMDeviceEnumerator
     {
-        internal readonly IMMDeviceEnumerator _realEnumerator;
+        internal IMMDeviceEnumerator _realEnumerator;
 
         /// <summary>
         ///     Creates a new MM Device Enumerator
@@ -46,7 +47,10 @@ namespace AudioSwitcher.AudioApi
                 throw new NotSupportedException("This functionality is only supported on Windows Vista or newer.");
             }
 #endif
-            _realEnumerator = new MMDeviceEnumeratorComObject() as IMMDeviceEnumerator;
+            ComThread.Invoke(() =>
+            {
+                _realEnumerator = new MMDeviceEnumeratorComObject() as IMMDeviceEnumerator;
+            });
         }
 
         /// <summary>
@@ -57,9 +61,12 @@ namespace AudioSwitcher.AudioApi
         /// <returns>Device Collection</returns>
         public MMDeviceCollection EnumerateAudioEndPoints(DataFlow dataFlow, DeviceState dwStateMask)
         {
-            IMMDeviceCollection result;
-            Marshal.ThrowExceptionForHR(_realEnumerator.EnumAudioEndpoints(dataFlow, dwStateMask, out result));
-            return new MMDeviceCollection(result);
+            return ComThread.Invoke(() =>
+            {
+                IMMDeviceCollection result;
+                Marshal.ThrowExceptionForHR(_realEnumerator.EnumAudioEndpoints(dataFlow, dwStateMask, out result));
+                return new MMDeviceCollection(result);
+            });
         }
 
         /// <summary>
@@ -70,11 +77,32 @@ namespace AudioSwitcher.AudioApi
         /// <returns>Device</returns>
         public MMDevice GetDefaultAudioEndpoint(DataFlow dataFlow, Role role)
         {
+            return ComThread.Invoke(() =>
+            {
+                try
+                {
+                    IMMDevice device;
+                    Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(dataFlow, role, out device));
+                    return new MMDevice(device);
+                }
+                catch
+                {
+                    Debug.WriteLine("Device does not exist");
+                }
+
+                return null;
+            });
+        }
+
+        public string GetDefaultAudioEndpointId(DataFlow dataFlow, Role role)
+        {
             try
             {
                 IMMDevice device;
                 Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(dataFlow, role, out device));
-                return new MMDevice(device);
+                string result;
+                Marshal.ThrowExceptionForHR(device.GetId(out result));
+                return result;
             }
             catch
             {
@@ -91,19 +119,28 @@ namespace AudioSwitcher.AudioApi
         /// <returns>Device</returns>
         public MMDevice GetDevice(string ID)
         {
-            IMMDevice device;
-            Marshal.ThrowExceptionForHR(_realEnumerator.GetDevice(ID, out device));
-            return new MMDevice(device);
+            return ComThread.Invoke(() =>
+            {
+                IMMDevice device;
+                Marshal.ThrowExceptionForHR(_realEnumerator.GetDevice(ID, out device));
+                return new MMDevice(device);
+            });
         }
 
         public void RegisterEndpointNotificationCallback(IMMNotificationClient client)
         {
-            _realEnumerator.RegisterEndpointNotificationCallback(client);
+            ComThread.Invoke(() =>
+            {
+                _realEnumerator.RegisterEndpointNotificationCallback(client);
+            });
         }
 
         public void UnregisterEndpointNotificationCallback(IMMNotificationClient client)
         {
-            _realEnumerator.UnregisterEndpointNotificationCallback(client);
+            ComThread.Invoke(() =>
+            {
+                _realEnumerator.UnregisterEndpointNotificationCallback(client);
+            });
         }
     }
 }

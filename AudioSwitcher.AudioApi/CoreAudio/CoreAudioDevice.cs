@@ -23,6 +23,31 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (Device.AudioEndpointVolume != null)
                     Device.AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
             });
+
+            enumerator.AudioDeviceChanged += EnumeratorOnAudioDeviceChanged;
+        }
+
+        private void EnumeratorOnAudioDeviceChanged(object sender, AudioDeviceChangedEventArgs audioDeviceChangedEventArgs)
+        {
+            if (audioDeviceChangedEventArgs.Device.Id != this.Id)
+                return;
+
+            if (audioDeviceChangedEventArgs.EventType == AudioDeviceEventType.PropertyChanged)
+            {
+                OnPropertyChanged("DataFlow");
+                OnPropertyChanged("Description");
+                OnPropertyChanged("FullName");
+                OnPropertyChanged("IconPath");
+                OnPropertyChanged("Id");
+                OnPropertyChanged("IsCaptureDevice");
+                OnPropertyChanged("IsDefaultCommunicationsDevice");
+                OnPropertyChanged("IsDefaultDevice");
+                OnPropertyChanged("IsMuted");
+                OnPropertyChanged("IsPlaybackDevice");
+                OnPropertyChanged("ShortName");
+                OnPropertyChanged("State");
+                OnPropertyChanged("SystemName");
+            }
         }
 
         void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)

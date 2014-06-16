@@ -27,9 +27,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ComThread.Invoke(() =>
             {
                 InnerEnumerator = new MMDeviceEnumerator();
+                InnerEnumerator.RegisterEndpointNotificationCallback(this);
             });
-
-            InnerEnumerator.RegisterEndpointNotificationCallback(this);
 
             RefreshSystemDevices();
         }
@@ -192,11 +191,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             lock (_mutex)
             {
-                MMDevice defDev = InnerEnumerator.GetDefaultAudioEndpoint(dataflow, eRole);
-                if (defDev == null || string.IsNullOrEmpty(defDev.ID))
+                string devId = InnerEnumerator.GetDefaultAudioEndpointId(dataflow, eRole);
+                if (string.IsNullOrEmpty(devId))
                     return null;
 
-                return _deviceCache.First(x => x.RealId == defDev.ID);
+                return _deviceCache.First(x => x.RealId == devId);
             }
         }
 
@@ -204,7 +203,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             lock (_mutex)
             {
-                return _deviceCache.Where(x => 
+                return _deviceCache.Where(x =>
                     (x.DataFlow == dataflow || dataflow == DataFlow.All)
                     && (x.State & state) > 0);
             }
