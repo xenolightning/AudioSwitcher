@@ -23,7 +23,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public CoreAudioDeviceEnumerator()
         {
-            InnerEnumerator = new MMDeviceEnumerator();
+            //Invoke on ComThread Synchronously
+            ComThread.Invoke(() =>
+            {
+                InnerEnumerator = new MMDeviceEnumerator();
+            });
+
             InnerEnumerator.RegisterEndpointNotificationCallback(this);
 
             RefreshSystemDevices();
@@ -99,18 +104,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void RefreshSystemDevices()
         {
-            Console.WriteLine("Start ref");
             lock (_mutex)
             {
-                Console.WriteLine("Refresh In thread " + Thread.CurrentThread.ManagedThreadId);
-
-                _deviceCache = new ConcurrentBag<CoreAudioDevice>();
-                foreach (var mDev in InnerEnumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.All))
+                ComThread.Invoke(() =>
                 {
-                    var dev = new CoreAudioDevice(mDev, this);
-                    _deviceCache.Add(dev);
-                    var asdf = dev.DataFlow;
-                }
+                    _deviceCache = new ConcurrentBag<CoreAudioDevice>();
+                    foreach (var mDev in InnerEnumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.All))
+                    {
+                        var dev = new CoreAudioDevice(mDev, this);
+                        _deviceCache.Add(dev);
+                    }
+                });
             }
         }
 
@@ -150,9 +154,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (Environment.OSVersion.Version.Major > 6
                     || (Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor >= 1)
                     )
-                    PolicyConfig.SetDefaultEndpoint(dev.Device.ID, Role.Console | Role.Multimedia);
+                    PolicyConfig.SetDefaultEndpoint(dev.RealId, Role.Console | Role.Multimedia);
                 else
-                    PolicyConfigVista.SetDefaultEndpoint(dev.Device.ID, Role.Console | Role.Multimedia);
+                    PolicyConfigVista.SetDefaultEndpoint(dev.RealId, Role.Console | Role.Multimedia);
 
                 return true;
             }
@@ -172,9 +176,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (Environment.OSVersion.Version.Major > 6
                     || (Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor >= 1)
                     )
-                    PolicyConfig.SetDefaultEndpoint(dev.Device.ID, Role.Communications);
+                    PolicyConfig.SetDefaultEndpoint(dev.RealId, Role.Communications);
                 else
-                    PolicyConfigVista.SetDefaultEndpoint(dev.Device.ID, Role.Communications);
+                    PolicyConfigVista.SetDefaultEndpoint(dev.RealId, Role.Communications);
 
                 return true;
             }
@@ -192,24 +196,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (defDev == null || string.IsNullOrEmpty(defDev.ID))
                     return null;
 
-                return _deviceCache.First(x => x.Device.ID == defDev.ID);
+                return _deviceCache.First(x => x.RealId == defDev.ID);
             }
         }
 
         public IEnumerable<CoreAudioDevice> GetDevices(DataFlow dataflow, DeviceState state)
         {
-            Console.WriteLine("Start");
             lock (_mutex)
             {
-                Console.WriteLine("In thread " + Thread.CurrentThread.ManagedThreadId);
-                foreach (var d in _deviceCache)
-                {
-                    if ((d.DataFlow & dataflow) > 0 && (d.State & state) > 0)
-                        yield return d;
-                }
-                //return _deviceCache.Where(x => (x.DataFlow & dataflow) > 0 && (x.State & state) > 0);
+                return _deviceCache.Where(x => 
+                    (x.DataFlow == dataflow || dataflow == DataFlow.All)
+                    && (x.State & state) > 0);
             }
-            //return new List<CoreAudioDevice>();
         }
 
         #endregion
@@ -262,7 +260,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 _processingIds.TryAdd(deviceId, true);
             }
 
-            //RefreshSystemDevices();
+            RefreshSystemDevices();
 
             if (role == Role.Console || role == Role.Multimedia)
                 RaiseAudioDeviceChanged(this,

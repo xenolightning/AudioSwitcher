@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="AudioController.cs" />
     <Compile Include="Controller.Generic.cs" />
+    <Compile Include="CoreAudio\ComThread.cs" />
     <Compile Include="IDeviceEnumerator.Generic.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="AudioDeviceChangedEventArgs.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="CoreAudio\CoreAudioController.cs" />
     <Compile Include="CoreAudio\CoreAudioDevice.cs" />
     <Compile Include="CoreAudio\CoreAudioDeviceEnumerator.cs" />
+    <Compile Include="Threading\ComTaskScheduler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AudioSwitcherApi.pfx" />
