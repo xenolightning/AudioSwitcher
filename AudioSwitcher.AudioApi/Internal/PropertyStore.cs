@@ -45,6 +45,7 @@ namespace AudioSwitcher.AudioApi
         ///     Creates a new property store
         /// </summary>
         /// <param name="store">IPropertyStore COM interface</param>
+        /// <param name="accessMode">The mode to open the propertystore in. Read/Write</param>
         internal PropertyStore(IPropertyStore store, Mode accessMode)
         {
             storeInterface = store;

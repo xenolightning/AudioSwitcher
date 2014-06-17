@@ -3,8 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.Interfaces;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
@@ -17,7 +15,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     public sealed class CoreAudioDeviceEnumerator : IDeviceEnumerator<CoreAudioDevice>, IMMNotificationClient,
         IDisposable
     {
-        private Object _mutex = new Object();
+        private readonly Object _mutex = new Object();
         internal MMDeviceEnumerator InnerEnumerator;
         private ConcurrentBag<CoreAudioDevice> _deviceCache = new ConcurrentBag<CoreAudioDevice>();
 
@@ -218,7 +216,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             RefreshSystemDevices();
 
             RaiseAudioDeviceChanged(this,
-                new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
+                new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
                     AudioDeviceEventType.StateChanged));
         }
 
@@ -227,7 +225,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             RefreshSystemDevices();
 
             RaiseAudioDeviceChanged(this,
-                new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
+                new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
                     AudioDeviceEventType.Added));
         }
 
@@ -236,7 +234,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             RefreshSystemDevices();
 
             RaiseAudioDeviceChanged(this,
-                new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
+                new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
                     AudioDeviceEventType.Removed));
         }
 
@@ -263,11 +261,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             if (role == Role.Console || role == Role.Multimedia)
                 RaiseAudioDeviceChanged(this,
-                    new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
+                    new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
                         AudioDeviceEventType.DefaultDevice));
             else if (role == Role.Communications)
                 RaiseAudioDeviceChanged(this,
-                    new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
+                    new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
                         AudioDeviceEventType.DefaultCommunicationsDevice));
 
             bool temp;
@@ -279,7 +277,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             RefreshSystemDevices();
 
             RaiseAudioDeviceChanged(this,
-                new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIDToGuid(deviceId)),
+                new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
                     AudioDeviceEventType.PropertyChanged));
         }
 

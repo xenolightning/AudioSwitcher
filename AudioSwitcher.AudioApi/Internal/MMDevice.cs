@@ -143,7 +143,7 @@ namespace AudioSwitcher.AudioApi
                 {
                     GetPropertyInformation();
                 }
-                if (propertyStore.Contains(PropertyKeys.PKEY_Device_FriendlyName))
+                if (propertyStore != null && propertyStore.Contains(PropertyKeys.PKEY_Device_FriendlyName))
                 {
                     return (string) propertyStore[PropertyKeys.PKEY_Device_FriendlyName].Value;
                 }
@@ -162,7 +162,7 @@ namespace AudioSwitcher.AudioApi
                 {
                     GetPropertyInformation();
                 }
-                if (propertyStore.Contains(PropertyKeys.PKEY_DeviceInterface_FriendlyName))
+                if (propertyStore != null && propertyStore.Contains(PropertyKeys.PKEY_DeviceInterface_FriendlyName))
                 {
                     return (string) propertyStore[PropertyKeys.PKEY_DeviceInterface_FriendlyName].Value;
                 }
@@ -182,7 +182,7 @@ namespace AudioSwitcher.AudioApi
                     if (propertyStore == null)
                         GetPropertyInformation();
 
-                    if (propertyStore.Contains(PropertyKeys.PKEY_Device_Icon))
+                    if (propertyStore != null && propertyStore.Contains(PropertyKeys.PKEY_Device_Icon))
                     {
                         return (string) propertyStore[PropertyKeys.PKEY_Device_Icon].Value;
                     }
@@ -206,7 +206,7 @@ namespace AudioSwitcher.AudioApi
                 {
                     GetPropertyInformation();
                 }
-                if (propertyStore.Contains(PropertyKeys.PKEY_Device_Description))
+                if (propertyStore != null && propertyStore.Contains(PropertyKeys.PKEY_Device_Description))
                 {
                     return (string) propertyStore[PropertyKeys.PKEY_Device_Description].Value;
                 }
@@ -218,7 +218,7 @@ namespace AudioSwitcher.AudioApi
                 {
                     GetPropertyInformation();
                 }
-                if (propertyStore.Contains(PropertyKeys.PKEY_Device_Description))
+                if (propertyStore != null && propertyStore.Contains(PropertyKeys.PKEY_Device_Description))
                 {
                     propertyStore.SetValue(PropertyKeys.PKEY_Device_Description, value);
                     //var pi = propertyStore[PropertyKeys.PKEY_Device_Description];
@@ -238,7 +238,7 @@ namespace AudioSwitcher.AudioApi
                 {
                     GetPropertyInformation();
                 }
-                if (propertyStore.Contains(PropertyKeys.PKEY_System_Name))
+                if (propertyStore != null && propertyStore.Contains(PropertyKeys.PKEY_System_Name))
                 {
                     return (string) propertyStore[PropertyKeys.PKEY_System_Name].Value;
                 }
@@ -257,8 +257,8 @@ namespace AudioSwitcher.AudioApi
                 {
                     if (propertyStore == null)
                         GetPropertyInformation();
-                    if (propertyStore.Contains(PropertyKeys.PKEY_Device_FriendlyName) &&
-                        propertyStore.Contains(PropertyKeys.PKEY_DeviceInterface_FriendlyName))
+                    if (propertyStore != null && (propertyStore.Contains(PropertyKeys.PKEY_Device_FriendlyName) &&
+                                                  propertyStore.Contains(PropertyKeys.PKEY_DeviceInterface_FriendlyName)))
                     {
                         return propertyStore[PropertyKeys.PKEY_Device_FriendlyName].Value + " (" +
                                propertyStore[PropertyKeys.PKEY_DeviceInterface_FriendlyName].Value + ")";

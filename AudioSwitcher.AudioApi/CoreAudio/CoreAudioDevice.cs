@@ -87,7 +87,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get
             {
                 if (_id == null)
-                    _id = SystemIDToGuid(RealId);
+                    _id = SystemIdToGuid(RealId);
 
                 return _id.Value;
             }
@@ -303,7 +303,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         /// <param name="systemDeviceId"></param>
         /// <returns></returns>
-        public static Guid SystemIDToGuid(string systemDeviceId)
+        public static Guid SystemIdToGuid(string systemDeviceId)
         {
             string[] dev = systemDeviceId.Replace("{", "")
                 .Replace("}", "")
