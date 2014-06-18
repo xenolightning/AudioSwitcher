@@ -32,6 +32,7 @@ namespace AudioSwitcher.AudioApi
                 return false;
 
             _plugins.Add(plugin);
+            plugin.AudioController = this;
             return true;
         }
 

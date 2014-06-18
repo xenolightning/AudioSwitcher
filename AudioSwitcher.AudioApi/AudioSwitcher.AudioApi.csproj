@@ -49,6 +49,7 @@
     <Compile Include="AudioDeviceChangedHandler.cs" />
     <Compile Include="AudioDeviceEventType.cs" />
     <Compile Include="IControllerPlugin.cs" />
+    <Compile Include="IDeviceExtensions.cs" />
     <Compile Include="Isolated\IsolatedAudioController.cs" />
     <Compile Include="Isolated\IsolatedDevice.cs" />
     <Compile Include="Isolated\IsolatedDeviceEnumerator.cs" />

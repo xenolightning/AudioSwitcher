@@ -4,7 +4,7 @@ namespace AudioSwitcher.AudioApi.Plugins
 {
     public interface IPreferredDeviceManager : IControllerPlugin
     {
-        IEnumerable<IDevice> PreferredDevices { get; }
+        IList<IDevice> PreferredDevices { get; }
 
         IDevice NextPlaybackDevice();
 
