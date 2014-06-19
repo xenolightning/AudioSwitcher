@@ -49,7 +49,6 @@
     <Compile Include="AudioDeviceChangedHandler.cs" />
     <Compile Include="AudioDeviceEventType.cs" />
     <Compile Include="IControllerPlugin.cs" />
-    <Compile Include="IDeviceExtensions.cs" />
     <Compile Include="Isolated\IsolatedAudioController.cs" />
     <Compile Include="Isolated\IsolatedDevice.cs" />
     <Compile Include="Isolated\IsolatedDeviceEnumerator.cs" />
@@ -95,7 +94,6 @@
     <Compile Include="Internal\PropertyStore.cs" />
     <Compile Include="Internal\PropertyStoreProperty.cs" />
     <Compile Include="Internal\PropVariant.cs" />
-    <Compile Include="Plugins\IPreferredDeviceManager.cs" />
     <Compile Include="Plugins\SystemEventLog.cs" />
     <Compile Include="Role.cs" />
     <Compile Include="Internal\PropertyKeys.cs" />
