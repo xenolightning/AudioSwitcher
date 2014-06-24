@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.Tests", "AudioSwitcher.Scripting.Tests\AudioSwitcher.Scripting.Tests.csproj", "{7395D2F2-2FCA-4F16-8903-3C9E565CF976}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi", "..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj", "{7A4E260C-007E-4615-A92B-E849E7B641AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi", "AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj", "{7A4E260C-007E-4615-A92B-E849E7B641AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

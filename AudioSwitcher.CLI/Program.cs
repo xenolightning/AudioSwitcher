@@ -39,10 +39,10 @@ namespace AudioSwitcher.CLI
                 return PrintUsage();
             }
 
-            Controller controller;
+            AudioController controller;
 
             if(IsDebug)
-                controller = new IsolatedController();
+                controller = new IsolatedAudioController();
             else
                 controller = new CoreAudioController();
 

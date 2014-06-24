@@ -66,7 +66,7 @@
     <Compile Include="ScriptEngineExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj">
+    <ProjectReference Include="..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj">
       <Project>{7a4e260c-007e-4615-a92b-e849e7b641ab}</Project>
       <Name>AudioSwitcher.AudioApi</Name>
     </ProjectReference>
