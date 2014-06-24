@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting", "AudioSwitcher.Scripting\AudioSwitcher.Scripting.csproj", "{7794300B-F8D3-4C30-AB1C-FFA0C961A510}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.Tests", "AudioSwitcher.Scripting.Tests\AudioSwitcher.Scripting.Tests.csproj", "{7395D2F2-2FCA-4F16-8903-3C9E565CF976}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi", "..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj", "{7A4E260C-007E-4615-A92B-E849E7B641AB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7395D2F2-2FCA-4F16-8903-3C9E565CF976}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7395D2F2-2FCA-4F16-8903-3C9E565CF976}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7395D2F2-2FCA-4F16-8903-3C9E565CF976}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7395D2F2-2FCA-4F16-8903-3C9E565CF976}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A4E260C-007E-4615-A92B-E849E7B641AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A4E260C-007E-4615-A92B-E849E7B641AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A4E260C-007E-4615-A92B-E849E7B641AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A4E260C-007E-4615-A92B-E849E7B641AB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

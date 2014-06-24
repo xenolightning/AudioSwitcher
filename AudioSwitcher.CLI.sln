@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.CLI", "AudioSwitcher.CLI\AudioSwitcher.CLI.csproj", "{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting", "..\AudioSwitcher.Scripting\AudioSwitcher.Scripting\AudioSwitcher.Scripting.csproj", "{7794300B-F8D3-4C30-AB1C-FFA0C961A510}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi", "..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj", "{7A4E260C-007E-4615-A92B-E849E7B641AB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CLI", "CLI", "{E956AD21-F71D-44BC-96F4-AD4EE19C6C52}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{2E4E7883-61A0-429A-819C-D297A67E438C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A4E260C-007E-4615-A92B-E849E7B641AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A4E260C-007E-4615-A92B-E849E7B641AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A4E260C-007E-4615-A92B-E849E7B641AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A4E260C-007E-4615-A92B-E849E7B641AB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8} = {E956AD21-F71D-44BC-96F4-AD4EE19C6C52}
+		{7794300B-F8D3-4C30-AB1C-FFA0C961A510} = {2E4E7883-61A0-429A-819C-D297A67E438C}
+		{7A4E260C-007E-4615-A92B-E849E7B641AB} = {2E4E7883-61A0-429A-819C-D297A67E438C}
+	EndGlobalSection
+EndGlobal
