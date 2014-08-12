@@ -11,46 +11,12 @@ namespace AudioSwitcher.AudioApi
         protected const DeviceState DefaultDeviceStateFilter =
             DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled;
 
-        private readonly List<IControllerPlugin> _plugins = new List<IControllerPlugin>();
-
-        public IEnumerable<IControllerPlugin> Plugins
-        {
-            get { return _plugins; }
-        } 
-
         protected AudioController(IDeviceEnumerator enumerator)
         {
             DeviceEnumerator = enumerator;
             DeviceEnumerator.AudioDeviceChanged += DeviceEnumerator_AudioDeviceChanged;
 
             enumerator.AudioController = this;
-        }
-
-        public bool AddPlugin(IControllerPlugin plugin)
-        {
-            if (plugin == null || plugin.AudioController != null || _plugins.Contains(plugin))
-                return false;
-
-            _plugins.Add(plugin);
-            plugin.AudioController = this;
-            return true;
-        }
-
-        public bool RemovePlugin(IControllerPlugin plugin)
-        {
-            return _plugins.Remove(plugin);
-        }
-
-        public T GetPlugin<T>()
-            where T : IControllerPlugin
-        {
-            return _plugins.OfType<T>().FirstOrDefault();
-        }
-
-        public T GetPlugin<T>(string name)
-            where T : IControllerPlugin
-        {
-            return _plugins.OfType<T>().FirstOrDefault(x => x.Name == name);
         }
 
         protected IDeviceEnumerator DeviceEnumerator

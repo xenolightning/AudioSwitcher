@@ -41,14 +41,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AudioController.cs" />
-    <Compile Include="Controller.Generic.cs" />
+    <Compile Include="AudioController.Generic.cs" />
     <Compile Include="CoreAudio\ComThread.cs" />
     <Compile Include="IDeviceEnumerator.Generic.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="AudioDeviceChangedEventArgs.cs" />
     <Compile Include="AudioDeviceChangedHandler.cs" />
     <Compile Include="AudioDeviceEventType.cs" />
-    <Compile Include="IControllerPlugin.cs" />
     <Compile Include="Isolated\IsolatedAudioController.cs" />
     <Compile Include="Isolated\IsolatedDevice.cs" />
     <Compile Include="Isolated\IsolatedDeviceEnumerator.cs" />
@@ -94,7 +93,6 @@
     <Compile Include="Internal\PropertyStore.cs" />
     <Compile Include="Internal\PropertyStoreProperty.cs" />
     <Compile Include="Internal\PropVariant.cs" />
-    <Compile Include="Plugins\SystemEventLog.cs" />
     <Compile Include="Role.cs" />
     <Compile Include="Internal\PropertyKeys.cs" />
     <Compile Include="Internal\Utils\HResult.cs" />
