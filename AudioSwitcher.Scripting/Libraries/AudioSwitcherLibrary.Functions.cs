@@ -15,7 +15,7 @@ namespace AudioSwitcher.Scripting.Libraries
         [JSFunction(Name = "getAudioDevices")]
         public ArrayInstance GetAudioDevices([DefaultParameterValue(0)] int flags = 0)
         {
-            var devices = new List<Device>();
+            var devices = new List<IDevice>();
 
             switch (flags)
             {
@@ -43,7 +43,7 @@ namespace AudioSwitcher.Scripting.Libraries
         [JSFunction(Name = "getAudioDevice")]
         public JavaScriptAudioDevice GetAudioDevice(string name, [DefaultParameterValue(0)] int flags = 0)
         {
-            var devices = new List<Device>();
+            var devices = new List<IDevice>();
 
             switch (flags)
             {
@@ -59,7 +59,7 @@ namespace AudioSwitcher.Scripting.Libraries
                     break;
             }
 
-            Device dev = devices.FirstOrDefault(x => x.ShortName == name);
+            IDevice dev = devices.FirstOrDefault(x => x.ShortName == name);
 
             return dev != null ? CreateJavaScriptAudioDevice(dev) : null;
         }

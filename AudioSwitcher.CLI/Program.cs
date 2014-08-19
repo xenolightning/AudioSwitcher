@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Linq;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
-using AudioSwitcher.AudioApi.Isolated;
+using AudioSwitcher.AudioApi.Sandbox;
 using AudioSwitcher.Scripting;
 using Jurassic;
 using Jurassic.Library;
@@ -42,7 +41,7 @@ namespace AudioSwitcher.CLI
             AudioController controller;
 
             if(IsDebug)
-                controller = new IsolatedAudioController();
+                controller = new SandboxAudioController(new CoreAudioDeviceEnumerator());
             else
                 controller = new CoreAudioController();
 

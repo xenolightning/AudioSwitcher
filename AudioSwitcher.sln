@@ -21,6 +21,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.Tes
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4F8309BD-D3FD-4903-8054-0B1EED7D385E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi.CoreAudio", "AudioSwitcher.AudioApi.CoreAudio\AudioSwitcher.AudioApi.CoreAudio.csproj", "{63191A1E-AF9E-4D3A-9BA8-BAA02345B277}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Tests.Common", "AudioSwitcher.Tests.Common\AudioSwitcher.Tests.Common.csproj", "{703D3C14-A63F-4BE1-82FE-8D20A55D9960}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +77,18 @@ Global
 		{7395D2F2-2FCA-4F16-8903-3C9E565CF976}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7395D2F2-2FCA-4F16-8903-3C9E565CF976}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7395D2F2-2FCA-4F16-8903-3C9E565CF976}.Release|x86.ActiveCfg = Release|Any CPU
+		{63191A1E-AF9E-4D3A-9BA8-BAA02345B277}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63191A1E-AF9E-4D3A-9BA8-BAA02345B277}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63191A1E-AF9E-4D3A-9BA8-BAA02345B277}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{63191A1E-AF9E-4D3A-9BA8-BAA02345B277}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63191A1E-AF9E-4D3A-9BA8-BAA02345B277}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63191A1E-AF9E-4D3A-9BA8-BAA02345B277}.Release|x86.ActiveCfg = Release|Any CPU
+		{703D3C14-A63F-4BE1-82FE-8D20A55D9960}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{703D3C14-A63F-4BE1-82FE-8D20A55D9960}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{703D3C14-A63F-4BE1-82FE-8D20A55D9960}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{703D3C14-A63F-4BE1-82FE-8D20A55D9960}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{703D3C14-A63F-4BE1-82FE-8D20A55D9960}.Release|Any CPU.Build.0 = Release|Any CPU
+		{703D3C14-A63F-4BE1-82FE-8D20A55D9960}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,6 +96,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{A4170B87-C5B3-48AE-8784-05FCE4E20E0E} = {4F8309BD-D3FD-4903-8054-0B1EED7D385E}
 		{2294421F-9911-434B-81EA-E1155D1B272B} = {A1D8776F-71F0-4ECF-8EBE-AB1BD671E0B7}
+		{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8} = {A1D8776F-71F0-4ECF-8EBE-AB1BD671E0B7}
 		{7395D2F2-2FCA-4F16-8903-3C9E565CF976} = {4F8309BD-D3FD-4903-8054-0B1EED7D385E}
+		{703D3C14-A63F-4BE1-82FE-8D20A55D9960} = {4F8309BD-D3FD-4903-8054-0B1EED7D385E}
 	EndGlobalSection
 EndGlobal

@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>AudioSwitcherApi.pfx</AssemblyOriginatorKeyFile>
@@ -106,6 +106,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\AudioSwitcher.AudioApi.CoreAudio\AudioSwitcher.AudioApi.CoreAudio.csproj">
+      <Project>{63191a1e-af9e-4d3a-9ba8-baa02345b277}</Project>
+      <Name>AudioSwitcher.AudioApi.CoreAudio</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\AudioSwitcher.AudioApi.Hooking\AudioSwitcher.AudioApi.Hooking.csproj">
       <Project>{B590E447-E7F2-43DE-B3F3-3A60F493DC98}</Project>
       <Name>AudioSwitcher.AudioApi.Hooking</Name>

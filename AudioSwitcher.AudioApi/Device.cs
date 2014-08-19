@@ -3,6 +3,10 @@ using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi
 {
+    /// <summary>
+    ///     Provides a basic implementation of IDevice so that developers need not implement very common functionality.
+    ///     Should be used inplace of IDevice where possible
+    /// </summary>
     [ComVisible(false)]
     public abstract class Device : IDevice
     {
@@ -31,8 +35,8 @@ namespace AudioSwitcher.AudioApi
         {
             get
             {
-                return Enumerator.DefaultPlaybackDevice.Id == Id
-                       || Enumerator.DefaultCaptureDevice.Id == Id;
+                return (Enumerator.DefaultPlaybackDevice != null && Enumerator.DefaultPlaybackDevice.Id == Id)
+                       || (Enumerator.DefaultCaptureDevice != null && Enumerator.DefaultCaptureDevice.Id == Id);
             }
         }
 
@@ -40,8 +44,11 @@ namespace AudioSwitcher.AudioApi
         {
             get
             {
-                return Enumerator.DefaultCommunicationsPlaybackDevice.Id == Id
-                       || Enumerator.DefaultCommunicationsCaptureDevice.Id == Id;
+                return (Enumerator.DefaultCommunicationsPlaybackDevice != null &&
+                        Enumerator.DefaultCommunicationsPlaybackDevice.Id == Id)
+                       ||
+                       (Enumerator.DefaultCommunicationsCaptureDevice != null &&
+                        Enumerator.DefaultCommunicationsCaptureDevice.Id == Id);
             }
         }
 

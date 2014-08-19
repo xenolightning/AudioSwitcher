@@ -1,7 +1,5 @@
-﻿using System.CodeDom;
-using System.Runtime.Remoting.Messaging;
-using AudioSwitcher.AudioApi;
-using AudioSwitcher.AudioApi.Isolated;
+﻿using AudioSwitcher.AudioApi;
+using AudioSwitcher.Tests.Common;
 using Jurassic;
 using Xunit;
 
@@ -12,7 +10,7 @@ namespace AudioSwitcher.Scripting.Tests
 
         public static AudioController GetAudioContext()
         {
-            return new IsolatedAudioController();
+            return new TestAudioController(new TestDeviceEnumerator(2, 2));
         }
 
         [Fact]
@@ -288,6 +286,70 @@ namespace AudioSwitcher.Scripting.Tests
 
             //unmutes
             Assert.DoesNotThrow(() => engine.Execute(js));
+        }
+
+        [Fact]
+        [Trait("Type", "AudioDevice")]
+        [Trait("Function", "SetDefault")]
+        public void AudioSwitcher_AudioDevice_setDefault_Playback()
+        {
+            var engine = new ScriptEngine();
+            engine.AddAudioSwitcherLibrary(GetAudioContext());
+
+            const string setDefault = @"AudioSwitcher.getAudioDevices(1)[0].setAsDefaultDevice()";
+            const string checkDefault = @"AudioSwitcher.getAudioDevices(1)[0].isDefault";
+
+            engine.Execute(setDefault);
+
+            Assert.Equal(true, engine.Evaluate<bool>(checkDefault));
+        }
+
+        [Fact]
+        [Trait("Type", "AudioDevice")]
+        [Trait("Function", "SetDefaultComm")]
+        public void AudioSwitcher_AudioDevice_setDefault_Playback_Comm()
+        {
+            var engine = new ScriptEngine();
+            engine.AddAudioSwitcherLibrary(GetAudioContext());
+
+            const string setDefault = @"AudioSwitcher.getAudioDevices(1)[0].setAsDefaultCommDevice()";
+            const string checkDefault = @"AudioSwitcher.getAudioDevices(1)[0].isDefaultComm";
+
+            engine.Execute(setDefault);
+
+            Assert.Equal(true, engine.Evaluate<bool>(checkDefault));
+        }
+
+        [Fact]
+        [Trait("Type", "AudioDevice")]
+        [Trait("Function", "SetDefault")]
+        public void AudioSwitcher_AudioDevice_setDefault_Recording()
+        {
+            var engine = new ScriptEngine();
+            engine.AddAudioSwitcherLibrary(GetAudioContext());
+
+            const string setDefault = @"AudioSwitcher.getAudioDevices(2)[0].setAsDefaultDevice()";
+            const string checkDefault = @"AudioSwitcher.getAudioDevices(2)[0].isDefault";
+
+            engine.Execute(setDefault);
+
+            Assert.Equal(true, engine.Evaluate<bool>(checkDefault));
+        }
+
+        [Fact]
+        [Trait("Type", "AudioDevice")]
+        [Trait("Function", "SetDefaultComm")]
+        public void AudioSwitcher_AudioDevice_setDefault_Recording_Comm()
+        {
+            var engine = new ScriptEngine();
+            engine.AddAudioSwitcherLibrary(GetAudioContext());
+
+            const string setDefault = @"AudioSwitcher.getAudioDevices(2)[0].setAsDefaultCommDevice()";
+            const string checkDefault = @"AudioSwitcher.getAudioDevices(2)[0].isDefaultComm";
+
+            engine.Execute(setDefault);
+
+            Assert.Equal(true, engine.Evaluate<bool>(checkDefault));
         }
 
     }

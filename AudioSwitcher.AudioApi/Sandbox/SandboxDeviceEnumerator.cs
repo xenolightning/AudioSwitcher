@@ -2,47 +2,51 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using AudioSwitcher.AudioApi.CoreAudio;
 
-namespace AudioSwitcher.AudioApi.Isolated
+namespace AudioSwitcher.AudioApi.Sandbox
 {
-    public sealed class DebugSystemDeviceEnumerator : IDeviceEnumerator<IsolatedDevice>
+    public sealed class SandboxDeviceEnumerator : IDeviceEnumerator<SandboxDevice>
     {
-        private readonly ConcurrentBag<IsolatedDevice> _devices;
-        private Guid _defaultPlaybackCommDeviceID;
-        private Guid _defaultPlaybackDeviceID;
+        private readonly ConcurrentBag<SandboxDevice> _devices;
         private Guid _defaultCaptureCommDeviceID;
         private Guid _defaultCaptureDeviceID;
+        private Guid _defaultPlaybackCommDeviceID;
+        private Guid _defaultPlaybackDeviceID;
 
 
-        public DebugSystemDeviceEnumerator()
+        public SandboxDeviceEnumerator(IDeviceEnumerator source)
         {
-            _devices = new ConcurrentBag<IsolatedDevice>();
+            _devices = new ConcurrentBag<SandboxDevice>();
 
             //Get a copy of the current system audio devices
             //then create a copy of the current state of the system
             //this allows us to "debug" macros against a "test" system
-            var devEnum = new CoreAudioDeviceEnumerator();
-            _defaultPlaybackDeviceID = devEnum.DefaultPlaybackDevice == null ? Guid.Empty : devEnum.DefaultPlaybackDevice.Id;
-            _defaultPlaybackCommDeviceID = devEnum.DefaultCommunicationsPlaybackDevice == null ? Guid.Empty : devEnum.DefaultCommunicationsPlaybackDevice.Id;
-            _defaultCaptureDeviceID = devEnum.DefaultCaptureDevice == null ? Guid.Empty : devEnum.DefaultCaptureDevice.Id;
-            _defaultCaptureCommDeviceID = devEnum.DefaultCommunicationsCaptureDevice == null ? Guid.Empty : devEnum.DefaultCommunicationsCaptureDevice.Id;
+            _defaultPlaybackDeviceID = source.DefaultPlaybackDevice == null
+                ? Guid.Empty
+                : source.DefaultPlaybackDevice.Id;
+            _defaultPlaybackCommDeviceID = source.DefaultCommunicationsPlaybackDevice == null
+                ? Guid.Empty
+                : source.DefaultCommunicationsPlaybackDevice.Id;
+            _defaultCaptureDeviceID = source.DefaultCaptureDevice == null ? Guid.Empty : source.DefaultCaptureDevice.Id;
+            _defaultCaptureCommDeviceID = source.DefaultCommunicationsCaptureDevice == null
+                ? Guid.Empty
+                : source.DefaultCommunicationsCaptureDevice.Id;
 
             foreach (
-                CoreAudioDevice sysDev in
-                    devEnum.GetDevices(DataFlow.All,
+                IDevice sourceDev in
+                    source.GetDevices(DataFlow.All,
                         DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled))
             {
-                var dev = new IsolatedDevice(this)
+                var dev = new SandboxDevice(this)
                 {
-                    id = sysDev.Id,
-                    description = sysDev.Description,
-                    shortName = sysDev.ShortName,
-                    systemName = sysDev.SystemName,
-                    fullName = sysDev.FullName,
-                    dataFlow = sysDev.DataFlow,
-                    state = sysDev.State,
-                    Volume = sysDev.Volume
+                    id = sourceDev.Id,
+                    description = sourceDev.Description,
+                    shortName = sourceDev.ShortName,
+                    systemName = sourceDev.SystemName,
+                    fullName = sourceDev.FullName,
+                    dataFlow = sourceDev.DataFlow,
+                    state = sourceDev.State,
+                    Volume = sourceDev.Volume
                 };
                 _devices.Add(dev);
             }
@@ -50,32 +54,32 @@ namespace AudioSwitcher.AudioApi.Isolated
 
         public AudioController AudioController { get; set; }
 
-        public IsolatedDevice DefaultPlaybackDevice
+        public SandboxDevice DefaultPlaybackDevice
         {
             get { return _devices.FirstOrDefault(x => x.Id == _defaultPlaybackDeviceID); }
         }
 
-        public IsolatedDevice DefaultCommunicationsPlaybackDevice
+        public SandboxDevice DefaultCommunicationsPlaybackDevice
         {
             get { return _devices.FirstOrDefault(x => x.Id == _defaultPlaybackCommDeviceID); }
         }
 
-        public IsolatedDevice DefaultCaptureDevice
+        public SandboxDevice DefaultCaptureDevice
         {
             get { return _devices.FirstOrDefault(x => x.Id == _defaultCaptureDeviceID); }
         }
 
-        public IsolatedDevice DefaultCommunicationsCaptureDevice
+        public SandboxDevice DefaultCommunicationsCaptureDevice
         {
             get { return _devices.FirstOrDefault(x => x.Id == _defaultCaptureCommDeviceID); }
         }
 
-        public IsolatedDevice GetDevice(Guid id)
+        public SandboxDevice GetDevice(Guid id)
         {
             return _devices.FirstOrDefault(x => x.Id == id);
         }
 
-        public IsolatedDevice GetDefaultDevice(DataFlow dataflow, Role eRole)
+        public SandboxDevice GetDefaultDevice(DataFlow dataflow, Role eRole)
         {
             switch (dataflow)
             {
@@ -94,7 +98,7 @@ namespace AudioSwitcher.AudioApi.Isolated
             return null;
         }
 
-        public IEnumerable<IsolatedDevice> GetDevices(DataFlow dataflow, DeviceState eRole)
+        public IEnumerable<SandboxDevice> GetDevices(DataFlow dataflow, DeviceState eRole)
         {
             return _devices.Where(x =>
                 (x.dataFlow == dataflow || dataflow == DataFlow.All)
@@ -102,7 +106,7 @@ namespace AudioSwitcher.AudioApi.Isolated
                 );
         }
 
-        public bool SetDefaultDevice(IsolatedDevice dev)
+        public bool SetDefaultDevice(SandboxDevice dev)
         {
             if (dev.IsPlaybackDevice)
             {
@@ -119,7 +123,7 @@ namespace AudioSwitcher.AudioApi.Isolated
             return false;
         }
 
-        public bool SetDefaultCommunicationsDevice(IsolatedDevice dev)
+        public bool SetDefaultCommunicationsDevice(SandboxDevice dev)
         {
             if (dev.IsPlaybackDevice)
             {
@@ -136,57 +140,57 @@ namespace AudioSwitcher.AudioApi.Isolated
             return false;
         }
 
-        Device IDeviceEnumerator.DefaultPlaybackDevice
+        IDevice IDeviceEnumerator.DefaultPlaybackDevice
         {
             get { return DefaultPlaybackDevice; }
         }
 
-        Device IDeviceEnumerator.DefaultCommunicationsPlaybackDevice
+        IDevice IDeviceEnumerator.DefaultCommunicationsPlaybackDevice
         {
             get { return DefaultCommunicationsPlaybackDevice; }
         }
 
-        Device IDeviceEnumerator.DefaultCaptureDevice
+        IDevice IDeviceEnumerator.DefaultCaptureDevice
         {
             get { return DefaultCaptureDevice; }
         }
 
-        Device IDeviceEnumerator.DefaultCommunicationsCaptureDevice
+        IDevice IDeviceEnumerator.DefaultCommunicationsCaptureDevice
         {
             get { return DefaultCommunicationsCaptureDevice; }
         }
 
         public event AudioDeviceChangedHandler AudioDeviceChanged;
 
-        Device IDeviceEnumerator.GetDevice(Guid id)
+        IDevice IDeviceEnumerator.GetDevice(Guid id)
         {
             return GetDevice(id);
         }
 
-        Device IDeviceEnumerator.GetDefaultDevice(DataFlow dataflow, Role eRole)
+        IDevice IDeviceEnumerator.GetDefaultDevice(DataFlow dataflow, Role eRole)
         {
             return GetDefaultDevice(dataflow, eRole);
         }
 
-        IEnumerable<Device> IDeviceEnumerator.GetDevices(DataFlow dataflow, DeviceState state)
+        IEnumerable<IDevice> IDeviceEnumerator.GetDevices(DataFlow dataflow, DeviceState state)
         {
             return GetDevices(dataflow, state);
         }
 
-        public bool SetDefaultDevice(Device dev)
+        public bool SetDefaultDevice(IDevice dev)
         {
-            var device = dev as IsolatedDevice;
+            var device = dev as SandboxDevice;
             if (device != null)
                 return SetDefaultDevice(device);
 
             return false;
         }
 
-        public bool SetDefaultCommunicationsDevice(Device dev)
+        public bool SetDefaultCommunicationsDevice(IDevice dev)
         {
-            var device = dev as IsolatedDevice;
+            var device = dev as SandboxDevice;
             if (device != null)
-                return SetDefaultDevice(device);
+                return SetDefaultCommunicationsDevice(device);
 
             return false;
         }

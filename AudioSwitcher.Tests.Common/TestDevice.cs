@@ -1,13 +1,15 @@
 ﻿using System;
 using AudioSwitcher.AudioApi;
 
-namespace AudioSwitcher.Scripting.Tests
+namespace AudioSwitcher.Tests.Common
 {
-    public sealed class TestAudioDevice : Device
+    public sealed class TestDevice : Device
     {
-        public TestAudioDevice(Guid id, DataFlow dFlow, IDeviceEnumerator enumerator)
+        public TestDevice(Guid id, DataFlow dFlow, IDeviceEnumerator enumerator)
             : base(enumerator)
         {
+            _id = id;
+            _dataFlow = dFlow;
         }
 
         public Guid _id;

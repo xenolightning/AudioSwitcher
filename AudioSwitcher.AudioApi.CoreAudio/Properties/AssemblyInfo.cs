@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("AudioSwitcher.AudioApi.Hooking")]
+[assembly: AssemblyTitle("AudioSwitcher.AudioApi.CoreAudio")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("AudioSwitcher.AudioApi.Hooking")]
+[assembly: AssemblyProduct("AudioSwitcher.AudioApi.CoreAudio")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("bdcd617f-b963-4acc-9a87-b7dc386b6d25")]
+[assembly: Guid("6412f464-c3c0-4240-9dfa-97c6748ae395")]
 
 // Version information for an assembly consists of the following four values:
 //

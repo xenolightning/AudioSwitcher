@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{63191A1E-AF9E-4D3A-9BA8-BAA02345B277}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AudioSwitcher.AudioApi.CoreAudio</RootNamespace>
+    <AssemblyName>AudioSwitcher.AudioApi.CoreAudio</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Internal\AudioEndpointVolume.cs" />
+    <Compile Include="Internal\AudioEndpointVolumeCallback.cs" />
+    <Compile Include="Internal\AudioEndpointVolumeChannel.cs" />
+    <Compile Include="Internal\AudioEndpointVolumeChannels.cs" />
+    <Compile Include="Internal\AudioEndpointVolumeNotificationDelegate.cs" />
+    <Compile Include="Internal\AudioEndpointVolumeStepInformation.cs" />
+    <Compile Include="Internal\AudioEndpointVolumeVolumeRange.cs" />
+    <Compile Include="Internal\AudioMeterInformation.cs" />
+    <Compile Include="Internal\AudioMeterInformationChannels.cs" />
+    <Compile Include="Internal\AudioVolumeNotificationData.cs" />
+    <Compile Include="Internal\Interfaces\AudioVolumeNotificationDataStruct.cs" />
+    <Compile Include="Internal\Interfaces\Blob.cs" />
+    <Compile Include="Internal\Interfaces\ClsCtx.cs" />
+    <Compile Include="Internal\Interfaces\ErrorCodes.cs" />
+    <Compile Include="Internal\Interfaces\IAudioEndpointVolume.cs" />
+    <Compile Include="Internal\Interfaces\IAudioEndpointVolumeCallback.cs" />
+    <Compile Include="Internal\Interfaces\IAudioMeterInformation.cs" />
+    <Compile Include="Internal\Interfaces\IMMDevice.cs" />
+    <Compile Include="Internal\Interfaces\IMMDeviceCollection.cs" />
+    <Compile Include="Internal\Interfaces\IMMDeviceEnumerator.cs" />
+    <Compile Include="Internal\Interfaces\IMMEndpoint.cs" />
+    <Compile Include="Internal\Interfaces\IMMNotificationClient.cs" />
+    <Compile Include="Internal\Interfaces\IPolicyConfig.cs" />
+    <Compile Include="Internal\Interfaces\IPolicyConfigVista.cs" />
+    <Compile Include="Internal\Interfaces\IPropertyStore.cs" />
+    <Compile Include="Internal\Interfaces\MMDeviceEnumeratorComObject.cs" />
+    <Compile Include="Internal\Interfaces\StorageAccessMode.cs" />
+    <Compile Include="Internal\MMDevice.cs" />
+    <Compile Include="Internal\MMDeviceCollection.cs" />
+    <Compile Include="Internal\MMDeviceEnumerator.cs" />
+    <Compile Include="Internal\NativeMethods.cs" />
+    <Compile Include="Internal\PolicyConfig.cs" />
+    <Compile Include="Internal\PolicyConfigVista.cs" />
+    <Compile Include="Internal\PropertyKey.cs" />
+    <Compile Include="Internal\PropertyKeys.cs" />
+    <Compile Include="Internal\PropertyStore.cs" />
+    <Compile Include="Internal\PropertyStoreProperty.cs" />
+    <Compile Include="Internal\PropVariant.cs" />
+    <Compile Include="Internal\Utils\HResult.cs" />
+    <Compile Include="Threading\ComThread.cs" />
+    <Compile Include="CoreAudioController.cs" />
+    <Compile Include="CoreAudioDevice.cs" />
+    <Compile Include="CoreAudioDeviceEnumerator.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Threading\ComTaskScheduler.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj">
+      <Project>{7a4e260c-007e-4615-a92b-e849e7b641ab}</Project>
+      <Name>AudioSwitcher.AudioApi</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

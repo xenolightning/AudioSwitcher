@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace AudioSwitcher.AudioApi.Isolated
+namespace AudioSwitcher.AudioApi.Sandbox
 {
-    public class IsolatedDevice : Device
+    public class SandboxDevice : Device
     {
         public DataFlow dataFlow;
         public string description;
@@ -14,7 +14,7 @@ namespace AudioSwitcher.AudioApi.Isolated
         public DeviceState state;
         public string systemName;
 
-        public IsolatedDevice(IDeviceEnumerator enumerator)
+        public SandboxDevice(IDeviceEnumerator enumerator)
             : base(enumerator)
         {
         }

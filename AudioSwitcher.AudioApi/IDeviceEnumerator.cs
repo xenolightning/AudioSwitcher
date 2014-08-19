@@ -9,24 +9,24 @@ namespace AudioSwitcher.AudioApi
     {
         AudioController AudioController { get; set; }
 
-        Device DefaultPlaybackDevice { get; }
+        IDevice DefaultPlaybackDevice { get; }
 
-        Device DefaultCommunicationsPlaybackDevice { get; }
+        IDevice DefaultCommunicationsPlaybackDevice { get; }
 
-        Device DefaultCaptureDevice { get; }
+        IDevice DefaultCaptureDevice { get; }
 
-        Device DefaultCommunicationsCaptureDevice { get; }
+        IDevice DefaultCommunicationsCaptureDevice { get; }
 
         event AudioDeviceChangedHandler AudioDeviceChanged;
 
-        Device GetDevice(Guid id);
+        IDevice GetDevice(Guid id);
 
-        Device GetDefaultDevice(DataFlow dataflow, Role eRole);
+        IDevice GetDefaultDevice(DataFlow dataflow, Role eRole);
 
-        IEnumerable<Device> GetDevices(DataFlow dataflow, DeviceState state);
+        IEnumerable<IDevice> GetDevices(DataFlow dataflow, DeviceState state);
 
-        bool SetDefaultDevice(Device dev);
+        bool SetDefaultDevice(IDevice dev);
 
-        bool SetDefaultCommunicationsDevice(Device dev);
+        bool SetDefaultCommunicationsDevice(IDevice dev);
     }
 }

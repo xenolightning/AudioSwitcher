@@ -6,7 +6,7 @@ namespace AudioSwitcher.AudioApi
 {
     [ComVisible(false)]
     public interface IDeviceEnumerator<T> : IDeviceEnumerator
-        where T : Device
+        where T : IDevice
     {
         new T DefaultPlaybackDevice { get; }
 

@@ -55,37 +55,37 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get { return GetDefaultDevice(DataFlow.Capture, Role.Communications); }
         }
 
-        Device IDeviceEnumerator.DefaultPlaybackDevice
+        IDevice IDeviceEnumerator.DefaultPlaybackDevice
         {
             get { return DefaultPlaybackDevice; }
         }
 
-        Device IDeviceEnumerator.DefaultCommunicationsPlaybackDevice
+        IDevice IDeviceEnumerator.DefaultCommunicationsPlaybackDevice
         {
             get { return DefaultCommunicationsPlaybackDevice; }
         }
 
-        Device IDeviceEnumerator.DefaultCaptureDevice
+        IDevice IDeviceEnumerator.DefaultCaptureDevice
         {
             get { return DefaultCaptureDevice; }
         }
 
-        Device IDeviceEnumerator.DefaultCommunicationsCaptureDevice
+        IDevice IDeviceEnumerator.DefaultCommunicationsCaptureDevice
         {
             get { return DefaultCommunicationsCaptureDevice; }
         }
 
-        Device IDeviceEnumerator.GetDevice(Guid id)
+        IDevice IDeviceEnumerator.GetDevice(Guid id)
         {
             return GetDevice(id);
         }
 
-        Device IDeviceEnumerator.GetDefaultDevice(DataFlow dataflow, Role eRole)
+        IDevice IDeviceEnumerator.GetDefaultDevice(DataFlow dataflow, Role eRole)
         {
             return GetDefaultDevice(dataflow, eRole);
         }
 
-        IEnumerable<Device> IDeviceEnumerator.GetDevices(DataFlow dataflow, DeviceState eRole)
+        IEnumerable<IDevice> IDeviceEnumerator.GetDevices(DataFlow dataflow, DeviceState eRole)
         {
             return GetDevices(dataflow, eRole);
         }
@@ -131,12 +131,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public bool SetDefaultDevice(Device dev)
+        public bool SetDefaultDevice(IDevice dev)
         {
             return SetDefaultDevice(dev as CoreAudioDevice);
         }
 
-        public bool SetDefaultCommunicationsDevice(Device dev)
+        public bool SetDefaultCommunicationsDevice(IDevice dev)
         {
             return SetDefaultCommunicationsDevice(dev as CoreAudioDevice);
         }

@@ -19,28 +19,24 @@ namespace AudioSwitcher.AudioApi
             enumerator.AudioController = this;
         }
 
-        protected IDeviceEnumerator DeviceEnumerator
-        {
-            get;
-            set;
-        }
+        protected IDeviceEnumerator DeviceEnumerator { get; set; }
 
-        public virtual Device DefaultPlaybackDevice
+        public virtual IDevice DefaultPlaybackDevice
         {
             get { return DeviceEnumerator.DefaultPlaybackDevice; }
         }
 
-        public virtual Device DefaultPlaybackCommunicationsDevice
+        public virtual IDevice DefaultPlaybackCommunicationsDevice
         {
             get { return DeviceEnumerator.DefaultCommunicationsPlaybackDevice; }
         }
 
-        public virtual Device DefaultCaptureDevice
+        public virtual IDevice DefaultCaptureDevice
         {
             get { return DeviceEnumerator.DefaultCaptureDevice; }
         }
 
-        public virtual Device DefaultCaptureCommunicationsDevice
+        public virtual IDevice DefaultCaptureCommunicationsDevice
         {
             get { return DeviceEnumerator.DefaultCommunicationsCaptureDevice; }
         }
@@ -60,32 +56,32 @@ namespace AudioSwitcher.AudioApi
         {
         }
 
-        public IEnumerable<Device> GetAllDevices(DeviceState deviceState = DefaultDeviceStateFilter)
+        public IEnumerable<IDevice> GetAllDevices(DeviceState deviceState = DefaultDeviceStateFilter)
         {
             return DeviceEnumerator.GetDevices(DataFlow.All, deviceState);
         }
 
-        public IEnumerable<Device> GetPlaybackDevices(DeviceState deviceState = DefaultDeviceStateFilter)
+        public IEnumerable<IDevice> GetPlaybackDevices(DeviceState deviceState = DefaultDeviceStateFilter)
         {
             return DeviceEnumerator.GetDevices(DataFlow.Render, deviceState);
         }
 
-        public IEnumerable<Device> GetCaptureDevices(DeviceState deviceState = DefaultDeviceStateFilter)
+        public IEnumerable<IDevice> GetCaptureDevices(DeviceState deviceState = DefaultDeviceStateFilter)
         {
             return DeviceEnumerator.GetDevices(DataFlow.Capture, deviceState);
         }
 
-        public virtual Device GetAudioDevice(Guid id, DeviceState state = DefaultDeviceStateFilter)
+        public virtual IDevice GetAudioDevice(Guid id, DeviceState state = DefaultDeviceStateFilter)
         {
             return DeviceEnumerator.GetDevices(DataFlow.All, state).FirstOrDefault(dev => dev.Id == id);
         }
 
-        public virtual bool SetDefaultDevice(Device dev)
+        public virtual bool SetDefaultDevice(IDevice dev)
         {
             return DeviceEnumerator.SetDefaultDevice(dev);
         }
 
-        public virtual bool SetDefaultCommunicationsDevice(Device dev)
+        public virtual bool SetDefaultCommunicationsDevice(IDevice dev)
         {
             return DeviceEnumerator.SetDefaultCommunicationsDevice(dev);
         }
