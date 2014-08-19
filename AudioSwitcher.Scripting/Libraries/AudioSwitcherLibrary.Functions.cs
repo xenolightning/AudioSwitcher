@@ -31,6 +31,10 @@ namespace AudioSwitcher.Scripting.Libraries
                     break;
             }
 
+            //if empty then return empty array
+            if (devices.Count == 0)
+                return Engine.Array.New();
+
             return Engine.EnumerableToArray(devices.Select(CreateJavaScriptAudioDevice));
         }
 

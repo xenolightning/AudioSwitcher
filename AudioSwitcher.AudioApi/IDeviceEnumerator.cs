@@ -21,9 +21,9 @@ namespace AudioSwitcher.AudioApi
 
         IDevice GetDevice(Guid id);
 
-        IDevice GetDefaultDevice(DataFlow dataflow, Role eRole);
+        IDevice GetDefaultDevice(DeviceType DeviceType, Role eRole);
 
-        IEnumerable<IDevice> GetDevices(DataFlow dataflow, DeviceState state);
+        IEnumerable<IDevice> GetDevices(DeviceType DeviceType, DeviceState state);
 
         bool SetDefaultDevice(IDevice dev);
 

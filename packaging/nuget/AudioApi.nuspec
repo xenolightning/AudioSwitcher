@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
     <metadata>
         <id>AudioSwitcher.AudioApi</id>
-        <version>2.0.0</version>
+        <version>2.0.1-beta</version>
         <title>Audio Switcher Api</title>
         <authors>Sean Chapman</authors>
         <owners>Sean Chapman</owners>
@@ -16,5 +16,7 @@
         <language>en-US</language>
         <tags>audio default device switch audioswitcher</tags>
     </metadata>
-    <files />
+    <files>
+        <file src="..\..\AudioSwitcher.AudioApi\bin\Release\AudioSwitcher.AudioApi.dll" target="lib\portable-net4+wp7+win8\AudioSwitcher.AudioApi.dll" />
+    </files>
 </package>

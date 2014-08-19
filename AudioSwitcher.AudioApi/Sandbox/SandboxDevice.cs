@@ -4,7 +4,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
 {
     public class SandboxDevice : Device
     {
-        public DataFlow dataFlow;
+        public DeviceType type;
         public string description;
         public string fullName;
         public string iconPath;
@@ -60,9 +60,9 @@ namespace AudioSwitcher.AudioApi.Sandbox
             get { return state; }
         }
 
-        public override DataFlow DataFlow
+        public override DeviceType DeviceType
         {
-            get { return dataFlow; }
+            get { return type; }
         }
 
         public override bool IsMuted

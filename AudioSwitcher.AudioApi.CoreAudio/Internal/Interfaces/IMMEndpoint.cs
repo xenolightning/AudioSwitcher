@@ -9,6 +9,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IMMEndpoint
     {
-        int GetDataFlow(out DataFlow dataFlow);
+        int GetDataFlow(out EDataFlow eDataFlow);
     }
 }

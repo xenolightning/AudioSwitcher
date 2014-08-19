@@ -54,16 +54,16 @@ namespace AudioSwitcher.AudioApi
 
         public abstract DeviceState State { get; }
 
-        public abstract DataFlow DataFlow { get; }
+        public abstract DeviceType DeviceType { get; }
 
         public virtual bool IsPlaybackDevice
         {
-            get { return DataFlow == DataFlow.Render || DataFlow == DataFlow.All; }
+            get { return DeviceType == DeviceType.Playback || DeviceType == DeviceType.All; }
         }
 
         public virtual bool IsCaptureDevice
         {
-            get { return DataFlow == DataFlow.Capture || DataFlow == DataFlow.All; }
+            get { return DeviceType == DeviceType.Capture || DeviceType == DeviceType.All; }
         }
 
         public abstract bool IsMuted { get; }

@@ -15,21 +15,21 @@ namespace AudioSwitcher.Tests.Common
         private Guid _defaultCaptureDeviceId;
 
 
-        public TestDeviceEnumerator(int numPlaybackDevices, int numRecordingDevices)
+        public TestDeviceEnumerator(int numPlaybackDevices, int numCaptureDevices)
         {
             _devices = new ConcurrentBag<TestDevice>();
 
             for (int i = 0; i < numPlaybackDevices; i++)
             {
                 var id = Guid.NewGuid();
-                var dev = new TestDevice(id, DataFlow.Render, this);
+                var dev = new TestDevice(id, DeviceType.Playback, this);
                 _devices.Add(dev);
             }
 
-            for (int i = 0; i < numRecordingDevices; i++)
+            for (int i = 0; i < numCaptureDevices; i++)
             {
                 var id = Guid.NewGuid();
-                var dev = new TestDevice(id, DataFlow.Capture, this);
+                var dev = new TestDevice(id, DeviceType.Capture, this);
                 _devices.Add(dev);
             }
         }
@@ -61,16 +61,16 @@ namespace AudioSwitcher.Tests.Common
             return _devices.FirstOrDefault(x => x.Id == id);
         }
 
-        public TestDevice GetDefaultDevice(DataFlow dataflow, Role eRole)
+        public TestDevice GetDefaultDevice(DeviceType deviceType, Role eRole)
         {
-            switch (dataflow)
+            switch (deviceType)
             {
-                case DataFlow.Capture:
+                case DeviceType.Capture:
                     if (eRole == Role.Console || eRole == Role.Multimedia)
                         return DefaultCaptureDevice;
 
                     return DefaultCommunicationsCaptureDevice;
-                case DataFlow.Render:
+                case DeviceType.Playback:
                     if (eRole == Role.Console || eRole == Role.Multimedia)
                         return DefaultPlaybackDevice;
 
@@ -80,10 +80,10 @@ namespace AudioSwitcher.Tests.Common
             return null;
         }
 
-        public IEnumerable<TestDevice> GetDevices(DataFlow dataflow, DeviceState eRole)
+        public IEnumerable<TestDevice> GetDevices(DeviceType deviceType, DeviceState eRole)
         {
             return _devices.Where(x =>
-                (x.DataFlow == dataflow || dataflow == DataFlow.All)
+                (x.DeviceType == deviceType || deviceType == DeviceType.All)
                 && (x.State & eRole) > 0
                 );
         }
@@ -149,14 +149,14 @@ namespace AudioSwitcher.Tests.Common
             return GetDevice(id);
         }
 
-        IDevice IDeviceEnumerator.GetDefaultDevice(DataFlow dataflow, Role eRole)
+        IDevice IDeviceEnumerator.GetDefaultDevice(DeviceType deviceType, Role eRole)
         {
-            return GetDefaultDevice(dataflow, eRole);
+            return GetDefaultDevice(deviceType, eRole);
         }
 
-        IEnumerable<IDevice> IDeviceEnumerator.GetDevices(DataFlow dataflow, DeviceState state)
+        IEnumerable<IDevice> IDeviceEnumerator.GetDevices(DeviceType deviceType, DeviceState state)
         {
-            return GetDevices(dataflow, state);
+            return GetDevices(deviceType, state);
         }
 
         public bool SetDefaultDevice(IDevice dev)

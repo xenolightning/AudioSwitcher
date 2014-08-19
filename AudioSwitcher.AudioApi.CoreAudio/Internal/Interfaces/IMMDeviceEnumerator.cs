@@ -6,10 +6,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IMMDeviceEnumerator
     {
-        int EnumAudioEndpoints(DataFlow dataFlow, DeviceState stateMask,
+        int EnumAudioEndpoints(EDataFlow eDataFlow, EDeviceState stateMask,
             out IMMDeviceCollection devices);
 
-        int GetDefaultAudioEndpoint(DataFlow dataFlow, Role role, out IMMDevice endpoint);
+        int GetDefaultAudioEndpoint(EDataFlow eDataFlow, ERole role, out IMMDevice endpoint);
 
         int GetDevice(string id, out IMMDevice deviceName);
 

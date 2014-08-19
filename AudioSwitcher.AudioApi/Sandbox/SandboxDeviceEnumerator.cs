@@ -34,7 +34,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
 
             foreach (
                 IDevice sourceDev in
-                    source.GetDevices(DataFlow.All,
+                    source.GetDevices(DeviceType.All,
                         DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled))
             {
                 var dev = new SandboxDevice(this)
@@ -44,7 +44,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
                     shortName = sourceDev.ShortName,
                     systemName = sourceDev.SystemName,
                     fullName = sourceDev.FullName,
-                    dataFlow = sourceDev.DataFlow,
+                    type = sourceDev.DeviceType,
                     state = sourceDev.State,
                     Volume = sourceDev.Volume
                 };
@@ -79,16 +79,16 @@ namespace AudioSwitcher.AudioApi.Sandbox
             return _devices.FirstOrDefault(x => x.Id == id);
         }
 
-        public SandboxDevice GetDefaultDevice(DataFlow dataflow, Role eRole)
+        public SandboxDevice GetDefaultDevice(DeviceType deviceType, Role eRole)
         {
-            switch (dataflow)
+            switch (deviceType)
             {
-                case DataFlow.Capture:
+                case DeviceType.Capture:
                     if (eRole == Role.Console || eRole == Role.Multimedia)
                         return DefaultCaptureDevice;
 
                     return DefaultCommunicationsCaptureDevice;
-                case DataFlow.Render:
+                case DeviceType.Playback:
                     if (eRole == Role.Console || eRole == Role.Multimedia)
                         return DefaultPlaybackDevice;
 
@@ -98,10 +98,10 @@ namespace AudioSwitcher.AudioApi.Sandbox
             return null;
         }
 
-        public IEnumerable<SandboxDevice> GetDevices(DataFlow dataflow, DeviceState eRole)
+        public IEnumerable<SandboxDevice> GetDevices(DeviceType deviceType, DeviceState eRole)
         {
             return _devices.Where(x =>
-                (x.dataFlow == dataflow || dataflow == DataFlow.All)
+                (x.type == deviceType || deviceType == DeviceType.All)
                 && (x.State & eRole) > 0
                 );
         }
@@ -167,14 +167,14 @@ namespace AudioSwitcher.AudioApi.Sandbox
             return GetDevice(id);
         }
 
-        IDevice IDeviceEnumerator.GetDefaultDevice(DataFlow dataflow, Role eRole)
+        IDevice IDeviceEnumerator.GetDefaultDevice(DeviceType deviceType, Role eRole)
         {
-            return GetDefaultDevice(dataflow, eRole);
+            return GetDefaultDevice(deviceType, eRole);
         }
 
-        IEnumerable<IDevice> IDeviceEnumerator.GetDevices(DataFlow dataflow, DeviceState state)
+        IEnumerable<IDevice> IDeviceEnumerator.GetDevices(DeviceType deviceType, DeviceState state)
         {
-            return GetDevices(dataflow, state);
+            return GetDevices(deviceType, state);
         }
 
         public bool SetDefaultDevice(IDevice dev)

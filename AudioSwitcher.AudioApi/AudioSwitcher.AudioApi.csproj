@@ -54,9 +54,8 @@
     <Compile Include="Sandbox\SandboxDeviceEnumerator.cs" />
     <Compile Include="IDevice.cs" />
     <Compile Include="IDeviceEnumerator.cs" />
-    <Compile Include="DataFlow.cs" />
+    <Compile Include="DeviceType.cs" />
     <Compile Include="DeviceState.cs" />
-    <Compile Include="EndpointHardwareSupport.cs" />
     <Compile Include="Role.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

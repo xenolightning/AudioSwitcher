@@ -9,7 +9,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         //private readonly IPolicyConfig _PolicyConfig = new _PolicyConfigClient() as IPolicyConfig;
 
-        public static void SetDefaultEndpoint(string devID, Role eRole)
+        public static void SetDefaultEndpoint(string devID, ERole eRole)
         {
             var _PolicyConfig = new _PolicyConfigClient() as IPolicyConfig;
             Marshal.ThrowExceptionForHR(_PolicyConfig.SetDefaultEndpoint(devID, eRole));

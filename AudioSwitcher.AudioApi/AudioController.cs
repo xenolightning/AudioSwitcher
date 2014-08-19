@@ -58,22 +58,22 @@ namespace AudioSwitcher.AudioApi
 
         public IEnumerable<IDevice> GetAllDevices(DeviceState deviceState = DefaultDeviceStateFilter)
         {
-            return DeviceEnumerator.GetDevices(DataFlow.All, deviceState);
+            return DeviceEnumerator.GetDevices(DeviceType.All, deviceState);
         }
 
         public IEnumerable<IDevice> GetPlaybackDevices(DeviceState deviceState = DefaultDeviceStateFilter)
         {
-            return DeviceEnumerator.GetDevices(DataFlow.Render, deviceState);
+            return DeviceEnumerator.GetDevices(DeviceType.Playback, deviceState);
         }
 
         public IEnumerable<IDevice> GetCaptureDevices(DeviceState deviceState = DefaultDeviceStateFilter)
         {
-            return DeviceEnumerator.GetDevices(DataFlow.Capture, deviceState);
+            return DeviceEnumerator.GetDevices(DeviceType.Capture, deviceState);
         }
 
         public virtual IDevice GetAudioDevice(Guid id, DeviceState state = DefaultDeviceStateFilter)
         {
-            return DeviceEnumerator.GetDevices(DataFlow.All, state).FirstOrDefault(dev => dev.Id == id);
+            return DeviceEnumerator.GetDevices(DeviceType.All, state).FirstOrDefault(dev => dev.Id == id);
         }
 
         public virtual bool SetDefaultDevice(IDevice dev)

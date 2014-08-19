@@ -35,7 +35,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             if (audioDeviceChangedEventArgs.EventType == AudioDeviceEventType.PropertyChanged)
             {
-                OnPropertyChanged("DataFlow");
+                OnPropertyChanged("DeviceType");
                 OnPropertyChanged("Description");
                 OnPropertyChanged("FullName");
                 OnPropertyChanged("IconPath");
@@ -204,18 +204,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 return ComThread.Invoke(() =>
                 {
-                    return Device.State;
+                    return Device.State.AsDeviceState();
                 });
             }
         }
 
-        public override DataFlow DataFlow
+        public override DeviceType DeviceType
         {
             get
             {
                 return ComThread.Invoke(() =>
                 {
-                    return Device.DataFlow;
+                    return Device.EDataFlow.AsDeviceType();
                 });
             }
         }

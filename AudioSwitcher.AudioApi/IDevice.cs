@@ -26,7 +26,7 @@ namespace AudioSwitcher.AudioApi
 
         DeviceState State { get; }
 
-        DataFlow DataFlow { get; }
+        DeviceType DeviceType { get; }
 
         bool IsPlaybackDevice { get; }
 

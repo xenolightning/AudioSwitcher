@@ -34,6 +34,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiExtensions.cs" />
     <Compile Include="Internal\AudioEndpointVolume.cs" />
     <Compile Include="Internal\AudioEndpointVolumeCallback.cs" />
     <Compile Include="Internal\AudioEndpointVolumeChannel.cs" />
@@ -44,6 +45,9 @@
     <Compile Include="Internal\AudioMeterInformation.cs" />
     <Compile Include="Internal\AudioMeterInformationChannels.cs" />
     <Compile Include="Internal\AudioVolumeNotificationData.cs" />
+    <Compile Include="Internal\EDataFlow.cs" />
+    <Compile Include="Internal\EDeviceState.cs" />
+    <Compile Include="Internal\EndpointHardwareSupport.cs" />
     <Compile Include="Internal\Interfaces\AudioVolumeNotificationDataStruct.cs" />
     <Compile Include="Internal\Interfaces\Blob.cs" />
     <Compile Include="Internal\Interfaces\ClsCtx.cs" />
@@ -72,6 +76,7 @@
     <Compile Include="Internal\PropertyStore.cs" />
     <Compile Include="Internal\PropertyStoreProperty.cs" />
     <Compile Include="Internal\PropVariant.cs" />
+    <Compile Include="Internal\ERole.cs" />
     <Compile Include="Internal\Utils\HResult.cs" />
     <Compile Include="Threading\ComThread.cs" />
     <Compile Include="CoreAudioController.cs" />

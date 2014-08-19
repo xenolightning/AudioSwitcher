@@ -94,7 +94,7 @@ namespace AudioSwitcher.Scripting.Tests
 
         [Fact]
         [Trait("Type", "AudioLibrary")]
-        public void AudioSwitcher_getAudioDevices_Recording()
+        public void AudioSwitcher_getAudioDevices_Capture()
         {
             var engine = new ScriptEngine();
             engine.AddAudioSwitcherLibrary(GetAudioContext());
@@ -141,7 +141,7 @@ namespace AudioSwitcher.Scripting.Tests
 
         [Fact]
         [Trait("Type", "AudioLibrary")]
-        public void AudioSwitcher_getAudioDeviceByName_Recording_Flags()
+        public void AudioSwitcher_getAudioDeviceByName_Capture_Flags()
         {
             var engine = new ScriptEngine();
             engine.AddAudioSwitcherLibrary(GetAudioContext());
@@ -323,7 +323,7 @@ namespace AudioSwitcher.Scripting.Tests
         [Fact]
         [Trait("Type", "AudioDevice")]
         [Trait("Function", "SetDefault")]
-        public void AudioSwitcher_AudioDevice_setDefault_Recording()
+        public void AudioSwitcher_AudioDevice_setDefault_Capture()
         {
             var engine = new ScriptEngine();
             engine.AddAudioSwitcherLibrary(GetAudioContext());
@@ -339,7 +339,7 @@ namespace AudioSwitcher.Scripting.Tests
         [Fact]
         [Trait("Type", "AudioDevice")]
         [Trait("Function", "SetDefaultComm")]
-        public void AudioSwitcher_AudioDevice_setDefault_Recording_Comm()
+        public void AudioSwitcher_AudioDevice_setDefault_Capture_Comm()
         {
             var engine = new ScriptEngine();
             engine.AddAudioSwitcherLibrary(GetAudioContext());

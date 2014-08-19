@@ -13,7 +13,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         ///     Device State Changed
         /// </summary>
         void OnDeviceStateChanged([MarshalAs(UnmanagedType.LPWStr)] string deviceId,
-            [MarshalAs(UnmanagedType.I4)] DeviceState newState);
+            [MarshalAs(UnmanagedType.I4)] EDeviceState newState);
 
         /// <summary>
         ///     Device Added
@@ -28,7 +28,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         /// <summary>
         ///     Default Device Changed
         /// </summary>
-        void OnDefaultDeviceChanged(DataFlow flow, Role role, [MarshalAs(UnmanagedType.LPWStr)] string defaultDeviceId);
+        void OnDefaultDeviceChanged(EDataFlow flow, ERole role, [MarshalAs(UnmanagedType.LPWStr)] string defaultDeviceId);
 
         /// <summary>
         ///     Property Value Changed

@@ -17,10 +17,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
         {
             get
             {
-                if (_thread == null)
-                    return -1;
-
-                return _thread.ManagedThreadId;
+                return _thread == null ? -1 : _thread.ManagedThreadId;
             }
         }
 

@@ -41,12 +41,12 @@ namespace AudioSwitcher.AudioApi
 
         public new IEnumerable<T> GetPlaybackDevices(DeviceState deviceState = DefaultDeviceStateFilter)
         {
-            return DeviceEnumerator.GetDevices(DataFlow.Render, deviceState);
+            return DeviceEnumerator.GetDevices(DeviceType.Playback, deviceState);
         }
 
         public new IEnumerable<T> GetCaptureDevices(DeviceState deviceState = DefaultDeviceStateFilter)
         {
-            return DeviceEnumerator.GetDevices(DataFlow.Capture, deviceState);
+            return DeviceEnumerator.GetDevices(DeviceType.Capture, deviceState);
         }
 
         public new T GetAudioDevice(Guid id, DeviceState state)

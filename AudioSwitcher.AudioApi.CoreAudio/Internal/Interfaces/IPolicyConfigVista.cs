@@ -57,6 +57,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         int SetPropertyValue(string pszDeviceName, PropertyKey propKey, PropVariant propVariant);
 
         [PreserveSig]
-        int SetDefaultEndpoint(string pszDeviceName, Role role);
+        int SetDefaultEndpoint(string pszDeviceName, ERole role);
     }
 }

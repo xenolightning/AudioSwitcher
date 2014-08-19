@@ -15,6 +15,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 
         int GetId([MarshalAs(UnmanagedType.LPWStr)] out string id);
 
-        int GetState(out DeviceState state);
+        int GetState(out EDeviceState state);
     }
 }

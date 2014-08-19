@@ -56,15 +56,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         ///     Enumerate Audio Endpoints
         /// </summary>
-        /// <param name="dataFlow">Desired DataFlow</param>
+        /// <param name="eDataFlow">Desired DeviceType</param>
         /// <param name="dwStateMask">State Mask</param>
         /// <returns>Device Collection</returns>
-        public MMDeviceCollection EnumerateAudioEndPoints(DataFlow dataFlow, DeviceState dwStateMask)
+        public MMDeviceCollection EnumerateAudioEndPoints(EDataFlow eDataFlow, EDeviceState dwStateMask)
         {
             return ComThread.Invoke(() =>
             {
                 IMMDeviceCollection result;
-                Marshal.ThrowExceptionForHR(_realEnumerator.EnumAudioEndpoints(dataFlow, dwStateMask, out result));
+                Marshal.ThrowExceptionForHR(_realEnumerator.EnumAudioEndpoints(eDataFlow, dwStateMask, out result));
                 return new MMDeviceCollection(result);
             });
         }
@@ -72,17 +72,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         ///     Get Default Endpoint
         /// </summary>
-        /// <param name="dataFlow">Data Flow</param>
+        /// <param name="eDataFlow">Data Flow</param>
         /// <param name="role">Role</param>
         /// <returns>Device</returns>
-        public MMDevice GetDefaultAudioEndpoint(DataFlow dataFlow, Role role)
+        public MMDevice GetDefaultAudioEndpoint(EDataFlow eDataFlow, ERole role)
         {
             return ComThread.Invoke(() =>
             {
                 try
                 {
                     IMMDevice device;
-                    Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(dataFlow, role, out device));
+                    Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(eDataFlow, role, out device));
                     return new MMDevice(device);
                 }
                 catch
@@ -94,12 +94,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             });
         }
 
-        public string GetDefaultAudioEndpointId(DataFlow dataFlow, Role role)
+        public string GetDefaultAudioEndpointId(EDataFlow eDataFlow, Role role)
         {
             try
             {
                 IMMDevice device;
-                Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(dataFlow, role, out device));
+                Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(eDataFlow, role.AsERole(), out device));
                 string result;
                 Marshal.ThrowExceptionForHR(device.GetId(out result));
                 return result;

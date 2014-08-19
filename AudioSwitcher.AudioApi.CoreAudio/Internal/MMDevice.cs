@@ -79,7 +79,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private void GetAudioEndpointVolume()
         {
             object result;
-            if (State == DeviceState.NotPresent || State == DeviceState.Unplugged)
+            if (State == EDeviceState.NotPresent || State == EDeviceState.Unplugged)
                 return;
 
             Marshal.ThrowExceptionForHR(DeviceInterface.Activate(ref IID_IAudioEndpointVolume, ClsCtx.ALL, IntPtr.Zero,
@@ -288,11 +288,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         ///     Data Flow
         /// </summary>
-        public DataFlow DataFlow
+        public EDataFlow EDataFlow
         {
             get
             {
-                DataFlow result;
+                EDataFlow result;
                 var ep = DeviceInterface as IMMEndpoint;
                 ep.GetDataFlow(out result);
                 return result;
@@ -302,11 +302,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         ///     Device State
         /// </summary>
-        public DeviceState State
+        public EDeviceState State
         {
             get
             {
-                DeviceState result;
+                EDeviceState result;
                 Marshal.ThrowExceptionForHR(DeviceInterface.GetState(out result));
                 return result;
             }

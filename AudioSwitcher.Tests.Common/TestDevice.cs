@@ -5,11 +5,11 @@ namespace AudioSwitcher.Tests.Common
 {
     public sealed class TestDevice : Device
     {
-        public TestDevice(Guid id, DataFlow dFlow, IDeviceEnumerator enumerator)
+        public TestDevice(Guid id, DeviceType dFlow, IDeviceEnumerator enumerator)
             : base(enumerator)
         {
             _id = id;
-            _dataFlow = dFlow;
+            _deviceType = dFlow;
         }
 
         public Guid _id;
@@ -57,12 +57,12 @@ namespace AudioSwitcher.Tests.Common
             get { return DeviceState.Active; }
         }
 
-        private readonly DataFlow _dataFlow;
-        public override DataFlow DataFlow
+        private readonly DeviceType _deviceType;
+        public override DeviceType DeviceType
         {
             get
             {
-                return _dataFlow;
+                return _deviceType;
             }
         }
 

@@ -38,22 +38,22 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public CoreAudioDevice DefaultPlaybackDevice
         {
-            get { return GetDefaultDevice(DataFlow.Render, Role.Console | Role.Multimedia); }
+            get { return GetDefaultDevice(DeviceType.Playback, Role.Console | Role.Multimedia); }
         }
 
         public CoreAudioDevice DefaultCommunicationsPlaybackDevice
         {
-            get { return GetDefaultDevice(DataFlow.Render, Role.Communications); }
+            get { return GetDefaultDevice(DeviceType.Playback, Role.Communications); }
         }
 
         public CoreAudioDevice DefaultCaptureDevice
         {
-            get { return GetDefaultDevice(DataFlow.Capture, Role.Console | Role.Multimedia); }
+            get { return GetDefaultDevice(DeviceType.Capture, Role.Console | Role.Multimedia); }
         }
 
         public CoreAudioDevice DefaultCommunicationsCaptureDevice
         {
-            get { return GetDefaultDevice(DataFlow.Capture, Role.Communications); }
+            get { return GetDefaultDevice(DeviceType.Capture, Role.Communications); }
         }
 
         IDevice IDeviceEnumerator.DefaultPlaybackDevice
@@ -81,14 +81,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return GetDevice(id);
         }
 
-        IDevice IDeviceEnumerator.GetDefaultDevice(DataFlow dataflow, Role eRole)
+        IDevice IDeviceEnumerator.GetDefaultDevice(DeviceType type, Role eRole)
         {
-            return GetDefaultDevice(dataflow, eRole);
+            return GetDefaultDevice(type, eRole);
         }
 
-        IEnumerable<IDevice> IDeviceEnumerator.GetDevices(DataFlow dataflow, DeviceState eRole)
+        IEnumerable<IDevice> IDeviceEnumerator.GetDevices(DeviceType type, DeviceState eRole)
         {
-            return GetDevices(dataflow, eRole);
+            return GetDevices(type, eRole);
         }
 
         public void Dispose()
@@ -107,7 +107,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 ComThread.Invoke(() =>
                 {
                     _deviceCache = new ConcurrentBag<CoreAudioDevice>();
-                    foreach (var mDev in InnerEnumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.All))
+                    foreach (var mDev in InnerEnumerator.EnumerateAudioEndPoints(EDataFlow.All, EDeviceState.All))
                     {
                         var dev = new CoreAudioDevice(mDev, this);
                         _deviceCache.Add(dev);
@@ -152,9 +152,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (Environment.OSVersion.Version.Major > 6
                     || (Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor >= 1)
                     )
-                    PolicyConfig.SetDefaultEndpoint(dev.RealId, Role.Console | Role.Multimedia);
+                    PolicyConfig.SetDefaultEndpoint(dev.RealId, ERole.Console | ERole.Multimedia);
                 else
-                    PolicyConfigVista.SetDefaultEndpoint(dev.RealId, Role.Console | Role.Multimedia);
+                    PolicyConfigVista.SetDefaultEndpoint(dev.RealId, ERole.Console | ERole.Multimedia);
 
                 return true;
             }
@@ -174,9 +174,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (Environment.OSVersion.Version.Major > 6
                     || (Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor >= 1)
                     )
-                    PolicyConfig.SetDefaultEndpoint(dev.RealId, Role.Communications);
+                    PolicyConfig.SetDefaultEndpoint(dev.RealId, ERole.Communications);
                 else
-                    PolicyConfigVista.SetDefaultEndpoint(dev.RealId, Role.Communications);
+                    PolicyConfigVista.SetDefaultEndpoint(dev.RealId, ERole.Communications);
 
                 return true;
             }
@@ -186,11 +186,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public CoreAudioDevice GetDefaultDevice(DataFlow dataflow, Role eRole)
+        public CoreAudioDevice GetDefaultDevice(DeviceType deviceType, Role eRole)
         {
             lock (_mutex)
             {
-                string devId = InnerEnumerator.GetDefaultAudioEndpointId(dataflow, eRole);
+                string devId = InnerEnumerator.GetDefaultAudioEndpointId(deviceType.AsEDataFlow(), eRole);
                 if (string.IsNullOrEmpty(devId))
                     return null;
 
@@ -198,12 +198,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public IEnumerable<CoreAudioDevice> GetDevices(DataFlow dataflow, DeviceState state)
+        public IEnumerable<CoreAudioDevice> GetDevices(DeviceType deviceType, DeviceState state)
         {
             lock (_mutex)
             {
                 return _deviceCache.Where(x =>
-                    (x.DataFlow == dataflow || dataflow == DataFlow.All)
+                    (x.DeviceType == deviceType || deviceType == DeviceType.All)
                     && (x.State & state) > 0);
             }
         }
@@ -212,7 +212,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         #region IMMNotif Members
 
-        void IMMNotificationClient.OnDeviceStateChanged(string deviceId, DeviceState newState)
+        void IMMNotificationClient.OnDeviceStateChanged(string deviceId, EDeviceState newState)
         {
             RefreshSystemDevices();
 
@@ -242,7 +242,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         readonly ConcurrentDictionary<string, bool> _processingIds = new ConcurrentDictionary<string, bool>();
 
-        void IMMNotificationClient.OnDefaultDeviceChanged(DataFlow flow, Role role, string deviceId)
+        void IMMNotificationClient.OnDefaultDeviceChanged(EDataFlow flow, ERole role, string deviceId)
         {
             //Need to do some event filtering here, there's a scenario where
             //multiple default device changed are raised when one playback device changes.
@@ -260,11 +260,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             RefreshSystemDevices();
 
-            if (role == Role.Console || role == Role.Multimedia)
+            if (role == ERole.Console || role == ERole.Multimedia)
                 RaiseAudioDeviceChanged(this,
                     new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
                         AudioDeviceEventType.DefaultDevice));
-            else if (role == Role.Communications)
+            else if (role == ERole.Communications)
                 RaiseAudioDeviceChanged(this,
                     new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
                         AudioDeviceEventType.DefaultCommunicationsDevice));

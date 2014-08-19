@@ -19,30 +19,42 @@
      misrepresented as being the original source code.
   3. This notice may not be removed or altered from any source distribution.
 */
+// adapted for NAudio,
+// updated to be in line with http://msdn.microsoft.com/en-us/library/dd370823%28v=vs.85%29.aspx
 
 using System;
 
-namespace AudioSwitcher.AudioApi
+namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
-    ///     Endpoint Hardware Support
+    ///     Device State
     /// </summary>
     [Flags]
-    public enum EndpointHardwareSupport
+    internal enum EDeviceState
     {
         /// <summary>
-        ///     Volume
+        ///     DEVICE_STATE_ACTIVE
         /// </summary>
-        Volume = 0x00000001,
+        Active = 0x00000001,
 
         /// <summary>
-        ///     Mute
+        ///     DEVICE_STATE_DISABLED
         /// </summary>
-        Mute = 0x00000002,
+        Disabled = 0x00000002,
 
         /// <summary>
-        ///     Meter
+        ///     DEVICE_STATE_NOTPRESENT
         /// </summary>
-        Meter = 0x00000004
+        NotPresent = 0x00000004,
+
+        /// <summary>
+        ///     DEVICE_STATE_UNPLUGGED
+        /// </summary>
+        Unplugged = 0x00000008,
+
+        /// <summary>
+        ///     DEVICE_STATEMASK_ALL
+        /// </summary>
+        All = 0x0000000F
     }
 }
