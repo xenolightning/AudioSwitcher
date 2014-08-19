@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>AudioSwitcher.AudioApi.CoreAudio</id>
+        <version>1.0.0</version>
+        <title>Audio Switcher Core Audio</title>
+        <authors>Sean Chapman</authors>
+        <owners>Sean Chapman</owners>
+        <licenseUrl>https://github.com/xenolightning/AudioSwitcher/blob/master/README.md</licenseUrl>
+        <projectUrl>https://github.com/xenolightning/AudioSwitcher</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <developmentDependency>true</developmentDependency>
+        <description>Windows WASAPI extension for Audio Switcher Audio Api</description>
+        <summary>Windows WASAPI extension for Audio Switcher Audio Api</summary>
+        <copyright />
+        <language>en-US</language>
+        <tags>wasapi audioswitcher audio api</tags>
+    </metadata>
+    <files />
+</package>

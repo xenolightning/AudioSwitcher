@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>AudioSwitcher.AudioApi</id>
+        <version>2.0.0</version>
+        <title>Audio Switcher Api</title>
+        <authors>Sean Chapman</authors>
+        <owners>Sean Chapman</owners>
+        <licenseUrl>https://github.com/xenolightning/AudioSwitcher/blob/master/README.md</licenseUrl>
+        <projectUrl>https://github.com/xenolightning/AudioSwitcher</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <developmentDependency>true</developmentDependency>
+        <description>.NET Library which facilitates interacting with Audio Devices</description>
+        <summary>.NET Library which facilitates interacting with Audio Devices</summary>
+        <copyright />
+        <language>en-US</language>
+        <tags>audio default device switch audioswitcher</tags>
+    </metadata>
+    <files />
+</package>
