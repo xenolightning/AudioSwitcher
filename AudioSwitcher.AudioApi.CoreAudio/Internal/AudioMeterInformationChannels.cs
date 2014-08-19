@@ -21,20 +21,20 @@
 */
 
 using System.Runtime.InteropServices;
-using AudioSwitcher.AudioApi.Interfaces;
+using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 
-namespace AudioSwitcher.AudioApi
+namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
     ///     Audio Meter Information Channels
     /// </summary>
     internal class AudioMeterInformationChannels
     {
-        private readonly IAudioMeterInformation _AudioMeterInformation;
+        private readonly IAudioMeterInformation _audioMeterInformation;
 
         internal AudioMeterInformationChannels(IAudioMeterInformation parent)
         {
-            _AudioMeterInformation = parent;
+            _audioMeterInformation = parent;
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace AudioSwitcher.AudioApi
             get
             {
                 int result;
-                Marshal.ThrowExceptionForHR(_AudioMeterInformation.GetMeteringChannelCount(out result));
+                Marshal.ThrowExceptionForHR(_audioMeterInformation.GetMeteringChannelCount(out result));
                 return result;
             }
         }
@@ -61,7 +61,7 @@ namespace AudioSwitcher.AudioApi
             {
                 var peakValues = new float[Count];
                 GCHandle Params = GCHandle.Alloc(peakValues, GCHandleType.Pinned);
-                Marshal.ThrowExceptionForHR(_AudioMeterInformation.GetChannelsPeakValues(peakValues.Length,
+                Marshal.ThrowExceptionForHR(_audioMeterInformation.GetChannelsPeakValues(peakValues.Length,
                     Params.AddrOfPinnedObject()));
                 Params.Free();
                 return peakValues[index];

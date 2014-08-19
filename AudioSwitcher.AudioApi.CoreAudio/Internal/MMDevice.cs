@@ -24,9 +24,9 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using AudioSwitcher.AudioApi.Interfaces;
+using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 
-namespace AudioSwitcher.AudioApi
+namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
     ///     MM Device

@@ -22,18 +22,18 @@
 
 using System;
 
-namespace AudioSwitcher.AudioApi
+namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
     ///     Audio Volume Notification Data
     /// </summary>
     internal class AudioVolumeNotificationData
     {
-        private readonly float[] _ChannelVolume;
-        private readonly int _Channels;
-        private readonly Guid _EventContext;
-        private readonly float _MasterVolume;
-        private readonly bool _Muted;
+        private readonly float[] _channelVolume;
+        private readonly int _channels;
+        private readonly Guid _eventContext;
+        private readonly float _masterVolume;
+        private readonly bool _muted;
 
         /// <summary>
         ///     Audio Volume Notification Data
@@ -44,11 +44,11 @@ namespace AudioSwitcher.AudioApi
         /// <param name="channelVolume"></param>
         public AudioVolumeNotificationData(Guid eventContext, bool muted, float masterVolume, float[] channelVolume)
         {
-            _EventContext = eventContext;
-            _Muted = muted;
-            _MasterVolume = masterVolume;
-            _Channels = channelVolume.Length;
-            _ChannelVolume = channelVolume;
+            _eventContext = eventContext;
+            _muted = muted;
+            _masterVolume = masterVolume;
+            _channels = channelVolume.Length;
+            _channelVolume = channelVolume;
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace AudioSwitcher.AudioApi
         /// </summary>
         public Guid EventContext
         {
-            get { return _EventContext; }
+            get { return _eventContext; }
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace AudioSwitcher.AudioApi
         /// </summary>
         public bool Muted
         {
-            get { return _Muted; }
+            get { return _muted; }
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace AudioSwitcher.AudioApi
         /// </summary>
         public float MasterVolume
         {
-            get { return _MasterVolume; }
+            get { return _masterVolume; }
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace AudioSwitcher.AudioApi
         /// </summary>
         public int Channels
         {
-            get { return _Channels; }
+            get { return _channels; }
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace AudioSwitcher.AudioApi
         /// </summary>
         public float[] ChannelVolume
         {
-            get { return _ChannelVolume; }
+            get { return _channelVolume; }
         }
     }
 }

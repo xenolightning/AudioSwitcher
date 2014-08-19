@@ -24,10 +24,10 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using AudioSwitcher.AudioApi.CoreAudio;
-using AudioSwitcher.AudioApi.Interfaces;
+using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
+using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
-namespace AudioSwitcher.AudioApi
+namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
     ///     MM Device Enumerator

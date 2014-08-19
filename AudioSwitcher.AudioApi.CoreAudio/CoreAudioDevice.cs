@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Threading;
+using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
@@ -29,7 +30,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void EnumeratorOnAudioDeviceChanged(object sender, AudioDeviceChangedEventArgs audioDeviceChangedEventArgs)
         {
-            if (audioDeviceChangedEventArgs.Device.Id != this.Id)
+            if (audioDeviceChangedEventArgs.Device.Id != Id)
                 return;
 
             if (audioDeviceChangedEventArgs.EventType == AudioDeviceEventType.PropertyChanged)

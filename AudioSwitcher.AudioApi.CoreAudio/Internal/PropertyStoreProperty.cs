@@ -22,7 +22,7 @@
 // modified from Ray Molenkamp's original
 
 
-namespace AudioSwitcher.AudioApi
+namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
     ///     Property Store Property

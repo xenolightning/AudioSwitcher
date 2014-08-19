@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace AudioSwitcher.AudioApi.Interfaces
+namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
     [Guid("f8679f50-850a-41cf-9c72-430f290290c8"),
      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]

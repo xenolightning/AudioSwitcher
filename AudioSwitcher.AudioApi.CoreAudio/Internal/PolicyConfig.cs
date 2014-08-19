@@ -1,9 +1,9 @@
 ﻿// This has been modified for use by Audio Switcher
 
 using System.Runtime.InteropServices;
-using AudioSwitcher.AudioApi.Interfaces;
+using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 
-namespace AudioSwitcher.AudioApi
+namespace AudioSwitcher.AudioApi.CoreAudio
 {
     internal static class PolicyConfig
     {

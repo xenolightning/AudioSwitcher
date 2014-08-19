@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AudioSwitcher.AudioApi
+namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
     ///     PROPERTYKEY is defined in wtypes.h

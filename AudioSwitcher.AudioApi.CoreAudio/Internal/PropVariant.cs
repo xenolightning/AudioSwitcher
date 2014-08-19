@@ -24,10 +24,10 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using AudioSwitcher.AudioApi.Interfaces;
+using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 
-namespace AudioSwitcher.AudioApi
+namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
     ///     from Propidl.h.

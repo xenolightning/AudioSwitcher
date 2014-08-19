@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AudioSwitcher.AudioApi.Threading
+namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 {
     internal sealed class ComTaskScheduler : TaskScheduler, IDisposable
     {

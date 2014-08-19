@@ -85,10 +85,10 @@ namespace HookingSample
 
             Controller = new CoreAudioController();
 
-            this.DataContext = this;
+            DataContext = this;
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
             if (Hook != null)
             {

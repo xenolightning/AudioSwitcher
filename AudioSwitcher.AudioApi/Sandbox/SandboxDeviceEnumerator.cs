@@ -8,10 +8,10 @@ namespace AudioSwitcher.AudioApi.Sandbox
     public sealed class SandboxDeviceEnumerator : IDeviceEnumerator<SandboxDevice>
     {
         private readonly ConcurrentBag<SandboxDevice> _devices;
-        private Guid _defaultCaptureCommDeviceID;
-        private Guid _defaultCaptureDeviceID;
-        private Guid _defaultPlaybackCommDeviceID;
-        private Guid _defaultPlaybackDeviceID;
+        private Guid _defaultCaptureCommDeviceId;
+        private Guid _defaultCaptureDeviceId;
+        private Guid _defaultPlaybackCommDeviceId;
+        private Guid _defaultPlaybackDeviceId;
 
 
         public SandboxDeviceEnumerator(IDeviceEnumerator source)
@@ -21,14 +21,14 @@ namespace AudioSwitcher.AudioApi.Sandbox
             //Get a copy of the current system audio devices
             //then create a copy of the current state of the system
             //this allows us to "debug" macros against a "test" system
-            _defaultPlaybackDeviceID = source.DefaultPlaybackDevice == null
+            _defaultPlaybackDeviceId = source.DefaultPlaybackDevice == null
                 ? Guid.Empty
                 : source.DefaultPlaybackDevice.Id;
-            _defaultPlaybackCommDeviceID = source.DefaultCommunicationsPlaybackDevice == null
+            _defaultPlaybackCommDeviceId = source.DefaultCommunicationsPlaybackDevice == null
                 ? Guid.Empty
                 : source.DefaultCommunicationsPlaybackDevice.Id;
-            _defaultCaptureDeviceID = source.DefaultCaptureDevice == null ? Guid.Empty : source.DefaultCaptureDevice.Id;
-            _defaultCaptureCommDeviceID = source.DefaultCommunicationsCaptureDevice == null
+            _defaultCaptureDeviceId = source.DefaultCaptureDevice == null ? Guid.Empty : source.DefaultCaptureDevice.Id;
+            _defaultCaptureCommDeviceId = source.DefaultCommunicationsCaptureDevice == null
                 ? Guid.Empty
                 : source.DefaultCommunicationsCaptureDevice.Id;
 
@@ -56,22 +56,22 @@ namespace AudioSwitcher.AudioApi.Sandbox
 
         public SandboxDevice DefaultPlaybackDevice
         {
-            get { return _devices.FirstOrDefault(x => x.Id == _defaultPlaybackDeviceID); }
+            get { return _devices.FirstOrDefault(x => x.Id == _defaultPlaybackDeviceId); }
         }
 
         public SandboxDevice DefaultCommunicationsPlaybackDevice
         {
-            get { return _devices.FirstOrDefault(x => x.Id == _defaultPlaybackCommDeviceID); }
+            get { return _devices.FirstOrDefault(x => x.Id == _defaultPlaybackCommDeviceId); }
         }
 
         public SandboxDevice DefaultCaptureDevice
         {
-            get { return _devices.FirstOrDefault(x => x.Id == _defaultCaptureDeviceID); }
+            get { return _devices.FirstOrDefault(x => x.Id == _defaultCaptureDeviceId); }
         }
 
         public SandboxDevice DefaultCommunicationsCaptureDevice
         {
-            get { return _devices.FirstOrDefault(x => x.Id == _defaultCaptureCommDeviceID); }
+            get { return _devices.FirstOrDefault(x => x.Id == _defaultCaptureCommDeviceId); }
         }
 
         public SandboxDevice GetDevice(Guid id)
@@ -110,13 +110,13 @@ namespace AudioSwitcher.AudioApi.Sandbox
         {
             if (dev.IsPlaybackDevice)
             {
-                _defaultPlaybackDeviceID = dev.Id;
+                _defaultPlaybackDeviceId = dev.Id;
                 return true;
             }
 
             if (dev.IsCaptureDevice)
             {
-                _defaultCaptureDeviceID = dev.Id;
+                _defaultCaptureDeviceId = dev.Id;
                 return true;
             }
 
@@ -127,13 +127,13 @@ namespace AudioSwitcher.AudioApi.Sandbox
         {
             if (dev.IsPlaybackDevice)
             {
-                _defaultPlaybackCommDeviceID = dev.Id;
+                _defaultPlaybackCommDeviceId = dev.Id;
                 return true;
             }
 
             if (dev.IsCaptureDevice)
             {
-                _defaultCaptureCommDeviceID = dev.Id;
+                _defaultCaptureCommDeviceId = dev.Id;
                 return true;
             }
 

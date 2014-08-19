@@ -23,7 +23,7 @@
 
 using System;
 
-namespace AudioSwitcher.AudioApi.Interfaces
+namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
     internal struct Blob
     {

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace AudioSwitcher.AudioApi.Interfaces
+namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
     // ReSharper disable once InconsistentNaming
     [StructLayout(LayoutKind.Sequential)]

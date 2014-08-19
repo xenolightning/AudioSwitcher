@@ -187,7 +187,7 @@ namespace AudioSwitcher.AudioApi.Hooking
 
         public void Dispose()
         {
-            this.UnHook();
+            UnHook();
         }
     }
 }

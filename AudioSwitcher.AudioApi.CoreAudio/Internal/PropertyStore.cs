@@ -22,9 +22,9 @@
 // this version modified for NAudio from Ray Molenkamp's original
 
 using System.Runtime.InteropServices;
-using AudioSwitcher.AudioApi.Interfaces;
+using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 
-namespace AudioSwitcher.AudioApi
+namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
     ///     Property Store class, only supports reading properties at the moment.

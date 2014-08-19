@@ -1,6 +1,6 @@
-﻿using AudioSwitcher.AudioApi.Utils;
+﻿using AudioSwitcher.AudioApi.CoreAudio.Utils;
 
-namespace AudioSwitcher.AudioApi.Interfaces
+namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
     internal enum AudioClientErrors
     {

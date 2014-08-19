@@ -25,9 +25,9 @@
 
 using System;
 using System.Runtime.InteropServices;
-using AudioSwitcher.AudioApi.Interfaces;
+using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 
-namespace AudioSwitcher.AudioApi
+namespace AudioSwitcher.AudioApi.CoreAudio
 {
     // This class implements the IAudioEndpointVolumeCallback interface,
     // it is implemented in this class because implementing it on AudioEndpointVolume 

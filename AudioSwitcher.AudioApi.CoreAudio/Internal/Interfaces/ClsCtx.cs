@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AudioSwitcher.AudioApi.Interfaces
+namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
     /// <summary>
     ///     is defined in WTypes.h

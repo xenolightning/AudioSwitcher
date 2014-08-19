@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace AudioSwitcher.AudioApi.Utils
+namespace AudioSwitcher.AudioApi.CoreAudio.Utils
 {
     /// <summary>
     ///     HResult

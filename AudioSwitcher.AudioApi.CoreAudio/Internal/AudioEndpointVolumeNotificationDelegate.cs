@@ -20,7 +20,7 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-namespace AudioSwitcher.AudioApi
+namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
     ///     Audio Endpoint Volume Notifiaction Delegate

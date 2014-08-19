@@ -57,7 +57,7 @@ namespace AudioSwitcher.Tests.Common
             get { return DeviceState.Active; }
         }
 
-        private DataFlow _dataFlow;
+        private readonly DataFlow _dataFlow;
         public override DataFlow DataFlow
         {
             get
@@ -66,7 +66,7 @@ namespace AudioSwitcher.Tests.Common
             }
         }
 
-        private bool _muted = false;
+        private bool _muted;
         public override bool IsMuted
         {
             get

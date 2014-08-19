@@ -1,4 +1,4 @@
-﻿namespace AudioSwitcher.AudioApi.Interfaces
+﻿namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
     /// <summary>
     ///     MMDevice STGM enumeration

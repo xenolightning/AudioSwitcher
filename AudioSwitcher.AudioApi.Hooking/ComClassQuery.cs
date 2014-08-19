@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.Hooking
 {
-    [ComImport()]
+    [ComImport]
     [Guid("00000001-0000-0000-C000-000000000046")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IClassFactory
@@ -22,7 +22,7 @@ namespace AudioSwitcher.AudioApi.Hooking
             [In] bool fLock);
     }
 
-    [ComImport()]
+    [ComImport]
     [Guid("B196B28F-BAB4-101A-B69C-00AA00341D07")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     interface IClassFactory2
@@ -54,23 +54,23 @@ namespace AudioSwitcher.AudioApi.Hooking
         {
             public ComClassInfo(Type classtype, Type interfacetype, string functionname)
             {
-                m_ClassType = classtype;
-                m_InterfaceType = interfacetype;
-                m_MethodInfo = m_InterfaceType.GetMethod(functionname);
+                _mClassType = classtype;
+                _mInterfaceType = interfacetype;
+                _mMethodInfo = _mInterfaceType.GetMethod(functionname);
             }
 
-            Type m_ClassType;
-            public Type ClassType { get { return m_ClassType; } }
+            readonly Type _mClassType;
+            public Type ClassType { get { return _mClassType; } }
 
-            Type m_InterfaceType;
-            public Type InterfaceType { get { return m_InterfaceType; } }
+            readonly Type _mInterfaceType;
+            public Type InterfaceType { get { return _mInterfaceType; } }
 
-            MethodInfo m_MethodInfo;
-            public string Functionname { get { return m_MethodInfo.Name; } }
-            public MethodInfo Method { get { return m_MethodInfo; } }
+            readonly MethodInfo _mMethodInfo;
+            public string Functionname { get { return _mMethodInfo.Name; } }
+            public MethodInfo Method { get { return _mMethodInfo; } }
 
-            internal IntPtr m_FunctionPointer = IntPtr.Zero;
-            public IntPtr FunctionPointer { get { return m_FunctionPointer; } }
+            internal IntPtr MFunctionPointer = IntPtr.Zero;
+            public IntPtr FunctionPointer { get { return MFunctionPointer; } }
 
             internal System.Diagnostics.ProcessModule m_ModuleHandle;
             public System.Diagnostics.ProcessModule LibraryOfFunction
@@ -90,8 +90,8 @@ namespace AudioSwitcher.AudioApi.Hooking
                 System.Diagnostics.Process pr = System.Diagnostics.Process.GetCurrentProcess();
                 foreach (System.Diagnostics.ProcessModule pm in pr.Modules)
                 {
-                    if (m_FunctionPointer.ToInt64() >= pm.BaseAddress.ToInt64() &&
-                        m_FunctionPointer.ToInt64() <= pm.BaseAddress.ToInt64() + pm.ModuleMemorySize)
+                    if (MFunctionPointer.ToInt64() >= pm.BaseAddress.ToInt64() &&
+                        MFunctionPointer.ToInt64() <= pm.BaseAddress.ToInt64() + pm.ModuleMemorySize)
                     {
                         m_ModuleHandle = pm;
                         return;
@@ -102,7 +102,7 @@ namespace AudioSwitcher.AudioApi.Hooking
 
             public void Dispose()
             {
-                Marshal.Release(m_FunctionPointer);
+                Marshal.Release(MFunctionPointer);
             }
         }
 
@@ -163,30 +163,27 @@ namespace AudioSwitcher.AudioApi.Hooking
             // no chance for other people to hijack the vtable
             try
             {
-                if (classinstance == null)
+                do
                 {
-                    do
-                    {
-                        Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey("CLSID\\{" + classguid.ToString() + "}\\InprocServer32");
-                        if (rk == null)
-                            break;
-                        string classdllname = rk.GetValue(null).ToString();
-                        IntPtr libH = KERNEL32.LoadLibrary(classdllname);
-                        if (libH == IntPtr.Zero)
-                            break;
-                        IntPtr factoryFunc = KERNEL32.GetProcAddress(libH, "DllGetClassObject");
-                        if (factoryFunc == IntPtr.Zero)
-                            break;
-                        DllGetClassObjectDelegate factoryDel = (DllGetClassObjectDelegate)Marshal.GetDelegateForFunctionPointer(factoryFunc, typeof(DllGetClassObjectDelegate));
-                        object classfactoryO;
-                        factoryDel(ref classguid, ref classfactoryguid, out classfactoryO);
-                        if (classfactoryO == null)
-                            break;
-                        IClassFactory classfactory = (IClassFactory)classfactoryO;
-                        classfactory.CreateInstance(null, ref interfguid, out classinstance);
-                        Marshal.FinalReleaseComObject(classfactory);
-                    } while (false);
-                }
+                    Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey("CLSID\\{" + classguid.ToString() + "}\\InprocServer32");
+                    if (rk == null)
+                        break;
+                    string classdllname = rk.GetValue(null).ToString();
+                    IntPtr libH = KERNEL32.LoadLibrary(classdllname);
+                    if (libH == IntPtr.Zero)
+                        break;
+                    IntPtr factoryFunc = KERNEL32.GetProcAddress(libH, "DllGetClassObject");
+                    if (factoryFunc == IntPtr.Zero)
+                        break;
+                    DllGetClassObjectDelegate factoryDel = (DllGetClassObjectDelegate)Marshal.GetDelegateForFunctionPointer(factoryFunc, typeof(DllGetClassObjectDelegate));
+                    object classfactoryO;
+                    factoryDel(ref classguid, ref classfactoryguid, out classfactoryO);
+                    if (classfactoryO == null)
+                        break;
+                    IClassFactory classfactory = (IClassFactory)classfactoryO;
+                    classfactory.CreateInstance(null, ref interfguid, out classinstance);
+                    Marshal.FinalReleaseComObject(classfactory);
+                } while (false);
             }
             catch { }
             try
@@ -231,7 +228,7 @@ namespace AudioSwitcher.AudioApi.Hooking
             // get function-address from vtable
             int mi_vto = Marshal.GetComSlotForMethodInfo(cci.Method);
             int* faddr = vTable[mi_vto];
-            cci.m_FunctionPointer = new IntPtr(faddr);
+            cci.MFunctionPointer = new IntPtr(faddr);
             // release intptr
             Marshal.Release(interfaceIntPtr);
             Marshal.FinalReleaseComObject(classinstance);

@@ -22,7 +22,7 @@
 
 using System;
 
-namespace AudioSwitcher.AudioApi.Interfaces
+namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
     public struct AudioVolumeNotificationDataStruct
     {

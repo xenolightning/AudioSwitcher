@@ -24,7 +24,7 @@ using System;
 
 // This has been modified for use by Audio Switcher
 
-namespace AudioSwitcher.AudioApi
+namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
     ///     Property Keys
