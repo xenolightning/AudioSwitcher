@@ -10,7 +10,11 @@ Components
 
 ### [Audio Api](AudioSwitcher.AudioApi)
 
-The "heavy lifting", this is the library that actually makes the system calls, and can be used in any .NET 4 application and above.
+An abstracted set of classes that can be extended to interact with any audio system. Is intended to be used across Windows/Windows RT/Windows Phone
+
+### [Core Audio Api](AudioSwitcher.AudioApi.CoreAudio)
+
+The WASAPI integration layer. This is the low level COM library that it used to interact with Audio Devices on a PC running Windows Vista or later.
 
 
 ### [Scripting](AudioSwitcher.Scripting)
