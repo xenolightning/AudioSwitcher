@@ -14,7 +14,7 @@ An abstracted set of classes that can be extended to interact with any audio sys
 
 ### [Core Audio Api](AudioSwitcher.AudioApi.CoreAudio)
 
-The WASAPI integration layer. This is the low level COM library that it used to interact with Audio Devices on a PC running Windows Vista or later.
+The MMDeviceAPI integration layer. This is the low level COM library that it used to interact with Audio Devices on a PC running Windows Vista or later.
 
 
 ### [Scripting](AudioSwitcher.Scripting)
