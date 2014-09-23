@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi
 {
@@ -76,6 +77,11 @@ namespace AudioSwitcher.AudioApi
             return Enumerator.SetDefaultDevice(this);
         }
 
+        public Task<bool> SetAsDefaultAsync()
+        {
+            return Enumerator.SetDefaultDeviceAsync(this);
+        }
+
         /// <summary>
         ///     Set this device as the default communication device
         /// </summary>
@@ -84,9 +90,22 @@ namespace AudioSwitcher.AudioApi
             return Enumerator.SetDefaultCommunicationsDevice(this);
         }
 
+        public Task<bool> SetAsDefaultCommunicationsAsync()
+        {
+            return Enumerator.SetDefaultCommunicationsDeviceAsync(this);
+        }
+
         public abstract bool Mute();
+        public virtual Task<bool> MuteAsync()
+        {
+            return Task.Factory.StartNew(() => Mute());
+        }
 
         public abstract bool UnMute();
+        public virtual Task<bool> UnMuteAsync()
+        {
+            return Task.Factory.StartNew(() => UnMute());
+        }
 
         public virtual bool ToggleMute()
         {
@@ -96,6 +115,11 @@ namespace AudioSwitcher.AudioApi
                 Mute();
 
             return IsMuted;
+        }
+
+        public virtual Task<bool> ToggleMuteAsync()
+        {
+            return Task.Factory.StartNew(() => ToggleMute());
         }
 
         public abstract event AudioDeviceChangedHandler VolumeChanged;

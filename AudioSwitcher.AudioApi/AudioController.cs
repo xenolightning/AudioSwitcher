@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi
 {
@@ -61,9 +62,19 @@ namespace AudioSwitcher.AudioApi
             return DeviceEnumerator.GetDevices(DeviceType.All, deviceState);
         }
 
+        public Task<IEnumerable<IDevice>> GetAllDevicesAsync(DeviceState deviceState = DefaultDeviceStateFilter)
+        {
+            return DeviceEnumerator.GetDevicesAsync(DeviceType.All, deviceState);
+        }
+
         public IEnumerable<IDevice> GetPlaybackDevices(DeviceState deviceState = DefaultDeviceStateFilter)
         {
             return DeviceEnumerator.GetDevices(DeviceType.Playback, deviceState);
+        }
+
+        public Task<IEnumerable<IDevice>> GetPlaybackDevicesAsync(DeviceState deviceState = DefaultDeviceStateFilter)
+        {
+            return DeviceEnumerator.GetDevicesAsync(DeviceType.Playback, deviceState);
         }
 
         public IEnumerable<IDevice> GetCaptureDevices(DeviceState deviceState = DefaultDeviceStateFilter)
@@ -71,9 +82,19 @@ namespace AudioSwitcher.AudioApi
             return DeviceEnumerator.GetDevices(DeviceType.Capture, deviceState);
         }
 
+        public Task<IEnumerable<IDevice>> GetCaptureDevicesAsync(DeviceState deviceState = DefaultDeviceStateFilter)
+        {
+            return DeviceEnumerator.GetDevicesAsync(DeviceType.Capture, deviceState);
+        }
+
         public virtual IDevice GetAudioDevice(Guid id, DeviceState state = DefaultDeviceStateFilter)
         {
             return DeviceEnumerator.GetDevices(DeviceType.All, state).FirstOrDefault(dev => dev.Id == id);
+        }
+
+        public virtual Task<IDevice> GetAudioDeviceAsync(Guid id, DeviceState state = DefaultDeviceStateFilter)
+        {
+            return Task.Factory.StartNew(() => DeviceEnumerator.GetDevices(DeviceType.All, state).FirstOrDefault(dev => dev.Id == id));
         }
 
         public virtual bool SetDefaultDevice(IDevice dev)
@@ -84,6 +105,16 @@ namespace AudioSwitcher.AudioApi
         public virtual bool SetDefaultCommunicationsDevice(IDevice dev)
         {
             return DeviceEnumerator.SetDefaultCommunicationsDevice(dev);
+        }
+
+        public virtual Task<bool> SetDefaultDeviceAsync(IDevice dev)
+        {
+            return DeviceEnumerator.SetDefaultDeviceAsync(dev);
+        }
+
+        public virtual Task<bool> SetDefaultCommunicationsDeviceAsync(IDevice dev)
+        {
+            return DeviceEnumerator.SetDefaultCommunicationsDeviceAsync(dev);
         }
     }
 }

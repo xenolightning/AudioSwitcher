@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
@@ -81,6 +82,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return GetDevice(id);
         }
 
+        Task<CoreAudioDevice> IDeviceEnumerator<CoreAudioDevice>.GetDeviceAsync(Guid id)
+        {
+            return Task.Factory.StartNew(() => GetDevice(id));
+        }
+
+        Task<CoreAudioDevice> IDeviceEnumerator<CoreAudioDevice>.GetDefaultDeviceAsync(DeviceType deviceType, Role role)
+        {
+            return Task.Factory.StartNew(() => GetDefaultDevice(deviceType, role));
+        }
+
+        Task<IEnumerable<CoreAudioDevice>> IDeviceEnumerator<CoreAudioDevice>.GetDevicesAsync(DeviceType deviceType, DeviceState state)
+        {
+            return Task.Factory.StartNew(() => GetDevices(deviceType, state));
+        }
+
         IDevice IDeviceEnumerator.GetDefaultDevice(DeviceType type, Role eRole)
         {
             return GetDefaultDevice(type, eRole);
@@ -89,6 +105,23 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         IEnumerable<IDevice> IDeviceEnumerator.GetDevices(DeviceType type, DeviceState eRole)
         {
             return GetDevices(type, eRole);
+        }
+
+        Task<IDevice> IDeviceEnumerator.GetDeviceAsync(Guid id)
+        {
+            return Task.Factory.StartNew(() => GetDevice(id) as IDevice);
+        }
+
+        Task<IDevice> IDeviceEnumerator.GetDefaultDeviceAsync(DeviceType deviceType, Role role)
+        {
+            return Task.Factory.StartNew(() => GetDefaultDevice(deviceType, role) as IDevice);
+        }
+
+        Task<IEnumerable<IDevice>> IDeviceEnumerator.GetDevicesAsync(DeviceType deviceType, DeviceState state)
+        {
+            // Required for the task return type
+            // ReSharper disable once RedundantEnumerableCastCall
+            return Task.Factory.StartNew(() => GetDevices(deviceType, state).Cast<IDevice>());
         }
 
         public void Dispose()
@@ -142,6 +175,16 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return SetDefaultCommunicationsDevice(dev as CoreAudioDevice);
         }
 
+        public Task<bool> SetDefaultDeviceAsync(IDevice dev)
+        {
+            return Task.Factory.StartNew(() => SetDefaultDevice(dev));
+        }
+
+        public Task<bool> SetDefaultCommunicationsDeviceAsync(IDevice dev)
+        {
+            return Task.Factory.StartNew(() => SetDefaultCommunicationsDevice(dev));
+        }
+
         public bool SetDefaultDevice(CoreAudioDevice dev)
         {
             if (dev == null)
@@ -164,6 +207,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
+        public Task<bool> SetDefaultDeviceAsync(CoreAudioDevice dev)
+        {
+            return Task.Factory.StartNew(() => SetDefaultDevice(dev));
+        }
+
         public bool SetDefaultCommunicationsDevice(CoreAudioDevice dev)
         {
             if (dev == null)
@@ -184,6 +232,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 return false;
             }
+        }
+
+        public Task<bool> SetDefaultCommunicationsDeviceAsync(CoreAudioDevice dev)
+        {
+            return Task.Factory.StartNew(() => SetDefaultCommunicationsDevice(dev));
         }
 
         public CoreAudioDevice GetDefaultDevice(DeviceType deviceType, Role eRole)

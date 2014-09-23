@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi.Sandbox
 {
@@ -78,6 +79,21 @@ namespace AudioSwitcher.AudioApi.Sandbox
             return _devices.FirstOrDefault(x => x.Id == id);
         }
 
+        Task<SandboxDevice> IDeviceEnumerator<SandboxDevice>.GetDeviceAsync(Guid id)
+        {
+            return Task.Factory.StartNew(() => GetDevice(id));
+        }
+
+        Task<SandboxDevice> IDeviceEnumerator<SandboxDevice>.GetDefaultDeviceAsync(DeviceType deviceType, Role role)
+        {
+            return Task.Factory.StartNew(() => GetDefaultDevice(deviceType, role));
+        }
+
+        Task<IEnumerable<SandboxDevice>> IDeviceEnumerator<SandboxDevice>.GetDevicesAsync(DeviceType deviceType, DeviceState state)
+        {
+            return Task.Factory.StartNew(() => GetDevices(deviceType, state));
+        }
+
         public SandboxDevice GetDefaultDevice(DeviceType deviceType, Role eRole)
         {
             switch (deviceType)
@@ -105,6 +121,22 @@ namespace AudioSwitcher.AudioApi.Sandbox
                 );
         }
 
+        Task<IDevice> IDeviceEnumerator.GetDeviceAsync(Guid id)
+        {
+            return Task.Factory.StartNew(() => GetDevice(id) as IDevice);
+        }
+
+        Task<IDevice> IDeviceEnumerator.GetDefaultDeviceAsync(DeviceType deviceType, Role role)
+        {
+            return Task.Factory.StartNew(() => GetDefaultDevice(deviceType, role) as IDevice);
+        }
+
+        Task<IEnumerable<IDevice>> IDeviceEnumerator.GetDevicesAsync(DeviceType deviceType, DeviceState state)
+        {
+            // ReSharper disable once RedundantEnumerableCastCall
+            return Task.Factory.StartNew(() => GetDevices(deviceType, state).Cast<IDevice>());
+        }
+
         public bool SetDefaultDevice(SandboxDevice dev)
         {
             if (dev.IsPlaybackDevice)
@@ -122,6 +154,11 @@ namespace AudioSwitcher.AudioApi.Sandbox
             return false;
         }
 
+        public Task<bool> SetDefaultDeviceAsync(SandboxDevice dev)
+        {
+            return Task.Factory.StartNew(() => SetDefaultDevice(dev));
+        }
+
         public bool SetDefaultCommunicationsDevice(SandboxDevice dev)
         {
             if (dev.IsPlaybackDevice)
@@ -137,6 +174,11 @@ namespace AudioSwitcher.AudioApi.Sandbox
             }
 
             return false;
+        }
+
+        public Task<bool> SetDefaultCommunicationsDeviceAsync(SandboxDevice dev)
+        {
+            return Task.Factory.StartNew(() => SetDefaultCommunicationsDevice(dev));
         }
 
         IDevice IDeviceEnumerator.DefaultPlaybackDevice
@@ -192,6 +234,16 @@ namespace AudioSwitcher.AudioApi.Sandbox
                 return SetDefaultCommunicationsDevice(device);
 
             return false;
+        }
+
+        public Task<bool> SetDefaultDeviceAsync(IDevice dev)
+        {
+            return Task.Factory.StartNew(() => SetDefaultDevice(dev));
+        }
+
+        public Task<bool> SetDefaultCommunicationsDeviceAsync(IDevice dev)
+        {
+            return Task.Factory.StartNew(() => SetDefaultCommunicationsDevice(dev));
         }
     }
 }

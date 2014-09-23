@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi
 {
@@ -36,13 +37,23 @@ namespace AudioSwitcher.AudioApi
 
         bool SetAsDefault();
 
+        Task<bool> SetAsDefaultAsync();
+
         bool SetAsDefaultCommunications();
+
+        Task<bool> SetAsDefaultCommunicationsAsync();
 
         bool Mute();
 
+        Task<bool> MuteAsync();
+
         bool UnMute();
 
+        Task<bool> UnMuteAsync();
+
         bool ToggleMute();
+
+        Task<bool> ToggleMuteAsync();
 
         event AudioDeviceChangedHandler VolumeChanged;
     }
