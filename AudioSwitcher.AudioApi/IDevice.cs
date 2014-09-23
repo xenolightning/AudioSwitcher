@@ -8,8 +8,6 @@ namespace AudioSwitcher.AudioApi
 
         Guid Id { get; }
 
-        string RealId { get; }
-
         string Description { get; }
 
         string ShortName { get; }

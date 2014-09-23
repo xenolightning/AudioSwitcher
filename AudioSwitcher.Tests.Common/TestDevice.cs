@@ -21,11 +21,6 @@ namespace AudioSwitcher.Tests.Common
             }
         }
 
-        public override string RealId
-        {
-            get { return Id.ToString(); }
-        }
-
         public override string Description
         {
             get { return Id.ToString(); }

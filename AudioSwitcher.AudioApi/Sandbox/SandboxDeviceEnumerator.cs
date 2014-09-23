@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,7 +6,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
 {
     public sealed class SandboxDeviceEnumerator : IDeviceEnumerator<SandboxDevice>
     {
-        private readonly ConcurrentBag<SandboxDevice> _devices;
+        private readonly List<SandboxDevice> _devices;
         private Guid _defaultCaptureCommDeviceId;
         private Guid _defaultCaptureDeviceId;
         private Guid _defaultPlaybackCommDeviceId;
@@ -16,7 +15,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
 
         public SandboxDeviceEnumerator(IDeviceEnumerator source)
         {
-            _devices = new ConcurrentBag<SandboxDevice>();
+            _devices = new List<SandboxDevice>();
 
             //Get a copy of the current system audio devices
             //then create a copy of the current state of the system

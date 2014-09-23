@@ -17,7 +17,7 @@ namespace HookingSample
     {
         private DefaultDeviceHook _hook;
         private Process _selectedProcess;
-        private IDevice _selectedAudioDevice;
+        private CoreAudioDevice _selectedAudioDevice;
 
         public ObservableCollection<Process> Processes
         {
@@ -41,7 +41,7 @@ namespace HookingSample
             }
         }
 
-        public IDevice SelectedAudioDevice
+        public CoreAudioDevice SelectedAudioDevice
         {
             get { return _selectedAudioDevice; }
             set

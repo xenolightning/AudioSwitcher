@@ -24,11 +24,6 @@ namespace AudioSwitcher.AudioApi.Sandbox
             get { return id; }
         }
 
-        public override string RealId
-        {
-            get { return Id.ToString(); }
-        }
-
         public override string Description
         {
             get { return description; }
