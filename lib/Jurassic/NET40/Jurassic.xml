@@ -6162,6 +6162,16 @@
             Gets the length, in characters, of the ConcatenatedString object.
             </summary>
         </member>
+        <member name="T:Jurassic.CompiledScript">
+            <summary>
+            Represents the result of compiling a script.
+            </summary>
+        </member>
+        <member name="M:Jurassic.CompiledScript.Execute">
+            <summary>
+            Executes the compiled script.
+            </summary>
+        </member>
         <member name="T:Jurassic.StringHelpers">
             <summary>
             Contains handy string routines.
@@ -6403,6 +6413,14 @@
             <summary>
             Gets or sets information needed by Reflection.Emit.
             </summary>
+        </member>
+        <member name="M:Jurassic.ScriptEngine.Compile(Jurassic.ScriptSource)">
+            <summary>
+            Compiles the given source code and returns it in a form that can be executed many
+            times.
+            </summary>
+            <param name="source"> The javascript source code to execute. </param>
+            <returns> A CompiledScript instance, which can be executed as many times as needed. </returns>
         </member>
         <member name="M:Jurassic.ScriptEngine.Evaluate(System.String)">
             <summary>

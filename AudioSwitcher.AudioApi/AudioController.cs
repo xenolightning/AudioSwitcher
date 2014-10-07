@@ -116,5 +116,6 @@ namespace AudioSwitcher.AudioApi
         {
             return DeviceEnumerator.SetDefaultCommunicationsDeviceAsync(dev);
         }
+
     }
 }

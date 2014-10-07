@@ -2,7 +2,6 @@
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
 using AudioSwitcher.AudioApi.Sandbox;
-using AudioSwitcher.Scripting;
 using Jurassic;
 using Jurassic.Library;
 

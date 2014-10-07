@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi", "AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj", "{7A4E260C-007E-4615-A92B-E849E7B641AB}"
 EndProject
@@ -15,15 +15,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{A1D8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.CLI", "AudioSwitcher.CLI\AudioSwitcher.CLI.csproj", "{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting", "AudioSwitcher.Scripting\AudioSwitcher.Scripting.csproj", "{7794300B-F8D3-4C30-AB1C-FFA0C961A510}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.Tests", "AudioSwitcher.Scripting.Tests\AudioSwitcher.Scripting.Tests.csproj", "{7395D2F2-2FCA-4F16-8903-3C9E565CF976}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.JavaScript.Tests", "AudioSwitcher.Scripting.Tests\AudioSwitcher.Scripting.JavaScript.Tests.csproj", "{7395D2F2-2FCA-4F16-8903-3C9E565CF976}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4F8309BD-D3FD-4903-8054-0B1EED7D385E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi.CoreAudio", "AudioSwitcher.AudioApi.CoreAudio\AudioSwitcher.AudioApi.CoreAudio.csproj", "{63191A1E-AF9E-4D3A-9BA8-BAA02345B277}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Tests.Common", "AudioSwitcher.Tests.Common\AudioSwitcher.Tests.Common.csproj", "{703D3C14-A63F-4BE1-82FE-8D20A55D9960}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripting", "Scripting", "{67E65805-9072-4B61-8D6C-DB3AA4A14BAC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting", "AudioSwitcher.Scripting\AudioSwitcher.Scripting.csproj", "{99F4CE07-B44F-45C2-AE1D-3732D695D61D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.JavaScript", "AudioSwitcher.Scripting.JavaScript\AudioSwitcher.Scripting.JavaScript.csproj", "{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,18 +91,6 @@ Global
 		{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8}.Release|ARM.ActiveCfg = Release|Any CPU
 		{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8}.Release|x64.ActiveCfg = Release|Any CPU
 		{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8}.Release|x86.ActiveCfg = Release|Any CPU
-		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Debug|x86.ActiveCfg = Debug|x86
-		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Debug|x86.Build.0 = Debug|x86
-		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Release|ARM.ActiveCfg = Release|Any CPU
-		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Release|x64.ActiveCfg = Release|Any CPU
-		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Release|x86.ActiveCfg = Release|x86
-		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Release|x86.Build.0 = Release|x86
 		{7395D2F2-2FCA-4F16-8903-3C9E565CF976}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7395D2F2-2FCA-4F16-8903-3C9E565CF976}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7395D2F2-2FCA-4F16-8903-3C9E565CF976}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -129,6 +121,26 @@ Global
 		{703D3C14-A63F-4BE1-82FE-8D20A55D9960}.Release|ARM.ActiveCfg = Release|Any CPU
 		{703D3C14-A63F-4BE1-82FE-8D20A55D9960}.Release|x64.ActiveCfg = Release|Any CPU
 		{703D3C14-A63F-4BE1-82FE-8D20A55D9960}.Release|x86.ActiveCfg = Release|Any CPU
+		{99F4CE07-B44F-45C2-AE1D-3732D695D61D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99F4CE07-B44F-45C2-AE1D-3732D695D61D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99F4CE07-B44F-45C2-AE1D-3732D695D61D}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{99F4CE07-B44F-45C2-AE1D-3732D695D61D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{99F4CE07-B44F-45C2-AE1D-3732D695D61D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{99F4CE07-B44F-45C2-AE1D-3732D695D61D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99F4CE07-B44F-45C2-AE1D-3732D695D61D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99F4CE07-B44F-45C2-AE1D-3732D695D61D}.Release|ARM.ActiveCfg = Release|Any CPU
+		{99F4CE07-B44F-45C2-AE1D-3732D695D61D}.Release|x64.ActiveCfg = Release|Any CPU
+		{99F4CE07-B44F-45C2-AE1D-3732D695D61D}.Release|x86.ActiveCfg = Release|Any CPU
+		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}.Release|ARM.ActiveCfg = Release|Any CPU
+		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}.Release|x64.ActiveCfg = Release|Any CPU
+		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -139,5 +151,7 @@ Global
 		{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8} = {A1D8776F-71F0-4ECF-8EBE-AB1BD671E0B7}
 		{7395D2F2-2FCA-4F16-8903-3C9E565CF976} = {4F8309BD-D3FD-4903-8054-0B1EED7D385E}
 		{703D3C14-A63F-4BE1-82FE-8D20A55D9960} = {4F8309BD-D3FD-4903-8054-0B1EED7D385E}
+		{99F4CE07-B44F-45C2-AE1D-3732D695D61D} = {67E65805-9072-4B61-8D6C-DB3AA4A14BAC}
+		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F} = {67E65805-9072-4B61-8D6C-DB3AA4A14BAC}
 	EndGlobalSection
 EndGlobal

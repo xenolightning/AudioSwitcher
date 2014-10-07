@@ -7,8 +7,8 @@
     <ProjectGuid>{7395D2F2-2FCA-4F16-8903-3C9E565CF976}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AudioSwitcher.Scripting.Tests</RootNamespace>
-    <AssemblyName>AudioSwitcher.Scripting.Tests</AssemblyName>
+    <RootNamespace>AudioSwitcher.Scripting.JavaScript.Tests</RootNamespace>
+    <AssemblyName>AudioSwitcher.Scripting.JavaScript.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -57,8 +57,12 @@
       <Project>{7a4e260c-007e-4615-a92b-e849e7b641ab}</Project>
       <Name>AudioSwitcher.AudioApi</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AudioSwitcher.Scripting.JavaScript\AudioSwitcher.Scripting.JavaScript.csproj">
+      <Project>{a521e1f4-70d0-4e59-abc9-cdd306d18f3f}</Project>
+      <Name>AudioSwitcher.Scripting.JavaScript</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AudioSwitcher.Scripting\AudioSwitcher.Scripting.csproj">
-      <Project>{7794300b-f8d3-4c30-ab1c-ffa0c961a510}</Project>
+      <Project>{99f4ce07-b44f-45c2-ae1d-3732d695d61d}</Project>
       <Name>AudioSwitcher.Scripting</Name>
     </ProjectReference>
     <ProjectReference Include="..\AudioSwitcher.Tests.Common\AudioSwitcher.Tests.Common.csproj">
