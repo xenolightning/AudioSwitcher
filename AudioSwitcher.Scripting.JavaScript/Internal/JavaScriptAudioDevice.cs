@@ -10,7 +10,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
         internal JavaScriptAudioDevice(ScriptEngine engine, AudioController controller, IDevice device)
             : base(engine)
         {
-            AudioController = controller;
+            Controller = controller;
             ID = device.Id.ToString();
             Name = device.ShortName;
             Flags = device.IsPlaybackDevice ? 1 : 2;
@@ -56,7 +56,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             internal set;
         }
 
-        private AudioController AudioController
+        private AudioController Controller
         {
             get;
             set;
@@ -68,7 +68,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             {
                 //Ensures that the AudioController is always referencing the correct device
                 //instance
-                return AudioController.GetAudioDevice(new Guid(ID));
+                return Controller.GetAudioDevice(new Guid(ID));
             }
         }
     }
