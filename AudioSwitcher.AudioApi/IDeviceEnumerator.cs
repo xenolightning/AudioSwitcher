@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi
 {
-    [ComVisible(false)]
     public interface IDeviceEnumerator
     {
         AudioController AudioController { get; set; }

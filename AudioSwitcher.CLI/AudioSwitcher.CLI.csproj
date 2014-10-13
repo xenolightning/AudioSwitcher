@@ -59,9 +59,19 @@
       <Project>{7a4e260c-007e-4615-a92b-e849e7b641ab}</Project>
       <Name>AudioSwitcher.AudioApi</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AudioSwitcher.Scripting.JavaScript\AudioSwitcher.Scripting.JavaScript.csproj">
+      <Project>{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}</Project>
+      <Name>AudioSwitcher.Scripting.JavaScript</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AudioSwitcher.Scripting\AudioSwitcher.Scripting.csproj">
+      <Project>{99f4ce07-b44f-45c2-ae1d-3732d695d61d}</Project>
+      <Name>AudioSwitcher.Scripting</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Test.js" />
+    <Content Include="Test.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

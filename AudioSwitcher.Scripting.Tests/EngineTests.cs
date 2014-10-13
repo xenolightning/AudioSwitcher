@@ -1,7 +1,7 @@
 ﻿using Jurassic;
 using Xunit;
 
-namespace AudioSwitcher.Scripting.Tests
+namespace AudioSwitcher.Scripting.JavaScript.Tests
 {
     public class EngineTests
     {

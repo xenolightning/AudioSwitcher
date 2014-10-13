@@ -8,18 +8,17 @@ namespace AudioSwitcher.Scripting.JavaScript
 {
     public class JSEngine : IScriptEngine<JSScript>
     {
-        private ScriptEngine _engine;
+        public ScriptEngine InternalEngine
+        {
+            get;
+            private set;
+        }
 
         public JSEngine(AudioController controller)
         {
-            _engine = new ScriptEngine();
-            _engine.AddCoreLibrary();
-            _engine.AddAudioSwitcherLibrary(controller);
-        }
-
-        public string SyntaxHighlightingCode
-        {
-            get { return "JavaScript"; }
+            InternalEngine = new ScriptEngine();
+            InternalEngine.AddCoreLibrary();
+            InternalEngine.AddAudioSwitcherLibrary(controller);
         }
 
         public string FriendlyName
@@ -32,13 +31,12 @@ namespace AudioSwitcher.Scripting.JavaScript
             get { return JSScriptInfo.Instance; }
         }
 
-
-        public ExecutionResult Execute(JSScript script)
+        public ExecutionResult<string> Execute(string script)
         {
             try
             {
-                _engine.Execute(script.Content);
-                return new ExecutionResult
+                InternalEngine.Execute(script);
+                return new ExecutionResult<string>
                 {
                     Script = script,
                     Success = true
@@ -46,7 +44,7 @@ namespace AudioSwitcher.Scripting.JavaScript
             }
             catch (Exception ex)
             {
-                return new ExecutionResult
+                return new ExecutionResult<string>
                 {
                     Script = script,
                     Success = false,
@@ -55,9 +53,57 @@ namespace AudioSwitcher.Scripting.JavaScript
             }
         }
 
-        public Task<ExecutionResult> ExecuteAsync(JSScript script)
+        public Task<ExecutionResult<string>> ExecuteAsync(string script)
         {
             return Task.Factory.StartNew(() => Execute(script));
+        }
+
+        public TReturn Evaluate<TReturn>(string script)
+        {
+            return InternalEngine.Evaluate<TReturn>(script);
+        }
+
+        public Task<TReturn> EvaluateAsync<TReturn>(string script)
+        {
+            return Task.Factory.StartNew(() => InternalEngine.Evaluate<TReturn>(script));
+        }
+
+
+        public ExecutionResult<JSScript> Execute(JSScript script)
+        {
+            try
+            {
+                InternalEngine.Execute(script.Content);
+                return new ExecutionResult<JSScript>
+                {
+                    Script = script,
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ExecutionResult<JSScript>
+                {
+                    Script = script,
+                    Success = false,
+                    ExecutionException = ex
+                };
+            }
+        }
+
+        public Task<ExecutionResult<JSScript>> ExecuteAsync(JSScript script)
+        {
+            return Task.Factory.StartNew(() => Execute(script));
+        }
+
+        public TReturn Evaluate<TReturn>(JSScript script)
+        {
+            return InternalEngine.Evaluate<TReturn>(script.Content);
+        }
+
+        public Task<TReturn> EvaluateAsync<TReturn>(JSScript script)
+        {
+            return Task.Factory.StartNew(() => InternalEngine.Evaluate<TReturn>(script.Content));
         }
 
         public JSScript NewScript()
@@ -67,7 +113,7 @@ namespace AudioSwitcher.Scripting.JavaScript
 
         public void Dispose()
         {
-            _engine = null;
+            InternalEngine = null;
         }
     }
 }

@@ -10,8 +10,8 @@ using AudioSwitcher.AudioApi.CoreAudio.Threading;
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
-    ///     Enumerates Windwows System Devices.
-    ///     Stores the current devices in memory to avoid calling the COM library when not requried
+    ///     Enumerates Windows System Devices.
+    ///     Stores the current devices in memory to avoid calling the COM library when not required
     /// </summary>
     [ComVisible(false)]
     public sealed class CoreAudioDeviceEnumerator : IDeviceEnumerator<CoreAudioDevice>, IMMNotificationClient,
@@ -33,9 +33,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             RefreshSystemDevices();
         }
 
-        public event AudioDeviceChangedHandler AudioDeviceChanged;
-
-        public AudioController AudioController { get; set; }
+        public AudioController AudioController
+        {
+            get;
+            set;
+        }
 
         public CoreAudioDevice DefaultPlaybackDevice
         {
@@ -77,6 +79,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get { return DefaultCommunicationsCaptureDevice; }
         }
 
+        public void Dispose()
+        {
+            if (InnerEnumerator != null)
+                InnerEnumerator.UnregisterEndpointNotificationCallback(this);
+
+            _deviceCache = null;
+            InnerEnumerator = null;
+        }
+
+        public event AudioDeviceChangedHandler AudioDeviceChanged;
+
         IDevice IDeviceEnumerator.GetDevice(Guid id)
         {
             return GetDevice(id);
@@ -92,7 +105,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return Task.Factory.StartNew(() => GetDefaultDevice(deviceType, role));
         }
 
-        Task<IEnumerable<CoreAudioDevice>> IDeviceEnumerator<CoreAudioDevice>.GetDevicesAsync(DeviceType deviceType, DeviceState state)
+        Task<IEnumerable<CoreAudioDevice>> IDeviceEnumerator<CoreAudioDevice>.GetDevicesAsync(DeviceType deviceType,
+            DeviceState state)
         {
             return Task.Factory.StartNew(() => GetDevices(deviceType, state));
         }
@@ -122,15 +136,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             // Required for the task return type
             // ReSharper disable once RedundantEnumerableCastCall
             return Task.Factory.StartNew(() => GetDevices(deviceType, state).Cast<IDevice>());
-        }
-
-        public void Dispose()
-        {
-            if (InnerEnumerator != null)
-                InnerEnumerator.UnregisterEndpointNotificationCallback(this);
-
-            _deviceCache = null;
-            InnerEnumerator = null;
         }
 
         private void RefreshSystemDevices()
@@ -265,6 +270,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         #region IMMNotif Members
 
+        private readonly ConcurrentDictionary<string, bool> _processingIds = new ConcurrentDictionary<string, bool>();
+
         void IMMNotificationClient.OnDeviceStateChanged(string deviceId, EDeviceState newState)
         {
             RefreshSystemDevices();
@@ -292,8 +299,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     AudioDeviceEventType.Removed));
         }
 
-
-        readonly ConcurrentDictionary<string, bool> _processingIds = new ConcurrentDictionary<string, bool>();
 
         void IMMNotificationClient.OnDefaultDeviceChanged(EDataFlow flow, ERole role, string deviceId)
         {

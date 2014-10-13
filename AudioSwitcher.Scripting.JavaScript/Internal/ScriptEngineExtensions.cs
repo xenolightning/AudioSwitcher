@@ -9,48 +9,30 @@ using Jurassic.Library;
 
 namespace AudioSwitcher.Scripting.JavaScript.Internal
 {
-    internal static class ScriptEngineExtensions
+    public static class ScriptEngineExtensions
     {
-        public static AudioSwitcherLibrary AddAudioSwitcherLibrary(this ScriptEngine engine, AudioController controller)
+        internal static AudioSwitcherLibrary AddAudioSwitcherLibrary(this ScriptEngine engine, AudioController controller)
         {
             return AddLibrary(engine, new AudioSwitcherLibrary(engine, controller));
         }
 
-        public static CoreLibrary AddCoreLibrary(this ScriptEngine engine)
+        internal static CoreLibrary AddCoreLibrary(this ScriptEngine engine)
         {
             return AddLibrary(engine, new CoreLibrary(engine));
         }
 
-        /// <summary>
-        ///     Add the library to the current lua controller
-        /// </summary>
-        /// <param name="engine"></param>
-        /// <param name="library"></param>
-        /// <returns></returns>
         public static bool AddLibrary(this ScriptEngine engine, IJavaScriptLibrary library)
         {
             library.Add(engine);
             return true;
         }
 
-        /// <summary>
-        ///     Add the library to the current lua controller
-        /// </summary>
-        /// <param name="engine"></param>
-        /// <param name="library"></param>
-        /// <returns></returns>
         public static T AddLibrary<T>(this ScriptEngine engine, T library) where T : IJavaScriptLibrary
         {
             library.Add(engine);
             return library;
         }
 
-        /// <summary>
-        ///     Removes the library import from the current lua controller
-        /// </summary>
-        /// <param name="engine"></param>
-        /// <param name="library"></param>
-        /// <returns></returns>
         public static bool RemoveLibrary(this ScriptEngine engine, IJavaScriptLibrary library)
         {
             library.Remove(engine);

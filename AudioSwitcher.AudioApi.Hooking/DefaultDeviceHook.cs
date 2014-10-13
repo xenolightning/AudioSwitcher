@@ -9,13 +9,17 @@ namespace AudioSwitcher.AudioApi.Hooking
 {
     public class DefaultDeviceHook : IHook, IDisposable
     {
-        private readonly Func<DataFlow, Role, string> _systemDeviceId;
-        private readonly int _processId;
-        private string _channelName;
-
         public delegate void OnErrorHandler(int processId, Exception exception);
 
-        public event OnErrorHandler OnError;
+        private readonly int _processId;
+        private readonly Func<DataFlow, Role, string> _systemDeviceId;
+        private string _channelName;
+
+        public DefaultDeviceHook(int processId, Func<DataFlow, Role, string> systemDeviceId)
+        {
+            _processId = processId;
+            _systemDeviceId = systemDeviceId;
+        }
 
         public bool IsHooked
         {
@@ -23,10 +27,9 @@ namespace AudioSwitcher.AudioApi.Hooking
             private set;
         }
 
-        public DefaultDeviceHook(int processId, Func<DataFlow, Role, string> systemDeviceId)
+        public void Dispose()
         {
-            _processId = processId;
-            _systemDeviceId = systemDeviceId;
+            UnHook();
         }
 
         public void Hook()
@@ -47,17 +50,11 @@ namespace AudioSwitcher.AudioApi.Hooking
             RemoteHooking.Inject(
                 _processId,
                 InjectionOptions.DoNotRequireStrongName,
-                typeof(IMMDeviceEnumerator).Assembly.Location,
-                typeof(IMMDeviceEnumerator).Assembly.Location,
+                typeof (IMMDeviceEnumerator).Assembly.Location,
+                typeof (IMMDeviceEnumerator).Assembly.Location,
                 _channelName);
 
             IsHooked = true;
-        }
-
-        private void RaiseOnError(int processId, Exception exception)
-        {
-            if (OnError != null)
-                OnError(processId, exception);
         }
 
         public void UnHook()
@@ -68,57 +65,22 @@ namespace AudioSwitcher.AudioApi.Hooking
             IsHooked = false;
         }
 
-        public class RemoteInterface : MarshalByRefObject, IRemoteHook
+        public event OnErrorHandler OnError;
+
+        private void RaiseOnError(int processId, Exception exception)
         {
-
-            public Func<DataFlow, Role, string> SystemId
-            {
-                get;
-                set;
-            }
-
-            public Func<bool> Unload
-            {
-                get;
-                set;
-            }
-
-            public Action<int, Exception> ErrorHandler
-            {
-                get;
-                set;
-            }
-
-            public string GetDefaultDevice(DataFlow dataFlow, Role role)
-            {
-                if (SystemId == null)
-                    return String.Empty;
-
-                return SystemId(dataFlow, role);
-            }
-
-            public bool CanUnload()
-            {
-                if (Unload == null)
-                    return true;
-
-                return Unload();
-            }
-
-            public void ReportError(int processId, Exception e)
-            {
-                if (ErrorHandler != null)
-                    ErrorHandler(processId, e);
-            }
+            if (OnError != null)
+                OnError(processId, exception);
         }
 
         public class EntryPoint : IEntryPoint
         {
-            public readonly RemoteInterface Interface;
-
             [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = false)]
             [return: MarshalAs(UnmanagedType.U4)]
-            public delegate int DGetDefaultAudioEndpoint(IMMDeviceEnumerator self, DataFlow dataFlow, Role role, out IntPtr ppEndpoint);
+            public delegate int DGetDefaultAudioEndpoint(
+                IMMDeviceEnumerator self, DataFlow dataFlow, Role role, out IntPtr ppEndpoint);
+
+            public readonly RemoteInterface Interface;
 
             public EntryPoint(RemoteHooking.IContext inContext, string inChannelName)
             {
@@ -128,12 +90,13 @@ namespace AudioSwitcher.AudioApi.Hooking
             public void Run(RemoteHooking.IContext inContext, string inChannelName)
             {
                 //Create the DefaultDevice Hook
-                var cci = new ComClassQuery.ComClassInfo(typeof(MMDeviceEnumeratorComObject),
-                    typeof(IMMDeviceEnumerator), "GetDefaultAudioEndpoint");
+                var cci = new ComClassQuery.ComClassInfo(typeof (MMDeviceEnumeratorComObject),
+                    typeof (IMMDeviceEnumerator), "GetDefaultAudioEndpoint");
                 ComClassQuery.Query(cci);
 
-                var hook = LocalHook.Create(cci.FunctionPointer, new DGetDefaultAudioEndpoint(GetDefaultAudioEndpoint), this);
-                hook.ThreadACL.SetExclusiveACL(new int[] { });
+                var hook = LocalHook.Create(cci.FunctionPointer, new DGetDefaultAudioEndpoint(GetDefaultAudioEndpoint),
+                    this);
+                hook.ThreadACL.SetExclusiveACL(new int[] {});
 
                 try
                 {
@@ -159,10 +122,10 @@ namespace AudioSwitcher.AudioApi.Hooking
                 {
                     hook.Dispose();
                 }
-
             }
 
-            private static int GetDefaultAudioEndpoint(IMMDeviceEnumerator self, DataFlow dataflow, Role role, out IntPtr ppendpoint)
+            private static int GetDefaultAudioEndpoint(IMMDeviceEnumerator self, DataFlow dataflow, Role role,
+                out IntPtr ppendpoint)
             {
                 var entryPoint = HookRuntimeInfo.Callback as EntryPoint;
 
@@ -185,9 +148,47 @@ namespace AudioSwitcher.AudioApi.Hooking
             }
         }
 
-        public void Dispose()
+        public class RemoteInterface : MarshalByRefObject, IRemoteHook
         {
-            UnHook();
+            public Func<DataFlow, Role, string> SystemId
+            {
+                get;
+                set;
+            }
+
+            public Func<bool> Unload
+            {
+                get;
+                set;
+            }
+
+            public Action<int, Exception> ErrorHandler
+            {
+                get;
+                set;
+            }
+
+            public bool CanUnload()
+            {
+                if (Unload == null)
+                    return true;
+
+                return Unload();
+            }
+
+            public void ReportError(int processId, Exception e)
+            {
+                if (ErrorHandler != null)
+                    ErrorHandler(processId, e);
+            }
+
+            public string GetDefaultDevice(DataFlow dataFlow, Role role)
+            {
+                if (SystemId == null)
+                    return String.Empty;
+
+                return SystemId(dataFlow, role);
+            }
         }
     }
 }

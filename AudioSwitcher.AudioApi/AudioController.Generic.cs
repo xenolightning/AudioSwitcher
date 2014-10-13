@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi
 {
-    [ComVisible(false)]
     public abstract class AudioController<T> : AudioController
         where T : Device
     {
@@ -41,31 +39,31 @@ namespace AudioSwitcher.AudioApi
             get { return base.DefaultCaptureCommunicationsDevice as T; }
         }
 
-        public new IEnumerable<T> GetPlaybackDevices(DeviceState deviceState = DefaultDeviceStateFilter)
+        public new IEnumerable<T> GetPlaybackDevices(DeviceState deviceState = DEFAULT_DEVICE_STATE_FILTER)
         {
             return DeviceEnumerator.GetDevices(DeviceType.Playback, deviceState);
         }
-        public new Task<IEnumerable<T>> GetPlaybackDevicesAsync(DeviceState deviceState = DefaultDeviceStateFilter)
+        public new Task<IEnumerable<T>> GetPlaybackDevicesAsync(DeviceState deviceState = DEFAULT_DEVICE_STATE_FILTER)
         {
             return DeviceEnumerator.GetDevicesAsync(DeviceType.Playback, deviceState);
         }
 
-        public new IEnumerable<T> GetCaptureDevices(DeviceState deviceState = DefaultDeviceStateFilter)
+        public new IEnumerable<T> GetCaptureDevices(DeviceState deviceState = DEFAULT_DEVICE_STATE_FILTER)
         {
             return DeviceEnumerator.GetDevices(DeviceType.Capture, deviceState);
         }
 
-        public new Task<IEnumerable<T>> GetCaptureDevicesAsync(DeviceState deviceState = DefaultDeviceStateFilter)
+        public new Task<IEnumerable<T>> GetCaptureDevicesAsync(DeviceState deviceState = DEFAULT_DEVICE_STATE_FILTER)
         {
             return DeviceEnumerator.GetDevicesAsync(DeviceType.Capture, deviceState);
         }
 
-        public new T GetAudioDevice(Guid id, DeviceState state = DefaultDeviceStateFilter)
+        public new T GetAudioDevice(Guid id, DeviceState state = DEFAULT_DEVICE_STATE_FILTER)
         {
             return base.GetAudioDevice(id, state) as T;
         }
 
-        public new Task<T> GetAudioDeviceAsync(Guid id, DeviceState state = DefaultDeviceStateFilter)
+        public new Task<T> GetAudioDeviceAsync(Guid id, DeviceState state = DEFAULT_DEVICE_STATE_FILTER)
         {
             return Task.Factory.StartNew(() => DeviceEnumerator.GetDevices(DeviceType.All, state).FirstOrDefault(dev => dev.Id == id));
         }

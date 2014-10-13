@@ -1,16 +1,17 @@
 ﻿using System;
+using System.IO;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
 using AudioSwitcher.AudioApi.Sandbox;
-using Jurassic;
+using AudioSwitcher.Scripting.JavaScript;
 using Jurassic.Library;
 
 namespace AudioSwitcher.CLI
 {
-    internal class Program
+    internal static class Program
     {
 
-        public static bool IsDebug = false;
+        public static bool IsDebug;
 
         private static int Main(string[] args)
         {
@@ -20,7 +21,7 @@ namespace AudioSwitcher.CLI
             //Process CLI Arguments
             for (var i = 0; i < args.Length - 1; i++)
             {
-                switch(args[i])
+                switch (args[i])
                 {
                     case "--debug":
                         IsDebug = true;
@@ -39,26 +40,27 @@ namespace AudioSwitcher.CLI
 
             AudioController controller;
 
-            if(IsDebug)
+            if (IsDebug)
                 controller = new SandboxAudioController(new CoreAudioDeviceEnumerator());
             else
                 controller = new CoreAudioController();
 
-            var engine = new ScriptEngine();
-            engine.AddCoreLibrary();
-            engine.AddAudioSwitcherLibrary(controller);
-
-            //Enable to log to CLI
-            //engine.SetGlobalValue("console", new ConsoleOutput(engine));
-            engine.SetGlobalValue("console", new FirebugConsole(engine));
-
-            try
+            using (var engine = new JSEngine(controller))
             {
-                engine.Evaluate(new FileScriptSource(fName));
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
+
+
+                //Enable to log to CLI
+                //engine.SetGlobalValue("console", new ConsoleOutput(engine));
+                engine.InternalEngine.SetGlobalValue("console", new FirebugConsole(engine.InternalEngine));
+
+                try
+                {
+                    engine.Execute(File.ReadAllText(fName));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
             }
 
             return 0;
@@ -71,7 +73,7 @@ namespace AudioSwitcher.CLI
             Console.WriteLine("asc.exe [options] inputFile");
             Console.WriteLine();
             Console.WriteLine("InputFile:");
-            Console.WriteLine("Must be a valid javascript file, and end with .js");
+            Console.WriteLine("Must be a valid JavaScript file, and end with .js");
             Console.WriteLine();
             Console.WriteLine("Options:");
             Console.WriteLine("--debug (optional) - Forces Debug Audio Context. Scripts will not affect actual System Devices.");

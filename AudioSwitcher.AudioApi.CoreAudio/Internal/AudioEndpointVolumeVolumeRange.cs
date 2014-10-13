@@ -31,13 +31,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     /// </summary>
     internal class AudioEndpointVolumeVolumeRange
     {
-        private readonly float _VolumeIncrementdB;
-        private readonly float _VolumeMaxdB;
-        private readonly float _VolumeMindB;
+        private readonly float _volumeIncrementdB;
+        private readonly float _volumeMaxdB;
+        private readonly float _volumeMindB;
 
         internal AudioEndpointVolumeVolumeRange(IAudioEndpointVolume parent)
         {
-            Marshal.ThrowExceptionForHR(parent.GetVolumeRange(out _VolumeMindB, out _VolumeMaxdB, out _VolumeIncrementdB));
+            Marshal.ThrowExceptionForHR(parent.GetVolumeRange(out _volumeMindB, out _volumeMaxdB, out _volumeIncrementdB));
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public float MinDecibels
         {
-            get { return _VolumeMindB; }
+            get { return _volumeMindB; }
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public float MaxDecibels
         {
-            get { return _VolumeMaxdB; }
+            get { return _volumeMaxdB; }
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public float IncrementDecibels
         {
-            get { return _VolumeIncrementdB; }
+            get { return _volumeIncrementdB; }
         }
     }
 }

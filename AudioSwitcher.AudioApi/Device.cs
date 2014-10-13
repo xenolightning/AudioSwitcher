@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi
 {
     /// <summary>
     ///     Provides a basic implementation of IDevice so that developers need not implement very common functionality.
-    ///     Should be used inplace of IDevice where possible
+    ///     Should be used in place of IDevice where possible
     /// </summary>
-    [ComVisible(false)]
     public abstract class Device : IDevice
     {
         protected Device(IDeviceEnumerator enumerator)

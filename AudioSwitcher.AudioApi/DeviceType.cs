@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AudioSwitcher.AudioApi
+﻿namespace AudioSwitcher.AudioApi
 {
     public enum DeviceType
     {

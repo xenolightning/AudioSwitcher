@@ -31,15 +31,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     /// </summary>
     internal class PropertyStore
     {
-        internal enum Mode
-        {
-            Read,
-            ReadWrite,
-            Write
-        }
-
-        private readonly IPropertyStore storeInterface;
         private readonly Mode _accessMode;
+        private readonly IPropertyStore storeInterface;
 
         /// <summary>
         ///     Creates a new property store
@@ -183,6 +176,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             result.Value = value;
             Marshal.ThrowExceptionForHR(storeInterface.SetValue(ref key, ref result));
             storeInterface.Commit();
+        }
+
+        internal enum Mode
+        {
+            Read,
+            ReadWrite,
+            Write
         }
     }
 }

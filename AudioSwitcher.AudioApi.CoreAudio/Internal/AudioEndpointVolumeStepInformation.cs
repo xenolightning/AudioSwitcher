@@ -30,12 +30,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     /// </summary>
     internal class AudioEndpointVolumeStepInformation
     {
-        private readonly uint _Step;
-        private readonly uint _StepCount;
+        private readonly uint _step;
+        private readonly uint _stepCount;
 
         internal AudioEndpointVolumeStepInformation(IAudioEndpointVolume parent)
         {
-            Marshal.ThrowExceptionForHR(parent.GetVolumeStepInfo(out _Step, out _StepCount));
+            Marshal.ThrowExceptionForHR(parent.GetVolumeStepInfo(out _step, out _stepCount));
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public uint Step
         {
-            get { return _Step; }
+            get { return _step; }
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public uint StepCount
         {
-            get { return _StepCount; }
+            get { return _stepCount; }
         }
     }
 }

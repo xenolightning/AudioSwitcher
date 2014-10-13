@@ -1,24 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AudioSwitcher.Scripting
 {
-    public interface IScriptEngine<T> : IDisposable
-        where T : IScript
+    public interface IScriptEngine : IDisposable
     {
+        string FriendlyName
+        {
+            get;
+        }
 
-        string FriendlyName { get; }
+        IScriptInfo ScriptInfo
+        {
+            get;
+        }
 
-        IScriptInfo ScriptInfo { get; }
+        ExecutionResult<string> Execute(string script);
 
-        ExecutionResult Execute(T scriptScript);
+        Task<ExecutionResult<string>> ExecuteAsync(string script);
 
-        Task<ExecutionResult> ExecuteAsync(T scriptScript);
+        TReturn Evaluate<TReturn>(string script);
 
-        T NewScript();
+        Task<TReturn> EvaluateAsync<TReturn>(string script);
 
     }
 }

@@ -2,11 +2,19 @@
 {
     public interface IScript
     {
+        string Name
+        {
+            get;
+        }
 
-        string Name { get; }
+        string Content
+        {
+            get;
+        }
 
-        string Content { get; }
-
-        IScriptInfo ScriptInfo { get; }
+        IScriptInfo ScriptInfo
+        {
+            get;
+        }
     }
 }

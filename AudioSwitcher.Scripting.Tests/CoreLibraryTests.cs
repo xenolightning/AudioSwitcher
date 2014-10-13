@@ -1,37 +1,33 @@
-﻿using Jurassic;
+﻿using AudioSwitcher.AudioApi;
+using AudioSwitcher.Tests.Common;
 using Xunit;
 
-namespace AudioSwitcher.Scripting.Tests
+namespace AudioSwitcher.Scripting.JavaScript.Tests
 {
     public class CoreLibraryTests
     {
+        public static AudioController GetAudioController()
+        {
+            return new TestAudioController(new TestDeviceEnumerator(2, 2));
+        }
 
         [Fact]
         public void Engine_AddLibrary_Core()
         {
-            var engine = new ScriptEngine();
-            var coreLib = engine.AddCoreLibrary();
-
-            Assert.Equal(true, engine.HasGlobalValue(coreLib.Name));
-        }
-
-        [Fact]
-        public void Engine_RemoveLibrary_Core()
-        {
-            var engine = new ScriptEngine();
-            var coreLib = engine.AddCoreLibrary();
-            engine.RemoveLibrary(coreLib);
-
-            Assert.Equal(engine.GetGlobalValue(coreLib.Name), Undefined.Value);
+            using (var engine = new JSEngine(GetAudioController()))
+            {
+                Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Core"));
+            }
         }
 
         [Fact]
         public void Core_sleep_Exists()
         {
-            var engine = new ScriptEngine();
-            engine.AddCoreLibrary();
-            Assert.DoesNotThrow(() => engine.Execute("Core.sleep(10)"));
+            using (var engine = new JSEngine(GetAudioController()))
+            {
+                Assert.DoesNotThrow(() => engine.Execute("Core.sleep(100)"));
+            }
         }
-
+        
     }
 }

@@ -13,14 +13,34 @@
             FileExtension = "js";
         }
 
-        public string CommonName { get; private set; }
+        public string CommonName
+        {
+            get;
+            private set;
+        }
 
-        public string OfficialName { get; private set; }
+        public string OfficialName
+        {
+            get;
+            private set;
+        }
 
-        public string VersionString { get; private set; }
+        public string VersionString
+        {
+            get;
+            private set;
+        }
 
-        public string SyntaxHighlightingCode { get; private set; }
+        public string SyntaxHighlightingCode
+        {
+            get;
+            private set;
+        }
 
-        public string FileExtension { get; private set; }
+        public string FileExtension
+        {
+            get;
+            private set;
+        }
     }
 }

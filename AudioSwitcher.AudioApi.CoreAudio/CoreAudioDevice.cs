@@ -9,8 +9,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     [ComVisible(false)]
     public sealed class CoreAudioDevice : Device, INotifyPropertyChanged
     {
-        private Guid? _id;
         private MMDevice _device;
+        private Guid? _id;
 
         internal CoreAudioDevice(MMDevice device, IDeviceEnumerator<CoreAudioDevice> enumerator)
             : base(enumerator)
@@ -26,42 +26,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             });
 
             enumerator.AudioDeviceChanged += EnumeratorOnAudioDeviceChanged;
-        }
-
-        private void EnumeratorOnAudioDeviceChanged(object sender, AudioDeviceChangedEventArgs audioDeviceChangedEventArgs)
-        {
-            if (audioDeviceChangedEventArgs.Device.Id != Id)
-                return;
-
-            if (audioDeviceChangedEventArgs.EventType == AudioDeviceEventType.PropertyChanged)
-            {
-                OnPropertyChanged("DeviceType");
-                OnPropertyChanged("Description");
-                OnPropertyChanged("FullName");
-                OnPropertyChanged("IconPath");
-                OnPropertyChanged("Id");
-                OnPropertyChanged("IsCaptureDevice");
-                OnPropertyChanged("IsDefaultCommunicationsDevice");
-                OnPropertyChanged("IsDefaultDevice");
-                OnPropertyChanged("IsMuted");
-                OnPropertyChanged("IsPlaybackDevice");
-                OnPropertyChanged("ShortName");
-                OnPropertyChanged("State");
-                OnPropertyChanged("SystemName");
-            }
-        }
-
-        void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
-        {
-            RaiseVolumeChanged();
-        }
-
-        private void RaiseVolumeChanged()
-        {
-            if (VolumeChanged != null)
-                VolumeChanged(this, new AudioDeviceChangedEventArgs(this, AudioDeviceEventType.Volume));
-
-            OnPropertyChanged("Volume");
         }
 
         /// <summary>
@@ -132,13 +96,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     return Device.DeviceName;
                 });
             }
-            set
-            {
-                ComThread.Invoke(() =>
-                {
-                    Device.DeviceName = value;
-                });
-            }
+            set { ComThread.Invoke(() => { Device.DeviceName = value; }); }
         }
 
         public override string SystemName
@@ -200,24 +158,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public override DeviceState State
         {
-            get
-            {
-                return ComThread.Invoke(() =>
-                {
-                    return Device.State.AsDeviceState();
-                });
-            }
+            get { return ComThread.Invoke(() => { return Device.State.AsDeviceState(); }); }
         }
 
         public override DeviceType DeviceType
         {
-            get
-            {
-                return ComThread.Invoke(() =>
-                {
-                    return Device.EDataFlow.AsDeviceType();
-                });
-            }
+            get { return ComThread.Invoke(() => { return Device.EDataFlow.AsDeviceType(); }); }
         }
 
         public override bool IsMuted
@@ -245,7 +191,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     try
                     {
-                        return (int)Math.Round(Device.AudioEndpointVolume.MasterVolumeLevelScalar * 100, 0);
+                        return (int) Math.Round(Device.AudioEndpointVolume.MasterVolumeLevelScalar*100, 0);
                     }
                     catch
                     {
@@ -262,7 +208,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     else if (value > 100)
                         value = 100;
 
-                    float val = (float)value / 100;
+                    float val = (float) value/100;
 
                     Device.AudioEndpointVolume.MasterVolumeLevelScalar = val;
 
@@ -271,6 +217,45 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                         Device.AudioEndpointVolume.MasterVolumeLevelScalar += 0.0001F;
                 });
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void EnumeratorOnAudioDeviceChanged(object sender,
+            AudioDeviceChangedEventArgs audioDeviceChangedEventArgs)
+        {
+            if (audioDeviceChangedEventArgs.Device.Id != Id)
+                return;
+
+            if (audioDeviceChangedEventArgs.EventType == AudioDeviceEventType.PropertyChanged)
+            {
+                OnPropertyChanged("DeviceType");
+                OnPropertyChanged("Description");
+                OnPropertyChanged("FullName");
+                OnPropertyChanged("IconPath");
+                OnPropertyChanged("Id");
+                OnPropertyChanged("IsCaptureDevice");
+                OnPropertyChanged("IsDefaultCommunicationsDevice");
+                OnPropertyChanged("IsDefaultDevice");
+                OnPropertyChanged("IsMuted");
+                OnPropertyChanged("IsPlaybackDevice");
+                OnPropertyChanged("ShortName");
+                OnPropertyChanged("State");
+                OnPropertyChanged("SystemName");
+            }
+        }
+
+        private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
+        {
+            RaiseVolumeChanged();
+        }
+
+        private void RaiseVolumeChanged()
+        {
+            if (VolumeChanged != null)
+                VolumeChanged(this, new AudioDeviceChangedEventArgs(this, AudioDeviceEventType.Volume));
+
+            OnPropertyChanged("Volume");
         }
 
         /// <summary>
@@ -308,11 +293,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             string[] dev = systemDeviceId.Replace("{", "")
                 .Replace("}", "")
-                .Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                .Split(new[] {'.'}, StringSplitOptions.RemoveEmptyEntries);
             return new Guid(dev[dev.Length - 1]);
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged(string propertyName)
         {

@@ -4,9 +4,15 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
 {
     public interface IJavaScriptLibrary
     {
-        string Name { get; }
+        string Name
+        {
+            get;
+        }
 
-        int Version { get; }
+        int Version
+        {
+            get;
+        }
 
         void Add(ScriptEngine engine);
 

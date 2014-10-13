@@ -31,13 +31,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     /// </summary>
     internal class AudioEndpointVolumeChannel
     {
-        private readonly IAudioEndpointVolume _AudioEndpointVolume;
-        private readonly uint _Channel;
+        private readonly IAudioEndpointVolume _audioEndpointVolume;
+        private readonly uint _channel;
 
         internal AudioEndpointVolumeChannel(IAudioEndpointVolume parent, int channel)
         {
-            _Channel = (uint) channel;
-            _AudioEndpointVolume = parent;
+            _channel = (uint) channel;
+            _audioEndpointVolume = parent;
         }
 
         /// <summary>
@@ -48,12 +48,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get
             {
                 float result;
-                Marshal.ThrowExceptionForHR(_AudioEndpointVolume.GetChannelVolumeLevel(_Channel, out result));
+                Marshal.ThrowExceptionForHR(_audioEndpointVolume.GetChannelVolumeLevel(_channel, out result));
                 return result;
             }
             set
             {
-                Marshal.ThrowExceptionForHR(_AudioEndpointVolume.SetChannelVolumeLevel(_Channel, value, Guid.Empty));
+                Marshal.ThrowExceptionForHR(_audioEndpointVolume.SetChannelVolumeLevel(_channel, value, Guid.Empty));
             }
         }
 
@@ -65,12 +65,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get
             {
                 float result;
-                Marshal.ThrowExceptionForHR(_AudioEndpointVolume.GetChannelVolumeLevelScalar(_Channel, out result));
+                Marshal.ThrowExceptionForHR(_audioEndpointVolume.GetChannelVolumeLevelScalar(_channel, out result));
                 return result;
             }
             set
             {
-                Marshal.ThrowExceptionForHR(_AudioEndpointVolume.SetChannelVolumeLevelScalar(_Channel, value, Guid.Empty));
+                Marshal.ThrowExceptionForHR(_audioEndpointVolume.SetChannelVolumeLevelScalar(_channel, value, Guid.Empty));
             }
         }
     }

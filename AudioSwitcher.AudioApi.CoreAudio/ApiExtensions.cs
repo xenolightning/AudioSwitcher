@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public static class ApiExtensions
     {
-
         internal static EDataFlow AsEDataFlow(this DeviceType type)
         {
             switch (type)
@@ -105,6 +101,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     throw new ArgumentOutOfRangeException("role");
             }
         }
-
     }
 }

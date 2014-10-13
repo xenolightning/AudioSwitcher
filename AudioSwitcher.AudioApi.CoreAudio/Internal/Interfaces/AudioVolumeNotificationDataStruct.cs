@@ -26,11 +26,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
     public struct AudioVolumeNotificationDataStruct
     {
-        public Guid guidEventContext;
+        public float ChannelVolume;
         public bool bMuted;
         public float fMasterVolume;
+        public Guid guidEventContext;
         public uint nChannels;
-        public float ChannelVolume;
 
         //Code Should Compile at warning level4 without any warnings,
         //However this struct will give us Warning CS0649: Field [Fieldname]

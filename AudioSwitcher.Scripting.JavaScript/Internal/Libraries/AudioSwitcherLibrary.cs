@@ -14,7 +14,11 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
             PopulateFunctions();
         }
 
-        public AudioController AudioController { get; private set; }
+        public AudioController AudioController
+        {
+            get;
+            private set;
+        }
 
         public string Name
         {

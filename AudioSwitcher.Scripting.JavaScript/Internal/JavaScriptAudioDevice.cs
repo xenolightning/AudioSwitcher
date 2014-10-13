@@ -22,21 +22,45 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
         }
 
         [JSProperty(Name = "id")]
-        public string ID { get; internal set; }
+        public string ID
+        {
+            get;
+            internal set;
+        }
 
         [JSProperty(Name = "name")]
-        public string Name { get; internal set; }
+        public string Name
+        {
+            get;
+            internal set;
+        }
 
         [JSProperty(Name = "flags")]
-        public int Flags { get; internal set; }
+        public int Flags
+        {
+            get;
+            internal set;
+        }
 
         [JSProperty(Name = "isDefault")]
-        public bool IsDefault { get; internal set; }
+        public bool IsDefault
+        {
+            get;
+            internal set;
+        }
 
         [JSProperty(Name = "isDefaultComm")]
-        public bool IsDefaultComm { get; internal set; }
+        public bool IsDefaultComm
+        {
+            get;
+            internal set;
+        }
 
-        private AudioController AudioController { get; set; }
+        private AudioController AudioController
+        {
+            get;
+            set;
+        }
 
         private IDevice Device
         {

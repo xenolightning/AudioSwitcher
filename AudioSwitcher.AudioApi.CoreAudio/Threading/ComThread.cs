@@ -6,7 +6,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 {
     internal static class ComThread
     {
-
         private static readonly ComTaskScheduler ComScheduler = new ComTaskScheduler();
 
         public static bool InvokeRequired
@@ -47,6 +46,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
         {
             return Task<T>.Factory.StartNew(func, CancellationToken.None, TaskCreationOptions.None, ComScheduler);
         }
-
     }
 }

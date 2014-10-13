@@ -5,6 +5,10 @@ namespace AudioSwitcher.Tests.Common
 {
     public sealed class TestDevice : Device
     {
+        private readonly DeviceType _deviceType;
+        public Guid _id;
+        private bool _muted;
+
         public TestDevice(Guid id, DeviceType dFlow, IDeviceEnumerator enumerator)
             : base(enumerator)
         {
@@ -12,13 +16,9 @@ namespace AudioSwitcher.Tests.Common
             _deviceType = dFlow;
         }
 
-        public Guid _id;
         public override Guid Id
         {
-            get
-            {
-                return _id;
-            }
+            get { return _id; }
         }
 
         public override string Description
@@ -52,22 +52,14 @@ namespace AudioSwitcher.Tests.Common
             get { return DeviceState.Active; }
         }
 
-        private readonly DeviceType _deviceType;
         public override DeviceType DeviceType
         {
-            get
-            {
-                return _deviceType;
-            }
+            get { return _deviceType; }
         }
 
-        private bool _muted;
         public override bool IsMuted
         {
-            get
-            {
-                return _muted;
-            }
+            get { return _muted; }
         }
 
         public override int Volume

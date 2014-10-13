@@ -47,10 +47,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 throw new NotSupportedException("This functionality is only supported on Windows Vista or newer.");
             }
 #endif
-            ComThread.Invoke(() =>
-            {
-                _realEnumerator = new MMDeviceEnumeratorComObject() as IMMDeviceEnumerator;
-            });
+            ComThread.Invoke(() => { _realEnumerator = new MMDeviceEnumeratorComObject() as IMMDeviceEnumerator; });
         }
 
         /// <summary>
@@ -99,7 +96,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             try
             {
                 IMMDevice device;
-                Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(eDataFlow, role.AsERole(), out device));
+                Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(eDataFlow, role.AsERole(),
+                    out device));
                 string result;
                 Marshal.ThrowExceptionForHR(device.GetId(out result));
                 return result;
@@ -129,18 +127,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public void RegisterEndpointNotificationCallback(IMMNotificationClient client)
         {
-            ComThread.Invoke(() =>
-            {
-                _realEnumerator.RegisterEndpointNotificationCallback(client);
-            });
+            ComThread.Invoke(() => { _realEnumerator.RegisterEndpointNotificationCallback(client); });
         }
 
         public void UnregisterEndpointNotificationCallback(IMMNotificationClient client)
         {
-            ComThread.Invoke(() =>
-            {
-                _realEnumerator.UnregisterEndpointNotificationCallback(client);
-            });
+            ComThread.Invoke(() => { _realEnumerator.UnregisterEndpointNotificationCallback(client); });
         }
     }
 }

@@ -10,10 +10,10 @@ namespace AudioSwitcher.Tests.Common
     public class TestDeviceEnumerator : IDeviceEnumerator<TestDevice>
     {
         private readonly ConcurrentBag<TestDevice> _devices;
-        private Guid _defaultPlaybackCommDeviceId;
-        private Guid _defaultPlaybackDeviceId;
         private Guid _defaultCaptureCommDeviceId;
         private Guid _defaultCaptureDeviceId;
+        private Guid _defaultPlaybackCommDeviceId;
+        private Guid _defaultPlaybackDeviceId;
 
 
         public TestDeviceEnumerator(int numPlaybackDevices, int numCaptureDevices)
@@ -35,7 +35,11 @@ namespace AudioSwitcher.Tests.Common
             }
         }
 
-        public AudioController AudioController { get; set; }
+        public AudioController AudioController
+        {
+            get;
+            set;
+        }
 
         public TestDevice DefaultPlaybackDevice
         {
@@ -55,6 +59,26 @@ namespace AudioSwitcher.Tests.Common
         public TestDevice DefaultCommunicationsCaptureDevice
         {
             get { return _devices.FirstOrDefault(x => x.Id == _defaultCaptureCommDeviceId); }
+        }
+
+        IDevice IDeviceEnumerator.DefaultPlaybackDevice
+        {
+            get { return DefaultPlaybackDevice; }
+        }
+
+        IDevice IDeviceEnumerator.DefaultCommunicationsPlaybackDevice
+        {
+            get { return DefaultCommunicationsPlaybackDevice; }
+        }
+
+        IDevice IDeviceEnumerator.DefaultCaptureDevice
+        {
+            get { return DefaultCaptureDevice; }
+        }
+
+        IDevice IDeviceEnumerator.DefaultCommunicationsCaptureDevice
+        {
+            get { return DefaultCommunicationsCaptureDevice; }
         }
 
         public TestDevice GetDevice(Guid id)
@@ -162,26 +186,6 @@ namespace AudioSwitcher.Tests.Common
         public Task<bool> SetDefaultCommunicationsDeviceAsync(TestDevice dev)
         {
             throw new NotImplementedException();
-        }
-
-        IDevice IDeviceEnumerator.DefaultPlaybackDevice
-        {
-            get { return DefaultPlaybackDevice; }
-        }
-
-        IDevice IDeviceEnumerator.DefaultCommunicationsPlaybackDevice
-        {
-            get { return DefaultCommunicationsPlaybackDevice; }
-        }
-
-        IDevice IDeviceEnumerator.DefaultCaptureDevice
-        {
-            get { return DefaultCaptureDevice; }
-        }
-
-        IDevice IDeviceEnumerator.DefaultCommunicationsCaptureDevice
-        {
-            get { return DefaultCommunicationsCaptureDevice; }
         }
 
         public event AudioDeviceChangedHandler AudioDeviceChanged;
