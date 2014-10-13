@@ -59,6 +59,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //Determine offset in memory of the first float
             var firstFloatPtr = (IntPtr) ((long) notifyData + (long) offset);
 
+            //Something weird happened, better to ignore it and move on
+            if (data.nChannels > 100)
+                return;
+
             var voldata = new float[data.nChannels];
 
             //Read all floats from memory.

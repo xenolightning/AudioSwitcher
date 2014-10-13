@@ -56,6 +56,12 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             internal set;
         }
 
+        [JSProperty(Name = "isMuted")]
+        public bool IsMuted
+        {
+            get { return Device.IsMuted; }
+        }
+
         private AudioController Controller
         {
             get;

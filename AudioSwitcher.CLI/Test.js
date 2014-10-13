@@ -1,5 +1,5 @@
 ﻿var devices = AudioSwitcher.getAudioDevices();
-
+console.log("Number of devices: " + devices.length);
 var defaultDevice;
 
 for (var i = 0; i < devices.length; i++) {
@@ -15,6 +15,7 @@ for (var i = 0; i < devices.length; i++) {
 if (defaultDevice !== undefined) {
 
     var vol = defaultDevice.volume();
+    var isMuted = defaultDevice.isMuted;
 
     //Sets the default device
     defaultDevice.setAsDefaultDevice();
@@ -34,4 +35,6 @@ if (defaultDevice !== undefined) {
     console.log("Toggling Mute");
     console.log("Is Muted: " + defaultDevice.toggleMute());
     Core.sleep(2000);
+    console.log("Setting Mute back to it's original state");
+    defaultDevice.mute(isMuted);
 }

@@ -142,8 +142,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return Enumerator.DefaultPlaybackDevice.Id == Id
-                       || Enumerator.DefaultCaptureDevice.Id == Id;
+                return (Enumerator.DefaultPlaybackDevice != null && Enumerator.DefaultPlaybackDevice.Id == Id)
+                       || (Enumerator.DefaultCaptureDevice != null && Enumerator.DefaultCaptureDevice.Id == Id);
             }
         }
 
@@ -151,8 +151,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return Enumerator.DefaultCommunicationsPlaybackDevice.Id == Id
-                       || Enumerator.DefaultCommunicationsCaptureDevice.Id == Id;
+                return (Enumerator.DefaultCommunicationsPlaybackDevice != null && Enumerator.DefaultCommunicationsPlaybackDevice.Id == Id)
+                       || (Enumerator.DefaultCommunicationsCaptureDevice != null && Enumerator.DefaultCommunicationsCaptureDevice.Id == Id);
             }
         }
 

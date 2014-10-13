@@ -55,6 +55,7 @@ namespace AudioSwitcher.CLI
 
                 try
                 {
+                    Console.WriteLine("Executing {0}...", fName);
                     engine.Execute(File.ReadAllText(fName));
                 }
                 catch (Exception ex)
@@ -70,7 +71,7 @@ namespace AudioSwitcher.CLI
         {
             Console.WriteLine("-----  USAGE -----");
             Console.WriteLine();
-            Console.WriteLine("asc.exe [options] inputFile");
+            Console.WriteLine("ascli.exe [options] inputFile");
             Console.WriteLine();
             Console.WriteLine("InputFile:");
             Console.WriteLine("Must be a valid JavaScript file, and end with .js");
