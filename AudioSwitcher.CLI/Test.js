@@ -16,6 +16,11 @@ if (defaultDevice !== undefined) {
 
     var vol = defaultDevice.volume();
     var isMuted = defaultDevice.isMuted;
+    if (isMuted) {
+        console.log("Device is muted");
+    } else {
+        console.log("Device is NOT muted");
+    }
 
     //Sets the default device
     defaultDevice.setAsDefaultDevice();
@@ -35,6 +40,6 @@ if (defaultDevice !== undefined) {
     console.log("Toggling Mute");
     console.log("Is Muted: " + defaultDevice.toggleMute());
     Core.sleep(2000);
-    console.log("Setting Mute back to it's original state");
-    defaultDevice.mute(isMuted);
+    console.log("Setting Muted to [" + defaultDevice.mute(isMuted) + "]");
+    Core.sleep(2000);
 }
