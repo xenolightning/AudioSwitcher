@@ -5,7 +5,7 @@
     <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{99F4CE07-B44F-45C2-AE1D-3732D695D61D}</ProjectGuid>
+    <ProjectGuid>{7794300B-F8D3-4C30-AB1C-FFA0C961A510}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AudioSwitcher.Scripting</RootNamespace>
