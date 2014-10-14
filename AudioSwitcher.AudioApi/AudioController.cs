@@ -87,12 +87,12 @@ namespace AudioSwitcher.AudioApi
 
         public virtual IDevice GetAudioDevice(Guid id, DeviceState state = DEFAULT_DEVICE_STATE_FILTER)
         {
-            return DeviceEnumerator.GetDevices(DeviceType.All, state).FirstOrDefault(dev => dev.Id == id);
+            return DeviceEnumerator.GetDevice(id, state);
         }
 
         public virtual Task<IDevice> GetAudioDeviceAsync(Guid id, DeviceState state = DEFAULT_DEVICE_STATE_FILTER)
         {
-            return Task.Factory.StartNew(() => DeviceEnumerator.GetDevices(DeviceType.All, state).FirstOrDefault(dev => dev.Id == id));
+            return Task.Factory.StartNew(() => GetAudioDevice(id, state));
         }
 
         public virtual bool SetDefaultDevice(IDevice dev)

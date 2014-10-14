@@ -20,11 +20,15 @@ namespace AudioSwitcher.AudioApi
 
         IDevice GetDevice(Guid id);
 
+        IDevice GetDevice(Guid id, DeviceState state);
+
         IDevice GetDefaultDevice(DeviceType deviceType, Role eRole);
 
         IEnumerable<IDevice> GetDevices(DeviceType deviceType, DeviceState state);
 
         Task<IDevice> GetDeviceAsync(Guid id);
+
+        Task<IDevice> GetDeviceAsync(Guid id, DeviceState state);
 
         Task<IDevice> GetDefaultDeviceAsync(DeviceType deviceType, Role eRole);
 

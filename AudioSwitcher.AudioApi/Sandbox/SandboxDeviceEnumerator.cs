@@ -76,12 +76,32 @@ namespace AudioSwitcher.AudioApi.Sandbox
 
         public SandboxDevice GetDevice(Guid id)
         {
-            return _devices.FirstOrDefault(x => x.Id == id);
+            return GetDevice(id, DeviceState.All);
+        }
+
+        public SandboxDevice GetDevice(Guid id, DeviceState state)
+        {
+            return _devices.FirstOrDefault(x => x.Id == id && (x.state & state) > 0);
+        }
+
+        Task<SandboxDevice> IDeviceEnumerator<SandboxDevice>.GetDeviceAsync(Guid id, DeviceState state)
+        {
+            return Task.Factory.StartNew(() => GetDevice(id, state));
+        }
+
+        IDevice IDeviceEnumerator.GetDevice(Guid id, DeviceState state)
+        {
+            return GetDevice(id, state);
         }
 
         Task<SandboxDevice> IDeviceEnumerator<SandboxDevice>.GetDeviceAsync(Guid id)
         {
             return Task.Factory.StartNew(() => GetDevice(id));
+        }
+
+        Task<IDevice> IDeviceEnumerator.GetDeviceAsync(Guid id, DeviceState state)
+        {
+            return Task.Factory.StartNew(() => GetDevice(id, state) as IDevice);
         }
 
         Task<SandboxDevice> IDeviceEnumerator<SandboxDevice>.GetDefaultDeviceAsync(DeviceType deviceType, Role role)

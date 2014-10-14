@@ -44,5 +44,65 @@ namespace AudioSwitcher.AudioApi.Tests
             Assert.True(controller.GetCaptureDevices().All(x => x.IsCaptureDevice));
         }
 
+        [Fact]
+        public void Controller_GetAudioDevice_Playback_1()
+        {
+            var controller = CreateTestController();
+            var device = controller.GetPlaybackDevices().ToList()[0];
+
+            Assert.NotNull(device);
+
+            var sameDevice = controller.GetAudioDevice(device.Id);
+            var sameDevice2 = controller.GetAudioDevice(device.Id, device.State);
+
+            Assert.Same(device, sameDevice);
+            Assert.Same(device, sameDevice2);
+        }
+
+        [Fact]
+        public void Controller_GetAudioDevice_Playback_2()
+        {
+            var controller = CreateTestController();
+            var device = controller.GetPlaybackDevices().ToList()[1];
+
+            Assert.NotNull(device);
+
+            var sameDevice = controller.GetAudioDevice(device.Id);
+            var sameDevice2 = controller.GetAudioDevice(device.Id, device.State);
+
+            Assert.Same(device, sameDevice);
+            Assert.Same(device, sameDevice2);
+        }
+
+        [Fact]
+        public void Controller_GetAudioDevice_Capture_1()
+        {
+            var controller = CreateTestController();
+            var device = controller.GetCaptureDevices().ToList()[0];
+
+            Assert.NotNull(device);
+
+            var sameDevice = controller.GetAudioDevice(device.Id);
+            var sameDevice2 = controller.GetAudioDevice(device.Id, device.State);
+
+            Assert.Same(device, sameDevice);
+            Assert.Same(device, sameDevice2);
+        }
+
+        [Fact]
+        public void Controller_GetAudioDevice_Capture_2()
+        {
+            var controller = CreateTestController();
+            var device = controller.GetCaptureDevices().ToList()[1];
+
+            Assert.NotNull(device);
+
+            var sameDevice = controller.GetAudioDevice(device.Id);
+            var sameDevice2 = controller.GetAudioDevice(device.Id, device.State);
+
+            Assert.Same(device, sameDevice);
+            Assert.Same(device, sameDevice2);
+        }
+
     }
 }

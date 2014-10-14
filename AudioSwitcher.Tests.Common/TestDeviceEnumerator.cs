@@ -83,12 +83,32 @@ namespace AudioSwitcher.Tests.Common
 
         public TestDevice GetDevice(Guid id)
         {
-            return _devices.FirstOrDefault(x => x.Id == id);
+            return GetDevice(id, DeviceState.All);
+        }
+
+        public TestDevice GetDevice(Guid id, DeviceState state)
+        {
+            return _devices.FirstOrDefault(x => x.Id == id && (x.State & state) > 0);
+        }
+
+        Task<TestDevice> IDeviceEnumerator<TestDevice>.GetDeviceAsync(Guid id, DeviceState state)
+        {
+            return Task.Factory.StartNew(() => GetDevice(id, state));
+        }
+
+        IDevice IDeviceEnumerator.GetDevice(Guid id, DeviceState state)
+        {
+            return GetDevice(id, state);
         }
 
         Task<IDevice> IDeviceEnumerator.GetDeviceAsync(Guid id)
         {
             return Task.Factory.StartNew(() => GetDevice(id) as IDevice);
+        }
+
+        Task<IDevice> IDeviceEnumerator.GetDeviceAsync(Guid id, DeviceState state)
+        {
+            return Task.Factory.StartNew(() => GetDevice(id, state) as IDevice);
         }
 
         Task<IDevice> IDeviceEnumerator.GetDefaultDeviceAsync(DeviceType deviceType, Role role)
@@ -185,7 +205,7 @@ namespace AudioSwitcher.Tests.Common
 
         public Task<bool> SetDefaultCommunicationsDeviceAsync(TestDevice dev)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() => SetDefaultCommunicationsDevice(dev));
         }
 
         public event AudioDeviceChangedHandler AudioDeviceChanged;

@@ -95,9 +95,32 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return GetDevice(id);
         }
 
-        Task<CoreAudioDevice> IDeviceEnumerator<CoreAudioDevice>.GetDeviceAsync(Guid id)
+        public CoreAudioDevice GetDevice(Guid id, DeviceState state)
+        {
+            lock (_mutex)
+            {
+                return _deviceCache.FirstOrDefault(x => x.Id == id && (x.State & state) > 0);
+            }
+        }
+
+        public Task<CoreAudioDevice> GetDeviceAsync(Guid id, DeviceState state)
+        {
+            return Task.Factory.StartNew(() => GetDevice(id, state));
+        }
+
+        IDevice IDeviceEnumerator.GetDevice(Guid id, DeviceState state)
+        {
+            return GetDevice(id, state);
+        }
+
+        public Task<CoreAudioDevice> GetDeviceAsync(Guid id)
         {
             return Task.Factory.StartNew(() => GetDevice(id));
+        }
+
+        Task<IDevice> IDeviceEnumerator.GetDeviceAsync(Guid id, DeviceState state)
+        {
+            return Task.Factory.StartNew(() => GetDevice(id, state) as IDevice);
         }
 
         Task<CoreAudioDevice> IDeviceEnumerator<CoreAudioDevice>.GetDefaultDeviceAsync(DeviceType deviceType, Role role)
@@ -164,10 +187,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public CoreAudioDevice GetDevice(Guid id)
         {
-            lock (_mutex)
-            {
-                return _deviceCache.FirstOrDefault(x => x.Id == id);
-            }
+            return GetDevice(id, DeviceState.All);
         }
 
         public bool SetDefaultDevice(IDevice dev)

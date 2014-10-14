@@ -19,6 +19,10 @@ namespace AudioSwitcher.AudioApi
 
         new Task<T> GetDeviceAsync(Guid id);
 
+        new T GetDevice(Guid id, DeviceState state);
+
+        new Task<T> GetDeviceAsync(Guid id, DeviceState state);
+
         new T GetDefaultDevice(DeviceType deviceType, Role role);
 
         new Task<T> GetDefaultDeviceAsync(DeviceType deviceType, Role role);
