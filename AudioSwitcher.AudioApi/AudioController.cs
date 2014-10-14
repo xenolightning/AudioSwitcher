@@ -23,21 +23,25 @@ namespace AudioSwitcher.AudioApi
         public virtual IDevice DefaultPlaybackDevice
         {
             get { return DeviceEnumerator.DefaultPlaybackDevice; }
+            set { DeviceEnumerator.SetDefaultDevice(value); }
         }
 
         public virtual IDevice DefaultPlaybackCommunicationsDevice
         {
             get { return DeviceEnumerator.DefaultCommunicationsPlaybackDevice; }
+            set { DeviceEnumerator.SetDefaultCommunicationsDevice(value); }
         }
 
         public virtual IDevice DefaultCaptureDevice
         {
             get { return DeviceEnumerator.DefaultCaptureDevice; }
+            set { DeviceEnumerator.SetDefaultDevice(value); }
         }
 
         public virtual IDevice DefaultCaptureCommunicationsDevice
         {
             get { return DeviceEnumerator.DefaultCommunicationsCaptureDevice; }
+            set { DeviceEnumerator.SetDefaultCommunicationsDevice(value); }
         }
 
         public event AudioDeviceChangedHandler AudioDeviceChanged;

@@ -104,5 +104,125 @@ namespace AudioSwitcher.AudioApi.Tests
             Assert.Same(device, sameDevice2);
         }
 
+        [Fact]
+        public void Controller_Capture_SetDefault_1()
+        {
+            var controller = CreateTestController();
+            var device = controller.GetCaptureDevices().First(x => !x.IsDefaultDevice);
+
+            Assert.True(device.SetAsDefault());
+            Assert.Same(controller.DefaultCaptureDevice, device);
+        }
+
+        [Fact]
+        public void Controller_Capture_SetDefault_2()
+        {
+            var controller = CreateTestController();
+            var device = controller.GetCaptureDevices().First(x => !x.IsDefaultDevice);
+
+            Assert.True(controller.SetDefaultDevice(device));
+            Assert.Same(controller.DefaultCaptureDevice, device);
+        }
+
+        [Fact]
+        public void Controller_Capture_SetDefault_3()
+        {
+            var controller = CreateTestController();
+            var device = controller.GetCaptureDevices().First(x => !x.IsDefaultDevice);
+
+            Assert.DoesNotThrow(() => controller.DefaultCaptureDevice = device);
+            Assert.Same(controller.DefaultCaptureDevice, device);
+        }
+
+        [Fact]
+        public void Controller_Playback_SetDefault_1()
+        {
+            var controller = CreateTestController();
+            var device = controller.GetPlaybackDevices().First(x => !x.IsDefaultDevice);
+
+            Assert.True(device.SetAsDefault());
+            Assert.Same(controller.DefaultPlaybackDevice, device);
+        }
+
+        [Fact]
+        public void Controller_Playback_SetDefault_2()
+        {
+            var controller = CreateTestController();
+            var device = controller.GetPlaybackDevices().First(x => !x.IsDefaultDevice);
+
+            Assert.True(controller.SetDefaultDevice(device));
+            Assert.Same(controller.DefaultPlaybackDevice, device);
+        }
+
+        [Fact]
+        public void Controller_Playback_SetDefault_3()
+        {
+            var controller = CreateTestController();
+            var device = controller.GetPlaybackDevices().First(x => !x.IsDefaultDevice);
+
+            Assert.DoesNotThrow(() => controller.DefaultPlaybackDevice = device);
+            Assert.Same(controller.DefaultPlaybackDevice, device);
+        }
+
+        [Fact]
+        public void Controller_Capture_SetDefaultComm_1()
+        {
+            var controller = CreateTestController();
+            var device = controller.GetCaptureDevices().First(x => !x.IsDefaultDevice);
+
+            Assert.True(device.SetAsDefaultCommunications());
+            Assert.Same(controller.DefaultCaptureCommunicationsDevice, device);
+        }
+
+        [Fact]
+        public void Controller_Capture_SetDefaultComm_2()
+        {
+            var controller = CreateTestController();
+            var device = controller.GetCaptureDevices().First(x => !x.IsDefaultDevice);
+
+            Assert.True(controller.SetDefaultCommunicationsDevice(device));
+            Assert.Same(controller.DefaultCaptureCommunicationsDevice, device);
+        }
+
+        [Fact]
+        public void Controller_Capture_SetDefaultComm_3()
+        {
+            var controller = CreateTestController();
+            var device = controller.GetCaptureDevices().First(x => !x.IsDefaultDevice);
+
+            Assert.DoesNotThrow(() => controller.DefaultCaptureCommunicationsDevice = device);
+            Assert.Same(controller.DefaultCaptureCommunicationsDevice, device);
+        }
+
+        [Fact]
+        public void Controller_Playback_SetDefaultComm_1()
+        {
+            var controller = CreateTestController();
+            var device = controller.GetPlaybackDevices().First(x => !x.IsDefaultDevice);
+
+            Assert.True(device.SetAsDefaultCommunications());
+            Assert.Same(controller.DefaultPlaybackCommunicationsDevice, device);
+        }
+
+        [Fact]
+        public void Controller_Playback_SetDefaultComm_2()
+        {
+            var controller = CreateTestController();
+            var device = controller.GetPlaybackDevices().First(x => !x.IsDefaultDevice);
+
+            Assert.True(controller.SetDefaultCommunicationsDevice(device));
+            Assert.Same(controller.DefaultPlaybackCommunicationsDevice, device);
+        }
+
+        [Fact]
+        public void Controller_Playback_SetDefaultComm_3()
+        {
+            var controller = CreateTestController();
+            var device = controller.GetPlaybackDevices().First(x => !x.IsDefaultDevice);
+
+            Assert.DoesNotThrow(() => controller.DefaultPlaybackCommunicationsDevice = device);
+            Assert.Same(controller.DefaultPlaybackCommunicationsDevice, device);
+        }
+
     }
 }

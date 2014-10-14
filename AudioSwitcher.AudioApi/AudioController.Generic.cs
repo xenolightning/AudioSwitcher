@@ -22,21 +22,25 @@ namespace AudioSwitcher.AudioApi
         public new T DefaultPlaybackDevice
         {
             get { return base.DefaultPlaybackDevice as T; }
+            set { DeviceEnumerator.SetDefaultDevice(value); }
         }
 
         public T DefaultPlaybackCommDevice
         {
             get { return base.DefaultPlaybackCommunicationsDevice as T; }
+            set { DeviceEnumerator.SetDefaultCommunicationsDevice(value); }
         }
 
         public new T DefaultCaptureDevice
         {
             get { return base.DefaultCaptureDevice as T; }
+            set { DeviceEnumerator.SetDefaultDevice(value); }
         }
 
         public T DefaultCaptureCommDevice
         {
             get { return base.DefaultCaptureCommunicationsDevice as T; }
+            set { DeviceEnumerator.SetDefaultCommunicationsDevice(value); }
         }
 
         public new IEnumerable<T> GetPlaybackDevices(DeviceState deviceState = DEFAULT_DEVICE_STATE_FILTER)
