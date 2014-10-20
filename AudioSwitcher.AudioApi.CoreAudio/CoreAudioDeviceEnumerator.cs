@@ -179,8 +179,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public void RaiseAudioDeviceChanged(object sender, AudioDeviceChangedEventArgs e)
         {
-            if (AudioDeviceChanged != null)
-                AudioDeviceChanged(this, e);
+            var handler = AudioDeviceChanged;
+
+            if (handler != null)
+                handler(this, e);
         }
 
         #region IDevEnum Members

@@ -252,8 +252,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void RaiseVolumeChanged()
         {
-            if (VolumeChanged != null)
-                VolumeChanged(this, new AudioDeviceChangedEventArgs(this, AudioDeviceEventType.Volume));
+            var handler = VolumeChanged;
+
+            if (handler != null)
+                handler(this, new AudioDeviceChangedEventArgs(this, AudioDeviceEventType.Volume));
 
             OnPropertyChanged("Volume");
         }

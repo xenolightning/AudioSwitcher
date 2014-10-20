@@ -48,15 +48,16 @@ namespace AudioSwitcher.AudioApi
 
         private void DeviceEnumerator_AudioDeviceChanged(object sender, AudioDeviceChangedEventArgs e)
         {
-            //Bubble the event
-            if (AudioDeviceChanged != null)
-                AudioDeviceChanged(sender, e);
-
             OnAudioDeviceChanged(sender, e);
         }
 
         protected virtual void OnAudioDeviceChanged(object sender, AudioDeviceChangedEventArgs e)
         {
+            var handler = AudioDeviceChanged;
+
+            //Bubble the event
+            if (handler != null)
+                handler(sender, e);
         }
 
         public IEnumerable<IDevice> GetAllDevices(DeviceState deviceState = DEFAULT_DEVICE_STATE_FILTER)
