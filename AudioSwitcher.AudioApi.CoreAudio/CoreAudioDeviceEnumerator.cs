@@ -18,7 +18,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         IDisposable
     {
         private readonly Object _mutex = new Object();
-        internal MMDeviceEnumerator InnerEnumerator;
+        private MMDeviceEnumerator InnerEnumerator;
         private ConcurrentBag<CoreAudioDevice> _deviceCache = new ConcurrentBag<CoreAudioDevice>();
 
         public CoreAudioDeviceEnumerator()

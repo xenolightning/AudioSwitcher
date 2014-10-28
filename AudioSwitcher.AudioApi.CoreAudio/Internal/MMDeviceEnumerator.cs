@@ -34,7 +34,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     /// </summary>
     internal class MMDeviceEnumerator
     {
-        internal IMMDeviceEnumerator _realEnumerator;
+        private IMMDeviceEnumerator _realEnumerator;
 
         /// <summary>
         ///     Creates a new MM Device Enumerator

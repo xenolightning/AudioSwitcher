@@ -196,7 +196,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     case VarEnum.VT_CLSID:
                         return (Guid) Marshal.PtrToStructure(pointerValue, typeof (Guid));
                 }
-                throw new NotImplementedException("PropVariant " + ve);
+                throw new NotSupportedException("PropVariant " + ve);
             }
             set
             {
@@ -212,10 +212,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public void Clear()
         {
-            PropVariantClear(ref this);
+            NativeMethods.PropVariantClear(ref this);
         }
-
-        [DllImport("ole32.dll")]
-        private static extern int PropVariantClear(ref PropVariant pvar);
     }
 }
