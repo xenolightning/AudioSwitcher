@@ -15,6 +15,8 @@ namespace AudioSwitcher.Scripting
             get;
         }
 
+        void SetOutput(IScriptOutput output);
+
         ExecutionResult<string> Execute(string script);
 
         Task<ExecutionResult<string>> ExecuteAsync(string script);

@@ -39,6 +39,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Internal\ScriptOutputBridge.cs" />
     <Compile Include="Internal\IJavaScriptLibrary.cs" />
     <Compile Include="Internal\JavaScriptAudioDevice.cs" />
     <Compile Include="Internal\JavaScriptAudioDevice.Functions.cs" />
