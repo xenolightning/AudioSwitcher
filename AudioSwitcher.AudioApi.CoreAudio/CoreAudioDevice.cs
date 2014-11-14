@@ -191,7 +191,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     try
                     {
-                        return (int) Math.Round(Device.AudioEndpointVolume.MasterVolumeLevelScalar*100, 0);
+                        return (int)Math.Round(Device.AudioEndpointVolume.MasterVolumeLevelScalar * 100, 0);
                     }
                     catch
                     {
@@ -208,7 +208,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     else if (value > 100)
                         value = 100;
 
-                    float val = (float) value/100;
+                    float val = (float)value / 100;
+
+                    if (Device.AudioEndpointVolume == null)
+                        return;
 
                     Device.AudioEndpointVolume.MasterVolumeLevelScalar = val;
 
@@ -267,6 +270,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             return ComThread.Invoke(() =>
             {
+                if (Device.AudioEndpointVolume == null)
+                    return false;
+
                 Device.AudioEndpointVolume.Mute = true;
                 return Device.AudioEndpointVolume.Mute;
             });
@@ -279,6 +285,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             return ComThread.Invoke(() =>
             {
+                if (Device.AudioEndpointVolume == null)
+                    return false;
+
                 Device.AudioEndpointVolume.Mute = false;
                 return Device.AudioEndpointVolume.Mute;
             });
@@ -295,7 +304,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             string[] dev = systemDeviceId.Replace("{", "")
                 .Replace("}", "")
-                .Split(new[] {'.'}, StringSplitOptions.RemoveEmptyEntries);
+                .Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
             return new Guid(dev[dev.Length - 1]);
         }
 
