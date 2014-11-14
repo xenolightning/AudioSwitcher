@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.Scripting.JavaScript.Internal;
 using Jurassic;
+using Jurassic.Library;
 
 namespace AudioSwitcher.Scripting.JavaScript
 {
@@ -29,6 +31,13 @@ namespace AudioSwitcher.Scripting.JavaScript
         public IScriptInfo ScriptInfo
         {
             get { return JSScriptInfo.Instance; }
+        }
+
+        public void SetOutput(IScriptOutput output)
+        {
+            var console = new FirebugConsole(InternalEngine);
+            console.Output = new ScriptOutputBridge(output);
+            InternalEngine.SetGlobalValue("console", console);
         }
 
         public ExecutionResult<string> Execute(string script)
