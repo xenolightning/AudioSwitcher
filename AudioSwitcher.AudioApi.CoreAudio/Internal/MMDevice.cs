@@ -36,9 +36,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         #region Variables
 
         internal readonly IMMDevice DeviceInterface;
-        private AudioEndpointVolume audioEndpointVolume;
-        private AudioMeterInformation audioMeterInformation;
-        private PropertyStore propertyStore;
+        private AudioEndpointVolume _audioEndpointVolume;
+        private AudioMeterInformation _audioMeterInformation;
+        private PropertyStore _propertyStore;
 
         #endregion
 
@@ -47,6 +47,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private static Guid IID_IAudioMeterInformation = new Guid("C02216F6-8C67-4B5B-9D00-D008E73E0064");
         private static Guid IID_IAudioEndpointVolume = new Guid("5CDF2C82-841E-4546-9722-0CF74078229A");
         private static Guid IID_IAudioClient = new Guid("1CB9AD4C-DBFA-4c32-B178-C2F568A703B2");
+        private bool _audioMeterInformationUnavailable = false;
+        private bool _audioEndpointVolumeUnavailable = false;
 
         #endregion
 
@@ -58,45 +60,51 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             try
             {
                 Marshal.ThrowExceptionForHR(DeviceInterface.OpenPropertyStore(StorageAccessMode.ReadWrite, out propstore));
-                propertyStore = new PropertyStore(propstore, PropertyStore.Mode.ReadWrite);
+                _propertyStore = new PropertyStore(propstore, PropertyStore.Mode.ReadWrite);
             }
             catch
             {
                 Debug.WriteLine("Cannot open property store in write mode");
                 Marshal.ThrowExceptionForHR(DeviceInterface.OpenPropertyStore(StorageAccessMode.Read, out propstore));
-                propertyStore = new PropertyStore(propstore, PropertyStore.Mode.Read);
+                _propertyStore = new PropertyStore(propstore, PropertyStore.Mode.Read);
             }
         }
 
         private void GetAudioMeterInformation()
         {
-            try
-            {
-                object result;
-                Marshal.ThrowExceptionForHR(DeviceInterface.Activate(ref IID_IAudioMeterInformation, ClsCtx.ALL, IntPtr.Zero, out result));
-                audioMeterInformation = new AudioMeterInformation(result as IAudioMeterInformation);
-            }
-            catch
-            {
-                //Suppress error, as there is an expected null check
-            }
+            //Prevent further look ups
+            if (_audioMeterInformationUnavailable)
+                return;
+
+            object result;
+            var ex = Marshal.GetExceptionForHR(DeviceInterface.Activate(ref IID_IAudioMeterInformation, ClsCtx.ALL, IntPtr.Zero, out result));
+
+            _audioMeterInformationUnavailable = ex != null;
+
+            if (_audioMeterInformationUnavailable)
+                return;
+
+            _audioMeterInformation = new AudioMeterInformation(result as IAudioMeterInformation);
         }
 
         private void GetAudioEndpointVolume()
         {
-            try
-            {
-                object result;
-                if (State == EDeviceState.NotPresent || State == EDeviceState.Unplugged)
-                    return;
+            //Prevent further look ups
+            if (_audioEndpointVolumeUnavailable)
+                return;
 
-                Marshal.ThrowExceptionForHR(DeviceInterface.Activate(ref IID_IAudioEndpointVolume, ClsCtx.ALL, IntPtr.Zero, out result));
-                audioEndpointVolume = new AudioEndpointVolume(result as IAudioEndpointVolume);
-            }
-            catch
-            {
-                //Suppress error, as there is an expected null check
-            }
+            object result;
+            if (State == EDeviceState.NotPresent || State == EDeviceState.Unplugged)
+                return;
+
+            var ex = Marshal.GetExceptionForHR(DeviceInterface.Activate(ref IID_IAudioEndpointVolume, ClsCtx.ALL, IntPtr.Zero, out result));
+
+            _audioEndpointVolumeUnavailable = ex != null;
+
+            if (_audioEndpointVolumeUnavailable)
+                return;
+
+            _audioEndpointVolume = new AudioEndpointVolume(result as IAudioEndpointVolume);
         }
 
         #endregion
@@ -110,10 +118,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (audioMeterInformation == null)
+                if (_audioMeterInformation == null)
                     GetAudioMeterInformation();
 
-                return audioMeterInformation;
+                return _audioMeterInformation;
             }
         }
 
@@ -124,10 +132,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (audioEndpointVolume == null)
+                if (_audioEndpointVolume == null)
                     GetAudioEndpointVolume();
 
-                return audioEndpointVolume;
+                return _audioEndpointVolume;
             }
         }
 
@@ -138,9 +146,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (propertyStore == null)
+                if (_propertyStore == null)
                     GetPropertyInformation();
-                return propertyStore;
+                return _propertyStore;
             }
         }
 
@@ -151,13 +159,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (propertyStore == null)
+                if (_propertyStore == null)
                 {
                     GetPropertyInformation();
                 }
-                if (propertyStore != null && propertyStore.Contains(PropertyKeys.PKEY_Device_FriendlyName))
+                if (_propertyStore != null && _propertyStore.Contains(PropertyKeys.PKEY_Device_FriendlyName))
                 {
-                    return (string)propertyStore[PropertyKeys.PKEY_Device_FriendlyName].Value;
+                    return (string)_propertyStore[PropertyKeys.PKEY_Device_FriendlyName].Value;
                 }
                 return "Unknown";
             }
@@ -170,13 +178,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (propertyStore == null)
+                if (_propertyStore == null)
                 {
                     GetPropertyInformation();
                 }
-                if (propertyStore != null && propertyStore.Contains(PropertyKeys.PKEY_DeviceInterface_FriendlyName))
+                if (_propertyStore != null && _propertyStore.Contains(PropertyKeys.PKEY_DeviceInterface_FriendlyName))
                 {
-                    return (string)propertyStore[PropertyKeys.PKEY_DeviceInterface_FriendlyName].Value;
+                    return (string)_propertyStore[PropertyKeys.PKEY_DeviceInterface_FriendlyName].Value;
                 }
                 return "Unknown";
             }
@@ -191,12 +199,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 try
                 {
-                    if (propertyStore == null)
+                    if (_propertyStore == null)
                         GetPropertyInformation();
 
-                    if (propertyStore != null && propertyStore.Contains(PropertyKeys.PKEY_Device_Icon))
+                    if (_propertyStore != null && _propertyStore.Contains(PropertyKeys.PKEY_Device_Icon))
                     {
-                        return (string)propertyStore[PropertyKeys.PKEY_Device_Icon].Value;
+                        return (string)_propertyStore[PropertyKeys.PKEY_Device_Icon].Value;
                     }
                     return "Unknown";
                 }
@@ -214,25 +222,25 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (propertyStore == null)
+                if (_propertyStore == null)
                 {
                     GetPropertyInformation();
                 }
-                if (propertyStore != null && propertyStore.Contains(PropertyKeys.PKEY_Device_Description))
+                if (_propertyStore != null && _propertyStore.Contains(PropertyKeys.PKEY_Device_Description))
                 {
-                    return (string)propertyStore[PropertyKeys.PKEY_Device_Description].Value;
+                    return (string)_propertyStore[PropertyKeys.PKEY_Device_Description].Value;
                 }
                 return DeviceFriendlyName;
             }
             set
             {
-                if (propertyStore == null)
+                if (_propertyStore == null)
                 {
                     GetPropertyInformation();
                 }
-                if (propertyStore != null && propertyStore.Contains(PropertyKeys.PKEY_Device_Description))
+                if (_propertyStore != null && _propertyStore.Contains(PropertyKeys.PKEY_Device_Description))
                 {
-                    propertyStore.SetValue(PropertyKeys.PKEY_Device_Description, value);
+                    _propertyStore.SetValue(PropertyKeys.PKEY_Device_Description, value);
                     //var pi = propertyStore[PropertyKeys.PKEY_Device_Description];
                     //propertyStore[PropertyKeys.PKEY_Device_Description] = pi;
                 }
@@ -246,13 +254,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (propertyStore == null)
+                if (_propertyStore == null)
                 {
                     GetPropertyInformation();
                 }
-                if (propertyStore != null && propertyStore.Contains(PropertyKeys.PKEY_System_Name))
+                if (_propertyStore != null && _propertyStore.Contains(PropertyKeys.PKEY_System_Name))
                 {
-                    return (string)propertyStore[PropertyKeys.PKEY_System_Name].Value;
+                    return (string)_propertyStore[PropertyKeys.PKEY_System_Name].Value;
                 }
                 return "Unknown";
             }
@@ -267,13 +275,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 try
                 {
-                    if (propertyStore == null)
+                    if (_propertyStore == null)
                         GetPropertyInformation();
-                    if (propertyStore != null && (propertyStore.Contains(PropertyKeys.PKEY_Device_FriendlyName) &&
-                                                  propertyStore.Contains(PropertyKeys.PKEY_DeviceInterface_FriendlyName)))
+                    if (_propertyStore != null && (_propertyStore.Contains(PropertyKeys.PKEY_Device_FriendlyName) &&
+                                                  _propertyStore.Contains(PropertyKeys.PKEY_DeviceInterface_FriendlyName)))
                     {
-                        return propertyStore[PropertyKeys.PKEY_Device_FriendlyName].Value + " (" +
-                               propertyStore[PropertyKeys.PKEY_DeviceInterface_FriendlyName].Value + ")";
+                        return _propertyStore[PropertyKeys.PKEY_Device_FriendlyName].Value + " (" +
+                               _propertyStore[PropertyKeys.PKEY_DeviceInterface_FriendlyName].Value + ")";
                     }
                     return "Unknown";
                 }
