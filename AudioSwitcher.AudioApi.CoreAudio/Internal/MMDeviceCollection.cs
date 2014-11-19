@@ -25,6 +25,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
+using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
@@ -72,9 +73,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                int result;
-                Marshal.ThrowExceptionForHR(_MMDeviceCollection.GetCount(out result));
-                return result;
+                return ComThread.Invoke(() =>
+                {
+                    int result;
+                    Marshal.ThrowExceptionForHR(_MMDeviceCollection.GetCount(out result));
+                    return result;
+
+                });
             }
         }
 
@@ -87,9 +92,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                IMMDevice result;
-                _MMDeviceCollection.Item(index, out result);
-                return new MMDevice(result);
+                return ComThread.Invoke(() =>
+                {
+                    IMMDevice result;
+                    _MMDeviceCollection.Item(index, out result);
+                    return new MMDevice(result);
+                });
             }
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
@@ -17,18 +18,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     public sealed class CoreAudioDeviceEnumerator : IDeviceEnumerator<CoreAudioDevice>, IMMNotificationClient,
         IDisposable
     {
-        private readonly Object _mutex = new Object();
-        private MMDeviceEnumerator InnerEnumerator;
+        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+
+        internal MMDeviceEnumerator InnerEnumerator;
         private ConcurrentBag<CoreAudioDevice> _deviceCache = new ConcurrentBag<CoreAudioDevice>();
 
         public CoreAudioDeviceEnumerator()
         {
-            //Invoke on ComThread Synchronously
-            ComThread.Invoke(() =>
-            {
-                InnerEnumerator = new MMDeviceEnumerator();
-                InnerEnumerator.RegisterEndpointNotificationCallback(this);
-            });
+            InnerEnumerator = new MMDeviceEnumerator();
+            InnerEnumerator.RegisterEndpointNotificationCallback(this);
 
             RefreshSystemDevices();
         }
@@ -97,9 +95,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public CoreAudioDevice GetDevice(Guid id, DeviceState state)
         {
-            lock (_mutex)
+            _lock.EnterReadLock();
+            try
             {
                 return _deviceCache.FirstOrDefault(x => x.Id == id && (x.State & state) > 0);
+            }
+            finally
+            {
+                _lock.ExitReadLock();
             }
         }
 
@@ -163,17 +166,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void RefreshSystemDevices()
         {
-            lock (_mutex)
+            _lock.EnterWriteLock();
+            try
             {
-                ComThread.Invoke(() =>
+                //_deviceCache.ToList().ForEach(x => x.Dispose());
+                _deviceCache = new ConcurrentBag<CoreAudioDevice>();
+                foreach (var mDev in InnerEnumerator.EnumerateAudioEndPoints(EDataFlow.All, EDeviceState.All))
                 {
-                    _deviceCache = new ConcurrentBag<CoreAudioDevice>();
-                    foreach (var mDev in InnerEnumerator.EnumerateAudioEndPoints(EDataFlow.All, EDeviceState.All))
-                    {
-                        var dev = new CoreAudioDevice(mDev, this);
-                        _deviceCache.Add(dev);
-                    }
-                });
+                    var dev = new CoreAudioDevice(mDev, this);
+                    _deviceCache.Add(dev);
+                }
+                GC.Collect();
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
             }
         }
 
@@ -268,7 +275,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public CoreAudioDevice GetDefaultDevice(DeviceType deviceType, Role eRole)
         {
-            lock (_mutex)
+            _lock.EnterReadLock();
+            try
             {
                 string devId = InnerEnumerator.GetDefaultAudioEndpointId(deviceType.AsEDataFlow(), eRole);
                 if (string.IsNullOrEmpty(devId))
@@ -276,15 +284,24 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
                 return _deviceCache.First(x => x.RealId == devId);
             }
+            finally
+            {
+                _lock.ExitReadLock();
+            }
         }
 
         public IEnumerable<CoreAudioDevice> GetDevices(DeviceType deviceType, DeviceState state)
         {
-            lock (_mutex)
+            _lock.EnterReadLock();
+            try
             {
                 return _deviceCache.Where(x =>
                     (x.DeviceType == deviceType || deviceType == DeviceType.All)
                     && (x.State & state) > 0);
+            }
+            finally
+            {
+                _lock.ExitReadLock();
             }
         }
 

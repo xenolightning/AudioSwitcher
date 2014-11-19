@@ -21,6 +21,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 
@@ -172,7 +173,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 Marshal.ThrowExceptionForHR(_audioEndPointVolume.UnregisterControlChangeNotify(_callBack));
                 _callBack = null;
             }
-            GC.SuppressFinalize(this);
+            //GC.SuppressFinalize(this);
         }
 
         /// <summary>

@@ -1,13 +1,15 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
+using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
     [ComVisible(false)]
-    public sealed class CoreAudioDevice : Device, INotifyPropertyChanged
+    public sealed class CoreAudioDevice : Device, INotifyPropertyChanged, IDisposable
     {
         private MMDevice _device;
         private Guid? _id;
@@ -18,15 +20,31 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (device == null)
                 throw new ArgumentNullException("device", "Device cannot be null. Something bad went wrong");
 
-            ComThread.Invoke(() =>
-            {
-                Device = device;
-                if (Device.AudioEndpointVolume != null)
-                    Device.AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
-            });
+            Device = device;
 
-            enumerator.AudioDeviceChanged += EnumeratorOnAudioDeviceChanged;
+            //Memory leak here, for some reason subscribing to this event is preventing a recycle
+
+            //if (Device.AudioEndpointVolume != null)
+                //Device.AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
+
+            //enumerator.AudioDeviceChanged += EnumeratorOnAudioDeviceChanged;
         }
+
+        ~CoreAudioDevice()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            if (Device != null)
+            {
+                Device.Dispose();
+            }
+
+            GC.SuppressFinalize(this);
+        }
+
 
         /// <summary>
         ///     Accesssor to lower level device
@@ -36,12 +54,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (Thread.CurrentThread.ManagedThreadId != ComThread.TaskScheduler.ThreadId)
-                    throw new ThreadStateException("Cross Thread access to COM Object MMDevice Detected");
-
                 return _device;
             }
-            set { _device = value; }
+            set
+            {
+                _device = value;
+            }
         }
 
         /// <summary>
@@ -62,13 +80,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return ComThread.Invoke(() =>
-                {
-                    if (Device == null)
-                        return String.Empty;
+                if (Device == null)
+                    return String.Empty;
 
-                    return Device.ID;
-                });
+                return Device.ID;
             }
         }
 
@@ -76,12 +91,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return ComThread.Invoke(() =>
-                {
-                    if (Device == null)
-                        return "Unknown";
-                    return Device.DeviceFriendlyName;
-                });
+                if (Device == null)
+                    return "Unknown";
+                return Device.DeviceFriendlyName;
             }
         }
 
@@ -89,26 +101,23 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return ComThread.Invoke(() =>
-                {
-                    if (Device == null)
-                        return "Unknown";
-                    return Device.DeviceName;
-                });
+                if (Device == null)
+                    return "Unknown";
+                return Device.DeviceName;
             }
-            set { ComThread.Invoke(() => { Device.DeviceName = value; }); }
+            set
+            {
+                Device.DeviceName = value;
+            }
         }
 
         public override string SystemName
         {
             get
             {
-                return ComThread.Invoke(() =>
-                {
-                    if (Device == null)
-                        return "Unknown";
-                    return Device.SystemName;
-                });
+                if (Device == null)
+                    return "Unknown";
+                return Device.SystemName;
             }
         }
 
@@ -116,12 +125,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return ComThread.Invoke(() =>
-                {
-                    if (Device != null)
-                        return Device.DeviceFriendlyName;
-                    return "Unknown Device";
-                });
+                if (Device != null)
+                    return Device.DeviceFriendlyName;
+                return "Unknown Device";
             }
         }
 
@@ -129,12 +135,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return ComThread.Invoke(() =>
-                {
-                    if (Device != null)
-                        return Device.IconPath;
-                    return "Unknown";
-                });
+                if (Device != null)
+                    return Device.IconPath;
+                return "Unknown";
             }
         }
 
@@ -158,25 +161,25 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public override DeviceState State
         {
-            get { return ComThread.Invoke(() => { return Device.State.AsDeviceState(); }); }
+            get
+            {
+                return Device.State.AsDeviceState();
+            }
         }
 
         public override DeviceType DeviceType
         {
-            get { return ComThread.Invoke(() => { return Device.EDataFlow.AsDeviceType(); }); }
+            get { return Device.EDataFlow.AsDeviceType(); }
         }
 
         public override bool IsMuted
         {
             get
             {
-                return ComThread.Invoke(() =>
-                {
-                    if (Device.AudioEndpointVolume == null)
-                        return false;
+                if (Device.AudioEndpointVolume == null)
+                    return false;
 
-                    return Device.AudioEndpointVolume.Mute;
-                });
+                return Device.AudioEndpointVolume.Mute;
             }
         }
 
@@ -187,38 +190,32 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return ComThread.Invoke(() =>
+                try
                 {
-                    try
-                    {
-                        return (int)Math.Round(Device.AudioEndpointVolume.MasterVolumeLevelScalar * 100, 0);
-                    }
-                    catch
-                    {
-                        return -1;
-                    }
-                });
+                    return (int)Math.Round(Device.AudioEndpointVolume.MasterVolumeLevelScalar * 100, 0);
+                }
+                catch
+                {
+                    return -1;
+                }
             }
             set
             {
-                ComThread.Invoke(() =>
-                {
-                    if (value < 0)
-                        value = 0;
-                    else if (value > 100)
-                        value = 100;
+                if (value < 0)
+                    value = 0;
+                else if (value > 100)
+                    value = 100;
 
-                    float val = (float)value / 100;
+                float val = (float)value / 100;
 
-                    if (Device.AudioEndpointVolume == null)
-                        return;
+                if (Device.AudioEndpointVolume == null)
+                    return;
 
-                    Device.AudioEndpointVolume.MasterVolumeLevelScalar = val;
+                Device.AudioEndpointVolume.MasterVolumeLevelScalar = val;
 
-                    //Something is up with the floating point numbers in Windows, so make sure the volume is correct
-                    if (Device.AudioEndpointVolume.MasterVolumeLevelScalar < val)
-                        Device.AudioEndpointVolume.MasterVolumeLevelScalar += 0.0001F;
-                });
+                //Something is up with the floating point numbers in Windows, so make sure the volume is correct
+                if (Device.AudioEndpointVolume.MasterVolumeLevelScalar < val)
+                    Device.AudioEndpointVolume.MasterVolumeLevelScalar += 0.0001F;
             }
         }
 
@@ -268,14 +265,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public override bool Mute()
         {
-            return ComThread.Invoke(() =>
-            {
-                if (Device.AudioEndpointVolume == null)
-                    return false;
+            if (Device.AudioEndpointVolume == null)
+                return false;
 
-                Device.AudioEndpointVolume.Mute = true;
-                return Device.AudioEndpointVolume.Mute;
-            });
+            Device.AudioEndpointVolume.Mute = true;
+            return Device.AudioEndpointVolume.Mute;
         }
 
         /// <summary>
@@ -283,14 +277,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public override bool UnMute()
         {
-            return ComThread.Invoke(() =>
-            {
-                if (Device.AudioEndpointVolume == null)
-                    return false;
+            if (Device.AudioEndpointVolume == null)
+                return false;
 
-                Device.AudioEndpointVolume.Mute = false;
-                return Device.AudioEndpointVolume.Mute;
-            });
+            Device.AudioEndpointVolume.Mute = false;
+            return Device.AudioEndpointVolume.Mute;
         }
 
         public override event AudioDeviceChangedHandler VolumeChanged;
@@ -313,5 +304,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
+
     }
 }
