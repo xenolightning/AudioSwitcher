@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi
 {
-    public abstract class AudioController
+    public abstract class AudioController : IDisposable
     {
         protected const DeviceState DEFAULT_DEVICE_STATE_FILTER =
             DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled;
@@ -120,5 +120,15 @@ namespace AudioSwitcher.AudioApi
             return DeviceEnumerator.SetDefaultCommunicationsDeviceAsync(dev);
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool native)
+        {
+            if(DeviceEnumerator != null)
+                DeviceEnumerator.Dispose();
+        }
     }
 }

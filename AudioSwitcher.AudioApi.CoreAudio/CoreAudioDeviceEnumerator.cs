@@ -5,8 +5,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
-using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
@@ -15,8 +13,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     ///     Stores the current devices in memory to avoid calling the COM library when not required
     /// </summary>
     [ComVisible(false)]
-    public sealed class CoreAudioDeviceEnumerator : IDeviceEnumerator<CoreAudioDevice>, IMMNotificationClient,
-        IDisposable
+    public sealed class CoreAudioDeviceEnumerator : IDeviceEnumerator<CoreAudioDevice>, ISystemAudioEventClient
     {
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
 
@@ -26,7 +23,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         public CoreAudioDeviceEnumerator()
         {
             InnerEnumerator = new MMDeviceEnumerator();
-            InnerEnumerator.RegisterEndpointNotificationCallback(this);
+            _notificationClient = new MMNotificationClient(this);
+
+            InnerEnumerator.RegisterEndpointNotificationCallback(_notificationClient);
 
             RefreshSystemDevices();
         }
@@ -80,7 +79,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         public void Dispose()
         {
             if (InnerEnumerator != null)
-                InnerEnumerator.UnregisterEndpointNotificationCallback(this);
+                InnerEnumerator.UnregisterEndpointNotificationCallback(_notificationClient);
 
             _deviceCache = null;
             InnerEnumerator = null;
@@ -310,8 +309,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         #region IMMNotif Members
 
         private readonly ConcurrentDictionary<string, bool> _processingIds = new ConcurrentDictionary<string, bool>();
+        private readonly MMNotificationClient _notificationClient;
 
-        void IMMNotificationClient.OnDeviceStateChanged(string deviceId, EDeviceState newState)
+        void ISystemAudioEventClient.OnDeviceStateChanged(string deviceId, EDeviceState newState)
         {
             RefreshSystemDevices();
 
@@ -320,7 +320,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     AudioDeviceEventType.StateChanged));
         }
 
-        void IMMNotificationClient.OnDeviceAdded(string deviceId)
+        void ISystemAudioEventClient.OnDeviceAdded(string deviceId)
         {
             RefreshSystemDevices();
 
@@ -329,7 +329,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     AudioDeviceEventType.Added));
         }
 
-        void IMMNotificationClient.OnDeviceRemoved(string deviceId)
+        void ISystemAudioEventClient.OnDeviceRemoved(string deviceId)
         {
             RefreshSystemDevices();
 
@@ -339,7 +339,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
 
 
-        void IMMNotificationClient.OnDefaultDeviceChanged(EDataFlow flow, ERole role, string deviceId)
+        void ISystemAudioEventClient.OnDefaultDeviceChanged(EDataFlow flow, ERole role, string deviceId)
         {
             //Need to do some event filtering here, there's a scenario where
             //multiple default device changed are raised when one playback device changes.
@@ -370,7 +370,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _processingIds.TryRemove(deviceId, out temp);
         }
 
-        void IMMNotificationClient.OnPropertyValueChanged(string deviceId, PropertyKey key)
+        void ISystemAudioEventClient.OnPropertyValueChanged(string deviceId, PropertyKey key)
         {
             RefreshSystemDevices();
 

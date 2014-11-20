@@ -265,5 +265,13 @@ namespace AudioSwitcher.AudioApi.Sandbox
         {
             return Task.Factory.StartNew(() => SetDefaultCommunicationsDevice(dev));
         }
+
+        public void Dispose()
+        {
+            if (_devices != null)
+            {
+                _devices.Clear();
+            }
+        }
     }
 }

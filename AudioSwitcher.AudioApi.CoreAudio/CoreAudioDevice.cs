@@ -1,33 +1,28 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Threading;
-using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
-using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
     [ComVisible(false)]
     public sealed class CoreAudioDevice : Device, INotifyPropertyChanged, IDisposable
     {
-        private MMDevice _device;
+        private readonly MMDevice _device;
         private Guid? _id;
 
         internal CoreAudioDevice(MMDevice device, IDeviceEnumerator<CoreAudioDevice> enumerator)
             : base(enumerator)
         {
             if (device == null)
-                throw new ArgumentNullException("device", "Device cannot be null. Something bad went wrong");
+                throw new ArgumentNullException("device");
 
-            Device = device;
+            _device = device;
 
-            //Memory leak here, for some reason subscribing to this event is preventing a recycle
+            if (_device.AudioEndpointVolume != null)
+                _device.AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
 
-            if (Device.AudioEndpointVolume != null)
-                Device.AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
-
-            //enumerator.AudioDeviceChanged += EnumeratorOnAudioDeviceChanged;
+            enumerator.AudioDeviceChanged +=
+                new WeakEventHandler<AudioDeviceChangedEventArgs>(EnumeratorOnAudioDeviceChanged).Handler;
         }
 
         ~CoreAudioDevice()
@@ -37,30 +32,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public void Dispose()
         {
-            if (Device != null)
-            {
-                Device.Dispose();
-            }
+            if (_device != null)
+                _device.Dispose();
 
             GC.SuppressFinalize(this);
         }
 
-
-        /// <summary>
-        ///     Accesssor to lower level device
-        /// </summary>
-        /// <remarks>Has to remain private to correctly control access to the ComObject in non STA threads</remarks>
-        private MMDevice Device
-        {
-            get
-            {
-                return _device;
-            }
-            set
-            {
-                _device = value;
-            }
-        }
 
         /// <summary>
         ///     Unique identifier for this device
@@ -80,10 +57,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (Device == null)
+                if (_device == null)
                     return String.Empty;
 
-                return Device.ID;
+                return _device.ID;
             }
         }
 
@@ -91,9 +68,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (Device == null)
+                if (_device == null)
                     return "Unknown";
-                return Device.DeviceFriendlyName;
+                return _device.DeviceFriendlyName;
             }
         }
 
@@ -101,13 +78,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (Device == null)
+                if (_device == null)
                     return "Unknown";
-                return Device.DeviceName;
+                return _device.DeviceName;
             }
             set
             {
-                Device.DeviceName = value;
+                _device.DeviceName = value;
             }
         }
 
@@ -115,9 +92,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (Device == null)
+                if (_device == null)
                     return "Unknown";
-                return Device.SystemName;
+                return _device.SystemName;
             }
         }
 
@@ -125,9 +102,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (Device != null)
-                    return Device.DeviceFriendlyName;
-                return "Unknown Device";
+                if (_device != null)
+                    return _device.DeviceFriendlyName;
+                return "Unknown _device";
             }
         }
 
@@ -135,8 +112,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (Device != null)
-                    return Device.IconPath;
+                if (_device != null)
+                    return _device.IconPath;
                 return "Unknown";
             }
         }
@@ -163,23 +140,23 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return Device.State.AsDeviceState();
+                return _device.State.AsDeviceState();
             }
         }
 
         public override DeviceType DeviceType
         {
-            get { return Device.EDataFlow.AsDeviceType(); }
+            get { return _device.EDataFlow.AsDeviceType(); }
         }
 
         public override bool IsMuted
         {
             get
             {
-                if (Device.AudioEndpointVolume == null)
+                if (_device.AudioEndpointVolume == null)
                     return false;
 
-                return Device.AudioEndpointVolume.Mute;
+                return _device.AudioEndpointVolume.Mute;
             }
         }
 
@@ -190,10 +167,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (Device.AudioEndpointVolume == null)
+                if (_device.AudioEndpointVolume == null)
                     return -1;
 
-                return (int)Math.Round(Device.AudioEndpointVolume.MasterVolumeLevelScalar * 100, 0);
+                return (int)Math.Round(_device.AudioEndpointVolume.MasterVolumeLevelScalar * 100, 0);
             }
             set
             {
@@ -204,14 +181,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
                 float val = (float)value / 100;
 
-                if (Device.AudioEndpointVolume == null)
+                if (_device.AudioEndpointVolume == null)
                     return;
 
-                Device.AudioEndpointVolume.MasterVolumeLevelScalar = val;
+                _device.AudioEndpointVolume.MasterVolumeLevelScalar = val;
 
                 //Something is up with the floating point numbers in Windows, so make sure the volume is correct
-                if (Device.AudioEndpointVolume.MasterVolumeLevelScalar < val)
-                    Device.AudioEndpointVolume.MasterVolumeLevelScalar += 0.0001F;
+                if (_device.AudioEndpointVolume.MasterVolumeLevelScalar < val)
+                    _device.AudioEndpointVolume.MasterVolumeLevelScalar += 0.0001F;
             }
         }
 
@@ -261,11 +238,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public override bool Mute()
         {
-            if (Device.AudioEndpointVolume == null)
+            if (_device.AudioEndpointVolume == null)
                 return false;
 
-            Device.AudioEndpointVolume.Mute = true;
-            return Device.AudioEndpointVolume.Mute;
+            _device.AudioEndpointVolume.Mute = true;
+            return _device.AudioEndpointVolume.Mute;
         }
 
         /// <summary>
@@ -273,17 +250,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public override bool UnMute()
         {
-            if (Device.AudioEndpointVolume == null)
+            if (_device.AudioEndpointVolume == null)
                 return false;
 
-            Device.AudioEndpointVolume.Mute = false;
-            return Device.AudioEndpointVolume.Mute;
+            _device.AudioEndpointVolume.Mute = false;
+            return _device.AudioEndpointVolume.Mute;
         }
 
         public override event AudioDeviceChangedHandler VolumeChanged;
 
         /// <summary>
-        ///     Extracts the unique GUID Identifier for a Windows System Device
+        ///     Extracts the unique GUID Identifier for a Windows System _device
         /// </summary>
         /// <param name="systemDeviceId"></param>
         /// <returns></returns>

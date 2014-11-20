@@ -70,6 +70,7 @@
     <Compile Include="Internal\MMDevice.cs" />
     <Compile Include="Internal\MMDeviceCollection.cs" />
     <Compile Include="Internal\MMDeviceEnumerator.cs" />
+    <Compile Include="Internal\MMNotificationClient.cs" />
     <Compile Include="Internal\NativeMethods.cs" />
     <Compile Include="Internal\PolicyConfig.cs" />
     <Compile Include="Internal\PolicyConfigVista.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Internal\PropVariant.cs" />
     <Compile Include="Internal\ERole.cs" />
     <Compile Include="Internal\Utils\HResult.cs" />
+    <Compile Include="Internal\WeakEventHandler.cs" />
     <Compile Include="Threading\ComThread.cs" />
     <Compile Include="CoreAudioController.cs" />
     <Compile Include="CoreAudioDevice.cs" />

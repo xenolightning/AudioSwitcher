@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi
 {
-    public interface IDeviceEnumerator
+    public interface IDeviceEnumerator : IDisposable
     {
         AudioController AudioController { get; set; }
 

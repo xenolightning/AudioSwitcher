@@ -29,8 +29,6 @@ using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    internal delegate void AudioVolumeNotificationDataHandler(AudioVolumeNotificationData data);
-
     // This class implements the IAudioEndpointVolumeCallback interface,
     // it is implemented in this class because implementing it on AudioEndpointVolume 
     // (where the functionality is really wanted, would cause the OnNotify function 
@@ -56,12 +54,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //
             var data =
                 (AudioVolumeNotificationDataStruct)
-                    Marshal.PtrToStructure(notifyData, typeof (AudioVolumeNotificationDataStruct));
+                    Marshal.PtrToStructure(notifyData, typeof(AudioVolumeNotificationDataStruct));
 
             //Determine offset in structure of the first float
-            var offset = Marshal.OffsetOf(typeof (AudioVolumeNotificationDataStruct), "ChannelVolume");
+            var offset = Marshal.OffsetOf(typeof(AudioVolumeNotificationDataStruct), "ChannelVolume");
             //Determine offset in memory of the first float
-            var firstFloatPtr = (IntPtr) ((long) notifyData + (long) offset);
+            var firstFloatPtr = (IntPtr)((long)notifyData + (long)offset);
 
             //Something weird happened, better to ignore it and move on
             if (data.nChannels > 100)
@@ -72,18 +70,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //Read all floats from memory.
             for (int i = 0; i < data.nChannels; i++)
             {
-                voldata[i] = (float) Marshal.PtrToStructure(firstFloatPtr, typeof (float));
+                voldata[i] = (float)Marshal.PtrToStructure(firstFloatPtr, typeof(float));
             }
 
             //Create combined structure and Fire Event in parent class.
             var notificationData = new AudioVolumeNotificationData(data.guidEventContext, data.bMuted,
                 data.fMasterVolume, voldata);
 
-            if (_handler.IsAlive)
-            {
-                var p = _handler.Target as AudioEndpointVolume;
+            var p = _handler.Target as AudioEndpointVolume;
+
+            if (_handler.IsAlive && p != null)
                 p.FireNotification(notificationData);
-            }
+
         }
     }
 }

@@ -252,5 +252,9 @@ namespace AudioSwitcher.Tests.Common
         {
             return Task.Factory.StartNew(() => SetDefaultCommunicationsDevice(dev));
         }
+
+        public void Dispose()
+        {
+        }
     }
 }
