@@ -24,8 +24,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             //Memory leak here, for some reason subscribing to this event is preventing a recycle
 
-            //if (Device.AudioEndpointVolume != null)
-                //Device.AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
+            if (Device.AudioEndpointVolume != null)
+                Device.AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
 
             //enumerator.AudioDeviceChanged += EnumeratorOnAudioDeviceChanged;
         }
@@ -190,14 +190,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                try
-                {
-                    return (int)Math.Round(Device.AudioEndpointVolume.MasterVolumeLevelScalar * 100, 0);
-                }
-                catch
-                {
+                if (Device.AudioEndpointVolume == null)
                     return -1;
-                }
+
+                return (int)Math.Round(Device.AudioEndpointVolume.MasterVolumeLevelScalar * 100, 0);
             }
             set
             {

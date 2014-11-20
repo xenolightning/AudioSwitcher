@@ -19,7 +19,7 @@
      misrepresented as being the original source code.
   3. This notice may not be removed or altered from any source distribution.
 */
-// modified for NAudio
+// modified for AudioSwitcher
 
 using System;
 using System.Diagnostics;
@@ -77,49 +77,49 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void GetAudioMeterInformation()
         {
-            ComThread.Invoke(() =>
-            {
-                //Prevent further look ups
-                if (_audioMeterInformationUnavailable)
-                    return;
+            //Prevent further look ups
+            if (_audioMeterInformationUnavailable)
+                return;
 
-                object result;
-                var ex =
-                    Marshal.GetExceptionForHR(_deviceInterface.Activate(ref IID_IAudioMeterInformation, ClsCtx.ALL,
+            object result = null;
+            var ex =
+                ComThread.Invoke(() =>
+                {
+                    return Marshal.GetExceptionForHR(_deviceInterface.Activate(ref IID_IAudioMeterInformation, ClsCtx.ALL,
                         IntPtr.Zero, out result));
+                });
 
-                _audioMeterInformationUnavailable = ex != null;
+            _audioMeterInformationUnavailable = ex != null;
 
-                if (_audioMeterInformationUnavailable)
-                    return;
+            if (_audioMeterInformationUnavailable)
+                return;
 
-                _audioMeterInformation = new AudioMeterInformation(result as IAudioMeterInformation);
-            });
+            _audioMeterInformation = new AudioMeterInformation(result as IAudioMeterInformation);
         }
 
         private void GetAudioEndpointVolume()
         {
-            ComThread.Invoke(() =>
-            {
-                //Prevent further look ups
-                if (_audioEndpointVolumeUnavailable)
-                    return;
+            //Prevent further look ups
+            if (_audioEndpointVolumeUnavailable)
+                return;
 
-                object result;
-                if (State == EDeviceState.NotPresent || State == EDeviceState.Unplugged)
-                    return;
+            object result = null;
+            if (State == EDeviceState.NotPresent || State == EDeviceState.Unplugged)
+                return;
 
-                var ex =
-                    Marshal.GetExceptionForHR(_deviceInterface.Activate(ref IID_IAudioEndpointVolume, ClsCtx.ALL,
+            var ex =
+                ComThread.Invoke(() =>
+                {
+                    return Marshal.GetExceptionForHR(_deviceInterface.Activate(ref IID_IAudioEndpointVolume, ClsCtx.ALL,
                         IntPtr.Zero, out result));
+                });
 
-                _audioEndpointVolumeUnavailable = ex != null;
+            _audioEndpointVolumeUnavailable = ex != null;
 
-                if (_audioEndpointVolumeUnavailable)
-                    return;
+            if (_audioEndpointVolumeUnavailable)
+                return;
 
-                _audioEndpointVolume = new AudioEndpointVolume(result as IAudioEndpointVolume);
-            });
+            _audioEndpointVolume = new AudioEndpointVolume(result as IAudioEndpointVolume);
         }
 
         #endregion
@@ -150,13 +150,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return ComThread.Invoke(() =>
-                {
-                    if (_audioEndpointVolume == null)
-                        GetAudioEndpointVolume();
+                if (_audioEndpointVolume == null)
+                    GetAudioEndpointVolume();
 
-                    return _audioEndpointVolume;
-                });
+                return _audioEndpointVolume;
             }
         }
 
@@ -186,9 +183,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return ComThread.Invoke(() =>
                 {
                     if (_propertyStore == null)
-                    {
                         GetPropertyInformation();
-                    }
+
                     if (_propertyStore != null && _propertyStore.Contains(PropertyKeys.PKEY_Device_FriendlyName))
                     {
                         return (string)_propertyStore[PropertyKeys.PKEY_Device_FriendlyName].Value;
@@ -208,9 +204,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return ComThread.Invoke(() =>
                 {
                     if (_propertyStore == null)
-                    {
                         GetPropertyInformation();
-                    }
+
                     if (_propertyStore != null &&
                         _propertyStore.Contains(PropertyKeys.PKEY_DeviceInterface_FriendlyName))
                     {
@@ -259,9 +254,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return ComThread.Invoke(() =>
                 {
                     if (_propertyStore == null)
-                    {
                         GetPropertyInformation();
-                    }
+
                     if (_propertyStore != null && _propertyStore.Contains(PropertyKeys.PKEY_Device_Description))
                     {
                         return (string)_propertyStore[PropertyKeys.PKEY_Device_Description].Value;
@@ -274,9 +268,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 ComThread.Invoke(() =>
                 {
                     if (_propertyStore == null)
-                    {
                         GetPropertyInformation();
-                    }
+
                     if (_propertyStore != null && _propertyStore.Contains(PropertyKeys.PKEY_Device_Description))
                     {
                         _propertyStore.SetValue(PropertyKeys.PKEY_Device_Description, value);
@@ -297,9 +290,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return ComThread.Invoke(() =>
                 {
                     if (_propertyStore == null)
-                    {
                         GetPropertyInformation();
-                    }
+
                     if (_propertyStore != null && _propertyStore.Contains(PropertyKeys.PKEY_System_Name))
                     {
                         return (string)_propertyStore[PropertyKeys.PKEY_System_Name].Value;
@@ -322,6 +314,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     {
                         if (_propertyStore == null)
                             GetPropertyInformation();
+
                         if (_propertyStore != null && (_propertyStore.Contains(PropertyKeys.PKEY_Device_FriendlyName) &&
                                                        _propertyStore.Contains(
                                                            PropertyKeys.PKEY_DeviceInterface_FriendlyName)))

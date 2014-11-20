@@ -29,17 +29,21 @@ using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
+    internal delegate void AudioVolumeNotificationDataHandler(AudioVolumeNotificationData data);
+
     // This class implements the IAudioEndpointVolumeCallback interface,
     // it is implemented in this class because implementing it on AudioEndpointVolume 
     // (where the functionality is really wanted, would cause the OnNotify function 
     // to show up in the public API. 
     internal class AudioEndpointVolumeCallback : IAudioEndpointVolumeCallback
     {
-        private readonly AudioEndpointVolume _parent;
+        //THIS NEEDS TO BE A WEAKREFERENCE
+        //If a direct reference is made, it prevents recycling of the entire object graph
+        private readonly WeakReference _handler;
 
-        internal AudioEndpointVolumeCallback(AudioEndpointVolume parent)
+        internal AudioEndpointVolumeCallback(AudioEndpointVolume handler)
         {
-            _parent = parent;
+            _handler = new WeakReference(handler);
         }
 
         public void OnNotify(IntPtr notifyData)
@@ -74,7 +78,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //Create combined structure and Fire Event in parent class.
             var notificationData = new AudioVolumeNotificationData(data.guidEventContext, data.bMuted,
                 data.fMasterVolume, voldata);
-            _parent.FireNotification(notificationData);
+
+            if (_handler.IsAlive)
+            {
+                var p = _handler.Target as AudioEndpointVolume;
+                p.FireNotification(notificationData);
+            }
         }
     }
 }

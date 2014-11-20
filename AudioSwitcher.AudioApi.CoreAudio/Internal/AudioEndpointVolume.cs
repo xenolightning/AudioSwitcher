@@ -24,6 +24,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
+using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
@@ -32,7 +33,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     /// </summary>
     internal class AudioEndpointVolume : IDisposable
     {
-        private readonly IAudioEndpointVolume _audioEndPointVolume;
+        private IAudioEndpointVolume _audioEndPointVolume;
         private readonly AudioEndpointVolumeChannels _channels;
         private readonly EndpointHardwareSupport _hardwareSupport;
         private readonly AudioEndpointVolumeStepInformation _stepInformation;
@@ -51,8 +52,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _channels = new AudioEndpointVolumeChannels(_audioEndPointVolume);
             _stepInformation = new AudioEndpointVolumeStepInformation(_audioEndPointVolume);
             Marshal.ThrowExceptionForHR(_audioEndPointVolume.QueryHardwareSupport(out hardwareSupp));
-            _hardwareSupport = (EndpointHardwareSupport) hardwareSupp;
+            _hardwareSupport = (EndpointHardwareSupport)hardwareSupp;
             _volumeRange = new AudioEndpointVolumeVolumeRange(_audioEndPointVolume);
+
             _callBack = new AudioEndpointVolumeCallback(this);
             Marshal.ThrowExceptionForHR(_audioEndPointVolume.RegisterControlChangeNotify(_callBack));
         }
@@ -96,11 +98,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                float result;
-                Marshal.ThrowExceptionForHR(_audioEndPointVolume.GetMasterVolumeLevel(out result));
-                return result;
+                return ComThread.Invoke(() =>
+                {
+                    float result;
+                    Marshal.ThrowExceptionForHR(_audioEndPointVolume.GetMasterVolumeLevel(out result));
+                    return result;
+                });
             }
-            set { Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMasterVolumeLevel(value, Guid.Empty)); }
+            set
+            {
+                ComThread.Invoke(() =>
+                {
+                    Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMasterVolumeLevel(value, Guid.Empty));
+                });
+            }
         }
 
         /// <summary>
@@ -110,11 +121,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                float result;
-                Marshal.ThrowExceptionForHR(_audioEndPointVolume.GetMasterVolumeLevelScalar(out result));
-                return result;
+                return ComThread.Invoke(() =>
+                {
+                    float result;
+                    Marshal.ThrowExceptionForHR(_audioEndPointVolume.GetMasterVolumeLevelScalar(out result));
+                    return result;
+                });
             }
-            set { Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMasterVolumeLevelScalar(value, Guid.Empty)); }
+            set
+            {
+                ComThread.Invoke(() =>
+               {
+                   Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMasterVolumeLevelScalar(value, Guid.Empty));
+               });
+            }
         }
 
         /// <summary>
@@ -124,11 +144,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                bool result;
-                Marshal.ThrowExceptionForHR(_audioEndPointVolume.GetMute(out result));
-                return result;
+                return ComThread.Invoke(() =>
+                {
+                    bool result;
+                    Marshal.ThrowExceptionForHR(_audioEndPointVolume.GetMute(out result));
+                    return result;
+                });
             }
-            set { Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMute(value, Guid.Empty)); }
+            set
+            {
+                ComThread.Invoke(() =>
+                {
+                    Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMute(value, Guid.Empty));
+                });
+            }
         }
 
         /// <summary>
@@ -141,7 +170,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public void VolumeStepUp()
         {
-            Marshal.ThrowExceptionForHR(_audioEndPointVolume.VolumeStepUp(Guid.Empty));
+            ComThread.Invoke(() =>
+            {
+                Marshal.ThrowExceptionForHR(_audioEndPointVolume.VolumeStepUp(Guid.Empty));
+            });
         }
 
         /// <summary>
@@ -149,7 +181,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public void VolumeStepDown()
         {
-            Marshal.ThrowExceptionForHR(_audioEndPointVolume.VolumeStepDown(Guid.Empty));
+            ComThread.Invoke(() =>
+            {
+                Marshal.ThrowExceptionForHR(_audioEndPointVolume.VolumeStepDown(Guid.Empty));
+            });
         }
 
         internal void FireNotification(AudioVolumeNotificationData notificationData)
@@ -161,8 +196,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        #region IDisposable Members
-
         /// <summary>
         ///     Dispose
         /// </summary>
@@ -170,10 +203,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             if (_callBack != null)
             {
-                Marshal.ThrowExceptionForHR(_audioEndPointVolume.UnregisterControlChangeNotify(_callBack));
+                ComThread.Invoke(() =>
+                {
+                    Marshal.ThrowExceptionForHR(_audioEndPointVolume.UnregisterControlChangeNotify(_callBack));
+                });
                 _callBack = null;
             }
-            //GC.SuppressFinalize(this);
+
+            _audioEndPointVolume = null;
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -183,7 +221,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             Dispose();
         }
-
-        #endregion
     }
 }

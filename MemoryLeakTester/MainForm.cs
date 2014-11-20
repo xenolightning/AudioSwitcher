@@ -30,11 +30,11 @@ namespace MemoryLeakTester
 
             var d = (await _controller.GetPlaybackDevicesAsync()).First(x => x.IsDefaultDevice);
             var nd = (await _controller.GetPlaybackDevicesAsync()).First(x => !x.IsDefaultDevice);
+            var vd = (await _controller.GetPlaybackDevicesAsync()).First(x => x.Volume > 0);
 
             d.SetAsDefault();
 
-            label1.Text = d.Volume.ToString();
-            label1.Text = nd.Volume.ToString();
+            label1.Text = vd.Volume.ToString();
         }
 
         private void button2_Click(object sender, EventArgs e)
