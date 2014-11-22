@@ -93,8 +93,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                        _deviceInterface.Activate(IID_I_AUDIO_METER_INFORMATION, ClsCtx.ALL,
                            IntPtr.Zero, out result));
                 }
-                catch (UnauthorizedAccessException)
+                catch (Exception e)
                 {
+                    ex = e;
                 }
 
                 _audioMeterInformationUnavailable = ex != null;
@@ -131,8 +132,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                        _deviceInterface.Activate(IID_I_AUDIO_ENDPOINT_VOLUME, ClsCtx.ALL,
                            IntPtr.Zero, out result));
                 }
-                catch (UnauthorizedAccessException)
+                catch (Exception e)
                 {
+                    ex = e;
                 }
 
                 _audioEndpointVolumeUnavailable = ex != null;
