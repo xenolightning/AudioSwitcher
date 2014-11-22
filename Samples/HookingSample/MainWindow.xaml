@@ -88,8 +88,8 @@
                                 <TextBlock >
                                     <TextBlock.Text>
                                         <MultiBinding  StringFormat="{}{0} ({1})">
-                                            <Binding Path="ShortName"/>
-                                            <Binding Path="Description"/>
+                                            <Binding Path="Name"/>
+                                            <Binding Path="InterfaceName"/>
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
@@ -112,8 +112,8 @@
                     </Path>
                 </Border>
                 <StackPanel Grid.Column="2" VerticalAlignment="Center"  >
-                    <TextBlock Text="{Binding SelectedAudioDevice.ShortName}" FontSize="24" HorizontalAlignment="Center" />
-                    <TextBlock Text="{Binding SelectedAudioDevice.Description}" FontSize="14" HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding SelectedAudioDevice.Name}" FontSize="24" HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding SelectedAudioDevice.InterfaceName}" FontSize="14" HorizontalAlignment="Center" />
                 </StackPanel>
             </Grid>
         </Border>

@@ -9,11 +9,9 @@ namespace AudioSwitcher.AudioApi
 
         Guid Id { get; }
 
-        string Description { get; }
+        string Name { get; }
 
-        string ShortName { get; }
-
-        string SystemName { get; }
+        string InterfaceName { get; }
 
         string FullName { get; }
 

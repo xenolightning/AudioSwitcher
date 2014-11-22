@@ -45,11 +45,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         #region Guids
 
-        private static Guid IID_IAudioMeterInformation = new Guid("C02216F6-8C67-4B5B-9D00-D008E73E0064");
-        private static Guid IID_IAudioEndpointVolume = new Guid("5CDF2C82-841E-4546-9722-0CF74078229A");
-        private static Guid IID_IAudioClient = new Guid("1CB9AD4C-DBFA-4c32-B178-C2F568A703B2");
-        private bool _audioMeterInformationUnavailable = false;
-        private bool _audioEndpointVolumeUnavailable = false;
+        private static readonly Guid IID_I_AUDIO_METER_INFORMATION = new Guid("C02216F6-8C67-4B5B-9D00-D008E73E0064");
+        private static readonly Guid IID_I_AUDIO_ENDPOINT_VOLUME = new Guid("5CDF2C82-841E-4546-9722-0CF74078229A");
+        private bool _audioMeterInformationUnavailable;
+        private bool _audioEndpointVolumeUnavailable;
 
         #endregion
 
@@ -62,11 +61,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 IPropertyStore propstore;
                 try
                 {
-                    Marshal.ThrowExceptionForHR(_deviceInterface.OpenPropertyStore(StorageAccessMode.ReadWrite,
-                        out propstore));
-                    _propertyStore = new PropertyStore(propstore, PropertyStore.Mode.ReadWrite);
+                    _deviceInterface.OpenPropertyStore(StorageAccessMode.ReadWrite, out propstore);
                 }
-                catch
+                catch (UnauthorizedAccessException)
                 {
                     Debug.WriteLine("Cannot open property store in write mode");
                     Marshal.ThrowExceptionForHR(_deviceInterface.OpenPropertyStore(StorageAccessMode.Read, out propstore));
@@ -81,20 +78,32 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (_audioMeterInformationUnavailable)
                 return;
 
-            object result = null;
-            var ex =
-                ComThread.Invoke(() =>
+            //This should be all on the COM thread to avoid any 
+            //weird lookups on the result COM object not on an STA Thread
+            ComThread.Invoke(() =>
+            {
+                object result = null;
+                Exception ex = null;
+
+                //Need to catch here, as there is a chance that unauthorized is thrown.
+                //It's not an HR exception, but bubbles up through the .net call stack
+                try
                 {
-                    return Marshal.GetExceptionForHR(_deviceInterface.Activate(ref IID_IAudioMeterInformation, ClsCtx.ALL,
-                        IntPtr.Zero, out result));
-                });
+                    ex = Marshal.GetExceptionForHR(
+                       _deviceInterface.Activate(IID_I_AUDIO_METER_INFORMATION, ClsCtx.ALL,
+                           IntPtr.Zero, out result));
+                }
+                catch (UnauthorizedAccessException)
+                {
+                }
 
-            _audioMeterInformationUnavailable = ex != null;
+                _audioMeterInformationUnavailable = ex != null;
 
-            if (_audioMeterInformationUnavailable)
-                return;
+                if (_audioMeterInformationUnavailable)
+                    return;
 
-            _audioMeterInformation = new AudioMeterInformation(result as IAudioMeterInformation);
+                _audioMeterInformation = new AudioMeterInformation(result as IAudioMeterInformation);
+            });
         }
 
         private void GetAudioEndpointVolume()
@@ -103,23 +112,36 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (_audioEndpointVolumeUnavailable)
                 return;
 
-            object result = null;
+            //Don't even bother looking up volume for disconnected devices
             if (State == EDeviceState.NotPresent || State == EDeviceState.Unplugged)
                 return;
 
-            var ex =
-                ComThread.Invoke(() =>
+            //This should be all on the COM thread to avoid any 
+            //weird lookups on the result COM object not on an STA Thread
+            ComThread.Invoke(() =>
+            {
+                object result = null;
+                Exception ex = null;
+
+                //Need to catch here, as there is a chance that unauthorized is thrown.
+                //It's not an HR exception, but bubbles up through the .net call stack
+                try
                 {
-                    return Marshal.GetExceptionForHR(_deviceInterface.Activate(ref IID_IAudioEndpointVolume, ClsCtx.ALL,
-                        IntPtr.Zero, out result));
-                });
+                    ex = Marshal.GetExceptionForHR(
+                       _deviceInterface.Activate(IID_I_AUDIO_ENDPOINT_VOLUME, ClsCtx.ALL,
+                           IntPtr.Zero, out result));
+                }
+                catch (UnauthorizedAccessException)
+                {
+                }
 
-            _audioEndpointVolumeUnavailable = ex != null;
+                _audioEndpointVolumeUnavailable = ex != null;
 
-            if (_audioEndpointVolumeUnavailable)
-                return;
+                if (_audioEndpointVolumeUnavailable)
+                    return;
 
-            _audioEndpointVolume = new AudioEndpointVolume(result as IAudioEndpointVolume);
+                _audioEndpointVolume = new AudioEndpointVolume(result as IAudioEndpointVolume);
+            });
         }
 
         #endregion
@@ -164,17 +186,58 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
+                if (_propertyStore == null)
+                    GetPropertyInformation();
+
+                return _propertyStore;
+            }
+        }
+
+        /// <summary>
+        ///     The name of the device. Eg. Speakers
+        /// </summary>
+        public string DeviceName
+        {
+            get
+            {
                 return ComThread.Invoke(() =>
                 {
-                    if (_propertyStore == null)
-                        GetPropertyInformation();
-                    return _propertyStore;
+                    if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_DESCRIPTION))
+                        return Properties[PropertyKeys.PKEY_DEVICE_DESCRIPTION].Value as string;
+
+                    return DeviceInterfaceFriendlyName;
+                });
+            }
+            set
+            {
+                ComThread.Invoke(() =>
+                {
+                    if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_DESCRIPTION))
+                        Properties.SetValue(PropertyKeys.PKEY_DEVICE_DESCRIPTION, value);
                 });
             }
         }
 
         /// <summary>
-        ///     Friendly name for the endpoint
+        ///     Friendly name of device. Eg. Realtek
+        /// </summary>
+        public string DeviceInterfaceFriendlyName
+        {
+            get
+            {
+                return ComThread.Invoke(() =>
+                {
+
+                    if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME))
+                        return Properties[PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME].Value as string;
+
+                    return "Unknown";
+                });
+            }
+        }
+
+        /// <summary>
+        ///     Friendly name for the endpoint. Eg. Speakers (Realtek)
         /// </summary>
         public string FriendlyName
         {
@@ -182,35 +245,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 return ComThread.Invoke(() =>
                 {
-                    if (_propertyStore == null)
-                        GetPropertyInformation();
+                    if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME))
+                        return Properties[PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME].Value as string;
 
-                    if (_propertyStore != null && _propertyStore.Contains(PropertyKeys.PKEY_Device_FriendlyName))
-                    {
-                        return (string)_propertyStore[PropertyKeys.PKEY_Device_FriendlyName].Value;
-                    }
-                    return "Unknown";
-                });
-            }
-        }
-
-        /// <summary>
-        ///     Friendly name of device
-        /// </summary>
-        public string DeviceFriendlyName
-        {
-            get
-            {
-                return ComThread.Invoke(() =>
-                {
-                    if (_propertyStore == null)
-                        GetPropertyInformation();
-
-                    if (_propertyStore != null &&
-                        _propertyStore.Contains(PropertyKeys.PKEY_DeviceInterface_FriendlyName))
-                    {
-                        return (string)_propertyStore[PropertyKeys.PKEY_DeviceInterface_FriendlyName].Value;
-                    }
                     return "Unknown";
                 });
             }
@@ -227,100 +264,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     try
                     {
-                        if (_propertyStore == null)
-                            GetPropertyInformation();
-
-                        if (_propertyStore != null && _propertyStore.Contains(PropertyKeys.PKEY_Device_Icon))
+                        if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_ICON))
                         {
-                            return (string)_propertyStore[PropertyKeys.PKEY_Device_Icon].Value;
-                        }
-                        return "Unknown";
-                    }
-                    catch
-                    {
-                        return "Unknown";
-                    }
-                });
-            }
-        }
-
-        /// <summary>
-        ///     The name fo the device
-        /// </summary>
-        public string DeviceName
-        {
-            get
-            {
-                return ComThread.Invoke(() =>
-                {
-                    if (_propertyStore == null)
-                        GetPropertyInformation();
-
-                    if (_propertyStore != null && _propertyStore.Contains(PropertyKeys.PKEY_Device_Description))
-                    {
-                        return (string)_propertyStore[PropertyKeys.PKEY_Device_Description].Value;
-                    }
-                    return DeviceFriendlyName;
-                });
-            }
-            set
-            {
-                ComThread.Invoke(() =>
-                {
-                    if (_propertyStore == null)
-                        GetPropertyInformation();
-
-                    if (_propertyStore != null && _propertyStore.Contains(PropertyKeys.PKEY_Device_Description))
-                    {
-                        _propertyStore.SetValue(PropertyKeys.PKEY_Device_Description, value);
-                        //var pi = propertyStore[PropertyKeys.PKEY_Device_Description];
-                        //propertyStore[PropertyKeys.PKEY_Device_Description] = pi;
-                    }
-                });
-            }
-        }
-
-        /// <summary>
-        ///     Friendly name of device
-        /// </summary>
-        public string SystemName
-        {
-            get
-            {
-                return ComThread.Invoke(() =>
-                {
-                    if (_propertyStore == null)
-                        GetPropertyInformation();
-
-                    if (_propertyStore != null && _propertyStore.Contains(PropertyKeys.PKEY_System_Name))
-                    {
-                        return (string)_propertyStore[PropertyKeys.PKEY_System_Name].Value;
-                    }
-                    return "Unknown";
-                });
-            }
-        }
-
-        /// <summary>
-        ///     Fully qualified name of the device
-        /// </summary>
-        public string FullName
-        {
-            get
-            {
-                return ComThread.Invoke(() =>
-                {
-                    try
-                    {
-                        if (_propertyStore == null)
-                            GetPropertyInformation();
-
-                        if (_propertyStore != null && (_propertyStore.Contains(PropertyKeys.PKEY_Device_FriendlyName) &&
-                                                       _propertyStore.Contains(
-                                                           PropertyKeys.PKEY_DeviceInterface_FriendlyName)))
-                        {
-                            return _propertyStore[PropertyKeys.PKEY_Device_FriendlyName].Value + " (" +
-                                   _propertyStore[PropertyKeys.PKEY_DeviceInterface_FriendlyName].Value + ")";
+                            return (string)Properties[PropertyKeys.PKEY_DEVICE_ICON].Value;
                         }
                         return "Unknown";
                     }
@@ -335,7 +281,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         ///     Device ID
         /// </summary>
-        public string ID
+        public string Id
         {
             get
             {
@@ -415,7 +361,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             _audioMeterInformation = null;
             _propertyStore = null;
-            //_deviceInterface = null;
 
             GC.SuppressFinalize(this);
         }

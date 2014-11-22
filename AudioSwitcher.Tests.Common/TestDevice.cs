@@ -21,20 +21,15 @@ namespace AudioSwitcher.Tests.Common
             get { return _id; }
         }
 
-        public override string Description
+        public override string InterfaceName
         {
             get { return Id.ToString(); }
         }
 
-        public override string ShortName
+        public override string Name
         {
             get { return Id.ToString(); }
             set { }
-        }
-
-        public override string SystemName
-        {
-            get { return Id.ToString(); }
         }
 
         public override string FullName

@@ -63,7 +63,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
                     break;
             }
 
-            IDevice dev = devices.FirstOrDefault(x => x.ShortName == name);
+            IDevice dev = devices.FirstOrDefault(x => x.Name == name);
 
             return dev != null ? CreateJavaScriptAudioDevice(dev) : null;
         }

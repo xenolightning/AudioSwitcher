@@ -8,8 +8,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
     internal interface IMMDevice
     {
         // activationParams is a propvariant
-        int Activate(ref Guid id, ClsCtx clsCtx, IntPtr activationParams,
-            [MarshalAs(UnmanagedType.IUnknown)] out object interfacePointer);
+        int Activate(Guid id, ClsCtx clsCtx, IntPtr activationParams, [MarshalAs(UnmanagedType.IUnknown)] out object interfacePointer);
 
         int OpenPropertyStore(StorageAccessMode stgmAccess, out IPropertyStore properties);
 
