@@ -62,6 +62,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 try
                 {
                     _deviceInterface.OpenPropertyStore(StorageAccessMode.ReadWrite, out propstore);
+                    _propertyStore = new PropertyStore(propstore, PropertyStore.Mode.ReadWrite);
                 }
                 catch (UnauthorizedAccessException)
                 {
