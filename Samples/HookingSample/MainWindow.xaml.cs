@@ -146,7 +146,7 @@ namespace HookingSample
             {
                 var devices = Controller.GetPlaybackDevices(DeviceState.Active);
                 AudioDevices.Clear();
-                foreach (var d in devices.OrderBy(x => x.ShortName))
+                foreach (var d in devices.OrderBy(x => x.Name))
                 {
                     AudioDevices.Add(d);
                 }

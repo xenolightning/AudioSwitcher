@@ -40,9 +40,8 @@ namespace AudioSwitcher.AudioApi.Sandbox
                 var dev = new SandboxDevice(this)
                 {
                     id = sourceDev.Id,
-                    description = sourceDev.Description,
-                    shortName = sourceDev.ShortName,
-                    systemName = sourceDev.SystemName,
+                    interfaceName = sourceDev.InterfaceName,
+                    name = sourceDev.Name,
                     fullName = sourceDev.FullName,
                     type = sourceDev.DeviceType,
                     state = sourceDev.State,

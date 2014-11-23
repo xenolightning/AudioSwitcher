@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,12 +8,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
     {
         private static readonly ComTaskScheduler ComScheduler = new ComTaskScheduler();
 
-        public static bool InvokeRequired
+        private static bool InvokeRequired
         {
-            get { return Thread.CurrentThread.ManagedThreadId != TaskScheduler.ThreadId; }
+            get { return Thread.CurrentThread.ManagedThreadId != Scheduler.ThreadId; }
         }
 
-        public static ComTaskScheduler TaskScheduler
+        private static ComTaskScheduler Scheduler
         {
             get { return ComScheduler; }
         }

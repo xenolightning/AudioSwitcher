@@ -60,21 +60,24 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (_device == null)
                     return String.Empty;
 
-                return _device.ID;
+                return _device.Id;
             }
         }
 
-        public override string Description
+        public override string InterfaceName
         {
             get
             {
                 if (_device == null)
                     return "Unknown";
-                return _device.DeviceFriendlyName;
+                return _device.DeviceInterfaceFriendlyName;
             }
         }
 
-        public override string ShortName
+        /// <summary>
+        /// The short name e.g. Speaker/Headphones etc..
+        /// </summary>
+        public override string Name
         {
             get
             {
@@ -88,23 +91,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public override string SystemName
+        public override string FullName
         {
             get
             {
                 if (_device == null)
                     return "Unknown";
-                return _device.SystemName;
-            }
-        }
-
-        public override string FullName
-        {
-            get
-            {
-                if (_device != null)
-                    return _device.DeviceFriendlyName;
-                return "Unknown _device";
+                return _device.FriendlyName;
             }
         }
 
@@ -203,7 +196,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (audioDeviceChangedEventArgs.EventType == AudioDeviceEventType.PropertyChanged)
             {
                 OnPropertyChanged("DeviceType");
-                OnPropertyChanged("Description");
+                OnPropertyChanged("InterfaceName");
                 OnPropertyChanged("FullName");
                 OnPropertyChanged("IconPath");
                 OnPropertyChanged("Id");
@@ -212,9 +205,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 OnPropertyChanged("IsDefaultDevice");
                 OnPropertyChanged("IsMuted");
                 OnPropertyChanged("IsPlaybackDevice");
-                OnPropertyChanged("ShortName");
+                OnPropertyChanged("Name");
                 OnPropertyChanged("State");
-                OnPropertyChanged("SystemName");
+                OnPropertyChanged("FullName");
             }
         }
 

@@ -21,7 +21,6 @@
 */
 
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
@@ -107,10 +106,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
             set
             {
-                ComThread.Invoke(() =>
-                {
-                    Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMasterVolumeLevel(value, Guid.Empty));
-                });
+                ComThread.Invoke(() => Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMasterVolumeLevel(value, Guid.Empty)));
             }
         }
 
@@ -130,10 +126,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
             set
             {
-                ComThread.Invoke(() =>
-               {
-                   Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMasterVolumeLevelScalar(value, Guid.Empty));
-               });
+                ComThread.Invoke(() => Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMasterVolumeLevelScalar(value, Guid.Empty)));
             }
         }
 
@@ -153,10 +146,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
             set
             {
-                ComThread.Invoke(() =>
-                {
-                    Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMute(value, Guid.Empty));
-                });
+                ComThread.Invoke(() => Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMute(value, Guid.Empty)));
             }
         }
 
@@ -170,10 +160,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public void VolumeStepUp()
         {
-            ComThread.Invoke(() =>
-            {
-                Marshal.ThrowExceptionForHR(_audioEndPointVolume.VolumeStepUp(Guid.Empty));
-            });
+            ComThread.Invoke(() => Marshal.ThrowExceptionForHR(_audioEndPointVolume.VolumeStepUp(Guid.Empty)));
         }
 
         /// <summary>
@@ -181,10 +168,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public void VolumeStepDown()
         {
-            ComThread.Invoke(() =>
-            {
-                Marshal.ThrowExceptionForHR(_audioEndPointVolume.VolumeStepDown(Guid.Empty));
-            });
+            ComThread.Invoke(() => Marshal.ThrowExceptionForHR(_audioEndPointVolume.VolumeStepDown(Guid.Empty)));
         }
 
         internal void FireNotification(AudioVolumeNotificationData notificationData)
@@ -203,10 +187,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             if (_callBack != null)
             {
-                ComThread.Invoke(() =>
-                {
-                    Marshal.ThrowExceptionForHR(_audioEndPointVolume.UnregisterControlChangeNotify(_callBack));
-                });
+                ComThread.Invoke(() => Marshal.ThrowExceptionForHR(_audioEndPointVolume.UnregisterControlChangeNotify(_callBack)));
                 _callBack = null;
             }
 

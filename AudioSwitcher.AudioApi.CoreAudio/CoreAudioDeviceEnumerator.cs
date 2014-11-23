@@ -17,15 +17,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
 
-        internal MMDeviceEnumerator InnerEnumerator;
+        private MMDeviceEnumerator _innerEnumerator;
         private ConcurrentBag<CoreAudioDevice> _deviceCache = new ConcurrentBag<CoreAudioDevice>();
 
         public CoreAudioDeviceEnumerator()
         {
-            InnerEnumerator = new MMDeviceEnumerator();
+            _innerEnumerator = new MMDeviceEnumerator();
             _notificationClient = new MMNotificationClient(this);
 
-            InnerEnumerator.RegisterEndpointNotificationCallback(_notificationClient);
+            _innerEnumerator.RegisterEndpointNotificationCallback(_notificationClient);
 
             RefreshSystemDevices();
         }
@@ -78,11 +78,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public void Dispose()
         {
-            if (InnerEnumerator != null)
-                InnerEnumerator.UnregisterEndpointNotificationCallback(_notificationClient);
+            if (_innerEnumerator != null)
+                _innerEnumerator.UnregisterEndpointNotificationCallback(_notificationClient);
 
             _deviceCache = null;
-            InnerEnumerator = null;
+            _innerEnumerator = null;
         }
 
         public event AudioDeviceChangedHandler AudioDeviceChanged;
@@ -170,11 +170,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 //_deviceCache.ToList().ForEach(x => x.Dispose());
                 _deviceCache = new ConcurrentBag<CoreAudioDevice>();
-                foreach (var mDev in InnerEnumerator.EnumerateAudioEndPoints(EDataFlow.All, EDeviceState.All))
+                foreach (var mDev in _innerEnumerator.EnumerateAudioEndPoints(EDataFlow.All, EDeviceState.All))
                 {
                     var dev = new CoreAudioDevice(mDev, this);
                     _deviceCache.Add(dev);
                 }
+
+                //Have to collect here to reduce the memory/handle leak issue in Windows 8 and above
                 GC.Collect();
             }
             finally
@@ -183,7 +185,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public void RaiseAudioDeviceChanged(object sender, AudioDeviceChangedEventArgs e)
+        private void RaiseAudioDeviceChanged(AudioDeviceChangedEventArgs e)
         {
             var handler = AudioDeviceChanged;
 
@@ -277,7 +279,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _lock.EnterReadLock();
             try
             {
-                string devId = InnerEnumerator.GetDefaultAudioEndpointId(deviceType.AsEDataFlow(), eRole);
+                string devId = _innerEnumerator.GetDefaultAudioEndpointId(deviceType.AsEDataFlow(), eRole);
                 if (string.IsNullOrEmpty(devId))
                     return null;
 
@@ -315,8 +317,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             RefreshSystemDevices();
 
-            RaiseAudioDeviceChanged(this,
-                new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
+            RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
                     AudioDeviceEventType.StateChanged));
         }
 
@@ -324,8 +325,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             RefreshSystemDevices();
 
-            RaiseAudioDeviceChanged(this,
-                new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
+            RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
                     AudioDeviceEventType.Added));
         }
 
@@ -333,8 +333,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             RefreshSystemDevices();
 
-            RaiseAudioDeviceChanged(this,
-                new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
+            RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
                     AudioDeviceEventType.Removed));
         }
 
@@ -358,12 +357,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             RefreshSystemDevices();
 
             if (role == ERole.Console || role == ERole.Multimedia)
-                RaiseAudioDeviceChanged(this,
-                    new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
+                RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
                         AudioDeviceEventType.DefaultDevice));
             else if (role == ERole.Communications)
-                RaiseAudioDeviceChanged(this,
-                    new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
+                RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
                         AudioDeviceEventType.DefaultCommunicationsDevice));
 
             bool temp;
@@ -374,8 +371,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             RefreshSystemDevices();
 
-            RaiseAudioDeviceChanged(this,
-                new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
+            RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
                     AudioDeviceEventType.PropertyChanged));
         }
 

@@ -12,7 +12,9 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
         {
             Controller = controller;
             ID = device.Id.ToString();
-            Name = device.ShortName;
+            Name = device.Name;
+            Interface = device.InterfaceName;
+            FullName = device.FullName;
             Flags = device.IsPlaybackDevice ? 1 : 2;
             IsDefault = device.IsDefaultDevice;
             IsDefaultComm = device.IsDefaultCommunicationsDevice;
@@ -30,6 +32,20 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
 
         [JSProperty(Name = "name")]
         public string Name
+        {
+            get;
+            internal set;
+        }
+
+        [JSProperty(Name = "interface")]
+        public string Interface
+        {
+            get;
+            internal set;
+        }
+
+        [JSProperty(Name = "fullName")]
+        public string FullName
         {
             get;
             internal set;

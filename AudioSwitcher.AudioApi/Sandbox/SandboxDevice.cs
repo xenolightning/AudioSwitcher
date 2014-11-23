@@ -5,14 +5,13 @@ namespace AudioSwitcher.AudioApi.Sandbox
     public class SandboxDevice : Device
     {
         public DeviceType type;
-        public string description;
-        public string fullName;
+        public string interfaceName;
         public string iconPath;
         public Guid id;
         public bool isMuted;
-        public string shortName;
+        public string name;
         public DeviceState state;
-        public string systemName;
+        public string fullName;
 
         public SandboxDevice(IDeviceEnumerator enumerator)
             : base(enumerator)
@@ -24,20 +23,15 @@ namespace AudioSwitcher.AudioApi.Sandbox
             get { return id; }
         }
 
-        public override string Description
+        public override string InterfaceName
         {
-            get { return description; }
+            get { return interfaceName; }
         }
 
-        public override string ShortName
+        public override string Name
         {
-            get { return shortName; }
+            get { return name; }
             set { }
-        }
-
-        public override string SystemName
-        {
-            get { return systemName; }
         }
 
         public override string FullName

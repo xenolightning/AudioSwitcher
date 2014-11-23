@@ -3,7 +3,7 @@ console.log("Number of devices: " + devices.length);
 var defaultDevice;
 
 for (var i = 0; i < devices.length; i++) {
-    console.log(devices[i].id + " - " + devices[i].name + " - " + devices[i].flags);
+    console.log(devices[i].id + " - " + devices[i].name +" / " + devices[i].interface + " - " + devices[i].flags);
     console.log("    Is Default: " + devices[i].isDefault);
     console.log("    Is Default Communications: " + devices[i].isDefaultComm);
 
