@@ -19,7 +19,7 @@
      misrepresented as being the original source code.
   3. This notice may not be removed or altered from any source distribution.
 */
-// updated for use in NAudio
+// updated for use in Audio Switcher
 
 using System;
 using System.Diagnostics;
@@ -47,7 +47,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 throw new NotSupportedException("This functionality is only supported on Windows Vista or newer.");
             }
 #endif
-            ComThread.Invoke(() => { _realEnumerator = new MMDeviceEnumeratorComObject() as IMMDeviceEnumerator; });
+            ComThread.Invoke(() =>
+            {
+                _realEnumerator = new MMDeviceEnumeratorComObject() as IMMDeviceEnumerator;
+            });
         }
 
         /// <summary>

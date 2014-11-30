@@ -2,17 +2,30 @@
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    /// <summary>
-    ///     is defined in propsys.h
-    /// </summary>
-    [Guid("886d8eeb-8cf2-4446-8d02-cdba1dbdcf99"),
-     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [Guid(ComIIds.PROPERTY_STORE_IID)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IPropertyStore
     {
-        int GetCount(out int propCount);
-        int GetAt(int property, out PropertyKey key);
-        int GetValue(ref PropertyKey key, out PropVariant value);
-        int SetValue(ref PropertyKey key, ref PropVariant value);
+        [PreserveSig]
+        int GetCount(
+            [Out] [MarshalAs(UnmanagedType.U4)] out int propertyCount);
+
+        [PreserveSig]
+        int GetAt(
+            [In] [MarshalAs(UnmanagedType.U4)] int propertyIndex,
+            [Out] out PropertyKey propertyKey);
+
+        [PreserveSig]
+        int GetValue(
+            [In] ref PropertyKey propertyKey,
+            [Out] out PropVariant value);
+
+        [PreserveSig]
+        int SetValue(
+            [In] ref PropertyKey propertyKey,
+            [In] ref PropVariant value);
+
+        [PreserveSig]
         int Commit();
     }
 }

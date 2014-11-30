@@ -1,20 +1,33 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid("A95664D2-9614-4F35-A746-DE8DB63617E6"),
-     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [Guid(ComIIds.IMM_DEVICE_ENUMERATOR_IID)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IMMDeviceEnumerator
     {
-        int EnumAudioEndpoints(EDataFlow eDataFlow, EDeviceState stateMask,
-            out IMMDeviceCollection devices);
+        [PreserveSig]
+        int EnumAudioEndpoints(
+            [In] [MarshalAs(UnmanagedType.I4)] EDataFlow dataFlow,
+            [In] [MarshalAs(UnmanagedType.U4)] EDeviceState stateMask,
+            [Out] [MarshalAs(UnmanagedType.Interface)] out IMMDeviceCollection devices);
 
-        int GetDefaultAudioEndpoint(EDataFlow eDataFlow, ERole role, out IMMDevice endpoint);
+        [PreserveSig]
+        int GetDefaultAudioEndpoint(
+            [In] [MarshalAs(UnmanagedType.I4)] EDataFlow dataFlow,
+            [In] [MarshalAs(UnmanagedType.I4)] ERole role,
+            [Out] [MarshalAs(UnmanagedType.Interface)] out IMMDevice device);
 
-        int GetDevice(string id, out IMMDevice deviceName);
+        [PreserveSig]
+        int GetDevice(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string endpointId,
+            [Out] [MarshalAs(UnmanagedType.Interface)] out IMMDevice device);
 
-        int RegisterEndpointNotificationCallback(IMMNotificationClient client);
+        [PreserveSig]
+        int RegisterEndpointNotificationCallback([In] [MarshalAs(UnmanagedType.Interface)] IMMNotificationClient client);
 
-        int UnregisterEndpointNotificationCallback(IMMNotificationClient client);
+        [PreserveSig]
+        int UnregisterEndpointNotificationCallback([In] [MarshalAs(UnmanagedType.Interface)] IMMNotificationClient client);
     }
 }

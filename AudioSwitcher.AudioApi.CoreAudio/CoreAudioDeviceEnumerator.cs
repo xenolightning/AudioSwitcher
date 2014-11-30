@@ -283,7 +283,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (string.IsNullOrEmpty(devId))
                     return null;
 
-                return _deviceCache.First(x => x.RealId == devId);
+                return _deviceCache.FirstOrDefault(x => x.RealId == devId);
             }
             finally
             {

@@ -30,7 +30,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     ///     Device State
     /// </summary>
     [Flags]
-    internal enum EDeviceState
+    internal enum EDeviceState : uint
     {
         /// <summary>
         ///     DEVICE_STATE_ACTIVE

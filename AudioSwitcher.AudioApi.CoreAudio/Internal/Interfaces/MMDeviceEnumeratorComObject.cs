@@ -2,10 +2,8 @@
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    /// <summary>
-    ///     implements IMMDeviceEnumerator
-    /// </summary>
-    [ComImport, Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")]
+    [ComImport]
+    [Guid(ComIIds.DEVICE_ENUMERATOR_CID)]
     internal class MMDeviceEnumeratorComObject
     {
     }

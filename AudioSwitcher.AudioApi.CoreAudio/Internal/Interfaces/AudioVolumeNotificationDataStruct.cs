@@ -24,7 +24,7 @@ using System;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    public struct AudioVolumeNotificationDataStruct
+    internal struct AudioVolumeNotificationDataStruct
     {
         public Guid guidEventContext;
         public bool bMuted;

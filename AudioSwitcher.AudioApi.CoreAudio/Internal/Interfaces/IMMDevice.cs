@@ -3,17 +3,28 @@ using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid("D666063F-1587-4E43-81F1-B948E807363F"),
-     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [Guid(ComIIds.IMM_DEVICE_IID)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IMMDevice
     {
-        // activationParams is a propvariant
-        int Activate(Guid id, ClsCtx clsCtx, IntPtr activationParams, [MarshalAs(UnmanagedType.IUnknown)] out object interfacePointer);
+        [PreserveSig]
+        int Activate(
+            [In] ref Guid interfaceId,
+            [In] [MarshalAs(UnmanagedType.U4)] ClsCtx classContext,
+            [In, Optional] IntPtr activationParams,
+            [Out] [MarshalAs(UnmanagedType.IUnknown)] out object instancePtr);
 
-        int OpenPropertyStore(StorageAccessMode stgmAccess, out IPropertyStore properties);
+        [PreserveSig]
+        int OpenPropertyStore(
+            [In] [MarshalAs(UnmanagedType.U4)] StorageAccessMode accessMode,
+            [Out] [MarshalAs(UnmanagedType.Interface)] out IPropertyStore properties);
 
-        int GetId([MarshalAs(UnmanagedType.LPWStr)] out string id);
+        [PreserveSig]
+        int GetId(
+            [Out] [MarshalAs(UnmanagedType.LPWStr)] out string strId);
 
-        int GetState(out EDeviceState state);
+        [PreserveSig]
+        int GetState(
+            [Out] [MarshalAs(UnmanagedType.U4)] out EDeviceState deviceState);
     }
 }

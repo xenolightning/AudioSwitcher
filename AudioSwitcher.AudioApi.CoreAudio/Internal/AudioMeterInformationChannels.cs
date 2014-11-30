@@ -20,6 +20,7 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
+using System;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 
@@ -60,10 +61,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get
             {
                 var peakValues = new float[Count];
-                GCHandle Params = GCHandle.Alloc(peakValues, GCHandleType.Pinned);
-                Marshal.ThrowExceptionForHR(_audioMeterInformation.GetChannelsPeakValues(peakValues.Length,
-                    Params.AddrOfPinnedObject()));
-                Params.Free();
+                Marshal.ThrowExceptionForHR(_audioMeterInformation.GetChannelsPeakValues(peakValues.Length, peakValues));
                 return peakValues[index];
             }
         }

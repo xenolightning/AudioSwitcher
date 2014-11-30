@@ -1,62 +1,73 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    // ReSharper disable once InconsistentNaming
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct WAVEFORMATEX
-    {
-        private readonly ushort wFormatTag;
-        private readonly ushort nChannels;
-        private readonly uint nSamplesPerSec;
-        private readonly uint nAvgBytesPerSec;
-        private readonly ushort nBlockAlign;
-        private readonly ushort wBitsPerSample;
-        private readonly ushort cbSize;
-    }
-
-    internal enum DeviceShareMode
-    {
-        DeviceShared,
-        DeviceExclusive
-    }
-
-    [Guid("568b9108-44bf-40b4-9006-86afe5b5a620"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [Guid(ComIIds.POLICY_CONFIG_VISTA_IID)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IPolicyConfigVista
     {
         [PreserveSig]
-        int GetMixFormat(string pszDeviceName, WAVEFORMATEX waveFormat);
-
-        // not available on Windows 7, use method from IPolicyConfig
-        [PreserveSig]
-        int GetDeviceFormat(string pszDeviceName, int bDefault, WAVEFORMATEX ppFormat);
+        int GetMixFormat(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] IntPtr ppFormat);
 
         [PreserveSig]
-        int SetDeviceFormat(string pszDeviceName, WAVEFORMATEX pEndpointFormat, WAVEFORMATEX MixFormat);
+        int GetDeviceFormat(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] [MarshalAs(UnmanagedType.Bool)] bool bDefault,
+            [In] IntPtr ppFormat);
 
         [PreserveSig]
-        int GetProcessingPeriod(string pszDeviceName, int input2, long long1, long long2);
-
-        // not available on Windows 7, use method from IPolicyConfig
-        [PreserveSig]
-        int SetProcessingPeriod(string pszDeviceName, long long1);
-
-        // not available on Windows 7, use method from IPolicyConfig
-        [PreserveSig]
-        int GetShareMode(string pszDeviceName, DeviceShareMode devShareMode);
-
-        // not available on Windows 7, use method from IPolicyConfig
-        [PreserveSig]
-        int SetShareMode(string pszDeviceName, DeviceShareMode shareMode);
-
-        // not available on Windows 7, use method from IPolicyConfig
-        [PreserveSig]
-        int GetPropertyValue(string pszDeviceName, out PropertyKey propKey, out PropVariant propVariant);
+        int SetDeviceFormat(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] IntPtr pEndpointFormat,
+            [In] IntPtr mixFormat);
 
         [PreserveSig]
-        int SetPropertyValue(string pszDeviceName, PropertyKey propKey, PropVariant propVariant);
+        int GetProcessingPeriod(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] [MarshalAs(UnmanagedType.Bool)] bool bDefault,
+            [In] IntPtr pmftDefaultPeriod,
+            [In] IntPtr pmftMinimumPeriod);
 
         [PreserveSig]
-        int SetDefaultEndpoint(string pszDeviceName, ERole role);
+        int SetProcessingPeriod(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] IntPtr pmftPeriod);
+
+        [PreserveSig]
+        int GetShareMode(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] IntPtr pMode);
+
+        [PreserveSig]
+        int SetShareMode(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] IntPtr mode);
+
+        [PreserveSig]
+        int GetPropertyValue(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] [MarshalAs(UnmanagedType.Bool)] bool bFxStore,
+            [In] IntPtr key,
+            [In] IntPtr pv);
+
+        [PreserveSig]
+        int SetPropertyValue(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] [MarshalAs(UnmanagedType.Bool)] bool bFxStore,
+            [In] IntPtr key,
+            [In] IntPtr pv);
+
+        [PreserveSig]
+        int SetDefaultEndpoint(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] [MarshalAs(UnmanagedType.U4)] ERole role);
+
+        [PreserveSig]
+        int SetEndpointVisibility(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] [MarshalAs(UnmanagedType.Bool)] bool bVisible);
     }
 }

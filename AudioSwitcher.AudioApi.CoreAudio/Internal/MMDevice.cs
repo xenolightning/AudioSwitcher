@@ -22,51 +22,44 @@
 // modified for AudioSwitcher
 
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    /// <summary>
-    ///     MM Device
-    /// </summary>
     internal class MMDevice : IDisposable
     {
-        #region Variables
-
         private readonly IMMDevice _deviceInterface;
         private AudioEndpointVolume _audioEndpointVolume;
         private AudioMeterInformation _audioMeterInformation;
         private PropertyStore _propertyStore;
 
-        #endregion
-
-        #region Guids
-
-        private static readonly Guid IID_I_AUDIO_METER_INFORMATION = new Guid("C02216F6-8C67-4B5B-9D00-D008E73E0064");
-        private static readonly Guid IID_I_AUDIO_ENDPOINT_VOLUME = new Guid("5CDF2C82-841E-4546-9722-0CF74078229A");
         private bool _audioMeterInformationUnavailable;
         private bool _audioEndpointVolumeUnavailable;
-
-        #endregion
-
-        #region Init
 
         private void GetPropertyInformation()
         {
             ComThread.Invoke(() =>
             {
-                IPropertyStore propstore;
+                IPropertyStore propstore = null;
+
+                //Opening in write mode, can cause exceptions to be thrown when not run as admin.
+                //This tries to open in write mode if available
                 try
                 {
                     _deviceInterface.OpenPropertyStore(StorageAccessMode.ReadWrite, out propstore);
+                }
+                catch
+                {
+                }
+
+                if (propstore != null)
+                {
                     _propertyStore = new PropertyStore(propstore, PropertyStore.Mode.ReadWrite);
                 }
-                catch (UnauthorizedAccessException)
+                else
                 {
-                    Debug.WriteLine("Cannot open property store in write mode");
                     Marshal.ThrowExceptionForHR(_deviceInterface.OpenPropertyStore(StorageAccessMode.Read, out propstore));
                     _propertyStore = new PropertyStore(propstore, PropertyStore.Mode.Read);
                 }
@@ -84,15 +77,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ComThread.Invoke(() =>
             {
                 object result = null;
-                Exception ex = null;
+                Exception ex;
 
                 //Need to catch here, as there is a chance that unauthorized is thrown.
                 //It's not an HR exception, but bubbles up through the .net call stack
                 try
                 {
+                    var clsGuid = new Guid(ComIIds.AUDIO_METER_INFORMATION_IID);
                     ex = Marshal.GetExceptionForHR(
-                       _deviceInterface.Activate(IID_I_AUDIO_METER_INFORMATION, ClsCtx.ALL,
-                           IntPtr.Zero, out result));
+                       _deviceInterface.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
                 }
                 catch (Exception e)
                 {
@@ -123,15 +116,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ComThread.Invoke(() =>
             {
                 object result = null;
-                Exception ex = null;
+                Exception ex;
 
                 //Need to catch here, as there is a chance that unauthorized is thrown.
                 //It's not an HR exception, but bubbles up through the .net call stack
                 try
                 {
+                    var clsGuid = new Guid(ComIIds.AUDIO_ENDPOINT_VOLUME_IID);
                     ex = Marshal.GetExceptionForHR(
-                       _deviceInterface.Activate(IID_I_AUDIO_ENDPOINT_VOLUME, ClsCtx.ALL,
-                           IntPtr.Zero, out result));
+                       _deviceInterface.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
                 }
                 catch (Exception e)
                 {
@@ -146,10 +139,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 _audioEndpointVolume = new AudioEndpointVolume(result as IAudioEndpointVolume);
             });
         }
-
-        #endregion
-
-        #region Properties
 
         /// <summary>
         ///     Audio Meter Information
@@ -268,9 +257,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     try
                     {
                         if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_ICON))
-                        {
                             return (string)Properties[PropertyKeys.PKEY_DEVICE_ICON].Value;
-                        }
+
                         return "Unknown";
                     }
                     catch
@@ -330,16 +318,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        #endregion
-
-        #region Constructor
-
         internal MMDevice(IMMDevice realDevice)
         {
             _deviceInterface = realDevice;
         }
-
-        #endregion
 
         /// <summary>
         ///     To string

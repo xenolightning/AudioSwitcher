@@ -3,44 +3,74 @@ using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid("f8679f50-850a-41cf-9c72-430f290290c8"),
-     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [Guid(ComIIds.POLICY_CONFIG_IID)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IPolicyConfig
     {
         [PreserveSig]
-        int GetMixFormat(string pszDeviceName, IntPtr ppFormat);
+        int GetMixFormat(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] IntPtr ppFormat);
 
         [PreserveSig]
-        int GetDeviceFormat(string pszDeviceName, bool bDefault, IntPtr ppFormat);
+        int GetDeviceFormat(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] [MarshalAs(UnmanagedType.Bool)] bool bDefault,
+            [In] IntPtr ppFormat);
 
         [PreserveSig]
-        int ResetDeviceFormat(string pszDeviceName);
+        int ResetDeviceFormat([In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName);
 
         [PreserveSig]
-        int SetDeviceFormat(string pszDeviceName, IntPtr pEndpointFormat, IntPtr MixFormat);
+        int SetDeviceFormat(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] IntPtr pEndpointFormat,
+            [In] IntPtr mixFormat);
 
         [PreserveSig]
-        int GetProcessingPeriod(string pszDeviceName, bool bDefault, IntPtr pmftDefaultPeriod, IntPtr pmftMinimumPeriod);
+        int GetProcessingPeriod(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] [MarshalAs(UnmanagedType.Bool)] bool bDefault,
+            [In] IntPtr pmftDefaultPeriod,
+            [In] IntPtr pmftMinimumPeriod);
 
         [PreserveSig]
-        int SetProcessingPeriod(string pszDeviceName, IntPtr pmftPeriod);
+        int SetProcessingPeriod(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] IntPtr pmftPeriod);
 
         [PreserveSig]
-        int GetShareMode(string pszDeviceName, IntPtr pMode);
+        int GetShareMode(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] IntPtr pMode);
 
         [PreserveSig]
-        int SetShareMode(string pszDeviceName, IntPtr mode);
+        int SetShareMode(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] IntPtr mode);
 
         [PreserveSig]
-        int GetPropertyValue(string pszDeviceName, bool bFxStore, IntPtr key, IntPtr pv);
+        int GetPropertyValue(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] [MarshalAs(UnmanagedType.Bool)] bool bFxStore,
+            [In] IntPtr key,
+            [In] IntPtr pv);
 
         [PreserveSig]
-        int SetPropertyValue(string pszDeviceName, bool bFxStore, IntPtr key, IntPtr pv);
+        int SetPropertyValue(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] [MarshalAs(UnmanagedType.Bool)] bool bFxStore,
+            [In] IntPtr key,
+            [In] IntPtr pv);
 
         [PreserveSig]
-        int SetDefaultEndpoint(string pszDeviceName, ERole role);
+        int SetDefaultEndpoint(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] [MarshalAs(UnmanagedType.U4)] ERole role);
 
         [PreserveSig]
-        int SetEndpointVisibility(string pszDeviceName, bool bVisible);
+        int SetEndpointVisibility(
+            [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
+            [In] [MarshalAs(UnmanagedType.Bool)] bool bVisible);
     }
 }

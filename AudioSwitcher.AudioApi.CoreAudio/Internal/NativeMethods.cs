@@ -5,10 +5,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     internal static class NativeMethods
     {
-        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
-        public static extern uint ExtractIconEx([MarshalAs(UnmanagedType.LPWStr)] string szFileName, int nIconIndex,
-            IntPtr[] phiconLarge, IntPtr[] phiconSmall, uint nIcons);
-
         [DllImport("ole32.dll")]
         public static extern int PropVariantClear(ref PropVariant pvar);
     }

@@ -2,13 +2,10 @@
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    /// <summary>
-    ///     defined in MMDeviceAPI.h
-    /// </summary>
-    [Guid("1BE09788-6894-4089-8586-9A2A6C265AC5"),
-     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [Guid(ComIIds.IMM_ENDPOINT_IID)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IMMEndpoint
     {
-        int GetDataFlow(out EDataFlow eDataFlow);
+        int GetDataFlow([Out] [MarshalAs(UnmanagedType.I4)] out EDataFlow dataFlow);
     }
 }

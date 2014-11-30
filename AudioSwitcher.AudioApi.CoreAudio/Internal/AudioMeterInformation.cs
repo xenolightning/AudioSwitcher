@@ -36,7 +36,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         internal AudioMeterInformation(IAudioMeterInformation realInterface)
         {
-            int hardwareSupp;
+            uint hardwareSupp;
 
             _audioMeterInformation = realInterface;
             Marshal.ThrowExceptionForHR(_audioMeterInformation.QueryHardwareSupport(out hardwareSupp));

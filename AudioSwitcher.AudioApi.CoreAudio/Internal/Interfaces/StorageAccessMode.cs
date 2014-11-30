@@ -3,10 +3,10 @@
     /// <summary>
     ///     MMDevice STGM enumeration
     /// </summary>
-    internal enum StorageAccessMode
+    internal enum StorageAccessMode : uint
     {
-        Read,
-        Write,
-        ReadWrite
+        Read = 0x00000000,
+        Write = 0x00000001,
+        ReadWrite = 0x00000002
     }
 }

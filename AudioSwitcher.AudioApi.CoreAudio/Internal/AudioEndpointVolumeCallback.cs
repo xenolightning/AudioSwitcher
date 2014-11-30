@@ -44,7 +44,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _handler = new WeakReference(handler);
         }
 
-        public void OnNotify(IntPtr notifyData)
+        public int OnNotify(IntPtr notifyData)
         {
             //Since AUDIO_VOLUME_NOTIFICATION_DATA is dynamic in length based on the
             //number of audio channels available we cannot just call PtrToStructure 
@@ -63,7 +63,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             //Something weird happened, better to ignore it and move on
             if (data.nChannels > 100)
-                return;
+                return 0;
 
             var voldata = new float[data.nChannels];
 
@@ -82,6 +82,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (_handler.IsAlive && p != null)
                 p.FireNotification(notificationData);
 
+            return 0;
         }
     }
 }

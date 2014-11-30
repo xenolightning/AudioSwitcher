@@ -59,9 +59,10 @@
     <Compile Include="Internal\Interfaces\AudioVolumeNotificationDataStruct.cs" />
     <Compile Include="Internal\Interfaces\Blob.cs" />
     <Compile Include="Internal\Interfaces\ClsCtx.cs" />
-    <Compile Include="Internal\Interfaces\ErrorCodes.cs" />
+    <Compile Include="Internal\Interfaces\ComIIds.cs" />
     <Compile Include="Internal\Interfaces\IAudioEndpointVolume.cs" />
     <Compile Include="Internal\Interfaces\IAudioEndpointVolumeCallback.cs" />
+    <Compile Include="Internal\Interfaces\IAudioEndpointVolumeEx.cs" />
     <Compile Include="Internal\Interfaces\IAudioMeterInformation.cs" />
     <Compile Include="Internal\Interfaces\IMMDevice.cs" />
     <Compile Include="Internal\Interfaces\IMMDeviceCollection.cs" />

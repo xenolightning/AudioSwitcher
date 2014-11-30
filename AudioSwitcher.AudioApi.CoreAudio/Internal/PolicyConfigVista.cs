@@ -7,16 +7,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     internal static class PolicyConfigVista
     {
-        //private readonly IPolicyConfigVista _IPolicyConfigVista = new CPolicyConfigVistaClient() as IPolicyConfigVista;
 
-        public static void SetDefaultEndpoint(string wszDeviceId, ERole eRole)
+        public static void SetDefaultEndpoint(string devId, ERole eRole)
         {
-            var _IPolicyConfigVista = new CPolicyConfigVistaClient() as IPolicyConfigVista;
-            Marshal.ThrowExceptionForHR(_IPolicyConfigVista.SetDefaultEndpoint(wszDeviceId, eRole));
+            var iPolicyConfigVista = new _PolicyConfigVistaClient() as IPolicyConfigVista;
+
+            if (iPolicyConfigVista != null)
+                Marshal.ThrowExceptionForHR(iPolicyConfigVista.SetDefaultEndpoint(devId, eRole));
         }
 
         [ComImport, Guid("294935CE-F637-4E7C-A41B-AB255460B862")]
-        private class CPolicyConfigVistaClient
+        private class _PolicyConfigVistaClient
         {
         }
     }

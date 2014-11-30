@@ -19,7 +19,7 @@
      misrepresented as being the original source code.
   3. This notice may not be removed or altered from any source distribution.
 */
-// updated for NAudio
+// updated for Audio Switcher
 
 using System.Collections;
 using System.Collections.Generic;
@@ -34,11 +34,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     /// </summary>
     internal class MMDeviceCollection : IEnumerable<MMDevice>
     {
-        private readonly IMMDeviceCollection _MMDeviceCollection;
+        private readonly IMMDeviceCollection _mmDeviceCollection;
 
         internal MMDeviceCollection(IMMDeviceCollection parent)
         {
-            _MMDeviceCollection = parent;
+            _mmDeviceCollection = parent;
         }
 
         #region IEnumerable<MMDevice> Members
@@ -76,7 +76,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return ComThread.Invoke(() =>
                 {
                     int result;
-                    Marshal.ThrowExceptionForHR(_MMDeviceCollection.GetCount(out result));
+                    Marshal.ThrowExceptionForHR(_mmDeviceCollection.GetCount(out result));
                     return result;
 
                 });
@@ -95,7 +95,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return ComThread.Invoke(() =>
                 {
                     IMMDevice result;
-                    _MMDeviceCollection.Item(index, out result);
+                    _mmDeviceCollection.Item(index, out result);
                     return new MMDevice(result);
                 });
             }
