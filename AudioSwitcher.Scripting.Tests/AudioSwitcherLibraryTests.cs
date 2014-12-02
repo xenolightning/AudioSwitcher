@@ -128,10 +128,10 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         {
             using (var engine = new JSEngine(GetAudioController()))
             {
-                const string js = @"AudioSwitcher.getAudioDevice(AudioSwitcher.getAudioDevices(1)[0].name, 1);";
+                const string js = @"AudioSwitcher.getAudioDevice(AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.PLAYBACK)[0].name, AudioSwitcher.DeviceType.PLAYBACK);";
 
                 Assert.DoesNotThrow(() => engine.Execute(js));
-                var audioDevice = engine.Evaluate<JavaScriptAudioDevice>("AudioSwitcher.getAudioDevices(1)[0]");
+                var audioDevice = engine.Evaluate<JavaScriptAudioDevice>("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.PLAYBACK)[0]");
                 var resolvedAudioDevice = engine.Evaluate<JavaScriptAudioDevice>(js);
 
                 Assert.NotEqual(null, resolvedAudioDevice);
@@ -146,10 +146,10 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         {
             using (var engine = new JSEngine(GetAudioController()))
             {
-                const string js = @"AudioSwitcher.getAudioDevice(AudioSwitcher.getAudioDevices(2)[0].name, 2);";
+                const string js = @"AudioSwitcher.getAudioDevice(AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE)[0].name, AudioSwitcher.DeviceType.CAPTURE);";
 
                 Assert.DoesNotThrow(() => engine.Execute(js));
-                var audioDevice = engine.Evaluate<JavaScriptAudioDevice>("AudioSwitcher.getAudioDevices(2)[0]");
+                var audioDevice = engine.Evaluate<JavaScriptAudioDevice>("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE)[0]");
                 var resolvedAudioDevice = engine.Evaluate<JavaScriptAudioDevice>(js);
 
                 Assert.NotEqual(null, resolvedAudioDevice);
@@ -287,8 +287,8 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         {
             using (var engine = new JSEngine(GetAudioController()))
             {
-                const string setDefault = @"AudioSwitcher.getAudioDevices(1)[0].setAsDefaultDevice()";
-                const string checkDefault = @"AudioSwitcher.getAudioDevices(1)[0].isDefault";
+                const string setDefault = @"AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.PLAYBACK)[0].setAsDefaultDevice()";
+                const string checkDefault = @"AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.PLAYBACK)[0].isDefault";
 
                 engine.Execute(setDefault);
 
@@ -303,8 +303,8 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         {
             using (var engine = new JSEngine(GetAudioController()))
             {
-                const string setDefault = @"AudioSwitcher.getAudioDevices(1)[0].setAsDefaultCommDevice()";
-                const string checkDefault = @"AudioSwitcher.getAudioDevices(1)[0].isDefaultComm";
+                const string setDefault = @"AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.PLAYBACK)[0].setAsDefaultCommDevice()";
+                const string checkDefault = @"AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.PLAYBACK)[0].isDefaultComm";
 
                 engine.Execute(setDefault);
 
@@ -319,8 +319,8 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         {
             using (var engine = new JSEngine(GetAudioController()))
             {
-                const string setDefault = @"AudioSwitcher.getAudioDevices(2)[0].setAsDefaultDevice()";
-                const string checkDefault = @"AudioSwitcher.getAudioDevices(2)[0].isDefault";
+                const string setDefault = @"AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE)[0].setAsDefaultDevice()";
+                const string checkDefault = @"AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE)[0].isDefault";
 
                 engine.Execute(setDefault);
 
@@ -335,8 +335,8 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         {
             using (var engine = new JSEngine(GetAudioController()))
             {
-                const string setDefault = @"AudioSwitcher.getAudioDevices(2)[0].setAsDefaultCommDevice()";
-                const string checkDefault = @"AudioSwitcher.getAudioDevices(2)[0].isDefaultComm";
+                const string setDefault = @"AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE)[0].setAsDefaultCommDevice()";
+                const string checkDefault = @"AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE)[0].isDefaultComm";
 
                 engine.Execute(setDefault);
 
