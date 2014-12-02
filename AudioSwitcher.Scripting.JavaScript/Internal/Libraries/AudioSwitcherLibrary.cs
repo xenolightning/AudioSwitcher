@@ -6,10 +6,16 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
 {
     internal sealed partial class AudioSwitcherLibrary : ObjectInstance, IJavaScriptLibrary
     {
+        private readonly JavaScriptDeviceType _deviceType;
+        private readonly JavaScriptDeviceState _deviceState;
+
         public AudioSwitcherLibrary(ScriptEngine engine, AudioController controller)
             : base(engine)
         {
             AudioController = controller;
+            _deviceType = new JavaScriptDeviceType(this.Engine);
+            _deviceState = new JavaScriptDeviceState(this.Engine);
+
             PopulateFields();
             PopulateFunctions();
         }
@@ -44,6 +50,9 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
 
         public JavaScriptAudioDevice CreateJavaScriptAudioDevice(IDevice audioDevice)
         {
+            if (audioDevice == null)
+                return null;
+
             return new JavaScriptAudioDevice(Engine, AudioController, audioDevice);
         }
     }

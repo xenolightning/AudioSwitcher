@@ -45,9 +45,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                int result;
+                uint result;
                 Marshal.ThrowExceptionForHR(_audioMeterInformation.GetMeteringChannelCount(out result));
-                return result;
+                return Convert.ToInt32(result);
             }
         }
 
@@ -61,7 +61,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get
             {
                 var peakValues = new float[Count];
-                Marshal.ThrowExceptionForHR(_audioMeterInformation.GetChannelsPeakValues(peakValues.Length, peakValues));
+                Marshal.ThrowExceptionForHR(_audioMeterInformation.GetChannelsPeakValues(Convert.ToUInt32(peakValues.Length), peakValues));
                 return peakValues[index];
             }
         }

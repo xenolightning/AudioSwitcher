@@ -15,7 +15,10 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             Name = device.Name;
             Interface = device.InterfaceName;
             FullName = device.FullName;
-            Flags = device.IsPlaybackDevice ? 1 : 2;
+            IsPlayback = device.IsPlaybackDevice;
+            IsCapture = device.IsPlaybackDevice;
+            Type = JavaScriptDeviceType.GetJavascriptDeviceType(device.DeviceType);
+            State = JavaScriptDeviceState.GetJavascriptDeviceState(device.State);
             IsDefault = device.IsDefaultDevice;
             IsDefaultComm = device.IsDefaultCommunicationsDevice;
 
@@ -51,8 +54,29 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             internal set;
         }
 
-        [JSProperty(Name = "flags")]
-        public int Flags
+        [JSProperty(Name = "type")]
+        public string Type
+        {
+            get;
+            internal set;
+        }
+
+        [JSProperty(Name = "isPlayback")]
+        public bool IsPlayback
+        {
+            get;
+            internal set;
+        }
+
+        [JSProperty(Name = "isCapture")]
+        public bool IsCapture
+        {
+            get;
+            internal set;
+        }
+
+        [JSProperty(Name = "state")]
+        public string State
         {
             get;
             internal set;

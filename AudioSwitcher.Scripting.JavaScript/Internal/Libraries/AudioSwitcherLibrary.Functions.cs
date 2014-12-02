@@ -7,26 +7,38 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
 {
     internal sealed partial class AudioSwitcherLibrary
     {
+        [JSProperty(Name = "DeviceType")]
+        public JavaScriptDeviceType DeviceType
+        {
+            get { return _deviceType; }
+        }
+
+        [JSProperty(Name = "DeviceState")]
+        public JavaScriptDeviceState DeviceState
+        {
+            get { return _deviceState; }
+        }
+
         /// <summary>
         ///     Macro function used to list all the devices
         /// </summary>
         /// <param name="flags">0 Both, 1 = Playback, 2 = Capture</param>
         /// <returns></returns>
         [JSFunction(Name = "getAudioDevices")]
-        public ArrayInstance GetAudioDevices([DefaultParameterValue(0)] int flags = 0)
+        public ArrayInstance GetAudioDevices([DefaultParameterValue(JavaScriptDeviceType.ALL)] string type = JavaScriptDeviceType.ALL)
         {
             var devices = new List<IDevice>();
 
-            switch (flags)
+            switch (type)
             {
-                case 0:
+                case JavaScriptDeviceType.ALL:
                     devices.AddRange(AudioController.GetPlaybackDevices());
                     devices.AddRange(AudioController.GetCaptureDevices());
                     break;
-                case 1:
+                case JavaScriptDeviceType.PLAYBACK:
                     devices.AddRange(AudioController.GetPlaybackDevices());
                     break;
-                case 2:
+                case JavaScriptDeviceType.CAPTURE:
                     devices.AddRange(AudioController.GetCaptureDevices());
                     break;
             }
@@ -39,48 +51,81 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
         }
 
         /// <summary>
-        ///     Get an audio device by name
+        ///     Macro function used to list all the devices
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="flags"></param>
         /// <returns></returns>
-        [JSFunction(Name = "getAudioDevice")]
-        public JavaScriptAudioDevice GetAudioDevice(string name, [DefaultParameterValue(0)] int flags = 0)
+        [JSFunction(Name = "getPlaybackDevices")]
+        public ArrayInstance GetPlaybackDevices()
+        {
+            var devices = new List<IDevice>();
+            devices.AddRange(AudioController.GetCaptureDevices());
+
+            //if empty then return empty array
+            if (devices.Count == 0)
+                return Engine.Array.New();
+
+            return Engine.EnumerableToArray(devices.Select(CreateJavaScriptAudioDevice));
+        }
+
+        /// <summary>
+        ///     Macro function used to list all the devices
+        /// </summary>
+        /// <returns></returns>
+        [JSFunction(Name = "getCaptureDevices")]
+        public ArrayInstance GetCaptureDevices()
         {
             var devices = new List<IDevice>();
 
-            switch (flags)
+            devices.AddRange(AudioController.GetCaptureDevices());
+
+            //if empty then return empty array
+            if (devices.Count == 0)
+                return Engine.Array.New();
+
+            return Engine.EnumerableToArray(devices.Select(CreateJavaScriptAudioDevice));
+        }
+
+        /// <summary>
+        ///     Get an audio device by name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        [JSFunction(Name = "getAudioDevice")]
+        public JavaScriptAudioDevice GetAudioDevice(string name, [DefaultParameterValue(JavaScriptDeviceType.ALL)] string type = JavaScriptDeviceType.ALL)
+        {
+            IDevice device = null;
+
+            switch (type)
             {
-                case 0:
-                    devices.AddRange(AudioController.GetPlaybackDevices());
-                    devices.AddRange(AudioController.GetCaptureDevices());
+                case JavaScriptDeviceType.ALL:
+                    device = AudioController.GetAllDevices().FirstOrDefault(x => x.Name == name);
                     break;
-                case 1:
-                    devices.AddRange(AudioController.GetPlaybackDevices());
+                case JavaScriptDeviceType.PLAYBACK:
+                    device = AudioController.GetPlaybackDevices().FirstOrDefault(x => x.Name == name);
                     break;
-                case 2:
-                    devices.AddRange(AudioController.GetCaptureDevices());
+                case JavaScriptDeviceType.CAPTURE:
+                    device = AudioController.GetCaptureDevices().FirstOrDefault(x => x.Name == name);
                     break;
             }
 
-            IDevice dev = devices.FirstOrDefault(x => x.Name == name);
-
-            return dev != null ? CreateJavaScriptAudioDevice(dev) : null;
+            return device != null ? CreateJavaScriptAudioDevice(device) : null;
         }
 
         /// <summary>
         ///     Returns the default device for the flag
         /// </summary>
-        /// <param name="flags">1 = Playback, 2 = Capture</param>
+        /// <param name="type">PLAYBACK, CAPTURE</param>
         /// <returns></returns>
         [JSFunction(Name = "getDefaultDevice")]
-        public JavaScriptAudioDevice GetDefaultDevice(int flags)
+        public JavaScriptAudioDevice GetDefaultDevice(string type)
         {
-            switch (flags)
+            switch (type)
             {
-                case 1:
+                case JavaScriptDeviceType.PLAYBACK:
                     return CreateJavaScriptAudioDevice(AudioController.DefaultPlaybackDevice);
-                case 2:
+                    break;
+                case JavaScriptDeviceType.CAPTURE:
                     return CreateJavaScriptAudioDevice(AudioController.DefaultCaptureDevice);
             }
 
@@ -90,16 +135,17 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
         /// <summary>
         ///     Returns the default communication device for the flag
         /// </summary>
-        /// <param name="flags">1 = Playback, 2 = Capture</param>
+        /// <param name="type">PLAYBACK, CAPTURE</param>
         /// <returns></returns>
         [JSFunction(Name = "getDefaultCommunicationDevice")]
-        public JavaScriptAudioDevice GetDefaultCommunicationDevice(int flags)
+        public JavaScriptAudioDevice GetDefaultCommunicationDevice(string type)
         {
-            switch (flags)
+            switch (type)
             {
-                case 1:
+                case JavaScriptDeviceType.PLAYBACK:
                     return CreateJavaScriptAudioDevice(AudioController.DefaultPlaybackCommunicationsDevice);
-                case 2:
+                    break;
+                case JavaScriptDeviceType.CAPTURE:
                     return CreateJavaScriptAudioDevice(AudioController.DefaultCaptureCommunicationsDevice);
             }
 

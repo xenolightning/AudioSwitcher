@@ -8,11 +8,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
     internal interface IMMDeviceCollection
     {
         [PreserveSig]
-        int GetCount([Out] [MarshalAs(UnmanagedType.U4)] out int count);
+        int GetCount([Out] [MarshalAs(UnmanagedType.U4)] out uint count);
 
         [PreserveSig]
         int Item(
-            [In] [MarshalAs(UnmanagedType.U4)] int index,
+            [In] [MarshalAs(UnmanagedType.U4)] uint index,
             [Out] [MarshalAs(UnmanagedType.Interface)] out IMMDevice device);
     }
 }

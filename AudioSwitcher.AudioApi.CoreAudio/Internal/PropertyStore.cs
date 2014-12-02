@@ -19,8 +19,9 @@
      misrepresented as being the original source code.
   3. This notice may not be removed or altered from any source distribution.
 */
-// this version modified for NAudio from Ray Molenkamp's original
+// this version modified for Audio Switcher
 
+using System;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 
@@ -32,7 +33,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     internal class PropertyStore
     {
         private readonly Mode _accessMode;
-        private readonly IPropertyStore storeInterface;
+        private readonly IPropertyStore _storeInterface;
 
         /// <summary>
         ///     Creates a new property store
@@ -41,7 +42,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <param name="accessMode">The mode to open the propertystore in. Read/Write</param>
         internal PropertyStore(IPropertyStore store, Mode accessMode)
         {
-            storeInterface = store;
+            _storeInterface = store;
             _accessMode = accessMode;
         }
 
@@ -57,9 +58,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                int result;
-                Marshal.ThrowExceptionForHR(storeInterface.GetCount(out result));
-                return result;
+                uint result;
+                Marshal.ThrowExceptionForHR(_storeInterface.GetCount(out result));
+
+                //Will error if the count returns > max value
+                return Convert.ToInt32(result);
             }
         }
 
@@ -74,7 +77,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 PropVariant result;
                 PropertyKey key = Get(index);
-                Marshal.ThrowExceptionForHR(storeInterface.GetValue(ref key, out result));
+                Marshal.ThrowExceptionForHR(_storeInterface.GetValue(ref key, out result));
                 return new PropertyStoreProperty(key, result);
             }
         }
@@ -94,7 +97,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     if ((ikey.formatId == key.formatId) && (ikey.propertyId == key.propertyId))
                     {
                         PropVariant result;
-                        Marshal.ThrowExceptionForHR(storeInterface.GetValue(ref ikey, out result));
+                        Marshal.ThrowExceptionForHR(_storeInterface.GetValue(ref ikey, out result));
                         return new PropertyStoreProperty(ikey, result);
                     }
                 }
@@ -142,7 +145,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         public PropertyKey Get(int index)
         {
             PropertyKey key;
-            Marshal.ThrowExceptionForHR(storeInterface.GetAt(index, out key));
+            Marshal.ThrowExceptionForHR(_storeInterface.GetAt((uint)index, out key));
             return key;
         }
 
@@ -155,7 +158,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             PropVariant result;
             PropertyKey key = Get(index);
-            Marshal.ThrowExceptionForHR(storeInterface.GetValue(ref key, out result));
+            Marshal.ThrowExceptionForHR(_storeInterface.GetValue(ref key, out result));
             return result;
         }
 
@@ -172,10 +175,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return;
 
             PropVariant result;
-            Marshal.ThrowExceptionForHR(storeInterface.GetValue(ref key, out result));
+            Marshal.ThrowExceptionForHR(_storeInterface.GetValue(ref key, out result));
             result.Value = value;
-            Marshal.ThrowExceptionForHR(storeInterface.SetValue(ref key, ref result));
-            storeInterface.Commit();
+            Marshal.ThrowExceptionForHR(_storeInterface.SetValue(ref key, ref result));
+            _storeInterface.Commit();
         }
 
         internal enum Mode

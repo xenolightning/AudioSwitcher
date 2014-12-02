@@ -3,14 +3,30 @@ console.log("Number of devices: " + devices.length);
 var defaultDevice;
 
 for (var i = 0; i < devices.length; i++) {
-    console.log(devices[i].id + " - " + devices[i].name +" / " + devices[i].interface + " - " + devices[i].flags);
+    console.log(devices[i].id);
+    console.log(devices[i].fullName);
+    console.log("    Type: " + devices[i].type);
+    console.log("    State: " + devices[i].state);
+    console.log("    Is Playback (property): " + devices[i].isPlayback);
+    console.log("    Is Playback (calculated): " + (devices[i].type == AudioSwitcher.DeviceType.PLAYBACK));
     console.log("    Is Default: " + devices[i].isDefault);
     console.log("    Is Default Communications: " + devices[i].isDefaultComm);
+    console.log();
 
-    if (devices[i].isDefault && devices[i].flags == 1) {
+    if (devices[i].isDefault && devices[i].isPlayback) {
         defaultDevice = devices[i];
     }
 }
+
+
+console.log("Trying to get Speakers...");
+var ad = AudioSwitcher.getAudioDevice("Speakers", AudioSwitcher.DeviceType.PLAYBACK);
+if (ad !== undefined) {
+    console.log(ad.fullName);
+} else {
+    console.log("Playback Speakers not found");
+}
+console.log();
 
 if (defaultDevice !== undefined) {
 

@@ -8,11 +8,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
     {
         [PreserveSig]
         int GetCount(
-            [Out] [MarshalAs(UnmanagedType.U4)] out int propertyCount);
+            [Out] [MarshalAs(UnmanagedType.U4)] out uint propertyCount);
 
         [PreserveSig]
         int GetAt(
-            [In] [MarshalAs(UnmanagedType.U4)] int propertyIndex,
+            [In] [MarshalAs(UnmanagedType.U4)] uint propertyIndex,
             [Out] out PropertyKey propertyKey);
 
         [PreserveSig]

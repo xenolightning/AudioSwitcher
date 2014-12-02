@@ -21,6 +21,7 @@
 */
 // updated for Audio Switcher
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -75,9 +76,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 return ComThread.Invoke(() =>
                 {
-                    int result;
+                    uint result;
                     Marshal.ThrowExceptionForHR(_mmDeviceCollection.GetCount(out result));
-                    return result;
+                    return Convert.ToInt32(result);
 
                 });
             }
@@ -95,7 +96,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return ComThread.Invoke(() =>
                 {
                     IMMDevice result;
-                    _mmDeviceCollection.Item(index, out result);
+                    _mmDeviceCollection.Item(Convert.ToUInt32(index), out result);
                     return new MMDevice(result);
                 });
             }
