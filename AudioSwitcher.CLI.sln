@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.CLI", "AudioSwitcher.CLI\AudioSwitcher.CLI.csproj", "{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8}"
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.CLI", "Samples\AudioSwitcher.CLI\AudioSwitcher.CLI.csproj", "{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting", "AudioSwitcher.Scripting\AudioSwitcher.Scripting.csproj", "{7794300B-F8D3-4C30-AB1C-FFA0C961A510}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting", "AudioSwitcher.Scripting\AudioSwitcher.Scripting.csproj", "{99F4CE07-B44F-45C2-AE1D-3732D695D61D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi", "AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj", "{7A4E260C-007E-4615-A92B-E849E7B641AB}"
 EndProject
@@ -14,6 +12,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{2E4E7883-61A0-429A-819C-D297A67E438C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi.CoreAudio", "AudioSwitcher.AudioApi.CoreAudio\AudioSwitcher.AudioApi.CoreAudio.csproj", "{63191A1E-AF9E-4D3A-9BA8-BAA02345B277}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.JavaScript", "AudioSwitcher.Scripting.JavaScript\AudioSwitcher.Scripting.JavaScript.csproj", "{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +25,10 @@ Global
 		{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7794300B-F8D3-4C30-AB1C-FFA0C961A510}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99F4CE07-B44F-45C2-AE1D-3732D695D61D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99F4CE07-B44F-45C2-AE1D-3732D695D61D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99F4CE07-B44F-45C2-AE1D-3732D695D61D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99F4CE07-B44F-45C2-AE1D-3732D695D61D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7A4E260C-007E-4615-A92B-E849E7B641AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7A4E260C-007E-4615-A92B-E849E7B641AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A4E260C-007E-4615-A92B-E849E7B641AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -37,14 +37,19 @@ Global
 		{63191A1E-AF9E-4D3A-9BA8-BAA02345B277}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63191A1E-AF9E-4D3A-9BA8-BAA02345B277}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63191A1E-AF9E-4D3A-9BA8-BAA02345B277}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8} = {E956AD21-F71D-44BC-96F4-AD4EE19C6C52}
-		{7794300B-F8D3-4C30-AB1C-FFA0C961A510} = {2E4E7883-61A0-429A-819C-D297A67E438C}
 		{7A4E260C-007E-4615-A92B-E849E7B641AB} = {2E4E7883-61A0-429A-819C-D297A67E438C}
+		{99F4CE07-B44F-45C2-AE1D-3732D695D61D} = {2E4E7883-61A0-429A-819C-D297A67E438C}
 		{63191A1E-AF9E-4D3A-9BA8-BAA02345B277} = {2E4E7883-61A0-429A-819C-D297A67E438C}
+		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F} = {2E4E7883-61A0-429A-819C-D297A67E438C}
 	EndGlobalSection
 EndGlobal

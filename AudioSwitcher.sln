@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi", "AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj", "{7A4E260C-007E-4615-A92B-E849E7B641AB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi.Tests", "AudioSwitcher.AudioApi.Tests\AudioSwitcher.AudioApi.Tests.csproj", "{A4170B87-C5B3-48AE-8784-05FCE4E20E0E}"
@@ -13,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HookingSample", "Samples\Ho
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{A1D8776F-71F0-4ECF-8EBE-AB1BD671E0B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.CLI", "AudioSwitcher.CLI\AudioSwitcher.CLI.csproj", "{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.CLI", "Samples\AudioSwitcher.CLI\AudioSwitcher.CLI.csproj", "{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.JavaScript.Tests", "AudioSwitcher.Scripting.Tests\AudioSwitcher.Scripting.JavaScript.Tests.csproj", "{7395D2F2-2FCA-4F16-8903-3C9E565CF976}"
 EndProject
@@ -28,8 +26,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting", "AudioSwitcher.Scripting\AudioSwitcher.Scripting.csproj", "{99F4CE07-B44F-45C2-AE1D-3732D695D61D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.JavaScript", "AudioSwitcher.Scripting.JavaScript\AudioSwitcher.Scripting.JavaScript.csproj", "{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryLeakTester", "MemoryLeakTester\MemoryLeakTester.csproj", "{FEE5A63D-4004-445B-AFB2-9A8504790209}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -143,28 +139,17 @@ Global
 		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}.Release|ARM.ActiveCfg = Release|Any CPU
 		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}.Release|x64.ActiveCfg = Release|Any CPU
 		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}.Release|x86.ActiveCfg = Release|Any CPU
-		{FEE5A63D-4004-445B-AFB2-9A8504790209}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FEE5A63D-4004-445B-AFB2-9A8504790209}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FEE5A63D-4004-445B-AFB2-9A8504790209}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{FEE5A63D-4004-445B-AFB2-9A8504790209}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{FEE5A63D-4004-445B-AFB2-9A8504790209}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{FEE5A63D-4004-445B-AFB2-9A8504790209}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FEE5A63D-4004-445B-AFB2-9A8504790209}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FEE5A63D-4004-445B-AFB2-9A8504790209}.Release|ARM.ActiveCfg = Release|Any CPU
-		{FEE5A63D-4004-445B-AFB2-9A8504790209}.Release|x64.ActiveCfg = Release|Any CPU
-		{FEE5A63D-4004-445B-AFB2-9A8504790209}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{7395D2F2-2FCA-4F16-8903-3C9E565CF976} = {4F8309BD-D3FD-4903-8054-0B1EED7D385E}
 		{A4170B87-C5B3-48AE-8784-05FCE4E20E0E} = {4F8309BD-D3FD-4903-8054-0B1EED7D385E}
+		{703D3C14-A63F-4BE1-82FE-8D20A55D9960} = {4F8309BD-D3FD-4903-8054-0B1EED7D385E}
 		{2294421F-9911-434B-81EA-E1155D1B272B} = {A1D8776F-71F0-4ECF-8EBE-AB1BD671E0B7}
 		{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8} = {A1D8776F-71F0-4ECF-8EBE-AB1BD671E0B7}
-		{7395D2F2-2FCA-4F16-8903-3C9E565CF976} = {4F8309BD-D3FD-4903-8054-0B1EED7D385E}
-		{703D3C14-A63F-4BE1-82FE-8D20A55D9960} = {4F8309BD-D3FD-4903-8054-0B1EED7D385E}
 		{99F4CE07-B44F-45C2-AE1D-3732D695D61D} = {67E65805-9072-4B61-8D6C-DB3AA4A14BAC}
 		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F} = {67E65805-9072-4B61-8D6C-DB3AA4A14BAC}
-		{FEE5A63D-4004-445B-AFB2-9A8504790209} = {A1D8776F-71F0-4ECF-8EBE-AB1BD671E0B7}
 	EndGlobalSection
 EndGlobal
