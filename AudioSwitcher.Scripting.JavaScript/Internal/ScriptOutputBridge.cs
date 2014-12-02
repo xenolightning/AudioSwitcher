@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Jurassic;
 using Jurassic.Library;
 
@@ -20,7 +21,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
         public void Log(FirebugConsoleMessageStyle style, object[] objects)
         {
             // Convert the objects to a string.
-            var message = new System.Text.StringBuilder();
+            var message = new StringBuilder();
             for (int i = 0; i < objects.Length; i++)
             {
                 message.Append(' ');

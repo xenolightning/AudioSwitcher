@@ -13,8 +13,8 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
             : base(engine)
         {
             AudioController = controller;
-            _deviceType = new JavaScriptDeviceType(this.Engine);
-            _deviceState = new JavaScriptDeviceState(this.Engine);
+            _deviceType = new JavaScriptDeviceType(engine);
+            _deviceState = new JavaScriptDeviceState(engine);
 
             PopulateFields();
             PopulateFunctions();

@@ -10,12 +10,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         ///     Format ID
         /// </summary>
-        public Guid formatId;
+        public readonly Guid FormatId;
 
         /// <summary>
         ///     Property ID
         /// </summary>
-        public int propertyId;
+        public readonly int PropertyId;
 
         /// <summary>
         ///     <param name="formatId"></param>
@@ -23,8 +23,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public PropertyKey(Guid formatId, int propertyId)
         {
-            this.formatId = formatId;
-            this.propertyId = propertyId;
+            FormatId = formatId;
+            PropertyId = propertyId;
         }
     }
 }

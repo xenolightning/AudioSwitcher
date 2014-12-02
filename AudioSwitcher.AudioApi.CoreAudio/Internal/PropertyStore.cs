@@ -94,7 +94,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 for (int i = 0; i < Count; i++)
                 {
                     PropertyKey ikey = Get(i);
-                    if ((ikey.formatId == key.formatId) && (ikey.propertyId == key.propertyId))
+                    if ((ikey.FormatId == key.FormatId) && (ikey.PropertyId == key.PropertyId))
                     {
                         PropVariant result;
                         Marshal.ThrowExceptionForHR(_storeInterface.GetValue(ref ikey, out result));
@@ -111,7 +111,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 for (int i = 0; i < Count; i++)
                 {
                     PropertyKey ikey = Get(i);
-                    if ((ikey.formatId == key.formatId) && (ikey.propertyId == key.propertyId))
+                    if ((ikey.FormatId == key.FormatId) && (ikey.PropertyId == key.PropertyId))
                     {
                         SetValue(ikey, value.Value);
                     }
@@ -129,7 +129,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             for (int i = 0; i < Count; i++)
             {
                 PropertyKey ikey = Get(i);
-                if ((ikey.formatId == key.formatId) && (ikey.propertyId == key.propertyId))
+                if ((ikey.FormatId == key.FormatId) && (ikey.PropertyId == key.PropertyId))
                 {
                     return true;
                 }
