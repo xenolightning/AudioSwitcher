@@ -16,7 +16,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             Interface = device.InterfaceName;
             FullName = device.FullName;
             IsPlayback = device.IsPlaybackDevice;
-            IsCapture = device.IsPlaybackDevice;
+            IsCapture = device.IsCaptureDevice;
             Type = JavaScriptDeviceType.GetJavascriptDeviceType(device.DeviceType);
             State = JavaScriptDeviceState.GetJavascriptDeviceState(device.State);
             IsDefault = device.IsDefaultDevice;

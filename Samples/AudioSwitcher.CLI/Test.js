@@ -18,9 +18,12 @@ for (var i = 0; i < devices.length; i++) {
     }
 }
 
+var defDevById = AudioSwitcher.getAudioDevice(defaultDevice.id);
+console.log("Id lookup successful: " + (defDevById !== undefined && defDevById.id === defaultDevice.id) + "\r\n");
 
 console.log("Trying to get Speakers...");
 var ad = AudioSwitcher.getAudioDevice("Speakers", AudioSwitcher.DeviceType.PLAYBACK);
+
 if (ad !== undefined) {
     console.log(ad.fullName);
 } else {

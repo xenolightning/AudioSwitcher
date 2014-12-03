@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AudioSwitcher.AudioApi;
 using Jurassic.Library;
@@ -22,7 +23,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
         /// <summary>
         ///     Macro function used to list all the devices
         /// </summary>
-        /// <param name="flags">0 Both, 1 = Playback, 2 = Capture</param>
+        /// <param name="type"></param>
         /// <returns></returns>
         [JSFunction(Name = "getAudioDevices")]
         public ArrayInstance GetAudioDevices([DefaultParameterValue(JavaScriptDeviceType.ALL)] string type = JavaScriptDeviceType.ALL)
@@ -86,7 +87,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
         }
 
         /// <summary>
-        ///     Get an audio device by name
+        ///     Get an audio device by name/id
         /// </summary>
         /// <param name="name"></param>
         /// <param name="type"></param>
@@ -96,16 +97,19 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
         {
             IDevice device = null;
 
+            Guid id;
+            Guid.TryParse(name, out id);
+
             switch (type)
             {
                 case JavaScriptDeviceType.ALL:
-                    device = AudioController.GetAllDevices().FirstOrDefault(x => x.Name == name);
+                    device = AudioController.GetAllDevices().FirstOrDefault(x => x.Id == id || x.Name == name);
                     break;
                 case JavaScriptDeviceType.PLAYBACK:
-                    device = AudioController.GetPlaybackDevices().FirstOrDefault(x => x.Name == name);
+                    device = AudioController.GetPlaybackDevices().FirstOrDefault(x => x.Id == id || x.Name == name);
                     break;
                 case JavaScriptDeviceType.CAPTURE:
-                    device = AudioController.GetCaptureDevices().FirstOrDefault(x => x.Name == name);
+                    device = AudioController.GetCaptureDevices().FirstOrDefault(x => x.Id == id || x.Name == name);
                     break;
             }
 
@@ -124,7 +128,6 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
             {
                 case JavaScriptDeviceType.PLAYBACK:
                     return CreateJavaScriptAudioDevice(AudioController.DefaultPlaybackDevice);
-                    break;
                 case JavaScriptDeviceType.CAPTURE:
                     return CreateJavaScriptAudioDevice(AudioController.DefaultCaptureDevice);
             }
@@ -144,7 +147,6 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
             {
                 case JavaScriptDeviceType.PLAYBACK:
                     return CreateJavaScriptAudioDevice(AudioController.DefaultPlaybackCommunicationsDevice);
-                    break;
                 case JavaScriptDeviceType.CAPTURE:
                     return CreateJavaScriptAudioDevice(AudioController.DefaultCaptureCommunicationsDevice);
             }

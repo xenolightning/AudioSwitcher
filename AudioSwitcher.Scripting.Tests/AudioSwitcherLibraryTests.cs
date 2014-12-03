@@ -1,6 +1,8 @@
-﻿using AudioSwitcher.AudioApi;
+﻿using System.Linq;
+using AudioSwitcher.AudioApi;
 using AudioSwitcher.Scripting.JavaScript.Internal;
 using AudioSwitcher.Tests.Common;
+using Jurassic.Library;
 using Xunit;
 
 namespace AudioSwitcher.Scripting.JavaScript.Tests
@@ -98,12 +100,95 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
 
         [Fact]
         [Trait("Type", "AudioLibrary")]
+        public void AudioSwitcher_getAudioDevices_Playback_IsPlayback()
+        {
+            using (var engine = new JSEngine(GetAudioController()))
+            {
+                var device = engine.Evaluate<JavaScriptAudioDevice>("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.PLAYBACK)[0]");
+                var devices = engine.Evaluate<ArrayInstance>("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.PLAYBACK)").ElementValues.Cast<JavaScriptAudioDevice>();
+                Assert.True(devices.All(x => x.IsPlayback));
+                Assert.True(device.IsPlayback);
+            }
+        }
+
+        [Fact]
+        [Trait("Type", "AudioLibrary")]
         public void AudioSwitcher_getAudioDevices_Capture()
         {
             using (var engine = new JSEngine(GetAudioController()))
             {
                 Assert.DoesNotThrow(() => engine.Execute("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE)"));
                 Assert.Equal(2, engine.Evaluate<int>("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE).length"));
+            }
+        }
+
+        [Fact]
+        [Trait("Type", "AudioLibrary")]
+        public void AudioSwitcher_getAudioDevices_Capture_IsCapture()
+        {
+            using (var engine = new JSEngine(GetAudioController()))
+            {
+                var device = engine.Evaluate<JavaScriptAudioDevice>("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE)[0]");
+                var devices = engine.Evaluate<ArrayInstance>("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE)").ElementValues.Cast<JavaScriptAudioDevice>();
+                Assert.True(devices.All(x => x.IsCapture));
+                Assert.True(device.IsCapture);
+            }
+        }
+
+        [Fact]
+        [Trait("Type", "AudioLibrary")]
+        public void AudioSwitcher_getAudioDeviceById()
+        {
+            const string js = @"AudioSwitcher.getAudioDevice(AudioSwitcher.getAudioDevices()[0].id);";
+
+            using (var engine = new JSEngine(GetAudioController()))
+            {
+                Assert.DoesNotThrow(() => engine.Execute(js));
+
+                var audioDevice = engine.Evaluate<JavaScriptAudioDevice>("AudioSwitcher.getAudioDevices()[0]");
+                var resolvedAudioDevice = engine.Evaluate<JavaScriptAudioDevice>(js);
+
+                Assert.NotEqual(null, resolvedAudioDevice);
+                Assert.Equal(audioDevice.Id, resolvedAudioDevice.Id);
+                Assert.IsType<JavaScriptAudioDevice>(resolvedAudioDevice);
+            }
+        }
+
+        [Fact]
+        [Trait("Type", "AudioLibrary")]
+        public void AudioSwitcher_getAudioDeviceById_Playback_Flags()
+        {
+            using (var engine = new JSEngine(GetAudioController()))
+            {
+                const string js = @"AudioSwitcher.getAudioDevice(AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.PLAYBACK)[0].id, AudioSwitcher.DeviceType.PLAYBACK);";
+
+                Assert.DoesNotThrow(() => engine.Execute(js));
+                var audioDevice = engine.Evaluate<JavaScriptAudioDevice>("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.PLAYBACK)[0]");
+                var resolvedAudioDevice = engine.Evaluate<JavaScriptAudioDevice>(js);
+
+                Assert.NotEqual(null, resolvedAudioDevice);
+                Assert.Equal(audioDevice.Id, resolvedAudioDevice.Id);
+                Assert.IsType<JavaScriptAudioDevice>(resolvedAudioDevice);
+                Assert.True(resolvedAudioDevice.IsPlayback);
+            }
+        }
+
+        [Fact]
+        [Trait("Type", "AudioLibrary")]
+        public void AudioSwitcher_getAudioDeviceById_Capture_Flags()
+        {
+            using (var engine = new JSEngine(GetAudioController()))
+            {
+                const string js = @"AudioSwitcher.getAudioDevice(AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE)[0].id, AudioSwitcher.DeviceType.CAPTURE);";
+
+                Assert.DoesNotThrow(() => engine.Execute(js));
+                var audioDevice = engine.Evaluate<JavaScriptAudioDevice>("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE)[0]");
+                var resolvedAudioDevice = engine.Evaluate<JavaScriptAudioDevice>(js);
+
+                Assert.NotEqual(null, resolvedAudioDevice);
+                Assert.Equal(audioDevice.Id, resolvedAudioDevice.Id);
+                Assert.IsType<JavaScriptAudioDevice>(resolvedAudioDevice);
+                Assert.True(resolvedAudioDevice.IsCapture);
             }
         }
 
@@ -141,6 +226,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 Assert.NotEqual(null, resolvedAudioDevice);
                 Assert.Equal(audioDevice.Id, resolvedAudioDevice.Id);
                 Assert.IsType<JavaScriptAudioDevice>(resolvedAudioDevice);
+                Assert.True(resolvedAudioDevice.IsPlayback);
             }
         }
 
@@ -159,6 +245,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 Assert.NotEqual(null, resolvedAudioDevice);
                 Assert.Equal(audioDevice.Id, resolvedAudioDevice.Id);
                 Assert.IsType<JavaScriptAudioDevice>(resolvedAudioDevice);
+                Assert.True(resolvedAudioDevice.IsCapture);
             }
         }
 
