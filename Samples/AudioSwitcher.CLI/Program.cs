@@ -3,15 +3,16 @@ using System.IO;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
 using AudioSwitcher.AudioApi.Sandbox;
+using AudioSwitcher.Scripting;
 using AudioSwitcher.Scripting.JavaScript;
+using Jurassic;
 using Jurassic.Library;
 
 namespace AudioSwitcher.CLI
 {
     internal static class Program
     {
-
-        public static bool IsDebug;
+        private static bool IsDebug;
 
         private static int Main(string[] args)
         {
@@ -51,12 +52,13 @@ namespace AudioSwitcher.CLI
 
                 //Enable to log to CLI
                 //engine.SetGlobalValue("console", new ConsoleOutput(engine));
-                engine.InternalEngine.SetGlobalValue("console", new FirebugConsole(engine.InternalEngine));
+                //engine.InternalEngine.SetGlobalValue("console", new FirebugConsole(engine.InternalEngine));
+                engine.SetOutput(new ConsoleScriptOutput());
 
                 try
                 {
                     Console.WriteLine("Executing {0}...", fName);
-                    engine.Execute(File.ReadAllText(fName));
+                    engine.Execute(new AudioSwitcher.Scripting.FileScriptSource(fName));
                 }
                 catch (Exception ex)
                 {

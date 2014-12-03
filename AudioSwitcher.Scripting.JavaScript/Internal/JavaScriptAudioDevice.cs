@@ -11,7 +11,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             : base(engine)
         {
             Controller = controller;
-            ID = device.Id.ToString();
+            Id = device.Id.ToString();
             Name = device.Name;
             Interface = device.InterfaceName;
             FullName = device.FullName;
@@ -27,7 +27,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
         }
 
         [JSProperty(Name = "id")]
-        public string ID
+        public string Id
         {
             get;
             internal set;
@@ -114,7 +114,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             {
                 //Ensures that the AudioController is always referencing the correct device
                 //instance
-                return Controller.GetAudioDevice(new Guid(ID));
+                return Controller.GetAudioDevice(new Guid(Id));
             }
         }
     }

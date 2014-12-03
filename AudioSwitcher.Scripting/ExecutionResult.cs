@@ -2,14 +2,8 @@
 
 namespace AudioSwitcher.Scripting
 {
-    public sealed class ExecutionResult<T>
+    public sealed class ExecutionResult
     {
-        public T Script
-        {
-            get;
-            set;
-        }
-
         public bool Success
         {
             get;

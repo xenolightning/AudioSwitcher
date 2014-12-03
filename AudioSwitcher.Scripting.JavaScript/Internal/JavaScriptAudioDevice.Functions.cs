@@ -28,15 +28,15 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             return Device.IsMuted;
         }
 
-        [JSFunction(Name = "setAsDefaultDevice")]
-        public bool SetAsDefaultDevice()
+        [JSFunction(Name = "setAsDefault")]
+        public bool SetAsDefault()
         {
             Device.SetAsDefault();
             return true;
         }
 
-        [JSFunction(Name = "setAsDefaultCommDevice")]
-        public bool SetAsDefaultCommDevice()
+        [JSFunction(Name = "setAsDefaultComm")]
+        public bool SetAsDefaultComm()
         {
             Device.SetAsDefaultCommunications();
             return true;

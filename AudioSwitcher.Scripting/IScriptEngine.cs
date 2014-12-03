@@ -17,13 +17,21 @@ namespace AudioSwitcher.Scripting
 
         void SetOutput(IScriptOutput output);
 
-        ExecutionResult<string> Execute(string script);
+        ExecutionResult Execute(string script);
 
-        Task<ExecutionResult<string>> ExecuteAsync(string script);
+        Task<ExecutionResult> ExecuteAsync(string script);
+
+        ExecutionResult Execute(IScriptSource scriptSource);
+
+        Task<ExecutionResult> ExecuteAsync(IScriptSource scriptSource);
 
         TReturn Evaluate<TReturn>(string script);
 
         Task<TReturn> EvaluateAsync<TReturn>(string script);
+
+        TReturn Evaluate<TReturn>(IScriptSource scriptSource);
+
+        Task<TReturn> EvaluateAsync<TReturn>(IScriptSource scriptSource);
 
     }
 }

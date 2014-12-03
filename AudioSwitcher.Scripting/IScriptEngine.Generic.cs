@@ -6,9 +6,9 @@ namespace AudioSwitcher.Scripting
         where T : IScript
     {
 
-        ExecutionResult<T> Execute(T script);
+        ExecutionResult Execute(T script);
 
-        Task<ExecutionResult<T>> ExecuteAsync(T script);
+        Task<ExecutionResult> ExecuteAsync(T script);
 
         TReturn Evaluate<TReturn>(T script);
 

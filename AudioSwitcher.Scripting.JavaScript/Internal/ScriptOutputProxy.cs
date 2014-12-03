@@ -9,11 +9,11 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
     /// <summary>
     /// Represents an implementation of the Firebug API using the standard console.
     /// </summary>
-    internal class ScriptOutputBridge : IFirebugConsoleOutput
+    internal class ScriptOutputProxy : IFirebugConsoleOutput
     {
         private readonly IScriptOutput _output;
 
-        public ScriptOutputBridge(IScriptOutput output)
+        public ScriptOutputProxy(IScriptOutput output)
         {
             _output = output;
         }

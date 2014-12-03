@@ -13,7 +13,7 @@
             set;
         }
 
-        public string Content
+        public IScriptSource Source
         {
             get;
             set;

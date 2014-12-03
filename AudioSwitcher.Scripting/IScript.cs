@@ -7,7 +7,7 @@
             get;
         }
 
-        string Content
+        IScriptSource Source
         {
             get;
         }

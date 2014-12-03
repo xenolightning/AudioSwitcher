@@ -35,35 +35,43 @@ namespace AudioSwitcher.Scripting.JavaScript
         public void SetOutput(IScriptOutput output)
         {
             var console = new FirebugConsole(InternalEngine);
-            console.Output = new ScriptOutputBridge(output);
+            console.Output = new ScriptOutputProxy(output);
             InternalEngine.SetGlobalValue("console", console);
         }
 
-        public ExecutionResult<string> Execute(string script)
+        public ExecutionResult Execute(string script)
+        {
+            return Execute(new StringScriptSource(script));
+        }
+
+        public Task<ExecutionResult> ExecuteAsync(string script)
+        {
+            return Task.Factory.StartNew(() => Execute(script));
+        }
+
+        public ExecutionResult Execute(IScriptSource scriptSource)
         {
             try
             {
-                InternalEngine.Execute(script);
-                return new ExecutionResult<string>
+                InternalEngine.Execute(new ScriptSourceProxy(scriptSource));
+                return new ExecutionResult
                 {
-                    Script = script,
                     Success = true
                 };
             }
             catch (Exception ex)
             {
-                return new ExecutionResult<string>
+                return new ExecutionResult
                 {
-                    Script = script,
                     Success = false,
                     ExecutionException = ex
                 };
             }
         }
 
-        public Task<ExecutionResult<string>> ExecuteAsync(string script)
+        public Task<ExecutionResult> ExecuteAsync(IScriptSource scriptSource)
         {
-            return Task.Factory.StartNew(() => Execute(script));
+            return Task.Factory.StartNew(() => Execute(scriptSource));
         }
 
         public TReturn Evaluate<TReturn>(string script)
@@ -76,42 +84,50 @@ namespace AudioSwitcher.Scripting.JavaScript
             return Task.Factory.StartNew(() => InternalEngine.Evaluate<TReturn>(script));
         }
 
+        public TReturn Evaluate<TReturn>(IScriptSource scriptSource)
+        {
+            return InternalEngine.Evaluate<TReturn>(new ScriptSourceProxy(scriptSource));
+        }
 
-        public ExecutionResult<JSScript> Execute(JSScript script)
+        public Task<TReturn> EvaluateAsync<TReturn>(IScriptSource scriptSource)
+        {
+            return Task.Factory.StartNew(() => Evaluate<TReturn>(scriptSource));
+        }
+
+
+        public ExecutionResult Execute(JSScript script)
         {
             try
             {
-                InternalEngine.Execute(script.Content);
-                return new ExecutionResult<JSScript>
+                InternalEngine.Execute(new ScriptSourceProxy(script.Source));
+                return new ExecutionResult
                 {
-                    Script = script,
                     Success = true
                 };
             }
             catch (Exception ex)
             {
-                return new ExecutionResult<JSScript>
+                return new ExecutionResult
                 {
-                    Script = script,
                     Success = false,
                     ExecutionException = ex
                 };
             }
         }
 
-        public Task<ExecutionResult<JSScript>> ExecuteAsync(JSScript script)
+        public Task<ExecutionResult> ExecuteAsync(JSScript script)
         {
             return Task.Factory.StartNew(() => Execute(script));
         }
 
         public TReturn Evaluate<TReturn>(JSScript script)
         {
-            return InternalEngine.Evaluate<TReturn>(script.Content);
+            return Evaluate<TReturn>(script.Source);
         }
 
         public Task<TReturn> EvaluateAsync<TReturn>(JSScript script)
         {
-            return Task.Factory.StartNew(() => InternalEngine.Evaluate<TReturn>(script.Content));
+            return Task.Factory.StartNew(() => Evaluate<TReturn>(script));
         }
 
         public JSScript NewScript()
