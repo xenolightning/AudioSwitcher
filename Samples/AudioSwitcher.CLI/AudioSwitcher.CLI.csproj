@@ -39,9 +39,8 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Jurassic, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Jurassic\NET35\Jurassic.dll</HintPath>
+    <Reference Include="Jurassic">
+      <HintPath>..\..\lib\Jurassic\NET40\Jurassic.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
