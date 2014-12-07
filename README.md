@@ -22,6 +22,6 @@ The MMDeviceAPI integration layer. This is the low level COM library that it use
 Uses the Audio Api, and Jurassic to create a Javascript interpreter/engine. Enables the ability to query and alter audio devices using Javascript.
 
 
-### [Command Line Interface](AudioSwitcher.CLI)
+### [Command Line Interface](Samples/AudioSwitcher.CLI)
 
-A simple CLI over the Scripting Library, which processes Javascript files, and runs them against the current system. Full documentation is in the [README](AudioSwitcher.CLI/README.md).
+A simple CLI over the Scripting Library, which processes Javascript files, and runs them against the current system. Full documentation is in the [README](Samples/AudioSwitcher.CLI/README.md).
