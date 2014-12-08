@@ -94,13 +94,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             });
         }
 
-        public string GetDefaultAudioEndpointId(EDataFlow eDataFlow, Role role)
+        public string GetDefaultAudioEndpointId(EDataFlow eDataFlow, ERole role)
         {
             try
             {
                 IMMDevice device;
-                Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(eDataFlow, role.AsERole(),
-                    out device));
+                Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(eDataFlow, role, out device));
                 string result;
                 Marshal.ThrowExceptionForHR(device.GetId(out result));
                 return result;

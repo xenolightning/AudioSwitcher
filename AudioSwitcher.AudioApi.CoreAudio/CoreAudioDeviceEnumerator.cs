@@ -279,7 +279,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _lock.EnterReadLock();
             try
             {
-                string devId = _innerEnumerator.GetDefaultAudioEndpointId(deviceType.AsEDataFlow(), eRole);
+                string devId = _innerEnumerator.GetDefaultAudioEndpointId(deviceType.AsEDataFlow(), eRole.AsERole());
                 if (string.IsNullOrEmpty(devId))
                     return null;
 
