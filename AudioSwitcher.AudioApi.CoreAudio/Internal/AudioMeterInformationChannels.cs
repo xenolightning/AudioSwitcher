@@ -23,6 +23,7 @@
 using System;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
+using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
@@ -45,9 +46,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                uint result;
-                Marshal.ThrowExceptionForHR(_audioMeterInformation.GetMeteringChannelCount(out result));
-                return Convert.ToInt32(result);
+                return ComThread.Invoke(() =>
+                {
+                    uint result;
+                    Marshal.ThrowExceptionForHR(_audioMeterInformation.GetMeteringChannelCount(out result));
+                    return Convert.ToInt32(result);
+                });
             }
         }
 
@@ -60,9 +64,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                var peakValues = new float[Count];
-                Marshal.ThrowExceptionForHR(_audioMeterInformation.GetChannelsPeakValues(Convert.ToUInt32(peakValues.Length), peakValues));
-                return peakValues[index];
+                return ComThread.Invoke(() =>
+                {
+                    var peakValues = new float[Count];
+                    Marshal.ThrowExceptionForHR(
+                        _audioMeterInformation.GetChannelsPeakValues(Convert.ToUInt32(peakValues.Length), peakValues));
+                    return peakValues[index];
+                });
             }
         }
     }

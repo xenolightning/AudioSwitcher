@@ -24,6 +24,7 @@
 using System;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
+using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
@@ -58,11 +59,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                uint result;
-                Marshal.ThrowExceptionForHR(_storeInterface.GetCount(out result));
+                return ComThread.Invoke(() =>
+                {
+                    uint result;
+                    Marshal.ThrowExceptionForHR(_storeInterface.GetCount(out result));
 
-                //Will error if the count returns > max value
-                return Convert.ToInt32(result);
+                    //Will error if the count returns > max value
+                    return Convert.ToInt32(result);
+                });
             }
         }
 
@@ -75,10 +79,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                PropVariant result;
-                PropertyKey key = Get(index);
-                Marshal.ThrowExceptionForHR(_storeInterface.GetValue(ref key, out result));
-                return new PropertyStoreProperty(key, result);
+                return ComThread.Invoke(() =>
+                {
+                    PropVariant result;
+                    PropertyKey key = Get(index);
+                    Marshal.ThrowExceptionForHR(_storeInterface.GetValue(ref key, out result));
+                    return new PropertyStoreProperty(key, result);
+                });
             }
         }
 
@@ -91,17 +98,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                for (int i = 0; i < Count; i++)
+                return ComThread.Invoke(() =>
                 {
-                    PropertyKey ikey = Get(i);
-                    if ((ikey.FormatId == key.FormatId) && (ikey.PropertyId == key.PropertyId))
+                    for (int i = 0; i < Count; i++)
                     {
-                        PropVariant result;
-                        Marshal.ThrowExceptionForHR(_storeInterface.GetValue(ref ikey, out result));
-                        return new PropertyStoreProperty(ikey, result);
+                        PropertyKey ikey = Get(i);
+                        if ((ikey.FormatId == key.FormatId) && (ikey.PropertyId == key.PropertyId))
+                        {
+                            PropVariant result;
+                            Marshal.ThrowExceptionForHR(_storeInterface.GetValue(ref ikey, out result));
+                            return new PropertyStoreProperty(ikey, result);
+                        }
                     }
-                }
-                return null;
+                    return null;
+                });
             }
             set
             {
@@ -126,15 +136,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <returns>True if found</returns>
         public bool Contains(PropertyKey key)
         {
-            for (int i = 0; i < Count; i++)
+            return ComThread.Invoke(() =>
             {
-                PropertyKey ikey = Get(i);
-                if ((ikey.FormatId == key.FormatId) && (ikey.PropertyId == key.PropertyId))
+                for (int i = 0; i < Count; i++)
                 {
-                    return true;
+                    PropertyKey ikey = Get(i);
+                    if ((ikey.FormatId == key.FormatId) && (ikey.PropertyId == key.PropertyId))
+                    {
+                        return true;
+                    }
                 }
-            }
-            return false;
+                return false;
+            });
         }
 
         /// <summary>
@@ -144,9 +157,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <returns>Property key</returns>
         public PropertyKey Get(int index)
         {
-            PropertyKey key;
-            Marshal.ThrowExceptionForHR(_storeInterface.GetAt((uint)index, out key));
-            return key;
+            return ComThread.Invoke(() =>
+            {
+                PropertyKey key;
+                Marshal.ThrowExceptionForHR(_storeInterface.GetAt((uint)index, out key));
+                return key;
+            });
         }
 
         /// <summary>
@@ -156,10 +172,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <returns>Property value</returns>
         public PropVariant GetValue(int index)
         {
-            PropVariant result;
-            PropertyKey key = Get(index);
-            Marshal.ThrowExceptionForHR(_storeInterface.GetValue(ref key, out result));
-            return result;
+            return ComThread.Invoke(() =>
+            {
+                PropVariant result;
+                PropertyKey key = Get(index);
+                Marshal.ThrowExceptionForHR(_storeInterface.GetValue(ref key, out result));
+                return result;
+            });
         }
 
         /// <summary>
@@ -168,17 +187,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <returns>Property value</returns>
         public void SetValue(PropertyKey key, object value)
         {
-            if (AccessMode == Mode.Read)
-                return;
+            ComThread.Invoke(() =>
+            {
+                if (AccessMode == Mode.Read)
+                    return;
 
-            if (!Contains(key))
-                return;
+                if (!Contains(key))
+                    return;
 
-            PropVariant result;
-            Marshal.ThrowExceptionForHR(_storeInterface.GetValue(ref key, out result));
-            result.Value = value;
-            Marshal.ThrowExceptionForHR(_storeInterface.SetValue(ref key, ref result));
-            _storeInterface.Commit();
+                PropVariant result;
+                Marshal.ThrowExceptionForHR(_storeInterface.GetValue(ref key, out result));
+                result.Value = value;
+                Marshal.ThrowExceptionForHR(_storeInterface.SetValue(ref key, ref result));
+                _storeInterface.Commit();
+            });
         }
 
         internal enum Mode

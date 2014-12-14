@@ -74,9 +74,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                float result;
-                Marshal.ThrowExceptionForHR(_audioMeterInformation.GetPeakValue(out result));
-                return result;
+                return ComThread.Invoke(() =>
+                {
+                    float result;
+                    Marshal.ThrowExceptionForHR(_audioMeterInformation.GetPeakValue(out result));
+                    return result;
+                });
             }
         }
 

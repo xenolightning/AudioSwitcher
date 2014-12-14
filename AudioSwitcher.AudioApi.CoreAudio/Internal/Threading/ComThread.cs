@@ -6,7 +6,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 {
     internal static class ComThread
     {
-        private static readonly ComTaskScheduler ComScheduler = new ComTaskScheduler();
+        private static readonly ComTaskScheduler COM_SCHEDULER = new ComTaskScheduler();
 
         private static bool InvokeRequired
         {
@@ -15,7 +15,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 
         private static ComTaskScheduler Scheduler
         {
-            get { return ComScheduler; }
+            get { return COM_SCHEDULER; }
         }
 
         public static void Invoke(Action action)
@@ -31,7 +31,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 
         public static Task BeginInvoke(Action action)
         {
-            return Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.None, ComScheduler);
+            return Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.None, COM_SCHEDULER);
         }
 
         public static T Invoke<T>(Func<T> func)
@@ -44,7 +44,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 
         public static Task<T> BeginInvoke<T>(Func<T> func)
         {
-            return Task<T>.Factory.StartNew(func, CancellationToken.None, TaskCreationOptions.None, ComScheduler);
+            return Task<T>.Factory.StartNew(func, CancellationToken.None, TaskCreationOptions.None, COM_SCHEDULER);
         }
     }
 }

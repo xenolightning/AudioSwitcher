@@ -93,12 +93,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return ComThread.Invoke(() =>
-                {
-                    if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME))
-                        return Properties[PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME].Value as string;
-                    return "Unknown";
-                });
+                if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME))
+                    return Properties[PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME].Value as string;
+                return "Unknown";
             }
         }
 
@@ -109,21 +106,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return ComThread.Invoke(() =>
-                {
-                    if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_DESCRIPTION))
-                        return Properties[PropertyKeys.PKEY_DEVICE_DESCRIPTION].Value as string;
+                if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_DESCRIPTION))
+                    return Properties[PropertyKeys.PKEY_DEVICE_DESCRIPTION].Value as string;
 
-                    return InterfaceName;
-                });
+                return InterfaceName;
             }
             set
             {
-                ComThread.Invoke(() =>
-                {
-                    if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_DESCRIPTION))
-                        Properties.SetValue(PropertyKeys.PKEY_DEVICE_DESCRIPTION, value);
-                });
+                if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_DESCRIPTION))
+                    Properties.SetValue(PropertyKeys.PKEY_DEVICE_DESCRIPTION, value);
             }
         }
 
@@ -131,12 +122,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return ComThread.Invoke(() =>
-                {
-                    if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME))
-                        return Properties[PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME].Value as string;
-                    return "Unknown";
-                });
+                if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME))
+                    return Properties[PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME].Value as string;
+                return "Unknown";
             }
         }
 
@@ -144,12 +132,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return ComThread.Invoke(() =>
-                {
-                    if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_ICON))
-                        return (string)Properties[PropertyKeys.PKEY_DEVICE_ICON].Value;
-                    return "Unknown";
-                });
+                if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_ICON))
+                    return (string)Properties[PropertyKeys.PKEY_DEVICE_ICON].Value;
+                return "Unknown";
             }
         }
 
