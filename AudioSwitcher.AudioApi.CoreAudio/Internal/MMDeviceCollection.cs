@@ -33,7 +33,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     /// <summary>
     ///     Multimedia Device Collection
     /// </summary>
-    internal class MMDeviceCollection : IEnumerable<MMDevice>
+    internal class MMDeviceCollection : IEnumerable<IMMDevice>, IDisposable
     {
         private readonly IMMDeviceCollection _mmDeviceCollection;
 
@@ -48,7 +48,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         ///     Get Enumerator
         /// </summary>
         /// <returns>Device enumerator</returns>
-        public IEnumerator<MMDevice> GetEnumerator()
+        public IEnumerator<IMMDevice> GetEnumerator()
         {
             for (int index = 0; index < Count; index++)
             {
@@ -89,7 +89,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         /// <param name="index">Device index</param>
         /// <returns>Device at the specified index</returns>
-        public MMDevice this[int index]
+        public IMMDevice this[int index]
         {
             get
             {
@@ -97,9 +97,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     IMMDevice result;
                     _mmDeviceCollection.Item(Convert.ToUInt32(index), out result);
-                    return new MMDevice(result);
+                    return result;
                 });
             }
+        }
+
+        public void Dispose()
+        {
+            Marshal.ReleaseComObject(_mmDeviceCollection);
         }
     }
 }

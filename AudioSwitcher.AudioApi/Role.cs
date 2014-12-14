@@ -6,6 +6,7 @@ namespace AudioSwitcher.AudioApi
     ///     The ERole enumeration defines constants that indicate the role
     ///     that the system has assigned to an audio endpoint device
     /// </summary>
+    [Flags]
     public enum Role
     {
         /// <summary>

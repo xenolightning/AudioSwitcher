@@ -10,6 +10,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public static void SetDefaultEndpoint(string devId, ERole eRole)
         {
+            // ReSharper disable once SuspiciousTypeConversion.Global
             var iPolicyConfigVista = new _PolicyConfigVistaClient() as IPolicyConfigVista;
 
             if (iPolicyConfigVista != null)

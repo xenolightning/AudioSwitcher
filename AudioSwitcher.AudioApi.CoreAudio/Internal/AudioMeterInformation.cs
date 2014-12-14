@@ -20,15 +20,17 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
+using System;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
+using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
     ///     Audio Meter Information
     /// </summary>
-    internal class AudioMeterInformation
+    internal class AudioMeterInformation : IDisposable
     {
         private readonly IAudioMeterInformation _audioMeterInformation;
         private readonly AudioMeterInformationChannels _channels;
@@ -40,8 +42,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             _audioMeterInformation = realInterface;
             Marshal.ThrowExceptionForHR(_audioMeterInformation.QueryHardwareSupport(out hardwareSupp));
-            _hardwareSupport = (EndpointHardwareSupport) hardwareSupp;
+            _hardwareSupport = (EndpointHardwareSupport)hardwareSupp;
             _channels = new AudioMeterInformationChannels(_audioMeterInformation);
+        }
+
+        ~AudioMeterInformation()
+        {
+            Dispose(false);
         }
 
         /// <summary>
@@ -70,6 +77,23 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 float result;
                 Marshal.ThrowExceptionForHR(_audioMeterInformation.GetPeakValue(out result));
                 return result;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                ComThread.Invoke(() =>
+                {
+                    if (_audioMeterInformation != null)
+                        Marshal.ReleaseComObject(_audioMeterInformation);
+                });
             }
         }
     }

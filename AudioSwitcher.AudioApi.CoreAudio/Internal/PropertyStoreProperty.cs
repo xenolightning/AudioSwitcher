@@ -29,13 +29,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     /// </summary>
     internal class PropertyStoreProperty
     {
-        private readonly PropertyKey propertyKey;
-        private PropVariant propertyValue;
+        private readonly PropertyKey _propertyKey;
+        private PropVariant _propertyValue;
 
         internal PropertyStoreProperty(PropertyKey key, PropVariant value)
         {
-            propertyKey = key;
-            propertyValue = value;
+            _propertyKey = key;
+            _propertyValue = value;
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public PropertyKey Key
         {
-            get { return propertyKey; }
+            get { return _propertyKey; }
         }
 
         /// <summary>
@@ -51,8 +51,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public object Value
         {
-            get { return propertyValue.Value; }
-            set { propertyValue.Value = value; }
+            get { return _propertyValue.Value; }
+            set { _propertyValue.Value = value; }
         }
     }
 }

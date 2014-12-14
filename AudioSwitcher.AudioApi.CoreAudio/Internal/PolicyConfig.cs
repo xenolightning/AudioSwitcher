@@ -9,6 +9,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         public static void SetDefaultEndpoint(string devId, ERole eRole)
         {
+            // ReSharper disable once SuspiciousTypeConversion.Global
             var policyConfig = new _PolicyConfigClient() as IPolicyConfig;
             if (policyConfig != null)
                 Marshal.ThrowExceptionForHR(policyConfig.SetDefaultEndpoint(devId, eRole));

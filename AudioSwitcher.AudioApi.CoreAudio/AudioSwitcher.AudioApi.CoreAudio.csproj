@@ -74,9 +74,7 @@
     <Compile Include="Internal\Interfaces\IPropertyStore.cs" />
     <Compile Include="Internal\Interfaces\MMDeviceEnumeratorComObject.cs" />
     <Compile Include="Internal\Interfaces\StorageAccessMode.cs" />
-    <Compile Include="Internal\MMDevice.cs" />
     <Compile Include="Internal\MMDeviceCollection.cs" />
-    <Compile Include="Internal\MMDeviceEnumerator.cs" />
     <Compile Include="Internal\MMNotificationClient.cs" />
     <Compile Include="Internal\NativeMethods.cs" />
     <Compile Include="Internal\PolicyConfig.cs" />
@@ -87,7 +85,6 @@
     <Compile Include="Internal\PropertyStoreProperty.cs" />
     <Compile Include="Internal\PropVariant.cs" />
     <Compile Include="Internal\ERole.cs" />
-    <Compile Include="Internal\Utils\HResult.cs" />
     <Compile Include="Internal\WeakEventHandler.cs" />
     <Compile Include="Threading\ComThread.cs" />
     <Compile Include="CoreAudioController.cs" />
@@ -104,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="api.pfx" />
+    <Compile Include="CoreAudioDevice.Internal.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

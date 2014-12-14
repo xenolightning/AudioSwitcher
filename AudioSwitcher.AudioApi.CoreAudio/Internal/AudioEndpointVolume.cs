@@ -187,7 +187,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             if (_callBack != null)
             {
-                ComThread.Invoke(() => Marshal.ThrowExceptionForHR(_audioEndPointVolume.UnregisterControlChangeNotify(_callBack)));
+                ComThread.Invoke(() =>
+                {
+                    Marshal.ThrowExceptionForHR(_audioEndPointVolume.UnregisterControlChangeNotify(_callBack));
+                    Marshal.ReleaseComObject(_audioEndPointVolume);
+                });
                 _callBack = null;
             }
 

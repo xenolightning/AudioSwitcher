@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
+using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
@@ -12,22 +14,32 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     ///     Enumerates Windows System Devices.
     ///     Stores the current devices in memory to avoid calling the COM library when not required
     /// </summary>
-    [ComVisible(false)]
     public sealed class CoreAudioDeviceEnumerator : IDeviceEnumerator<CoreAudioDevice>, ISystemAudioEventClient
     {
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+        private readonly ReaderWriterLockSlim _refreshLock = new ReaderWriterLockSlim();
 
-        private MMDeviceEnumerator _innerEnumerator;
+        private IMMDeviceEnumerator _innerEnumerator;
         private ConcurrentBag<CoreAudioDevice> _deviceCache = new ConcurrentBag<CoreAudioDevice>();
 
         public CoreAudioDeviceEnumerator()
         {
-            _innerEnumerator = new MMDeviceEnumerator();
+
+            ComThread.Invoke(() =>
+            {
+                _innerEnumerator = new MMDeviceEnumeratorComObject() as IMMDeviceEnumerator;
+            });
+
             _notificationClient = new MMNotificationClient(this);
 
             _innerEnumerator.RegisterEndpointNotificationCallback(_notificationClient);
 
             RefreshSystemDevices();
+        }
+
+        ~CoreAudioDeviceEnumerator()
+        {
+            Dispose(false);
         }
 
         public AudioController AudioController
@@ -78,11 +90,26 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public void Dispose()
         {
-            if (_innerEnumerator != null)
-                _innerEnumerator.UnregisterEndpointNotificationCallback(_notificationClient);
+            Dispose(true);
+        }
 
-            _deviceCache = null;
-            _innerEnumerator = null;
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_innerEnumerator != null)
+                {
+                    ComThread.Invoke(() =>
+                    {
+                        _innerEnumerator.UnregisterEndpointNotificationCallback(_notificationClient);
+                        Marshal.ReleaseComObject(_innerEnumerator);
+                    });
+                }
+                _deviceCache = null;
+                _innerEnumerator = null;
+            }
+
+            GC.SuppressFinalize(this);
         }
 
         public event AudioDeviceChangedHandler AudioDeviceChanged;
@@ -168,21 +195,29 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _lock.EnterWriteLock();
             try
             {
-                //_deviceCache.ToList().ForEach(x => x.Dispose());
-                _deviceCache = new ConcurrentBag<CoreAudioDevice>();
-                foreach (var mDev in _innerEnumerator.EnumerateAudioEndPoints(EDataFlow.All, EDeviceState.All))
+                ComThread.Invoke(() =>
                 {
-                    var dev = new CoreAudioDevice(mDev, this);
-                    _deviceCache.Add(dev);
-                }
-
-                //Have to collect here to reduce the memory/handle leak issue in Windows 8 and above
-                GC.Collect();
+                    _deviceCache = new ConcurrentBag<CoreAudioDevice>();
+                    IMMDeviceCollection collection;
+                    _innerEnumerator.EnumAudioEndpoints(EDataFlow.All, EDeviceState.All, out collection);
+                    using (var coll = new MMDeviceCollection(collection))
+                    {
+                        foreach (var mDev in coll)
+                        {
+                            var dev = new CoreAudioDevice(mDev, this);
+                            _deviceCache.Add(dev);
+                            Marshal.ReleaseComObject(mDev);
+                        }
+                    }
+                });
             }
             finally
             {
                 _lock.ExitWriteLock();
             }
+
+            //Have to collect here to reduce the memory/handle leak issue in Windows 8 and above
+            GC.Collect();
         }
 
         private void RaiseAudioDeviceChanged(AudioDeviceChangedEventArgs e)
@@ -279,8 +314,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _lock.EnterReadLock();
             try
             {
-                string devId = _innerEnumerator.GetDefaultAudioEndpointId(deviceType.AsEDataFlow(), eRole.AsERole());
-                if (string.IsNullOrEmpty(devId))
+                IMMDevice dev;
+                _innerEnumerator.GetDefaultAudioEndpoint(deviceType.AsEDataFlow(), eRole.AsERole(), out dev);
+                if (dev == null)
+                    return null;
+
+                string devId;
+                dev.GetId(out devId);
+                if (String.IsNullOrEmpty(devId))
                     return null;
 
                 return _deviceCache.FirstOrDefault(x => x.RealId == devId);
@@ -310,7 +351,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         #region IMMNotif Members
 
-        private readonly ConcurrentDictionary<string, bool> _processingIds = new ConcurrentDictionary<string, bool>();
         private readonly MMNotificationClient _notificationClient;
 
         void ISystemAudioEventClient.OnDeviceStateChanged(string deviceId, EDeviceState newState)
@@ -340,31 +380,36 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         void ISystemAudioEventClient.OnDefaultDeviceChanged(EDataFlow flow, ERole role, string deviceId)
         {
-            //Need to do some event filtering here, there's a scenario where
-            //multiple default device changed are raised when one playback device changes.
-            //This is correct functionality, but I want to limit it to one event per device
-            //this is specific to Audio Switcher only. You could theorectically want an event 
-            //signalling a non default then a default update
-
-            lock (_processingIds)
+            Task.Factory.StartNew(() =>
             {
-                if (_processingIds.ContainsKey(deviceId))
-                    return;
+                //Need to do some event filtering here, there's a scenario where
+                //multiple default device changed are raised when one playback device changes.
+                //This is correct functionality, but I want to limit it to one event per device
+                //this is specific to Audio Switcher only. You could theorectically want an event 
+                //signalling a non default then a default update
 
-                _processingIds.TryAdd(deviceId, true);
-            }
+                try
+                {
+                    if (!_refreshLock.TryEnterWriteLock(0))
+                        return;
 
-            RefreshSystemDevices();
+                    RefreshSystemDevices();
 
-            if (role == ERole.Console || role == ERole.Multimedia)
-                RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
-                        AudioDeviceEventType.DefaultDevice));
-            else if (role == ERole.Communications)
-                RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
-                        AudioDeviceEventType.DefaultCommunicationsDevice));
-
-            bool temp;
-            _processingIds.TryRemove(deviceId, out temp);
+                    if (role == ERole.Console || role == ERole.Multimedia)
+                        RaiseAudioDeviceChanged(
+                            new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
+                                AudioDeviceEventType.DefaultDevice));
+                    else if (role == ERole.Communications)
+                        RaiseAudioDeviceChanged(
+                            new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
+                                AudioDeviceEventType.DefaultCommunicationsDevice));
+                }
+                finally
+                {
+                    if (_refreshLock.IsWriteLockHeld)
+                        _refreshLock.ExitWriteLock();
+                }
+            });
         }
 
         void ISystemAudioEventClient.OnPropertyValueChanged(string deviceId, PropertyKey key)

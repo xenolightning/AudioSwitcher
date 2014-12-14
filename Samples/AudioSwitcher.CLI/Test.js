@@ -24,7 +24,7 @@ console.log("Id lookup successful: " + (defDevById !== undefined && defDevById.i
 console.log("Trying to get Speakers...");
 var ad = AudioSwitcher.getAudioDevice("Speakers", AudioSwitcher.DeviceType.PLAYBACK);
 
-if (ad !== undefined) {
+if (ad !== null) {
     console.log(ad.fullName);
 } else {
     console.log("Playback Speakers not found");

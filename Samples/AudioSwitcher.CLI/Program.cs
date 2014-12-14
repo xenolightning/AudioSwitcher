@@ -58,7 +58,7 @@ namespace AudioSwitcher.CLI
                 try
                 {
                     Console.WriteLine("Executing {0}...", fName);
-                    engine.Execute(new AudioSwitcher.Scripting.FileScriptSource(fName));
+                    engine.Execute(new Scripting.FileScriptSource(fName));
                 }
                 catch (Exception ex)
                 {
