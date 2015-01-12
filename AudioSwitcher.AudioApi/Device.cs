@@ -24,7 +24,7 @@ namespace AudioSwitcher.AudioApi
 
         public abstract string FullName { get; }
 
-        public abstract string IconPath { get; }
+        public abstract DeviceIcon Icon { get; }
 
         public virtual bool IsDefaultDevice
         {

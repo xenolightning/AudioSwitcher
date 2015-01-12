@@ -6,7 +6,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
     {
         public DeviceType type;
         public string interfaceName;
-        public string iconPath;
+        public DeviceIcon icon;
         public Guid id;
         public bool isMuted;
         public string name;
@@ -39,9 +39,9 @@ namespace AudioSwitcher.AudioApi.Sandbox
             get { return fullName; }
         }
 
-        public override string IconPath
+        public override DeviceIcon Icon
         {
-            get { return iconPath; }
+            get { return icon; }
         }
 
         public override DeviceState State

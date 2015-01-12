@@ -128,13 +128,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public override string IconPath
+        public override DeviceIcon Icon
         {
             get
             {
                 if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_ICON))
-                    return (string)Properties[PropertyKeys.PKEY_DEVICE_ICON].Value;
-                return "Unknown";
+                    return IconStringToDeviceIcon(Properties[PropertyKeys.PKEY_DEVICE_ICON].Value as string);
+
+                return DeviceIcon.Unknown;
             }
         }
 

@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>api.pfx</AssemblyOriginatorKeyFile>
@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="AudioController.cs" />
     <Compile Include="AudioController.Generic.cs" />
+    <Compile Include="DeviceIcon.cs" />
     <Compile Include="IDeviceEnumerator.Generic.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="AudioDeviceChangedEventArgs.cs" />
