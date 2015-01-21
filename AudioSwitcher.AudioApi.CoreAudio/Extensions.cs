@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    public static class ApiExtensions
+    public static class Extensions
     {
+        public const string GUID_REGEX = @"([a-z0-9]{8}[-][a-z0-9]{4}[-][a-z0-9]{4}[-][a-z0-9]{4}[-][a-z0-9]{12})";
+
         internal static EDataFlow AsEDataFlow(this DeviceType type)
         {
             switch (type)
@@ -101,5 +106,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     throw new ArgumentOutOfRangeException("role");
             }
         }
+
+        internal static IEnumerable<Guid> ExtractGuids(this string str)
+        {
+            var r = new Regex(GUID_REGEX);
+            var matches = r.Matches(str);
+
+            if (matches.Count == 0)
+                throw new FormatException("String does not contain a valid Guid");
+
+            foreach (var match in matches)
+            {
+                yield return new Guid(match.ToString());
+            }
+
+        }
+
     }
 }

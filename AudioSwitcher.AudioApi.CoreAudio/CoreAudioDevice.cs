@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
@@ -8,7 +9,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public sealed partial class CoreAudioDevice : Device, INotifyPropertyChanged, IDisposable
     {
-        //private readonly IMMDevice _device;
         private Guid? _id;
         private PropertyStore _propertyStore;
         private EDeviceState _state;
@@ -24,7 +24,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ComThread.Invoke(() =>
             {
                 //Load values
-
                 Marshal.ThrowExceptionForHR(device.GetId(out _realId));
                 Marshal.ThrowExceptionForHR(device.GetState(out _state));
 
@@ -283,10 +282,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <returns></returns>
         public static Guid SystemIdToGuid(string systemDeviceId)
         {
-            string[] dev = systemDeviceId.Replace("{", "")
-                .Replace("}", "")
-                .Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-            return new Guid(dev[dev.Length - 1]);
+            return systemDeviceId.ExtractGuids().First();
         }
 
         private void OnPropertyChanged(string propertyName)

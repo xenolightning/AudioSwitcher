@@ -42,7 +42,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiExtensions.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Internal\AudioEndpointVolume.cs" />
     <Compile Include="Internal\AudioEndpointVolumeCallback.cs" />
     <Compile Include="Internal\AudioEndpointVolumeChannel.cs" />

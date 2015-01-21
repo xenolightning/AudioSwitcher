@@ -1,4 +1,9 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.Scripting.JavaScript.Internal;
@@ -63,8 +68,46 @@ namespace AudioSwitcher.Scripting.JavaScript
 
         public override TReturn Evaluate<TReturn>(IScriptSource scriptSource)
         {
+            if (typeof(TReturn).IsArray)
+                return EvaluateArray<TReturn>(scriptSource);
+            if (typeof(IEnumerable).IsAssignableFrom(typeof(TReturn)))
+                return EvaluateEnumerable<TReturn>(scriptSource);
+
             return InternalEngine.Evaluate<TReturn>(scriptSource.GetReader().ReadToEnd());
         }
+
+        private TReturn EvaluateArray<TReturn>(IScriptSource scriptSource)
+        {
+            if (!typeof(TReturn).IsArray)
+                return default(TReturn);
+
+            MethodInfo castMethod = typeof(Enumerable).GetMethod("Cast");
+            MethodInfo toArrayMethod = typeof(Enumerable).GetMethod("ToArray");
+
+            var returnType = typeof(TReturn);
+            var obj = InternalEngine.Evaluate<ArrayInstance>(scriptSource.GetReader().ReadToEnd()).ElementValues.ToArray();
+
+            var targetType = returnType.GetElementType();
+            var cast = castMethod.MakeGenericMethod(new Type[] { targetType }).Invoke(null, new object[] { obj });
+            return (TReturn)toArrayMethod.MakeGenericMethod(new Type[] { targetType }).Invoke(null, new object[] { cast });
+        }
+
+        private TReturn EvaluateEnumerable<TReturn>(IScriptSource scriptSource)
+        {
+            if (!typeof(IEnumerable).IsAssignableFrom(typeof(TReturn)))
+                return default(TReturn);
+
+            MethodInfo castMethod = typeof(Enumerable).GetMethod("Cast");
+            MethodInfo toListMethod = typeof(Enumerable).GetMethod("ToList");
+
+            var returnType = typeof(TReturn);
+            var obj = InternalEngine.Evaluate<ArrayInstance>(scriptSource.GetReader().ReadToEnd()).ElementValues.ToArray();
+
+            var targetType = returnType.GetGenericArguments()[0];
+            var cast = castMethod.MakeGenericMethod(new Type[] { targetType }).Invoke(null, new object[] { obj });
+            return (TReturn)toListMethod.MakeGenericMethod(new Type[] { targetType }).Invoke(null, new object[] { cast });
+        }
+
 
         public override ExecutionResult Execute(JSScript script)
         {
