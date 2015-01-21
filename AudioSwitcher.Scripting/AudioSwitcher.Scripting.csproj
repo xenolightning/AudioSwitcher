@@ -41,6 +41,7 @@
     <Compile Include="IScriptOutput.cs" />
     <Compile Include="IScriptSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScriptEngine.cs" />
     <Compile Include="StringScriptSource.cs" />
   </ItemGroup>
   <ItemGroup>

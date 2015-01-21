@@ -7,7 +7,7 @@ using Jurassic.Library;
 
 namespace AudioSwitcher.Scripting.JavaScript
 {
-    public class JSEngine : IScriptEngine<JSScript>
+    public class JSEngine : ScriptEngine<JSScript>
     {
         public ScriptEngine InternalEngine
         {
@@ -22,34 +22,25 @@ namespace AudioSwitcher.Scripting.JavaScript
             InternalEngine.AddAudioSwitcherLibrary(controller);
         }
 
-        public string FriendlyName
+        public override string FriendlyName
         {
             get { return "JavaScript Engine"; }
         }
 
-        public IScriptInfo ScriptInfo
+        public override IScriptInfo ScriptInfo
         {
             get { return JSScriptInfo.Instance; }
         }
 
-        public void SetOutput(IScriptOutput output)
+        public override void SetOutput(IScriptOutput output)
         {
             var console = new FirebugConsole(InternalEngine);
             console.Output = new ScriptOutputProxy(output);
             InternalEngine.SetGlobalValue("console", console);
         }
 
-        public ExecutionResult Execute(string script)
-        {
-            return Execute(new StringScriptSource(script));
-        }
 
-        public Task<ExecutionResult> ExecuteAsync(string script)
-        {
-            return Task.Factory.StartNew(() => Execute(script));
-        }
-
-        public ExecutionResult Execute(IScriptSource scriptSource)
+        public override ExecutionResult Execute(IScriptSource scriptSource)
         {
             try
             {
@@ -69,33 +60,13 @@ namespace AudioSwitcher.Scripting.JavaScript
             }
         }
 
-        public Task<ExecutionResult> ExecuteAsync(IScriptSource scriptSource)
+
+        public override TReturn Evaluate<TReturn>(IScriptSource scriptSource)
         {
-            return Task.Factory.StartNew(() => Execute(scriptSource));
+            return InternalEngine.Evaluate<TReturn>(scriptSource.GetReader().ReadToEnd());
         }
 
-        public TReturn Evaluate<TReturn>(string script)
-        {
-            return InternalEngine.Evaluate<TReturn>(script);
-        }
-
-        public Task<TReturn> EvaluateAsync<TReturn>(string script)
-        {
-            return Task.Factory.StartNew(() => InternalEngine.Evaluate<TReturn>(script));
-        }
-
-        public TReturn Evaluate<TReturn>(IScriptSource scriptSource)
-        {
-            return InternalEngine.Evaluate<TReturn>(new ScriptSourceProxy(scriptSource));
-        }
-
-        public Task<TReturn> EvaluateAsync<TReturn>(IScriptSource scriptSource)
-        {
-            return Task.Factory.StartNew(() => Evaluate<TReturn>(scriptSource));
-        }
-
-
-        public ExecutionResult Execute(JSScript script)
+        public override ExecutionResult Execute(JSScript script)
         {
             try
             {
@@ -115,27 +86,12 @@ namespace AudioSwitcher.Scripting.JavaScript
             }
         }
 
-        public Task<ExecutionResult> ExecuteAsync(JSScript script)
-        {
-            return Task.Factory.StartNew(() => Execute(script));
-        }
-
-        public TReturn Evaluate<TReturn>(JSScript script)
-        {
-            return Evaluate<TReturn>(script.Source);
-        }
-
-        public Task<TReturn> EvaluateAsync<TReturn>(JSScript script)
-        {
-            return Task.Factory.StartNew(() => Evaluate<TReturn>(script));
-        }
-
-        public JSScript NewScript()
+        public override JSScript NewScript()
         {
             return new JSScript();
         }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
             InternalEngine = null;
         }
