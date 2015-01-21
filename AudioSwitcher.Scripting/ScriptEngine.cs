@@ -40,19 +40,19 @@ namespace AudioSwitcher.Scripting
             return Task.Factory.StartNew(() => Execute(scriptSource));
         }
 
-        public TReturn Evaluate<TReturn>(string script)
+        public ExecutionResult<TReturn> Evaluate<TReturn>(string script)
         {
             return this.Evaluate<TReturn>(new StringScriptSource(script));
         }
 
-        public Task<TReturn> EvaluateAsync<TReturn>(string script)
+        public Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(string script)
         {
             return Task.Factory.StartNew(() => this.Evaluate<TReturn>(script));
         }
 
-        public abstract TReturn Evaluate<TReturn>(IScriptSource scriptSource);
+        public abstract ExecutionResult<TReturn> Evaluate<TReturn>(IScriptSource scriptSource);
 
-        public Task<TReturn> EvaluateAsync<TReturn>(IScriptSource scriptSource)
+        public Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(IScriptSource scriptSource)
         {
             return Task.Factory.StartNew(() => Evaluate<TReturn>(scriptSource));
         }
@@ -64,12 +64,12 @@ namespace AudioSwitcher.Scripting
             return Task.Factory.StartNew(() => Execute(script));
         }
 
-        public TReturn Evaluate<TReturn>(T script)
+        public ExecutionResult<TReturn> Evaluate<TReturn>(T script)
         {
             return Evaluate<TReturn>(script.Source);
         }
 
-        public Task<TReturn> EvaluateAsync<TReturn>(T script)
+        public Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(T script)
         {
             return Task.Factory.StartNew(() => Evaluate<TReturn>(script));
         }

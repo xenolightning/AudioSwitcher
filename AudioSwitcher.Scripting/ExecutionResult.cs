@@ -2,7 +2,7 @@
 
 namespace AudioSwitcher.Scripting
 {
-    public sealed class ExecutionResult
+    public class ExecutionResult
     {
         public bool Success
         {
@@ -15,5 +15,26 @@ namespace AudioSwitcher.Scripting
             get;
             set;
         }
+    }
+
+    public sealed class ExecutionResult<T> : ExecutionResult
+    {
+
+        public ExecutionResult()
+        {
+            
+        }
+
+        public ExecutionResult(T result)
+        {
+            Result = result;
+        }
+
+        public T Result
+        {
+            get;
+            set;
+        }
+
     }
 }

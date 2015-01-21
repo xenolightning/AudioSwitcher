@@ -10,9 +10,9 @@ namespace AudioSwitcher.Scripting
 
         Task<ExecutionResult> ExecuteAsync(T script);
 
-        TReturn Evaluate<TReturn>(T script);
+        ExecutionResult<TReturn> Evaluate<TReturn>(T script);
 
-        Task<TReturn> EvaluateAsync<TReturn>(T script);
+        Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(T script);
 
         T NewScript();
     }

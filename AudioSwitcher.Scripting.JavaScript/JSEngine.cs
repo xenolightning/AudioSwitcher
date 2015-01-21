@@ -66,14 +66,24 @@ namespace AudioSwitcher.Scripting.JavaScript
         }
 
 
-        public override TReturn Evaluate<TReturn>(IScriptSource scriptSource)
+        public override ExecutionResult<TReturn> Evaluate<TReturn>(IScriptSource scriptSource)
         {
-            if (typeof(TReturn).IsArray)
-                return EvaluateArray<TReturn>(scriptSource);
-            if (typeof(IEnumerable).IsAssignableFrom(typeof(TReturn)))
-                return EvaluateEnumerable<TReturn>(scriptSource);
+            TReturn val = default(TReturn);
+            try
+            {
+                if (typeof(TReturn).IsArray)
+                    val = EvaluateArray<TReturn>(scriptSource);
+                else if (typeof(IEnumerable).IsAssignableFrom(typeof(TReturn)))
+                    val = EvaluateEnumerable<TReturn>(scriptSource);
+                else
+                    val = InternalEngine.Evaluate<TReturn>(scriptSource.GetReader().ReadToEnd());
 
-            return InternalEngine.Evaluate<TReturn>(scriptSource.GetReader().ReadToEnd());
+                return new ExecutionResult<TReturn> { Result = val, Success = true };
+            }
+            catch (Exception ex)
+            {
+                return new ExecutionResult<TReturn> { Success = false };
+            }
         }
 
         private TReturn EvaluateArray<TReturn>(IScriptSource scriptSource)
