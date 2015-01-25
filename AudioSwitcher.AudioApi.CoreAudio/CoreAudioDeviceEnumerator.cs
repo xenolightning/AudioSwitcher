@@ -99,10 +99,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 if (_innerEnumerator != null)
                 {
-                    ComThread.Invoke(() =>
+                    ComThread.BeginInvoke(() =>
                     {
                         _innerEnumerator.UnregisterEndpointNotificationCallback(_notificationClient);
-                        Marshal.ReleaseComObject(_innerEnumerator);
                     });
                 }
                 _deviceCache = null;
@@ -206,7 +205,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                         {
                             var dev = new CoreAudioDevice(mDev, this);
                             _deviceCache.Add(dev);
-                            Marshal.ReleaseComObject(mDev);
                         }
                     }
                 });

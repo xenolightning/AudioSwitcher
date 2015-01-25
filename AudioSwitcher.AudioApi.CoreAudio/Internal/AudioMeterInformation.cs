@@ -32,8 +32,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     /// </summary>
     internal class AudioMeterInformation : IDisposable
     {
-        private readonly IAudioMeterInformation _audioMeterInformation;
-        private readonly AudioMeterInformationChannels _channels;
+        private IAudioMeterInformation _audioMeterInformation;
+        private AudioMeterInformationChannels _channels;
         private readonly EndpointHardwareSupport _hardwareSupport;
 
         internal AudioMeterInformation(IAudioMeterInformation realInterface)
@@ -92,11 +92,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             if (disposing)
             {
-                ComThread.Invoke(() =>
-                {
-                    if (_audioMeterInformation != null)
-                        Marshal.ReleaseComObject(_audioMeterInformation);
-                });
+                _audioMeterInformation = null;
+                _channels = null;
             }
         }
     }

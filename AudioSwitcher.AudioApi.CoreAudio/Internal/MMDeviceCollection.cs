@@ -35,7 +35,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     /// </summary>
     internal class MMDeviceCollection : IEnumerable<IMMDevice>, IDisposable
     {
-        private readonly IMMDeviceCollection _mmDeviceCollection;
+        private IMMDeviceCollection _mmDeviceCollection;
 
         internal MMDeviceCollection(IMMDeviceCollection parent)
         {
@@ -104,7 +104,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public void Dispose()
         {
-            Marshal.ReleaseComObject(_mmDeviceCollection);
+            _mmDeviceCollection = null;
         }
     }
 }
