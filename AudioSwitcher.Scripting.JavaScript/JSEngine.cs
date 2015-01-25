@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.Scripting.JavaScript.Internal;
 using Jurassic;
@@ -20,7 +16,7 @@ namespace AudioSwitcher.Scripting.JavaScript
             private set;
         }
 
-        public JSEngine(AudioController controller)
+        public JSEngine(IAudioController controller)
         {
             InternalEngine = new ScriptEngine();
             InternalEngine.AddCoreLibrary();
@@ -68,9 +64,9 @@ namespace AudioSwitcher.Scripting.JavaScript
 
         public override ExecutionResult<TReturn> Evaluate<TReturn>(IScriptSource scriptSource)
         {
-            TReturn val = default(TReturn);
             try
             {
+                TReturn val;
                 if (typeof(TReturn).IsArray)
                     val = EvaluateArray<TReturn>(scriptSource);
                 else if (typeof(IEnumerable).IsAssignableFrom(typeof(TReturn)))
@@ -78,11 +74,19 @@ namespace AudioSwitcher.Scripting.JavaScript
                 else
                     val = InternalEngine.Evaluate<TReturn>(scriptSource.GetReader().ReadToEnd());
 
-                return new ExecutionResult<TReturn> { Result = val, Success = true };
+                return new ExecutionResult<TReturn>
+                {
+                    Result = val,
+                    Success = true
+                };
             }
             catch (Exception ex)
             {
-                return new ExecutionResult<TReturn> { Success = false };
+                return new ExecutionResult<TReturn>
+                {
+                    Success = false,
+                    ExecutionException = ex
+                };
             }
         }
 
@@ -91,15 +95,15 @@ namespace AudioSwitcher.Scripting.JavaScript
             if (!typeof(TReturn).IsArray)
                 return default(TReturn);
 
-            MethodInfo castMethod = typeof(Enumerable).GetMethod("Cast");
-            MethodInfo toArrayMethod = typeof(Enumerable).GetMethod("ToArray");
+            var castMethod = typeof(Enumerable).GetMethod("Cast");
+            var toArrayMethod = typeof(Enumerable).GetMethod("ToArray");
 
             var returnType = typeof(TReturn);
             var obj = InternalEngine.Evaluate<ArrayInstance>(scriptSource.GetReader().ReadToEnd()).ElementValues.ToArray();
 
             var targetType = returnType.GetElementType();
-            var cast = castMethod.MakeGenericMethod(new Type[] { targetType }).Invoke(null, new object[] { obj });
-            return (TReturn)toArrayMethod.MakeGenericMethod(new Type[] { targetType }).Invoke(null, new object[] { cast });
+            var cast = castMethod.MakeGenericMethod(targetType).Invoke(null, new object[] { obj });
+            return (TReturn)toArrayMethod.MakeGenericMethod(targetType).Invoke(null, new[] { cast });
         }
 
         private TReturn EvaluateEnumerable<TReturn>(IScriptSource scriptSource)
@@ -107,15 +111,15 @@ namespace AudioSwitcher.Scripting.JavaScript
             if (!typeof(IEnumerable).IsAssignableFrom(typeof(TReturn)))
                 return default(TReturn);
 
-            MethodInfo castMethod = typeof(Enumerable).GetMethod("Cast");
-            MethodInfo toListMethod = typeof(Enumerable).GetMethod("ToList");
+            var castMethod = typeof(Enumerable).GetMethod("Cast");
+            var toListMethod = typeof(Enumerable).GetMethod("ToList");
 
             var returnType = typeof(TReturn);
             var obj = InternalEngine.Evaluate<ArrayInstance>(scriptSource.GetReader().ReadToEnd()).ElementValues.ToArray();
 
             var targetType = returnType.GetGenericArguments()[0];
-            var cast = castMethod.MakeGenericMethod(new Type[] { targetType }).Invoke(null, new object[] { obj });
-            return (TReturn)toListMethod.MakeGenericMethod(new Type[] { targetType }).Invoke(null, new object[] { cast });
+            var cast = castMethod.MakeGenericMethod(targetType).Invoke(null, new object[] { obj });
+            return (TReturn)toListMethod.MakeGenericMethod(targetType).Invoke(null, new[] { cast });
         }
 
 

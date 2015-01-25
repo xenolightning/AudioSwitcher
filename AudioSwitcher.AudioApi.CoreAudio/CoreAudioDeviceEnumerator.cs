@@ -42,7 +42,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             Dispose(false);
         }
 
-        public AudioController AudioController
+        public IAudioController AudioController
         {
             get;
             set;

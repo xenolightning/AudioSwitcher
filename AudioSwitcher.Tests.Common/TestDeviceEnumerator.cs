@@ -35,7 +35,7 @@ namespace AudioSwitcher.Tests.Common
             }
         }
 
-        public AudioController AudioController
+        public IAudioController AudioController
         {
             get;
             set;

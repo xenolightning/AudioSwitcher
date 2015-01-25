@@ -39,7 +39,7 @@ namespace AudioSwitcher.CLI
                 return PrintUsage();
             }
 
-            AudioController controller;
+            IAudioController controller;
 
             if (IsDebug)
                 controller = new SandboxAudioController(new CoreAudioDeviceEnumerator());

@@ -9,7 +9,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
         private readonly JavaScriptDeviceType _deviceType;
         private readonly JavaScriptDeviceState _deviceState;
 
-        public AudioSwitcherLibrary(ScriptEngine engine, AudioController controller)
+        public AudioSwitcherLibrary(ScriptEngine engine, IAudioController controller)
             : base(engine)
         {
             AudioController = controller;
@@ -20,7 +20,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
             PopulateFunctions();
         }
 
-        public AudioController AudioController
+        public IAudioController AudioController
         {
             get;
             private set;

@@ -6,7 +6,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
 {
     public class CoreLibraryTests
     {
-        public static AudioController GetAudioController()
+        public static IAudioController GetAudioController()
         {
             return new TestAudioController(new TestDeviceEnumerator(2, 2));
         }

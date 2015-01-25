@@ -32,7 +32,7 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>api.pfx</AssemblyOriginatorKeyFile>
@@ -74,6 +74,7 @@
     <Compile Include="Internal\Interfaces\IPropertyStore.cs" />
     <Compile Include="Internal\Interfaces\MMDeviceEnumeratorComObject.cs" />
     <Compile Include="Internal\Interfaces\StorageAccessMode.cs" />
+    <Compile Include="Internal\ISystemAudioEventClient.cs" />
     <Compile Include="Internal\MMDeviceCollection.cs" />
     <Compile Include="Internal\MMNotificationClient.cs" />
     <Compile Include="Internal\NativeMethods.cs" />

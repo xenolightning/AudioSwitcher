@@ -6,7 +6,7 @@ namespace AudioSwitcher.AudioApi.Tests
 {
     public partial class DeviceTests
     {
-        private AudioController CreateTestController()
+        private IAudioController CreateTestController()
         {
             return new TestAudioController(new TestDeviceEnumerator(2, 2));
         }

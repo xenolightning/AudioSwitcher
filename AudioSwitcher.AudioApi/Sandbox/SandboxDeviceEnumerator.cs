@@ -51,7 +51,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
             }
         }
 
-        public AudioController AudioController { get; set; }
+        public IAudioController AudioController { get; set; }
 
         public SandboxDevice DefaultPlaybackDevice
         {

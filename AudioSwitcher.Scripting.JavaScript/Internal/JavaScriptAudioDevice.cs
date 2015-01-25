@@ -7,7 +7,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
 {
     internal sealed partial class JavaScriptAudioDevice : ObjectInstance
     {
-        internal JavaScriptAudioDevice(ScriptEngine engine, AudioController controller, IDevice device)
+        internal JavaScriptAudioDevice(ScriptEngine engine, IAudioController controller, IDevice device)
             : base(engine)
         {
             Controller = controller;
@@ -102,7 +102,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             get { return Device.IsMuted; }
         }
 
-        private AudioController Controller
+        private IAudioController Controller
         {
             get;
             set;

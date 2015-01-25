@@ -6,7 +6,7 @@ namespace AudioSwitcher.AudioApi
 {
     public interface IDeviceEnumerator : IDisposable
     {
-        AudioController AudioController { get; set; }
+        IAudioController AudioController { get; set; }
 
         IDevice DefaultPlaybackDevice { get; }
 

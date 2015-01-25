@@ -11,7 +11,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
 {
     public static class ScriptEngineExtensions
     {
-        internal static AudioSwitcherLibrary AddAudioSwitcherLibrary(this ScriptEngine engine, AudioController controller)
+        internal static AudioSwitcherLibrary AddAudioSwitcherLibrary(this ScriptEngine engine, IAudioController controller)
         {
             return AddLibrary(engine, new AudioSwitcherLibrary(engine, controller));
         }
