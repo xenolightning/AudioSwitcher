@@ -9,10 +9,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         public static void SetDefaultEndpoint(string devId, ERole eRole)
         {
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            var policyConfig = new _PolicyConfigClient() as IPolicyConfig;
-            if (policyConfig != null)
-                Marshal.ThrowExceptionForHR(policyConfig.SetDefaultEndpoint(devId, eRole));
+            IPolicyConfig policyConfig = null;
+            try
+            {
+                // ReSharper disable once SuspiciousTypeConversion.Global
+                policyConfig = new _PolicyConfigClient() as IPolicyConfig;
+                if (policyConfig != null)
+                    Marshal.ThrowExceptionForHR(policyConfig.SetDefaultEndpoint(devId, eRole));
+            }
+            finally
+            {
+                if (policyConfig != null && Marshal.IsComObject(policyConfig))
+                    Marshal.ReleaseComObject(policyConfig);
+            }
         }
 
         [ComImport, Guid("870AF99C-171D-4F9E-AF0D-E63DF40C2BC9")]

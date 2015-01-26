@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7395D2F2-2FCA-4F16-8903-3C9E565CF976}</ProjectGuid>
+    <ProjectGuid>{4270A872-8A0F-4092-8873-71581C1BDDFB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AudioSwitcher.Scripting.JavaScript.Tests</RootNamespace>
-    <AssemblyName>AudioSwitcher.Scripting.JavaScript.Tests</AssemblyName>
+    <RootNamespace>AudioSwitcher.AudioApi.CoreAudio.Tests</RootNamespace>
+    <AssemblyName>AudioSwitcher.AudioApi.CoreAudio.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -33,44 +33,32 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Jurassic, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Jurassic\NET35\Jurassic.dll</HintPath>
-    </Reference>
-    <Reference Include="Moq">
-      <HintPath>..\packages\Moq.4.1.1311.0615\lib\net40\Moq.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
     <Reference Include="xunit">
       <HintPath>..\packages\xunit.1.9.2\lib\net20\xunit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AudioSwitcherLibraryTests.cs" />
-    <Compile Include="CoreLibraryTests.cs" />
-    <Compile Include="EngineTests.cs" />
+    <Compile Include="MemoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AudioSwitcher.AudioApi.CoreAudio\AudioSwitcher.AudioApi.CoreAudio.csproj">
+      <Project>{63191a1e-af9e-4d3a-9ba8-baa02345b277}</Project>
+      <Name>AudioSwitcher.AudioApi.CoreAudio</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj">
       <Project>{7a4e260c-007e-4615-a92b-e849e7b641ab}</Project>
       <Name>AudioSwitcher.AudioApi</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AudioSwitcher.Scripting.JavaScript\AudioSwitcher.Scripting.JavaScript.csproj">
-      <Project>{a521e1f4-70d0-4e59-abc9-cdd306d18f3f}</Project>
-      <Name>AudioSwitcher.Scripting.JavaScript</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AudioSwitcher.Scripting\AudioSwitcher.Scripting.csproj">
-      <Project>{99f4ce07-b44f-45c2-ae1d-3732d695d61d}</Project>
-      <Name>AudioSwitcher.Scripting</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AudioSwitcher.Tests.Common\AudioSwitcher.Tests.Common.csproj">
-      <Project>{703d3c14-a63f-4be1-82fe-8d20a55d9960}</Project>
-      <Name>AudioSwitcher.Tests.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

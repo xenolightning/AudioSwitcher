@@ -267,7 +267,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 else
                     PolicyConfigVista.SetDefaultEndpoint(dev.RealId, ERole.Console | ERole.Multimedia);
 
-                return true;
+                return dev.IsDefaultDevice;
             }
             catch
             {
@@ -294,7 +294,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 else
                     PolicyConfigVista.SetDefaultEndpoint(dev.RealId, ERole.Communications);
 
-                return true;
+                return dev.IsDefaultCommunicationsDevice;
             }
             catch
             {
