@@ -38,6 +38,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         internal AudioMeterInformation(IAudioMeterInformation realInterface)
         {
+            ComThread.Assert();
             uint hardwareSupp;
 
             _audioMeterInformation = realInterface;

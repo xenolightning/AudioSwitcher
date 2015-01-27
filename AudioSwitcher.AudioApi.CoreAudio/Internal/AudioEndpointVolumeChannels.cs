@@ -22,6 +22,7 @@
 
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
+using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
@@ -35,6 +36,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         internal AudioEndpointVolumeChannels(IAudioEndpointVolume parent)
         {
+            ComThread.Assert();
             _audioEndPointVolume = parent;
 
             int channelCount = Count;
@@ -52,9 +54,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                int result;
-                Marshal.ThrowExceptionForHR(_audioEndPointVolume.GetChannelCount(out result));
-                return result;
+                return ComThread.Invoke(() =>
+                {
+                    int result;
+                    Marshal.ThrowExceptionForHR(_audioEndPointVolume.GetChannelCount(out result));
+                    return result;
+                });
             }
         }
 
@@ -63,7 +68,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public AudioEndpointVolumeChannel this[int index]
         {
-            get { return _channels[index]; }
+            get
+            {
+                return ComThread.Invoke(() =>
+                {
+                    return _channels[index];
+                });
+            }
         }
     }
 }

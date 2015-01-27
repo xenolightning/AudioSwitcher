@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
@@ -24,15 +23,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public CoreAudioDeviceEnumerator()
         {
-
             ComThread.Invoke(() =>
             {
                 _innerEnumerator = new MMDeviceEnumeratorComObject() as IMMDeviceEnumerator;
+                _notificationClient = new MMNotificationClient(this);
+                _innerEnumerator.RegisterEndpointNotificationCallback(_notificationClient);
             });
-
-            _notificationClient = new MMNotificationClient(this);
-
-            _innerEnumerator.RegisterEndpointNotificationCallback(_notificationClient);
 
             RefreshSystemDevices();
         }
@@ -102,6 +98,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     ComThread.BeginInvoke(() =>
                     {
                         _innerEnumerator.UnregisterEndpointNotificationCallback(_notificationClient);
+                        _notificationClient = null;
                     });
                 }
                 _deviceCache = null;
@@ -349,7 +346,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         #region IMMNotif Members
 
-        private readonly MMNotificationClient _notificationClient;
+        private MMNotificationClient _notificationClient;
 
         void ISystemAudioEventClient.OnDeviceStateChanged(string deviceId, EDeviceState newState)
         {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace AudioSwitcher.Scripting
 {
@@ -42,12 +37,12 @@ namespace AudioSwitcher.Scripting
 
         public ExecutionResult<TReturn> Evaluate<TReturn>(string script)
         {
-            return this.Evaluate<TReturn>(new StringScriptSource(script));
+            return Evaluate<TReturn>(new StringScriptSource(script));
         }
 
         public Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(string script)
         {
-            return Task.Factory.StartNew(() => this.Evaluate<TReturn>(script));
+            return Task.Factory.StartNew(() => Evaluate<TReturn>(script));
         }
 
         public abstract ExecutionResult<TReturn> Evaluate<TReturn>(IScriptSource scriptSource);

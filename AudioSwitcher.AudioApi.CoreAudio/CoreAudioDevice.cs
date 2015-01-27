@@ -18,24 +18,23 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         internal CoreAudioDevice(IMMDevice device, IDeviceEnumerator<CoreAudioDevice> enumerator)
             : base(enumerator)
         {
+            ComThread.Assert();
+
             if (device == null)
                 throw new ArgumentNullException("device");
 
-            ComThread.Invoke(() =>
-            {
-                //Load values
-                Marshal.ThrowExceptionForHR(device.GetId(out _realId));
-                Marshal.ThrowExceptionForHR(device.GetState(out _state));
+            //Load values
+            Marshal.ThrowExceptionForHR(device.GetId(out _realId));
+            Marshal.ThrowExceptionForHR(device.GetState(out _state));
 
-                // ReSharper disable once SuspiciousTypeConversion.Global
-                var ep = device as IMMEndpoint;
-                if (ep != null)
-                    ep.GetDataFlow(out _dataFlow);
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            var ep = device as IMMEndpoint;
+            if (ep != null)
+                ep.GetDataFlow(out _dataFlow);
 
-                GetPropertyInformation(device);
-                GetAudioMeterInformation(device);
-                GetAudioEndpointVolume(device);
-            });
+            GetPropertyInformation(device);
+            GetAudioMeterInformation(device);
+            GetAudioEndpointVolume(device);
 
             if (AudioEndpointVolume != null)
                 AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;

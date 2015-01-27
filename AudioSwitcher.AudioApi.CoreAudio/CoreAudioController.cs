@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace AudioSwitcher.AudioApi.CoreAudio
+﻿namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public sealed class CoreAudioController : AudioController<CoreAudioDevice>
     {

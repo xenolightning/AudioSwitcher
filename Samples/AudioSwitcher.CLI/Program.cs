@@ -1,18 +1,14 @@
 ﻿using System;
-using System.IO;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
 using AudioSwitcher.AudioApi.Sandbox;
-using AudioSwitcher.Scripting;
 using AudioSwitcher.Scripting.JavaScript;
-using Jurassic;
-using Jurassic.Library;
 
 namespace AudioSwitcher.CLI
 {
     internal static class Program
     {
-        private static bool IsDebug;
+        private static bool _isDebug;
 
         private static int Main(string[] args)
         {
@@ -25,7 +21,7 @@ namespace AudioSwitcher.CLI
                 switch (args[i])
                 {
                     case "--debug":
-                        IsDebug = true;
+                        _isDebug = true;
                         break;
                 }
             }
@@ -41,7 +37,7 @@ namespace AudioSwitcher.CLI
 
             IAudioController controller;
 
-            if (IsDebug)
+            if (_isDebug)
                 controller = new SandboxAudioController(new CoreAudioDeviceEnumerator());
             else
                 controller = new CoreAudioController();
@@ -58,13 +54,19 @@ namespace AudioSwitcher.CLI
                 try
                 {
                     Console.WriteLine("Executing {0}...", fName);
-                    engine.Execute(new Scripting.FileScriptSource(fName));
+                    var result = engine.Execute(new Scripting.FileScriptSource(fName));
+                    if (!result.Success)
+                        throw result.ExecutionException;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.ToString());
                 }
             }
+
+#if DEBUG
+            Console.ReadKey();
+#endif
 
             return 0;
         }

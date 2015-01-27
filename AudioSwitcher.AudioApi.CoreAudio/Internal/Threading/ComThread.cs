@@ -18,6 +18,16 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
             get { return COM_SCHEDULER; }
         }
 
+        /// <summary>
+        /// Asserts that the execution following this statement is running on the ComThreads
+        /// <exception cref="InvalidThreadException">Thrown if the assertion fails</exception>
+        /// </summary>
+        public static void Assert()
+        {
+            if (InvokeRequired)
+                throw new InvalidThreadException(String.Format("This operation must be run on the ComThread ThreadId: {0}", Scheduler.ThreadId));
+        }
+
         public static void Invoke(Action action)
         {
             if (!InvokeRequired)

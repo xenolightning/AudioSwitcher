@@ -45,6 +45,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <param name="realEndpointVolume">IAudioEndpointVolume COM interface</param>
         internal AudioEndpointVolume(IAudioEndpointVolume realEndpointVolume)
         {
+            ComThread.Assert();
             uint hardwareSupp;
 
             _audioEndPointVolume = realEndpointVolume;

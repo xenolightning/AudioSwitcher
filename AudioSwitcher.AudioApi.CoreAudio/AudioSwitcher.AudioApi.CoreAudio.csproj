@@ -86,6 +86,7 @@
     <Compile Include="Internal\PropertyStoreProperty.cs" />
     <Compile Include="Internal\PropVariant.cs" />
     <Compile Include="Internal\ERole.cs" />
+    <Compile Include="Internal\Threading\InvalidThreadException.cs" />
     <Compile Include="Internal\WeakEventHandler.cs" />
     <Compile Include="Internal\Threading\ComThread.cs" />
     <Compile Include="CoreAudioController.cs" />

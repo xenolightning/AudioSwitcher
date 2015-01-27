@@ -43,6 +43,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <param name="accessMode">The mode to open the propertystore in. Read/Write</param>
         internal PropertyStore(IPropertyStore store, Mode accessMode)
         {
+            ComThread.Assert();
             _storeInterface = store;
             _accessMode = accessMode;
         }
@@ -151,7 +152,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
 
         /// <summary>
-        ///     Gets property key at sepecified index
+        ///     Gets property key at specified index
         /// </summary>
         /// <param name="index">Index</param>
         /// <returns>Property key</returns>

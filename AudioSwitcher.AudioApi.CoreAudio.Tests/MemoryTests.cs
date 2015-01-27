@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -21,10 +20,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
             for (int i = 0; i < 1000; i++)
             {
-                var list = controller.GetAllDevices().ToList();
+                controller.GetAllDevices();
                 var isDefault = controller.DefaultPlaybackDevice.SetAsDefault();
                 Assert.True(isDefault);
-                list = controller.GetPlaybackDevices().ToList();
+                controller.GetPlaybackDevices();
             }
 
             var newHandles = Process.GetCurrentProcess().HandleCount;
@@ -42,10 +41,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
             for (int i = 0; i < 1000; i++)
             {
-                var list = await controller.GetCaptureDevicesAsync();
+                await controller.GetCaptureDevicesAsync();
                 var isDefault = await controller.DefaultPlaybackDevice.SetAsDefaultAsync();
                 Assert.True(isDefault);
-                list = await controller.GetPlaybackDevicesAsync();
+                await controller.GetPlaybackDevicesAsync();
             }
 
             var newHandles = Process.GetCurrentProcess().HandleCount;

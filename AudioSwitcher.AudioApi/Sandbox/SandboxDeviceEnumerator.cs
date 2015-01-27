@@ -41,6 +41,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
                 {
                     id = sourceDev.Id,
                     interfaceName = sourceDev.InterfaceName,
+                    icon = sourceDev.Icon,
                     name = sourceDev.Name,
                     fullName = sourceDev.FullName,
                     type = sourceDev.DeviceType,

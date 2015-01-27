@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace AudioSwitcher.Scripting
 {

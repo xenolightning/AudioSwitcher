@@ -60,5 +60,4 @@ if (defaultDevice !== undefined) {
     console.log("Is Muted: " + defaultDevice.toggleMute());
     Core.sleep(2000);
     console.log("Setting Muted to [" + defaultDevice.mute(isMuted) + "]");
-    Core.sleep(2000);
 }

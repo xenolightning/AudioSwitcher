@@ -6,7 +6,7 @@ namespace AudioSwitcher.Tests.Common
     public sealed class TestDevice : Device
     {
         private readonly DeviceType _deviceType;
-        public Guid _id;
+        private Guid _id;
         private bool _muted;
 
         public TestDevice(Guid id, DeviceType dFlow, IDeviceEnumerator enumerator)

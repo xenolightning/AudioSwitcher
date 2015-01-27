@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.Scripting.JavaScript.Internal;
 using AudioSwitcher.Tests.Common;
-using Jurassic.Library;
 using Xunit;
 
 namespace AudioSwitcher.Scripting.JavaScript.Tests

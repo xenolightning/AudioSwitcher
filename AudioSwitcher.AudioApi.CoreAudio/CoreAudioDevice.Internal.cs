@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
@@ -46,30 +45,29 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void GetPropertyInformation(IMMDevice device)
         {
-            ComThread.Invoke(() =>
-            {
-                IPropertyStore propstore = null;
-                //Opening in write mode, can cause exceptions to be thrown when not run as admin.
-                //This tries to open in write mode if available
-                try
-                {
-                    device.OpenPropertyStore(StorageAccessMode.ReadWrite, out propstore);
-                }
-                catch
-                {
-                    Debug.WriteLine("Cannot open property store in write mode");
-                }
+            ComThread.Assert();
 
-                if (propstore != null)
-                {
-                    _propertyStore = new PropertyStore(propstore, PropertyStore.Mode.ReadWrite);
-                }
-                else
-                {
-                    Marshal.ThrowExceptionForHR(device.OpenPropertyStore(StorageAccessMode.Read, out propstore));
-                    _propertyStore = new PropertyStore(propstore, PropertyStore.Mode.Read);
-                }
-            });
+            IPropertyStore propstore = null;
+            //Opening in write mode, can cause exceptions to be thrown when not run as admin.
+            //This tries to open in write mode if available
+            try
+            {
+                device.OpenPropertyStore(StorageAccessMode.ReadWrite, out propstore);
+            }
+            catch
+            {
+                Debug.WriteLine("Cannot open property store in write mode");
+            }
+
+            if (propstore != null)
+            {
+                _propertyStore = new PropertyStore(propstore, PropertyStore.Mode.ReadWrite);
+            }
+            else
+            {
+                Marshal.ThrowExceptionForHR(device.OpenPropertyStore(StorageAccessMode.Read, out propstore));
+                _propertyStore = new PropertyStore(propstore, PropertyStore.Mode.Read);
+            }
         }
 
         private void GetAudioMeterInformation(IMMDevice device)
@@ -80,26 +78,25 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             //This should be all on the COM thread to avoid any
             //weird lookups on the result COM object not on an STA Thread
-            ComThread.Invoke(() =>
+            ComThread.Assert();
+
+            object result = null;
+            Exception ex;
+            //Need to catch here, as there is a chance that unauthorized is thrown.
+            //It's not an HR exception, but bubbles up through the .net call stack
+            try
             {
-                object result = null;
-                Exception ex;
-                //Need to catch here, as there is a chance that unauthorized is thrown.
-                //It's not an HR exception, but bubbles up through the .net call stack
-                try
-                {
-                    var clsGuid = new Guid(ComIIds.AUDIO_METER_INFORMATION_IID);
-                    ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
-                }
-                catch (Exception e)
-                {
-                    ex = e;
-                }
-                _audioMeterInformationUnavailable = ex != null;
-                if (_audioMeterInformationUnavailable)
-                    return;
-                _audioMeterInformation = new AudioMeterInformation(result as IAudioMeterInformation);
-            });
+                var clsGuid = new Guid(ComIIds.AUDIO_METER_INFORMATION_IID);
+                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
+            }
+            catch (Exception e)
+            {
+                ex = e;
+            }
+            _audioMeterInformationUnavailable = ex != null;
+            if (_audioMeterInformationUnavailable)
+                return;
+            _audioMeterInformation = new AudioMeterInformation(result as IAudioMeterInformation);
         }
 
         private void GetAudioEndpointVolume(IMMDevice device)
@@ -114,29 +111,28 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             //This should be all on the COM thread to avoid any
             //weird lookups on the result COM object not on an STA Thread
-            ComThread.Invoke(() =>
+            ComThread.Assert();
+
+            object result = null;
+            Exception ex;
+            //Need to catch here, as there is a chance that unauthorized is thrown.
+            //It's not an HR exception, but bubbles up through the .net call stack
+            try
             {
-                object result = null;
-                Exception ex;
-                //Need to catch here, as there is a chance that unauthorized is thrown.
-                //It's not an HR exception, but bubbles up through the .net call stack
-                try
-                {
-                    var clsGuid = new Guid(ComIIds.AUDIO_ENDPOINT_VOLUME_IID);
-                    ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
-                }
-                catch (Exception e)
-                {
-                    ex = e;
-                }
-                _audioEndpointVolumeUnavailable = ex != null;
-                if (_audioEndpointVolumeUnavailable)
-                    return;
-                _audioEndpointVolume = new AudioEndpointVolume(result as IAudioEndpointVolume);
-            });
+                var clsGuid = new Guid(ComIIds.AUDIO_ENDPOINT_VOLUME_IID);
+                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
+            }
+            catch (Exception e)
+            {
+                ex = e;
+            }
+            _audioEndpointVolumeUnavailable = ex != null;
+            if (_audioEndpointVolumeUnavailable)
+                return;
+            _audioEndpointVolume = new AudioEndpointVolume(result as IAudioEndpointVolume);
         }
 
-        private static readonly Dictionary<string, DeviceIcon> ICON_MAP = new Dictionary<string, DeviceIcon>()
+        private static readonly Dictionary<string, DeviceIcon> ICON_MAP = new Dictionary<string, DeviceIcon>
         {
             {"0", DeviceIcon.Speakers},
             {"1", DeviceIcon.Speakers},
