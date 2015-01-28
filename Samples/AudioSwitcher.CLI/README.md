@@ -118,30 +118,52 @@ Sample Macro Script
 Sample macro script that demonstrates the usage of some scripting functions.
 
 ```javascript
-//Gets all OUTPUT devices (see the flags arg)
-var devices = AudioSwitcher.getAudioDevices(1);
-
+var devices = AudioSwitcher.getAudioDevices();
+console.log("Number of devices: " + devices.length);
 var defaultDevice;
 
-//Prints out all OUTPUT devices to console and finds the current default device
 for (var i = 0; i < devices.length; i++) {
-    console.log(devices[i].id + " - " + devices[i].name + " - " + devices[i].flags);
+    console.log(devices[i].id);
+    console.log(devices[i].fullName);
+    console.log("    Type: " + devices[i].type);
+    console.log("    State: " + devices[i].state);
+    console.log("    Is Playback (property): " + devices[i].isPlayback);
+    console.log("    Is Playback (calculated): " + (devices[i].type == AudioSwitcher.DeviceType.PLAYBACK));
     console.log("    Is Default: " + devices[i].isDefault);
     console.log("    Is Default Communications: " + devices[i].isDefaultComm);
+    console.log();
 
-    if (devices[i].isDefault) {
+    if (devices[i].isDefault && devices[i].isPlayback) {
         defaultDevice = devices[i];
     }
 }
 
+var defDevById = AudioSwitcher.getAudioDevice(defaultDevice.id);
+console.log("Id lookup successful: " + (defDevById !== undefined && defDevById.id === defaultDevice.id) + "\r\n");
+
+console.log("Trying to get Speakers...");
+var ad = AudioSwitcher.getAudioDevice("Speakers", AudioSwitcher.DeviceType.PLAYBACK);
+
+if (ad !== null) {
+    console.log(ad.fullName);
+} else {
+    console.log("Playback Speakers not found");
+}
+console.log();
+
 if (defaultDevice !== undefined) {
 
-    //Gets the volume of the current default device
     var vol = defaultDevice.volume();
+    var isMuted = defaultDevice.isMuted;
+    if (isMuted) {
+        console.log("Device is muted");
+    } else {
+        console.log("Device is NOT muted");
+    }
 
     //Sets the default device
-    defaultDevice.setAsDefaultDevice();
-    defaultDevice.setAsDefaultCommDevice();
+    defaultDevice.setAsDefault();
+    defaultDevice.setAsDefaultComm();
 
     console.log("Current Volume: " + vol);
     console.log("Set Volume To: " + defaultDevice.volume(10));
@@ -152,10 +174,11 @@ if (defaultDevice !== undefined) {
     defaultDevice.mute(false);
     Core.sleep(2000);
     console.log("Toggling Mute");
-    console.log("Is Muted: " + defaultDevice.toggleMute())
+    console.log("Is Muted: " + defaultDevice.toggleMute());
     Core.sleep(2000);
     console.log("Toggling Mute");
     console.log("Is Muted: " + defaultDevice.toggleMute());
     Core.sleep(2000);
+    console.log("Setting Muted to [" + defaultDevice.mute(isMuted) + "]");
 }
 ```
