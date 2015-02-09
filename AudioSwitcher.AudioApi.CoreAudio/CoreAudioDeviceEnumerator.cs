@@ -103,6 +103,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 }
                 _deviceCache = null;
                 _innerEnumerator = null;
+                _lock.Dispose();
             }
 
             GC.SuppressFinalize(this);
@@ -120,7 +121,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _lock.EnterReadLock();
             try
             {
-                return _deviceCache.FirstOrDefault(x => x.Id == id && (x.State & state) > 0);
+                return _deviceCache.FirstOrDefault(x => x.Id == id && state.HasFlag(x.State));
             }
             finally
             {
@@ -334,7 +335,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 return _deviceCache.Where(x =>
                     (x.DeviceType == deviceType || deviceType == DeviceType.All)
-                    && (x.State & state) > 0);
+                    && state.HasFlag(x.State));
             }
             finally
             {

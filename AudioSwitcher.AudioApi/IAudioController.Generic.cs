@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace AudioSwitcher.AudioApi
 {
     public interface IAudioController<T> : IAudioController
-        where T : Device
+        where T : IDevice
     {
         new T DefaultPlaybackDevice { get; set; }
 
@@ -14,6 +14,14 @@ namespace AudioSwitcher.AudioApi
         new T DefaultCaptureDevice { get; set; }
 
         new T DefaultCaptureCommunicationsDevice { get; set; }
+
+        new IEnumerable<T> GetAllDevices();
+
+        new IEnumerable<T> GetAllDevices(DeviceState deviceState);
+
+        new Task<IEnumerable<T>> GetAllDevicesAsync();
+
+        new Task<IEnumerable<T>> GetAllDevicesAsync(DeviceState deviceState);
 
         new IEnumerable<T> GetPlaybackDevices();
 

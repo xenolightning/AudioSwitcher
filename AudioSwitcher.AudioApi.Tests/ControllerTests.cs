@@ -223,6 +223,5 @@ namespace AudioSwitcher.AudioApi.Tests
             Assert.DoesNotThrow(() => controller.DefaultPlaybackCommunicationsDevice = device);
             Assert.Same(controller.DefaultPlaybackCommunicationsDevice, device);
         }
-
     }
 }

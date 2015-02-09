@@ -43,6 +43,26 @@ namespace AudioSwitcher.AudioApi
             set { DeviceEnumerator.SetDefaultCommunicationsDevice(value); }
         }
 
+        public new IEnumerable<T> GetAllDevices()
+        {
+            return GetAllDevices(DEFAULT_DEVICE_STATE_FILTER);
+        }
+
+        public new IEnumerable<T> GetAllDevices(DeviceState deviceState)
+        {
+            return DeviceEnumerator.GetDevices(DeviceType.All, deviceState);
+        }
+
+        public new Task<IEnumerable<T>> GetAllDevicesAsync()
+        {
+            return GetAllDevicesAsync(DEFAULT_DEVICE_STATE_FILTER);
+        }
+
+        public new Task<IEnumerable<T>> GetAllDevicesAsync(DeviceState deviceState)
+        {
+            return DeviceEnumerator.GetDevicesAsync(DeviceType.All, deviceState);
+        }
+
         public new IEnumerable<T> GetPlaybackDevices()
         {
             return GetPlaybackDevices(DEFAULT_DEVICE_STATE_FILTER);

@@ -81,7 +81,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
 
         public SandboxDevice GetDevice(Guid id, DeviceState state)
         {
-            return _devices.FirstOrDefault(x => x.Id == id && (x.state & state) > 0);
+            return _devices.FirstOrDefault(x => x.Id == id && state.HasFlag(x.State));
         }
 
         Task<SandboxDevice> IDeviceEnumerator<SandboxDevice>.GetDeviceAsync(Guid id, DeviceState state)
@@ -133,11 +133,11 @@ namespace AudioSwitcher.AudioApi.Sandbox
             return null;
         }
 
-        public IEnumerable<SandboxDevice> GetDevices(DeviceType deviceType, DeviceState eRole)
+        public IEnumerable<SandboxDevice> GetDevices(DeviceType deviceType, DeviceState state)
         {
             return _devices.Where(x =>
                 (x.type == deviceType || deviceType == DeviceType.All)
-                && (x.State & eRole) > 0
+                && state.HasFlag(x.State)
                 );
         }
 

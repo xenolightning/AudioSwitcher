@@ -9,6 +9,6 @@ namespace AudioSwitcher.AudioApi
         Disabled = 0x00000002,
         NotPresent = 0x00000004,
         Unplugged = 0x00000008,
-        All = 0x0000000F
+        All = Active | Disabled | NotPresent | Unplugged
     }
 }
