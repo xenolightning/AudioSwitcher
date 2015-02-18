@@ -26,5 +26,25 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             FormatId = formatId;
             PropertyId = propertyId;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is PropertyKey))
+                return false;
+
+            PropertyKey key = (PropertyKey)obj;
+
+            return key.FormatId == this.FormatId && key.PropertyId == this.PropertyId;
+        }
+
+        public static bool operator ==(PropertyKey k1, PropertyKey k2)
+        {
+            return k1.FormatId == k2.FormatId && k1.PropertyId == k2.PropertyId;
+        }
+
+        public static bool operator !=(PropertyKey k1, PropertyKey k2)
+        {
+            return !(k1 == k2);
+        }
     }
 }

@@ -14,11 +14,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private bool _audioMeterInformationUnavailable;
         private bool _audioEndpointVolumeUnavailable;
 
-        private PropertyStore Properties
+        private IPropertyDictionary Properties
         {
             get
             {
-                return _propertyStore;
+                return _properties;
             }
         }
 
@@ -47,27 +47,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             ComThread.Assert();
 
-            IPropertyStore propstore = null;
-            //Opening in write mode, can cause exceptions to be thrown when not run as admin.
-            //This tries to open in write mode if available
-            try
-            {
-                device.OpenPropertyStore(StorageAccessMode.ReadWrite, out propstore);
-            }
-            catch
-            {
-                Debug.WriteLine("Cannot open property store in write mode");
-            }
-
-            if (propstore != null)
-            {
-                _propertyStore = new PropertyStore(propstore, PropertyStore.Mode.ReadWrite);
-            }
-            else
-            {
-                Marshal.ThrowExceptionForHR(device.OpenPropertyStore(StorageAccessMode.Read, out propstore));
-                _propertyStore = new PropertyStore(propstore, PropertyStore.Mode.Read);
-            }
+            if (_properties == null)
+                _properties = new CachedPropertyDictionary();
+            
+            _properties.TryLoadFrom(device);
         }
 
         private void GetAudioMeterInformation(IMMDevice device)

@@ -9,8 +9,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public sealed partial class CoreAudioDevice : Device, INotifyPropertyChanged, IDisposable
     {
+        private IMMDevice _device;
         private Guid? _id;
-        private PropertyStore _propertyStore;
+        private CachedPropertyDictionary _properties;
         private EDeviceState _state;
         private string _realId;
         private EDataFlow _dataFlow;
@@ -18,10 +19,27 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         internal CoreAudioDevice(IMMDevice device, IDeviceEnumerator<CoreAudioDevice> enumerator)
             : base(enumerator)
         {
+            _device = device;
             ComThread.Assert();
 
             if (device == null)
                 throw new ArgumentNullException("device");
+
+            LoadProperties(device);
+
+            GetAudioMeterInformation(device);
+            GetAudioEndpointVolume(device);
+
+            if (AudioEndpointVolume != null)
+                AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
+
+            enumerator.AudioDeviceChanged +=
+                new WeakEventHandler<AudioDeviceChangedEventArgs>(EnumeratorOnAudioDeviceChanged).Handler;
+        }
+
+        private void LoadProperties(IMMDevice device)
+        {
+            ComThread.Assert();
 
             //Load values
             Marshal.ThrowExceptionForHR(device.GetId(out _realId));
@@ -33,14 +51,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 ep.GetDataFlow(out _dataFlow);
 
             GetPropertyInformation(device);
-            GetAudioMeterInformation(device);
-            GetAudioEndpointVolume(device);
-
-            if (AudioEndpointVolume != null)
-                AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
-
-            enumerator.AudioDeviceChanged +=
-                new WeakEventHandler<AudioDeviceChangedEventArgs>(EnumeratorOnAudioDeviceChanged).Handler;
         }
 
         ~CoreAudioDevice()
@@ -55,6 +65,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void Dispose(bool disposing)
         {
+            _device = null;
+
             if (disposing)
             {
                 if (AudioEndpointVolume != null)
@@ -92,7 +104,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get
             {
                 if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME))
-                    return Properties[PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME].Value as string;
+                    return Properties[PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME] as string;
                 return "Unknown";
             }
         }
@@ -105,14 +117,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get
             {
                 if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_DESCRIPTION))
-                    return Properties[PropertyKeys.PKEY_DEVICE_DESCRIPTION].Value as string;
+                    return Properties[PropertyKeys.PKEY_DEVICE_DESCRIPTION] as string;
 
                 return InterfaceName;
             }
             set
             {
                 if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_DESCRIPTION))
-                    Properties.SetValue(PropertyKeys.PKEY_DEVICE_DESCRIPTION, value);
+                    Properties[PropertyKeys.PKEY_DEVICE_DESCRIPTION] = value;
             }
         }
 
@@ -121,7 +133,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get
             {
                 if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME))
-                    return Properties[PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME].Value as string;
+                    return Properties[PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME] as string;
                 return "Unknown";
             }
         }
@@ -131,7 +143,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get
             {
                 if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_ICON))
-                    return IconStringToDeviceIcon(Properties[PropertyKeys.PKEY_DEVICE_ICON].Value as string);
+                    return IconStringToDeviceIcon(Properties[PropertyKeys.PKEY_DEVICE_ICON] as string);
 
                 return DeviceIcon.Unknown;
             }
@@ -214,6 +226,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             if (audioDeviceChangedEventArgs.Device.Id != Id)
                 return;
+
+            ComThread.Invoke(() =>
+            {
+                LoadProperties(_device);
+            });
 
             if (audioDeviceChangedEventArgs.EventType == AudioDeviceEventType.PropertyChanged)
             {

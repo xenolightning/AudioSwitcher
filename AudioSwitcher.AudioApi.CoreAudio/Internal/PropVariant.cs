@@ -188,11 +188,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                         return ulVal;
                     case VarEnum.VT_UI8:
                         return uhVal;
+                    case VarEnum.VT_BOOL:
+                        return boolVal;
                     case VarEnum.VT_LPWSTR:
                         return Marshal.PtrToStringUni(pointerValue);
-                    case VarEnum.VT_BLOB:
-                    case VarEnum.VT_VECTOR | VarEnum.VT_UI1:
-                        return GetBlob();
+                    //case VarEnum.VT_BLOB:
+                    //case VarEnum.VT_VECTOR:
+                    //case VarEnum.VT_UI1:
+                    //    return GetBlob();
                     case VarEnum.VT_CLSID:
                         return (Guid) Marshal.PtrToStructure(pointerValue, typeof (Guid));
                 }
@@ -204,6 +207,35 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     pointerValue = Marshal.StringToBSTR(value as string);
                 }
+            }
+        }
+
+        public bool IsSupported()
+        {
+            switch (DataType)
+            {
+                case VarEnum.VT_I1:
+                    return true;
+                case VarEnum.VT_I2:
+                    return true;
+                case VarEnum.VT_I4:
+                    return true;
+                case VarEnum.VT_I8:
+                    return true;
+                case VarEnum.VT_INT:
+                    return true;
+                case VarEnum.VT_UI4:
+                    return true;
+                case VarEnum.VT_UI8:
+                    return true;
+                case VarEnum.VT_BOOL:
+                    return true;
+                case VarEnum.VT_LPWSTR:
+                    return true;
+                case VarEnum.VT_CLSID:
+                    return true;
+                default:
+                    return false;
             }
         }
 

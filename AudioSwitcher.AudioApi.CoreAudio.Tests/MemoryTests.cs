@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -27,9 +28,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
             var newHandles = Process.GetCurrentProcess().HandleCount;
 
+            //*15 for each device and the handles it requires
+            //*3 because that should cater for at least 2 copies of each device
+            var maxHandles = controller.GetAllDevices().Count() * 15 * 3;
+
             //Ensure it doesn't blow out the handles
-            //200 is enough to cover the overhead of devices
-            Assert.True(newHandles - originalHandles < 200);
+            Assert.True(newHandles - originalHandles < maxHandles);
         }
 
         [Fact]
@@ -48,9 +52,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
             var newHandles = Process.GetCurrentProcess().HandleCount;
 
+            //*15 for each device and the handles it requires
+            //*3 because that should cater for at least 2 copies of each device
+            var maxHandles = controller.GetAllDevices().Count() * 15 * 3;
+
             //Ensure it doesn't blow out the handles
-            //200 is enough to cover the overhead of devices
-            Assert.True(newHandles - originalHandles < 200);
+            Assert.True(newHandles - originalHandles < maxHandles);
         }
 
     }

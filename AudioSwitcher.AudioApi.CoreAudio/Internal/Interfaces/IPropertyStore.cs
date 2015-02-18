@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Runtime.Remoting;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
@@ -23,7 +25,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         [PreserveSig]
         int SetValue(
             [In] ref PropertyKey propertyKey,
-            [In] ref PropVariant value);
+            [In] ref object value);
 
         [PreserveSig]
         int Commit();
