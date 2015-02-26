@@ -201,6 +201,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     {
                         foreach (var mDev in coll)
                         {
+                            if (!DeviceIsValid(mDev))
+                                continue;
+
                             var dev = new CoreAudioDevice(mDev, this);
                             _deviceCache.Add(dev);
                         }
@@ -214,6 +217,23 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             //Have to collect here to reduce the memory/handle leak issue in Windows 8 and above
             GC.Collect();
+        }
+
+        private static bool DeviceIsValid(IMMDevice device)
+        {
+            try
+            {
+                string id;
+                EDeviceState state;
+                device.GetId(out id);
+                device.GetState(out state);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private void RaiseAudioDeviceChanged(AudioDeviceChangedEventArgs e)
