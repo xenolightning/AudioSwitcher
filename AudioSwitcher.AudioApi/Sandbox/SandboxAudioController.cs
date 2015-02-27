@@ -7,7 +7,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
 {
     public class SandboxAudioController : AudioController<SandboxDevice>
     {
-        private List<SandboxDevice> _devices;
+        private readonly List<SandboxDevice> _devices;
         private Guid _defaultPlaybackDeviceId;
         private Guid _defaultPlaybackCommDeviceId;
         private Guid _defaultCaptureDeviceId;
@@ -42,6 +42,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
                     interfaceName = sourceDev.InterfaceName,
                     icon = sourceDev.Icon,
                     name = sourceDev.Name,
+                    isMuted = sourceDev.IsMuted,
                     fullName = sourceDev.FullName,
                     type = sourceDev.DeviceType,
                     state = sourceDev.State,
@@ -71,11 +72,6 @@ namespace AudioSwitcher.AudioApi.Sandbox
             get { return _devices.FirstOrDefault(x => x.Id == _defaultCaptureCommDeviceId); }
         }
 
-        public SandboxDevice DefaultCommunicationsCaptureDevice
-        {
-            get { return _devices.FirstOrDefault(x => x.Id == _defaultCaptureCommDeviceId); }
-        }
-
         public override SandboxDevice GetDevice(Guid id)
         {
             return GetDevice(id, DeviceState.All);
@@ -94,7 +90,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
                     if (role == Role.Console || role == Role.Multimedia)
                         return DefaultCaptureDevice;
 
-                    return DefaultCommunicationsCaptureDevice;
+                    return DefaultCaptureCommunicationsDevice;
                 case DeviceType.Playback:
                     if (role == Role.Console || role == Role.Multimedia)
                         return DefaultPlaybackDevice;

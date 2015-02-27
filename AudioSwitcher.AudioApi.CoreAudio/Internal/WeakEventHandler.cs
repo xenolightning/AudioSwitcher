@@ -1,31 +1,30 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reflection;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    public delegate void UnregisterCallback<E>(EventHandler<E> eventHandler) where E : EventArgs;
+    public delegate void UnregisterCallback<TEventArgs>(EventHandler<TEventArgs> eventHandler) where TEventArgs : EventArgs;
 
-    public interface IWeakEventHandler<E>
-        where E : EventArgs
+    public interface IWeakEventHandler<TEventArgs>
+        where TEventArgs : EventArgs
     {
-        EventHandler<E> Handler { get; }
+        EventHandler<TEventArgs> Handler { get; }
     }
 
     [DebuggerNonUserCode]
-    public class WeakEventHandler<T, E> : IWeakEventHandler<E>
+    public class WeakEventHandler<T, TEventArgs> : IWeakEventHandler<TEventArgs>
         where T : class
-        where E : EventArgs
+        where TEventArgs : EventArgs
     {
-        private delegate void OpenEventHandler(T @this, object sender, E e);
+        private delegate void OpenEventHandler(T @this, object sender, TEventArgs e);
 
-        private WeakReference _targetRef;
-        private OpenEventHandler _openHandler;
-        private EventHandler<E> _handler;
-        private UnregisterCallback<E> _unregister;
+        private readonly WeakReference _targetRef;
+        private readonly OpenEventHandler _openHandler;
+        private readonly EventHandler<TEventArgs> _handler;
+        private UnregisterCallback<TEventArgs> _unregister;
 
         [DebuggerNonUserCode]
-        public WeakEventHandler(EventHandler<E> eventHandler, UnregisterCallback<E> unregister)
+        public WeakEventHandler(EventHandler<TEventArgs> eventHandler, UnregisterCallback<TEventArgs> unregister)
         {
             _targetRef = new WeakReference(eventHandler.Target);
             _openHandler = (OpenEventHandler)Delegate.CreateDelegate(typeof(OpenEventHandler),
@@ -35,7 +34,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
 
         [DebuggerNonUserCode]
-        public void Invoke(object sender, E e)
+        public void Invoke(object sender, TEventArgs e)
         {
             T target = (T)_targetRef.Target;
 
@@ -49,13 +48,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
 
         [DebuggerNonUserCode]
-        public EventHandler<E> Handler
+        public EventHandler<TEventArgs> Handler
         {
             get { return _handler; }
         }
 
         [DebuggerNonUserCode]
-        public static implicit operator EventHandler<E>(WeakEventHandler<T, E> weh)
+        public static implicit operator EventHandler<TEventArgs>(WeakEventHandler<T, TEventArgs> weh)
         {
             return weh._handler;
         }
@@ -63,19 +62,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
     public static class EventHandlerUtils
     {
-        public static EventHandler<E> MakeWeak<E>(this EventHandler<E> eventHandler, UnregisterCallback<E> unregister)
-            where E : EventArgs
+        public static EventHandler<TEventArgs> MakeWeak<TEventArgs>(this EventHandler<TEventArgs> eventHandler, UnregisterCallback<TEventArgs> unregister)
+            where TEventArgs : EventArgs
         {
             if (eventHandler == null)
                 throw new ArgumentNullException("eventHandler");
             if (eventHandler.Method.IsStatic || eventHandler.Target == null)
                 throw new ArgumentException("Only instance methods are supported.", "eventHandler");
 
-            Type wehType = typeof(WeakEventHandler<,>).MakeGenericType(eventHandler.Method.DeclaringType, typeof(E));
-            ConstructorInfo wehConstructor = wehType.GetConstructor(new Type[] { typeof(EventHandler<E>),
-      typeof(UnregisterCallback<E>) });
+            var wehType = typeof(WeakEventHandler<,>).MakeGenericType(eventHandler.Method.DeclaringType, typeof(TEventArgs));
+            var wehConstructor = wehType.GetConstructor(new[] { typeof(EventHandler<TEventArgs>), typeof(UnregisterCallback<TEventArgs>) });
 
-            IWeakEventHandler<E> weh = (IWeakEventHandler<E>)wehConstructor.Invoke(
+            var weh = (IWeakEventHandler<TEventArgs>)wehConstructor.Invoke(
               new object[] { eventHandler, unregister });
 
             return weh.Handler;
