@@ -28,6 +28,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 // ReSharper disable once SuspiciousTypeConversion.Global
                 _innerEnumerator = new MMDeviceEnumeratorComObject() as IMMDeviceEnumerator;
+
+                if (_innerEnumerator == null)
+                    return;
+
                 _notificationClient = new MMNotificationClient(this);
                 _innerEnumerator.RegisterEndpointNotificationCallback(_notificationClient);
             });
@@ -38,12 +42,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         ~CoreAudioController()
         {
             Dispose(false);
-        }
-
-        public IAudioController AudioController
-        {
-            get;
-            set;
         }
 
         public override CoreAudioDevice DefaultPlaybackDevice
