@@ -16,8 +16,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private string _realId;
         private EDataFlow _dataFlow;
 
-        internal CoreAudioDevice(IMMDevice device, IDeviceEnumerator<CoreAudioDevice> enumerator)
-            : base(enumerator)
+        internal CoreAudioDevice(IMMDevice device, IAudioController<CoreAudioDevice> controller)
+            : base(controller)
         {
             _device = device;
             ComThread.Assert();
@@ -33,8 +33,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (AudioEndpointVolume != null)
                 AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
 
-            enumerator.AudioDeviceChanged +=
-                new WeakEventHandler<AudioDeviceChangedEventArgs>(EnumeratorOnAudioDeviceChanged).Handler;
+            controller.AudioDeviceChanged +=
+                new EventHandler<AudioDeviceChangedEventArgs>(EnumeratorOnAudioDeviceChanged)
+                    .MakeWeak(x =>
+                    {
+                        controller.AudioDeviceChanged -= x;
+                    });
         }
 
         private void LoadProperties(IMMDevice device)
@@ -65,16 +69,22 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void Dispose(bool disposing)
         {
-            _device = null;
-
             if (disposing)
             {
                 if (AudioEndpointVolume != null)
+                {
                     AudioEndpointVolume.Dispose();
+                    AudioEndpointVolume.OnVolumeNotification -= AudioEndpointVolume_OnVolumeNotification;
+                }
 
                 if (AudioMeterInformation != null)
+                {
                     AudioMeterInformation.Dispose();
+                    //Un
+                }
             }
+
+            _device = null;
         }
 
         /// <summary>
@@ -153,8 +163,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return (Enumerator.DefaultPlaybackDevice != null && Enumerator.DefaultPlaybackDevice.Id == Id)
-                       || (Enumerator.DefaultCaptureDevice != null && Enumerator.DefaultCaptureDevice.Id == Id);
+                return (Controller.DefaultPlaybackDevice != null && Controller.DefaultPlaybackDevice.Id == Id)
+                       || (Controller.DefaultCaptureDevice != null && Controller.DefaultCaptureDevice.Id == Id);
             }
         }
 
@@ -162,8 +172,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return (Enumerator.DefaultCommunicationsPlaybackDevice != null && Enumerator.DefaultCommunicationsPlaybackDevice.Id == Id)
-                       || (Enumerator.DefaultCommunicationsCaptureDevice != null && Enumerator.DefaultCommunicationsCaptureDevice.Id == Id);
+                return (Controller.DefaultPlaybackCommunicationsDevice != null && Controller.DefaultPlaybackCommunicationsDevice.Id == Id)
+                       || (Controller.DefaultCaptureCommunicationsDevice != null && Controller.DefaultCaptureCommunicationsDevice.Id == Id);
             }
         }
 
@@ -289,7 +299,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return AudioEndpointVolume.Mute;
         }
 
-        public override event AudioDeviceChangedHandler VolumeChanged;
+        public override event EventHandler<AudioDeviceChangedEventArgs> VolumeChanged;
 
         /// <summary>
         ///     Extracts the unique GUID Identifier for a Windows System _device

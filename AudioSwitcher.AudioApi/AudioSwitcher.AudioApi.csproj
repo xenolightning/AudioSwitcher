@@ -43,21 +43,24 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AudioController.cs" />
-    <Compile Include="AudioController.Generic.cs" />
+    <Compile Include="AudioController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AudioController.Generic.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DeviceIcon.cs" />
-    <Compile Include="IAudioController.cs" />
-    <Compile Include="IAudioController.Generic.cs" />
-    <Compile Include="IDeviceEnumerator.Generic.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="AudioDeviceChangedEventArgs.cs" />
     <Compile Include="AudioDeviceChangedHandler.cs" />
     <Compile Include="AudioDeviceEventType.cs" />
+    <Compile Include="IAudioController.cs" />
+    <Compile Include="IAudioController.Generic.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Sandbox\SandboxAudioController.cs" />
     <Compile Include="Sandbox\SandboxDevice.cs" />
-    <Compile Include="Sandbox\SandboxDeviceEnumerator.cs" />
     <Compile Include="IDevice.cs" />
-    <Compile Include="IDeviceEnumerator.cs" />
     <Compile Include="DeviceType.cs" />
     <Compile Include="DeviceState.cs" />
     <Compile Include="Role.cs" />

@@ -9,8 +9,8 @@ namespace AudioSwitcher.Tests.Common
         private Guid _id;
         private bool _muted;
 
-        public TestDevice(Guid id, DeviceType dFlow, IDeviceEnumerator enumerator)
-            : base(enumerator)
+        public TestDevice(Guid id, DeviceType dFlow, IAudioController<TestDevice> controller)
+            : base(controller)
         {
             _id = id;
             _deviceType = dFlow;
@@ -73,6 +73,6 @@ namespace AudioSwitcher.Tests.Common
             return _muted = false;
         }
 
-        public override event AudioDeviceChangedHandler VolumeChanged;
+        public override event EventHandler<AudioDeviceChangedEventArgs> VolumeChanged;
     }
 }

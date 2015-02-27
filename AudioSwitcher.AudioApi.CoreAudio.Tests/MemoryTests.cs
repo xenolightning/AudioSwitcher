@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -20,7 +21,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
             for (int i = 0; i < 50; i++)
             {
-                controller.GetAllDevices();
+                controller.GetDevices();
                 var isDefault = controller.DefaultPlaybackDevice.SetAsDefault();
                 Assert.True(isDefault);
                 controller.GetPlaybackDevices();
@@ -30,7 +31,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
             //*15 for each device and the handles it requires
             //*3 because that should cater for at least 2 copies of each device
-            var maxHandles = controller.GetAllDevices().Count() * 15 * 3;
+            var maxHandles = controller.GetDevices().Count() * 15 * 3;
 
             //Ensure it doesn't blow out the handles
             Assert.True(newHandles - originalHandles < maxHandles);
@@ -54,7 +55,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
             //*15 for each device and the handles it requires
             //*3 because that should cater for at least 2 copies of each device
-            var maxHandles = controller.GetAllDevices().Count() * 15 * 3;
+            var maxHandles = controller.GetDevices().Count() * 15 * 3;
 
             //Ensure it doesn't blow out the handles
             Assert.True(newHandles - originalHandles < maxHandles);

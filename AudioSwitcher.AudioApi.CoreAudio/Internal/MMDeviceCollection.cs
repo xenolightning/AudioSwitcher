@@ -45,7 +45,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         #region IEnumerable<MMDevice> Members
 
         /// <summary>
-        ///     Get Enumerator
+        ///     Get Controller
         /// </summary>
         /// <returns>Device enumerator</returns>
         public IEnumerator<IMMDevice> GetEnumerator()

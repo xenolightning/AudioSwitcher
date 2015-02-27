@@ -46,5 +46,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             return !(k1 == k2);
         }
+
+        public override int GetHashCode()
+        {
+            return this.FormatId.GetHashCode() * 17 + this.PropertyId.GetHashCode();
+        }
     }
 }

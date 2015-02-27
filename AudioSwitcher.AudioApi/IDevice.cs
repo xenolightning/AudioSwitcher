@@ -5,7 +5,7 @@ namespace AudioSwitcher.AudioApi
 {
     public interface IDevice
     {
-        IDeviceEnumerator Enumerator { get; }
+        IAudioController Controller { get; }
 
         Guid Id { get; }
 
@@ -53,6 +53,6 @@ namespace AudioSwitcher.AudioApi
 
         Task<bool> ToggleMuteAsync();
 
-        event AudioDeviceChangedHandler VolumeChanged;
+        event EventHandler<AudioDeviceChangedEventArgs> VolumeChanged;
     }
 }

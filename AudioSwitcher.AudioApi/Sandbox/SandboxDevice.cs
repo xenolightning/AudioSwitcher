@@ -13,8 +13,8 @@ namespace AudioSwitcher.AudioApi.Sandbox
         public DeviceState state;
         public string fullName;
 
-        public SandboxDevice(IDeviceEnumerator enumerator)
-            : base(enumerator)
+        public SandboxDevice(IAudioController controller)
+            : base(controller)
         {
         }
 
@@ -71,6 +71,6 @@ namespace AudioSwitcher.AudioApi.Sandbox
             return isMuted = false;
         }
 
-        public override event AudioDeviceChangedHandler VolumeChanged;
+        public override event EventHandler<AudioDeviceChangedEventArgs> VolumeChanged;
     }
 }

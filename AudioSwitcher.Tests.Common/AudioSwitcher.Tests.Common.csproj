@@ -37,9 +37,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestAudioController.cs" />
     <Compile Include="TestDevice.cs" />
-    <Compile Include="TestDeviceEnumerator.cs" />
+    <Compile Include="TestDeviceController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

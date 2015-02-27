@@ -5,5 +5,5 @@
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    public delegate void AudioDeviceChangedHandler(object sender, AudioDeviceChangedEventArgs e);
+    //public delegate void AudioDeviceChangedHandler(object sender, AudioDeviceChangedEventArgs e);
 }

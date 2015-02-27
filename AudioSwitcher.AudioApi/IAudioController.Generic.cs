@@ -7,25 +7,41 @@ namespace AudioSwitcher.AudioApi
     public interface IAudioController<T> : IAudioController
         where T : IDevice
     {
-        new T DefaultPlaybackDevice { get; set; }
+        new T DefaultPlaybackDevice { get; }
 
-        new T DefaultPlaybackCommunicationsDevice { get; set; }
+        new T DefaultPlaybackCommunicationsDevice { get; }
 
-        new T DefaultCaptureDevice { get; set; }
+        new T DefaultCaptureDevice { get; }
 
-        new T DefaultCaptureCommunicationsDevice { get; set; }
+        new T DefaultCaptureCommunicationsDevice { get; }
 
-        new IEnumerable<T> GetAllDevices();
+        new T GetDevice(Guid id);
 
-        new IEnumerable<T> GetAllDevices(DeviceState deviceState);
+        new Task<T> GetDeviceAsync(Guid id);
 
-        new Task<IEnumerable<T>> GetAllDevicesAsync();
+        new T GetDevice(Guid id, DeviceState state);
 
-        new Task<IEnumerable<T>> GetAllDevicesAsync(DeviceState deviceState);
+        new Task<T> GetDeviceAsync(Guid id, DeviceState state);
+
+        new T GetDefaultDevice(DeviceType deviceType, Role role);
+
+        new Task<T> GetDefaultDeviceAsync(DeviceType deviceType, Role role);
+
+        new IEnumerable<T> GetDevices();
+
+        new Task<IEnumerable<T>> GetDevicesAsync();
+
+        new IEnumerable<T> GetDevices(DeviceState state);
+
+        new Task<IEnumerable<T>> GetDevicesAsync(DeviceState state);
+
+        new IEnumerable<T> GetDevices(DeviceType deviceType, DeviceState state);
+
+        new Task<IEnumerable<T>> GetDevicesAsync(DeviceType deviceType, DeviceState state);
 
         new IEnumerable<T> GetPlaybackDevices();
 
-        new IEnumerable<T> GetPlaybackDevices(DeviceState deviceState);
+        new IEnumerable<T> GetPlaybackDevices(DeviceState state);
 
         new Task<IEnumerable<T>> GetPlaybackDevicesAsync();
 
@@ -33,19 +49,11 @@ namespace AudioSwitcher.AudioApi
 
         new IEnumerable<T> GetCaptureDevices();
 
-        new IEnumerable<T> GetCaptureDevices(DeviceState deviceState);
+        new IEnumerable<T> GetCaptureDevices(DeviceState state);
 
         new Task<IEnumerable<T>> GetCaptureDevicesAsync();
 
         new Task<IEnumerable<T>> GetCaptureDevicesAsync(DeviceState deviceState);
-
-        new T GetAudioDevice(Guid id);
-
-        new T GetAudioDevice(Guid id, DeviceState state);
-
-        new Task<T> GetAudioDeviceAsync(Guid id);
-
-        new Task<T> GetAudioDeviceAsync(Guid id, DeviceState state);
 
         bool SetDefaultDevice(T dev);
 

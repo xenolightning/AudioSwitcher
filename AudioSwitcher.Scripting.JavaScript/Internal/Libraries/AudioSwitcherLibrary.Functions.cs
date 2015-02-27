@@ -103,7 +103,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
             switch (type)
             {
                 case JavaScriptDeviceType.ALL:
-                    device = AudioController.GetAllDevices().FirstOrDefault(x => x.Id == id || x.Name == name);
+                    device = AudioController.GetDevices().FirstOrDefault(x => x.Id == id || x.Name == name);
                     break;
                 case JavaScriptDeviceType.PLAYBACK:
                     device = AudioController.GetPlaybackDevices().FirstOrDefault(x => x.Id == id || x.Name == name);

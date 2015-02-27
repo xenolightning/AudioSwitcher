@@ -114,7 +114,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             {
                 //Ensures that the AudioController is always referencing the correct device
                 //instance
-                return Controller.GetAudioDevice(new Guid(Id));
+                return Controller.GetDevice(new Guid(Id));
             }
         }
     }

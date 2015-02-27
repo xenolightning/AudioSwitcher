@@ -9,12 +9,12 @@ namespace AudioSwitcher.AudioApi
     /// </summary>
     public abstract class Device : IDevice
     {
-        protected Device(IDeviceEnumerator enumerator)
+        protected Device(IAudioController controller)
         {
-            Enumerator = enumerator;
+            Controller = controller;
         }
 
-        public IDeviceEnumerator Enumerator { get; private set; }
+        public IAudioController Controller { get; private set; }
 
         public abstract Guid Id { get; }
 
@@ -30,8 +30,8 @@ namespace AudioSwitcher.AudioApi
         {
             get
             {
-                return (Enumerator.DefaultPlaybackDevice != null && Enumerator.DefaultPlaybackDevice.Id == Id)
-                       || (Enumerator.DefaultCaptureDevice != null && Enumerator.DefaultCaptureDevice.Id == Id);
+                return (Controller.DefaultPlaybackDevice != null && Controller.DefaultPlaybackDevice.Id == Id)
+                       || (Controller.DefaultCaptureDevice != null && Controller.DefaultCaptureDevice.Id == Id);
             }
         }
 
@@ -39,11 +39,11 @@ namespace AudioSwitcher.AudioApi
         {
             get
             {
-                return (Enumerator.DefaultCommunicationsPlaybackDevice != null &&
-                        Enumerator.DefaultCommunicationsPlaybackDevice.Id == Id)
+                return (Controller.DefaultPlaybackCommunicationsDevice != null &&
+                        Controller.DefaultPlaybackCommunicationsDevice.Id == Id)
                        ||
-                       (Enumerator.DefaultCommunicationsCaptureDevice != null &&
-                        Enumerator.DefaultCommunicationsCaptureDevice.Id == Id);
+                       (Controller.DefaultCaptureCommunicationsDevice != null &&
+                        Controller.DefaultCaptureCommunicationsDevice.Id == Id);
             }
         }
 
@@ -70,12 +70,12 @@ namespace AudioSwitcher.AudioApi
         /// </summary>
         public virtual bool SetAsDefault()
         {
-            return Enumerator.SetDefaultDevice(this);
+            return Controller.SetDefaultDevice(this);
         }
 
         public Task<bool> SetAsDefaultAsync()
         {
-            return Enumerator.SetDefaultDeviceAsync(this);
+            return Controller.SetDefaultDeviceAsync(this);
         }
 
         /// <summary>
@@ -83,12 +83,12 @@ namespace AudioSwitcher.AudioApi
         /// </summary>
         public virtual bool SetAsDefaultCommunications()
         {
-            return Enumerator.SetDefaultCommunicationsDevice(this);
+            return Controller.SetDefaultCommunicationsDevice(this);
         }
 
         public Task<bool> SetAsDefaultCommunicationsAsync()
         {
-            return Enumerator.SetDefaultCommunicationsDeviceAsync(this);
+            return Controller.SetDefaultCommunicationsDeviceAsync(this);
         }
 
         public abstract bool Mute();
@@ -118,6 +118,6 @@ namespace AudioSwitcher.AudioApi
             return Task.Factory.StartNew(() => ToggleMute());
         }
 
-        public abstract event AudioDeviceChangedHandler VolumeChanged;
+        public abstract event EventHandler<AudioDeviceChangedEventArgs> VolumeChanged;
     }
 }

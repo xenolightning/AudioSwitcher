@@ -6,23 +6,39 @@ namespace AudioSwitcher.AudioApi
 {
     public interface IAudioController : IDisposable
     {
-        IDevice DefaultPlaybackDevice { get; set; }
+        IDevice DefaultPlaybackDevice { get; }
 
-        IDevice DefaultPlaybackCommunicationsDevice { get; set; }
+        IDevice DefaultPlaybackCommunicationsDevice { get; }
 
-        IDevice DefaultCaptureDevice { get; set; }
+        IDevice DefaultCaptureDevice { get; }
 
-        IDevice DefaultCaptureCommunicationsDevice { get; set; }
+        IDevice DefaultCaptureCommunicationsDevice { get; }
 
-        event AudioDeviceChangedHandler AudioDeviceChanged;
+        event EventHandler<AudioDeviceChangedEventArgs> AudioDeviceChanged;
 
-        IEnumerable<IDevice> GetAllDevices();
+        IDevice GetDevice(Guid id);
 
-        IEnumerable<IDevice> GetAllDevices(DeviceState deviceState);
+        Task<IDevice> GetDeviceAsync(Guid id);
 
-        Task<IEnumerable<IDevice>> GetAllDevicesAsync();
+        IDevice GetDevice(Guid id, DeviceState state);
 
-        Task<IEnumerable<IDevice>> GetAllDevicesAsync(DeviceState deviceState);
+        Task<IDevice> GetDeviceAsync(Guid id, DeviceState state);
+
+        IDevice GetDefaultDevice(DeviceType deviceType, Role role);
+
+        Task<IDevice> GetDefaultDeviceAsync(DeviceType deviceType, Role role);
+
+        IEnumerable<IDevice> GetDevices();
+
+        Task<IEnumerable<IDevice>> GetDevicesAsync();
+
+        IEnumerable<IDevice> GetDevices(DeviceState state);
+
+        Task<IEnumerable<IDevice>> GetDevicesAsync(DeviceState state);
+
+        IEnumerable<IDevice> GetDevices(DeviceType deviceType, DeviceState state);
+
+        Task<IEnumerable<IDevice>> GetDevicesAsync(DeviceType deviceType, DeviceState state);
 
         IEnumerable<IDevice> GetPlaybackDevices();
 
@@ -39,14 +55,6 @@ namespace AudioSwitcher.AudioApi
         Task<IEnumerable<IDevice>> GetCaptureDevicesAsync();
 
         Task<IEnumerable<IDevice>> GetCaptureDevicesAsync(DeviceState deviceState);
-
-        IDevice GetAudioDevice(Guid id);
-
-        IDevice GetAudioDevice(Guid id, DeviceState state);
-
-        Task<IDevice> GetAudioDeviceAsync(Guid id);
-
-        Task<IDevice> GetAudioDeviceAsync(Guid id, DeviceState state);
 
         bool SetDefaultDevice(IDevice dev);
 

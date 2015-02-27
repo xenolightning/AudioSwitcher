@@ -8,7 +8,7 @@ namespace AudioSwitcher.AudioApi.Tests
     {
         private IAudioController CreateTestController()
         {
-            return new TestAudioController(new TestDeviceEnumerator(2, 2));
+            return new TestDeviceController(2, 2);
         }
 
 

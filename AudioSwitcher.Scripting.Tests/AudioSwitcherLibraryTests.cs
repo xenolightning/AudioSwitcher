@@ -12,7 +12,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
 
         public static IAudioController GetAudioController()
         {
-            return new TestAudioController(new TestDeviceEnumerator(2, 2));
+            return new TestDeviceController(2, 2);
         }
 
         [Fact]
