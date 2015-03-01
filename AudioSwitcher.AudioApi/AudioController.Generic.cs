@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace AudioSwitcher.AudioApi
 {
     public abstract class AudioController<T> : IAudioController<T>
-        where T : IDevice
+        where T : class, IDevice
     {
         protected const DeviceState DEFAULT_DEVICE_STATE_FILTER =
             DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled;
@@ -22,11 +22,53 @@ namespace AudioSwitcher.AudioApi
                 handler(sender, e);
         }
 
-        public abstract T DefaultPlaybackCommunicationsDevice { get; }
-        public abstract T DefaultCaptureDevice { get; }
-        public abstract T DefaultCaptureCommunicationsDevice { get; }
-        public abstract T DefaultPlaybackDevice { get; }
+        public T DefaultPlaybackDevice
+        {
+            get
+            {
+                return GetDefaultDevice(DeviceType.Playback, Role.Console | Role.Multimedia);
+            }
+            set
+            {
+                SetDefaultDevice(value);
+            }
+        }
 
+        public T DefaultPlaybackCommunicationsDevice
+        {
+            get
+            {
+                return GetDefaultDevice(DeviceType.Playback, Role.Communications);
+            }
+            set
+            {
+                SetDefaultCommunicationsDevice(value);
+            }
+        }
+
+        public T DefaultCaptureDevice
+        {
+            get
+            {
+                return GetDefaultDevice(DeviceType.Capture, Role.Console | Role.Multimedia);
+            }
+            set
+            {
+                SetDefaultDevice(value);
+            }
+        }
+
+        public T DefaultCaptureCommunicationsDevice
+        {
+            get
+            {
+                return GetDefaultDevice(DeviceType.Capture, Role.Communications);
+            }
+            set
+            {
+                SetDefaultCommunicationsDevice(value);
+            }
+        }
 
         public virtual T GetDevice(Guid id)
         {
@@ -138,21 +180,25 @@ namespace AudioSwitcher.AudioApi
         IDevice IAudioController.DefaultPlaybackDevice
         {
             get { return DefaultPlaybackDevice; }
+            set { SetDefaultDevice(value); }
         }
 
         IDevice IAudioController.DefaultPlaybackCommunicationsDevice
         {
             get { return DefaultPlaybackCommunicationsDevice; }
+            set { SetDefaultCommunicationsDevice(value); }
         }
 
         IDevice IAudioController.DefaultCaptureDevice
         {
             get { return DefaultCaptureDevice; }
+            set { SetDefaultDevice(value); }
         }
 
         IDevice IAudioController.DefaultCaptureCommunicationsDevice
         {
             get { return DefaultCaptureCommunicationsDevice; }
+            set { SetDefaultCommunicationsDevice(value); }
         }
 
 
@@ -183,82 +229,103 @@ namespace AudioSwitcher.AudioApi
 
         IEnumerable<IDevice> IAudioController.GetDevices()
         {
-            return GetDevices().Cast<IDevice>();
+            return GetDevices();
         }
 
         Task<IEnumerable<IDevice>> IAudioController.GetDevicesAsync()
         {
+            // ReSharper disable once RedundantEnumerableCastCall
             return Task.Factory.StartNew(() => GetDevices().Cast<IDevice>());
         }
 
         IEnumerable<IDevice> IAudioController.GetDevices(DeviceState state)
         {
-            return GetDevices(state).Cast<IDevice>();
+            return GetDevices(state);
         }
 
         Task<IEnumerable<IDevice>> IAudioController.GetDevicesAsync(DeviceState state)
         {
+            // ReSharper disable once RedundantEnumerableCastCall
             return Task.Factory.StartNew(() => GetDevices(state).Cast<IDevice>());
         }
 
         IEnumerable<IDevice> IAudioController.GetDevices(DeviceType deviceType, DeviceState state)
         {
-            return GetDevices(deviceType, state).Cast<IDevice>();
+            return GetDevices(deviceType, state);
         }
 
         Task<IEnumerable<IDevice>> IAudioController.GetDevicesAsync(DeviceType deviceType, DeviceState state)
         {
+            // ReSharper disable once RedundantEnumerableCastCall
             return Task.Factory.StartNew(() => GetDevices(deviceType, state).Cast<IDevice>());
         }
 
         IEnumerable<IDevice> IAudioController.GetPlaybackDevices()
         {
-            return GetPlaybackDevices().Cast<IDevice>();
+            return GetPlaybackDevices();
         }
 
         IEnumerable<IDevice> IAudioController.GetPlaybackDevices(DeviceState state)
         {
-            return GetPlaybackDevices(state).Cast<IDevice>();
+            return GetPlaybackDevices(state);
         }
 
         Task<IEnumerable<IDevice>> IAudioController.GetPlaybackDevicesAsync()
         {
+            // ReSharper disable once RedundantEnumerableCastCall
             return Task.Factory.StartNew(() => GetPlaybackDevices().Cast<IDevice>());
         }
 
         Task<IEnumerable<IDevice>> IAudioController.GetPlaybackDevicesAsync(DeviceState deviceState)
         {
+            // ReSharper disable once RedundantEnumerableCastCall
             return Task.Factory.StartNew(() => GetPlaybackDevices(deviceState).Cast<IDevice>());
         }
 
         IEnumerable<IDevice> IAudioController.GetCaptureDevices()
         {
-            return GetCaptureDevices().Cast<IDevice>();
+            return GetCaptureDevices();
         }
 
         IEnumerable<IDevice> IAudioController.GetCaptureDevices(DeviceState state)
         {
-            return GetCaptureDevices(state).Cast<IDevice>();
+            return GetCaptureDevices(state);
         }
 
         Task<IEnumerable<IDevice>> IAudioController.GetCaptureDevicesAsync()
         {
+            // ReSharper disable once RedundantEnumerableCastCall
             return Task.Factory.StartNew(() => GetCaptureDevices().Cast<IDevice>());
         }
 
         Task<IEnumerable<IDevice>> IAudioController.GetCaptureDevicesAsync(DeviceState deviceState)
         {
+            // ReSharper disable once RedundantEnumerableCastCall
             return Task.Factory.StartNew(() => GetCaptureDevices(deviceState).Cast<IDevice>());
         }
 
-        public abstract bool SetDefaultDevice(IDevice dev);
+        public virtual bool SetDefaultDevice(IDevice dev)
+        {
+            var device = dev as T;
+            if (device != null)
+                return SetDefaultDevice(device);
+
+            return false;
+        }
 
         public virtual Task<bool> SetDefaultDeviceAsync(IDevice dev)
         {
             return Task.Factory.StartNew(() => SetDefaultDevice(dev));
         }
 
-        public abstract bool SetDefaultCommunicationsDevice(IDevice dev);
+        public virtual bool SetDefaultCommunicationsDevice(IDevice dev)
+        {
+            var device = dev as T;
+            if (device != null)
+                return SetDefaultCommunicationsDevice(device);
+
+            return false;
+        }
 
         public virtual Task<bool> SetDefaultCommunicationsDeviceAsync(IDevice dev)
         {

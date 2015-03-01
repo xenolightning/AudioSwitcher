@@ -41,26 +41,6 @@ namespace AudioSwitcher.Tests.Common
             set;
         }
 
-        public override TestDevice DefaultPlaybackDevice
-        {
-            get { return _devices.FirstOrDefault(x => x.Id == _defaultPlaybackDeviceId); }
-        }
-
-        public override TestDevice DefaultPlaybackCommunicationsDevice
-        {
-            get { return _devices.FirstOrDefault(x => x.Id == _defaultPlaybackCommDeviceId); }
-        }
-
-        public override TestDevice DefaultCaptureDevice
-        {
-            get { return _devices.FirstOrDefault(x => x.Id == _defaultCaptureDeviceId); }
-        }
-
-        public override TestDevice DefaultCaptureCommunicationsDevice
-        {
-            get { return _devices.FirstOrDefault(x => x.Id == _defaultCaptureCommDeviceId); }
-        }
-
         public override TestDevice GetDevice(Guid id)
         {
             return GetDevice(id, DeviceState.All);
@@ -73,21 +53,24 @@ namespace AudioSwitcher.Tests.Common
 
         public override TestDevice GetDefaultDevice(DeviceType deviceType, Role role)
         {
+            Guid devId = Guid.Empty;
             switch (deviceType)
             {
                 case DeviceType.Capture:
                     if (role == Role.Console || role == Role.Multimedia)
-                        return DefaultCaptureDevice;
-
-                    return DefaultCaptureCommunicationsDevice;
+                        devId = _defaultCaptureDeviceId;
+                    else
+                        devId = _defaultCaptureCommDeviceId;
+                    break;
                 case DeviceType.Playback:
                     if (role == Role.Console || role == Role.Multimedia)
-                        return DefaultPlaybackDevice;
-
-                    return DefaultPlaybackCommunicationsDevice;
+                        devId = _defaultPlaybackDeviceId;
+                    else
+                        devId = _defaultPlaybackCommDeviceId;
+                    break;
             }
 
-            return null;
+            return _devices.FirstOrDefault(x => x.Id == devId);
         }
 
         public override IEnumerable<TestDevice> GetDevices(DeviceType deviceType, DeviceState state)

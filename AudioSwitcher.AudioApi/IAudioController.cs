@@ -6,13 +6,13 @@ namespace AudioSwitcher.AudioApi
 {
     public interface IAudioController : IDisposable
     {
-        IDevice DefaultPlaybackDevice { get; }
+        IDevice DefaultPlaybackDevice { get; set; }
 
-        IDevice DefaultPlaybackCommunicationsDevice { get; }
+        IDevice DefaultPlaybackCommunicationsDevice { get; set; }
 
-        IDevice DefaultCaptureDevice { get; }
+        IDevice DefaultCaptureDevice { get; set; }
 
-        IDevice DefaultCaptureCommunicationsDevice { get; }
+        IDevice DefaultCaptureCommunicationsDevice { get; set; }
 
         event EventHandler<AudioDeviceChangedEventArgs> AudioDeviceChanged;
 

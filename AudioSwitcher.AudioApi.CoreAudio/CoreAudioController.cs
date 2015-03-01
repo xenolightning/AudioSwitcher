@@ -44,26 +44,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             Dispose(false);
         }
 
-        public override CoreAudioDevice DefaultPlaybackDevice
-        {
-            get { return GetDefaultDevice(DeviceType.Playback, Role.Console | Role.Multimedia); }
-        }
-
-        public override CoreAudioDevice DefaultPlaybackCommunicationsDevice
-        {
-            get { return GetDefaultDevice(DeviceType.Playback, Role.Communications); }
-        }
-
-        public override CoreAudioDevice DefaultCaptureDevice
-        {
-            get { return GetDefaultDevice(DeviceType.Capture, Role.Console | Role.Multimedia); }
-        }
-
-        public override CoreAudioDevice DefaultCaptureCommunicationsDevice
-        {
-            get { return GetDefaultDevice(DeviceType.Capture, Role.Communications); }
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)

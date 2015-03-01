@@ -52,26 +52,6 @@ namespace AudioSwitcher.AudioApi.Sandbox
             }
         }
 
-        public override SandboxDevice DefaultPlaybackDevice
-        {
-            get { return _devices.FirstOrDefault(x => x.Id == _defaultPlaybackDeviceId); }
-        }
-
-        public override SandboxDevice DefaultPlaybackCommunicationsDevice
-        {
-            get { return _devices.FirstOrDefault(x => x.Id == _defaultPlaybackCommDeviceId); }
-        }
-
-        public override SandboxDevice DefaultCaptureDevice
-        {
-            get { return _devices.FirstOrDefault(x => x.Id == _defaultCaptureDeviceId); }
-        }
-
-        public override SandboxDevice DefaultCaptureCommunicationsDevice
-        {
-            get { return _devices.FirstOrDefault(x => x.Id == _defaultCaptureCommDeviceId); }
-        }
-
         public override SandboxDevice GetDevice(Guid id)
         {
             return GetDevice(id, DeviceState.All);
@@ -84,21 +64,24 @@ namespace AudioSwitcher.AudioApi.Sandbox
 
         public override SandboxDevice GetDefaultDevice(DeviceType deviceType, Role role)
         {
+            Guid devId = Guid.Empty;
             switch (deviceType)
             {
                 case DeviceType.Capture:
                     if (role == Role.Console || role == Role.Multimedia)
-                        return DefaultCaptureDevice;
-
-                    return DefaultCaptureCommunicationsDevice;
+                        devId = _defaultCaptureDeviceId;
+                    else
+                        devId = _defaultCaptureCommDeviceId;
+                    break;
                 case DeviceType.Playback:
                     if (role == Role.Console || role == Role.Multimedia)
-                        return DefaultPlaybackDevice;
-
-                    return DefaultPlaybackCommunicationsDevice;
+                        devId = _defaultPlaybackDeviceId;
+                    else
+                        devId = _defaultPlaybackCommDeviceId;
+                    break;
             }
 
-            return null;
+            return _devices.FirstOrDefault(x => x.Id == devId);
         }
 
         public override IEnumerable<SandboxDevice> GetDevices(DeviceState state)

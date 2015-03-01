@@ -11,35 +11,51 @@ namespace AudioSwitcher.AudioApi
 
         public event EventHandler<AudioDeviceChangedEventArgs> AudioDeviceChanged;
 
-        public IDevice DefaultPlaybackDevice
+        public virtual IDevice DefaultPlaybackDevice
         {
             get
             {
-                return GetDefaultDevice(DeviceType.Playback, Role.Console);
+                return GetDefaultDevice(DeviceType.Playback, Role.Console | Role.Multimedia);
+            }
+            set
+            {
+                SetDefaultDevice(value);
             }
         }
 
-        public IDevice DefaultPlaybackCommunicationsDevice
+        public virtual IDevice DefaultPlaybackCommunicationsDevice
         {
             get
             {
                 return GetDefaultDevice(DeviceType.Playback, Role.Communications);
             }
-        }
-
-        public IDevice DefaultCaptureDevice
-        {
-            get
+            set
             {
-                return GetDefaultDevice(DeviceType.Capture, Role.Console);
+                SetDefaultCommunicationsDevice(value);
             }
         }
 
-        public IDevice DefaultCaptureCommunicationsDevice
+        public virtual IDevice DefaultCaptureDevice
+        {
+            get
+            {
+                return GetDefaultDevice(DeviceType.Capture, Role.Console | Role.Multimedia);
+            }
+            set
+            {
+                SetDefaultDevice(value);
+            }
+        }
+
+        public virtual IDevice DefaultCaptureCommunicationsDevice
         {
             get
             {
                 return GetDefaultDevice(DeviceType.Capture, Role.Communications);
+            }
+            set
+            {
+                SetDefaultCommunicationsDevice(value);
             }
         }
 
@@ -140,7 +156,7 @@ namespace AudioSwitcher.AudioApi
 
         protected virtual void Dispose(bool disposing)
         {
-            
+
         }
 
     }
