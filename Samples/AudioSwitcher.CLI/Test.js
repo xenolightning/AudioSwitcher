@@ -1,4 +1,15 @@
-﻿var devices = AudioSwitcher.getAudioDevices();
+﻿var devices;
+
+console.log();
+if (_ !== undefined) {
+    console.log('_ is defined');
+    devices = _.getAudioDevices();
+} else {
+    console.log('_ is not defined');
+    devices = AudioSwitcher.getAudioDevices();
+}
+console.log();
+
 console.log("Number of devices: " + devices.length);
 var defaultDevice;
 

@@ -50,7 +50,9 @@
     <Compile Include="AudioSwitcherLibraryTests.cs" />
     <Compile Include="CoreLibraryTests.cs" />
     <Compile Include="EngineTests.cs" />
+    <Compile Include="DynamicLibraryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestLibrary.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

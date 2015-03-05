@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.Scripting.JavaScript.Internal;
 using Jurassic;
@@ -19,6 +21,7 @@ namespace AudioSwitcher.Scripting.JavaScript
         public JSEngine(IAudioController controller)
         {
             InternalEngine = new ScriptEngine();
+            InternalEngine.EnableExposedClrTypes = true;
             InternalEngine.AddCoreLibrary();
             InternalEngine.AddAudioSwitcherLibrary(controller);
         }
@@ -38,6 +41,23 @@ namespace AudioSwitcher.Scripting.JavaScript
             var console = new FirebugConsole(InternalEngine);
             console.Output = new ScriptOutputProxy(output);
             InternalEngine.SetGlobalValue("console", console);
+        }
+
+        public override void AddLibrary(string name, IScriptLibrary libraryInstance)
+        {
+            if (InternalEngine.HasGlobalValue(name))
+                return;
+
+            InternalEngine.SetGlobalValue(name, new ClrInstanceWrapper(InternalEngine, libraryInstance));
+        }
+
+        public override bool RemoveLibrary(string name)
+        {
+            if (!InternalEngine.HasGlobalValue(name)) 
+                return false;
+            
+            InternalEngine.Global.Delete(name, false);
+            return true;
         }
 
 
@@ -69,14 +89,14 @@ namespace AudioSwitcher.Scripting.JavaScript
                 TReturn val;
                 if (typeof(TReturn).IsArray)
                     val = EvaluateArray<TReturn>(scriptSource);
-                else if (typeof(IEnumerable).IsAssignableFrom(typeof(TReturn)))
+                else if (typeof(IEnumerable).IsAssignableFrom(typeof(TReturn)) && typeof(TReturn) != typeof(string))
                     val = EvaluateEnumerable<TReturn>(scriptSource);
                 else
                     val = InternalEngine.Evaluate<TReturn>(scriptSource.GetReader().ReadToEnd());
 
                 return new ExecutionResult<TReturn>
                 {
-                    Result = val,
+                    Value = val,
                     Success = true
                 };
             }

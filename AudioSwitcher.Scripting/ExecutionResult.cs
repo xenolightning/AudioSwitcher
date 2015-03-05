@@ -25,12 +25,12 @@ namespace AudioSwitcher.Scripting
             
         }
 
-        public ExecutionResult(T result)
+        public ExecutionResult(T value)
         {
-            Result = result;
+            Value = value;
         }
 
-        public T Result
+        public T Value
         {
             get;
             set;

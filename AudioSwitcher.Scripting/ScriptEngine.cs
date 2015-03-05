@@ -18,6 +18,10 @@ namespace AudioSwitcher.Scripting
 
         public abstract void SetOutput(IScriptOutput output);
 
+        public abstract void AddLibrary(string name, IScriptLibrary libraryInstance);
+
+        public abstract bool RemoveLibrary(string name);
+
         public ExecutionResult Execute(string script)
         {
             return Execute(new StringScriptSource(script));

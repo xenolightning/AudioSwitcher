@@ -18,6 +18,10 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
 
             PopulateFields();
             PopulateFunctions();
+
+            if(!engine.HasGlobalValue("_"))
+                engine.SetGlobalValue("_", this);
+
         }
 
         public IAudioController AudioController
