@@ -2,6 +2,14 @@
 
 namespace AudioSwitcher.Scripting.JavaScript.Tests
 {
+    public class ClrObject
+    {
+        public int Field
+        {
+            get { return 1; }
+        }
+    }
+
     public sealed class TestLibrary : IScriptLibrary
     {
 
@@ -23,6 +31,15 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         public string Method()
         {
             return "Hello";
+        }
+
+        public ClrObject MethodReturnClr()
+        {
+            return new ClrObject();
+        }
+        public ClrObject[] MethodReturnClrArray()
+        {
+            return new[] { new ClrObject(), new ClrObject() };
         }
 
         public string MethodWithArg(string x)

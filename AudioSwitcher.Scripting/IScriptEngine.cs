@@ -18,8 +18,7 @@ namespace AudioSwitcher.Scripting
         void SetOutput(IScriptOutput output);
 
         void AddLibrary(string name, IScriptLibrary libraryInstance);
-
-        bool RemoveLibrary(string name);
+        void AddLibrary(string name, Func<IScriptEngine, IScriptLibrary> libraryInstance);
 
         ExecutionResult Execute(string script);
 

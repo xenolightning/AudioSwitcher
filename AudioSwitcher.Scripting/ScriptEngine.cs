@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace AudioSwitcher.Scripting
 {
@@ -19,8 +20,7 @@ namespace AudioSwitcher.Scripting
         public abstract void SetOutput(IScriptOutput output);
 
         public abstract void AddLibrary(string name, IScriptLibrary libraryInstance);
-
-        public abstract bool RemoveLibrary(string name);
+        public abstract void AddLibrary(string name, Func<IScriptEngine, IScriptLibrary> libraryInstance);
 
         public ExecutionResult Execute(string script)
         {

@@ -1,29 +1,44 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using AudioSwitcher.AudioApi;
-using AudioSwitcher.Scripting.JavaScript.Internal;
 using Jurassic;
 using Jurassic.Library;
+using AudioSwitcher.Scripting.JavaScript.Internal;
 
 namespace AudioSwitcher.Scripting.JavaScript
 {
     public class JSEngine : ScriptEngine<JSScript>
     {
+        private readonly Dictionary<string, IScriptLibrary> _libraryDictionary;
+
         public ScriptEngine InternalEngine
         {
             get;
             private set;
         }
 
-        public JSEngine(IAudioController controller)
+        public JSEngine()
         {
+            _libraryDictionary = new Dictionary<string, IScriptLibrary>();
+
             InternalEngine = new ScriptEngine();
             InternalEngine.EnableExposedClrTypes = true;
-            InternalEngine.AddCoreLibrary();
-            InternalEngine.AddAudioSwitcherLibrary(controller);
+
+            InternalEngine.SetGlobalFunction("lib", new Func<string, ObjectInstance>(ImportLibrary));
+        }
+
+        private ObjectInstance ImportLibrary(string libraryName)
+        {
+            if (!_libraryDictionary.ContainsKey(libraryName))
+                return null;
+
+            var library = _libraryDictionary[libraryName];
+
+            if (library is ObjectInstance)
+                return library as ObjectInstance;
+
+            return new ClrInstanceWrapper(InternalEngine, library);
         }
 
         public override string FriendlyName
@@ -45,21 +60,16 @@ namespace AudioSwitcher.Scripting.JavaScript
 
         public override void AddLibrary(string name, IScriptLibrary libraryInstance)
         {
-            if (InternalEngine.HasGlobalValue(name))
+            if (_libraryDictionary.ContainsKey(name))
                 return;
 
-            InternalEngine.SetGlobalValue(name, new ClrInstanceWrapper(InternalEngine, libraryInstance));
+            _libraryDictionary.Add(name, libraryInstance);
         }
 
-        public override bool RemoveLibrary(string name)
+        public override void AddLibrary(string name, Func<IScriptEngine, IScriptLibrary> libraryInstance)
         {
-            if (!InternalEngine.HasGlobalValue(name)) 
-                return false;
-            
-            InternalEngine.Global.Delete(name, false);
-            return true;
+            AddLibrary(name, libraryInstance(this));
         }
-
 
         public override ExecutionResult Execute(IScriptSource scriptSource)
         {

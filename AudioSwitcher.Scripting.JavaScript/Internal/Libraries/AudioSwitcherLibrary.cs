@@ -4,7 +4,7 @@ using Jurassic.Library;
 
 namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
 {
-    internal sealed partial class AudioSwitcherLibrary : ObjectInstance, IJavaScriptLibrary
+    internal sealed partial class AudioSwitcherLibrary : ObjectInstance, IScriptLibrary
     {
         private readonly JavaScriptDeviceType _deviceType;
         private readonly JavaScriptDeviceState _deviceState;
@@ -19,37 +19,12 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
             PopulateFields();
             PopulateFunctions();
 
-            if(!engine.HasGlobalValue("_"))
-                engine.SetGlobalValue("_", this);
-
         }
 
-        public IAudioController AudioController
+        private IAudioController AudioController
         {
-            get;
-            private set;
-        }
-
-        public string Name
-        {
-            get { return "AudioSwitcher"; }
-        }
-
-        public int Version
-        {
-            get { return 1; }
-        }
-
-        public void Add(ScriptEngine engine)
-        {
-            if (engine.GetGlobalValue(Name) == Undefined.Value)
-                engine.SetGlobalValue(Name, this);
-        }
-
-        public void Remove(ScriptEngine engine)
-        {
-            if (engine.GetGlobalValue(Name) != Undefined.Value)
-                engine.Global.Delete(Name, false);
+            get; 
+            set;
         }
 
         public JavaScriptAudioDevice CreateJavaScriptAudioDevice(IDevice audioDevice)

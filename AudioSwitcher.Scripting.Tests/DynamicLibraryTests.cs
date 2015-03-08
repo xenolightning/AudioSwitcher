@@ -20,9 +20,11 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_AddLibrary_Dynamic()
         {
-            using (var engine = new JSEngine(GetAudioController()))
+            using (var engine = new JSEngine())
             {
                 engine.AddLibrary("Dynamic", new TestLibrary());
+
+                engine.Execute("Dynamic = lib('Dynamic');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
             }
         }
@@ -30,10 +32,12 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Value_Exists()
         {
-            using (var engine = new JSEngine(GetAudioController()))
+            using (var engine = new JSEngine())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
+
+                engine.Execute("Dynamic = lib('Dynamic');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
                 Assert.Equal(testLib.Property, engine.Evaluate<int>("Dyanmic.Property").Value);
             }
@@ -42,10 +46,14 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Delegate_Returns()
         {
-            using (var engine = new JSEngine(GetAudioController()))
+            using (var engine = new JSEngine())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
+
+                engine.Execute("import('Dyanmic');");
+
+                engine.Execute("Dynamic = lib('Dynamic');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
 
                 var result = engine.Evaluate<int>("Dynamic.Delegate()");
@@ -57,10 +65,12 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Delegate_Func_Fail()
         {
-            using (var engine = new JSEngine(GetAudioController()))
+            using (var engine = new JSEngine())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
+
+                engine.Execute("Dynamic = lib('Dynamic');");
                 Assert.True(engine.InternalEngine.HasGlobalValue("Dynamic"));
 
                 var result = engine.Evaluate<string>("Dynamic.DelegateWithArguments('Hello')");
@@ -73,10 +83,12 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Method_Returns()
         {
-            using (var engine = new JSEngine(GetAudioController()))
+            using (var engine = new JSEngine())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
+
+                engine.Execute("Dynamic = lib('Dynamic');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
 
                 var result = engine.Evaluate<string>("Dynamic.Method()");
@@ -86,12 +98,48 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        public void Engine_Dynamic_Method_WithArg_Returns()
+        public void Engine_Dynamic_Method_Returns_Clr()
         {
-            using (var engine = new JSEngine(GetAudioController()))
+            using (var engine = new JSEngine())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
+
+                engine.Execute("Dynamic = lib('Dynamic');");
+                Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
+
+                var result = engine.Evaluate<int>("Dynamic.MethodReturnClr().Field");
+
+                Assert.Equal(new ClrObject().Field, result.Value);
+            }
+        }
+
+        [Fact]
+        public void Engine_Dynamic_Method_Returns_ClrArray()
+        {
+            using (var engine = new JSEngine())
+            {
+                var testLib = new TestLibrary();
+                engine.AddLibrary("Dynamic", testLib);
+
+                engine.Execute("Dynamic = lib('Dynamic');");
+                Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
+
+                var result = engine.Evaluate<int>("Dynamic.MethodReturnClrArray().Length");
+
+                Assert.Equal(2, result.Value);
+            }
+        }
+
+        [Fact]
+        public void Engine_Dynamic_Method_WithArg_Returns()
+        {
+            using (var engine = new JSEngine())
+            {
+                var testLib = new TestLibrary();
+                engine.AddLibrary("Dynamic", testLib);
+
+                engine.Execute("Dynamic = lib('Dynamic');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
 
                 var result = engine.Evaluate<string>("Dynamic.MethodWithArg('Hello')");
@@ -103,10 +151,12 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Method_WithArgs_Returns()
         {
-            using (var engine = new JSEngine(GetAudioController()))
+            using (var engine = new JSEngine())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
+
+                engine.Execute("Dynamic = lib('Dynamic');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
 
                 var result = engine.Evaluate<string>("Dynamic.MethodWithArgs('One', 'Two')");
@@ -118,10 +168,12 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Method_Func_Returns()
         {
-            using (var engine = new JSEngine(GetAudioController()))
+            using (var engine = new JSEngine())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
+
+                engine.Execute("Dynamic = lib('Dynamic');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
 
                 var result = engine.Evaluate<string>("Dynamic.MethodFunc()");

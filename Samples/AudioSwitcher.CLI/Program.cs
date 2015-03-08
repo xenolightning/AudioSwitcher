@@ -3,6 +3,7 @@ using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
 using AudioSwitcher.AudioApi.Sandbox;
 using AudioSwitcher.Scripting.JavaScript;
+using AudioSwitcher.Scripting.JavaScript.Internal;
 
 namespace AudioSwitcher.CLI
 {
@@ -42,14 +43,19 @@ namespace AudioSwitcher.CLI
             else
                 controller = new CoreAudioController();
 
-            using (var engine = new JSEngine(controller))
+            using (var engine = new JSEngine())
             {
 
+                engine.AddCoreLibrary();
+                engine.AddAudioSwitcherLibrary(controller);
 
                 //Enable to log to CLI
                 //engine.SetGlobalValue("console", new ConsoleOutput(engine));
                 //engine.InternalEngine.SetGlobalValue("console", new FirebugConsole(engine.InternalEngine));
                 engine.SetOutput(new ConsoleScriptOutput());
+
+                engine.Execute("AudioSwitcher = lib('AudioSwitcher');");
+                engine.Execute("Core = lib('Core');");
 
                 try
                 {
