@@ -54,9 +54,6 @@ namespace AudioSwitcher.CLI
                 //engine.InternalEngine.SetGlobalValue("console", new FirebugConsole(engine.InternalEngine));
                 engine.SetOutput(new ConsoleScriptOutput());
 
-                engine.Execute("AudioSwitcher = lib('AudioSwitcher');");
-                engine.Execute("Core = lib('Core');");
-
                 try
                 {
                     Console.WriteLine("Executing {0}...", fName);

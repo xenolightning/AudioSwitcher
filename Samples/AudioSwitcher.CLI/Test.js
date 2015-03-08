@@ -1,4 +1,8 @@
-﻿var devices;
+﻿AudioSwitcher = lib('AudioSwitcher');
+_ = AudioSwitcher;
+Core = lib('Core');
+
+var devices;
 
 console.log();
 if (_ !== undefined) {
@@ -19,7 +23,7 @@ for (var i = 0; i < devices.length; i++) {
     console.log("    Type: " + devices[i].type);
     console.log("    State: " + devices[i].state);
     console.log("    Is Playback (property): " + devices[i].isPlayback);
-    console.log("    Is Playback (calculated): " + (devices[i].type == AudioSwitcher.DeviceType.PLAYBACK));
+    console.log("    Is Playback (calculated): " + (devices[i].type === AudioSwitcher.DeviceType.PLAYBACK));
     console.log("    Is Default: " + devices[i].isDefault);
     console.log("    Is Default Communications: " + devices[i].isDefaultComm);
     console.log();
