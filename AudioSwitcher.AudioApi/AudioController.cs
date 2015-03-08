@@ -70,7 +70,7 @@ namespace AudioSwitcher.AudioApi
 
         public virtual Task<IDevice> GetDeviceAsync(Guid id, DeviceState state)
         {
-            return Task.Factory.StartNew(() => GetDevice(id));
+            return Task.Factory.StartNew(() => GetDevice(id, state));
         }
 
         public abstract IDevice GetDefaultDevice(DeviceType deviceType, Role role);
@@ -90,12 +90,12 @@ namespace AudioSwitcher.AudioApi
         }
         public virtual Task<IEnumerable<IDevice>> GetDevicesAsync(DeviceState state)
         {
-            return Task.Factory.StartNew(() => GetDevices());
+            return Task.Factory.StartNew(() => GetDevices(state));
         }
 
         public virtual IEnumerable<IDevice> GetDevices(DeviceState state)
         {
-            return GetDevices(DeviceType.All, DEFAULT_DEVICE_STATE_FILTER);
+            return GetDevices(DeviceType.All, state);
         }
 
         public abstract IEnumerable<IDevice> GetDevices(DeviceType deviceType, DeviceState state);
