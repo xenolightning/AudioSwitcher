@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Management.Automation;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
@@ -37,9 +34,17 @@ namespace AudioSwitcher.PowerShell.CoreAudio
         protected override void ProcessRecord()
         {
             if (Id.HasValue)
+            {
                 WriteObject(_controller.GetDevice(Id.Value));
+            }
             else
-                WriteObject(_controller.GetDevices().FirstOrDefault(x => String.Equals(x.Name, Name, StringComparison.InvariantCultureIgnoreCase)));
+            {
+                var wildCard = new WildcardPattern(Name, WildcardOptions.IgnoreCase);
+
+                WriteObject(
+                    _controller.GetDevices()
+                        .FirstOrDefault(x => wildCard.IsMatch(x.Name)));
+            }
         }
     }
 }
