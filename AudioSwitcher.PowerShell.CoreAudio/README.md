@@ -11,3 +11,20 @@ Install-Module -ModuleUrl https://github.com/xenolightning/AudioSwitcher/release
 ```
 
 Alternatively download the latest zip package and install it manually
+
+
+
+Usage
+------
+
+Currently two commands are available: 
+
+Returns a list of devices in the system
+```
+Get-AudioDevices [-Type All|Playback|Capture]
+```
+
+Returns a specific device in the system
+```
+Get-AudioDevice [-Id (Guid)] [-Name (string - support wildcards)]
+```
