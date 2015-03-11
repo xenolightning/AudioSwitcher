@@ -12,8 +12,10 @@ Install-Module -ModuleUrl https://github.com/xenolightning/AudioSwitcher/release
 
 Alternatively:
 
-1) Download the latest zip package
-2) Extract to %User%\Documents\WindowsPowershell\Modules\AudioSwitcher
+1. Download the latest zip package
+2. Extract to %User%\Documents\WindowsPowershell\Modules\AudioSwitcher
+
+3. Run `Install-Module AudioSwitcher`
 ```
 \---Modules
     +---AudioSwitcher
@@ -22,7 +24,6 @@ Alternatively:
     |       AudioSwitcher.PowerShell.CoreAudio.dll
     |       AudioSwitcher.psd1
 ```
-3) Run `Install-Module AudioSwitcher`
 
 
 Usage
