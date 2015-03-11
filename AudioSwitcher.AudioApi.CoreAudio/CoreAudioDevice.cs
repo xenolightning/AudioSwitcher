@@ -69,19 +69,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void Dispose(bool disposing)
         {
-            if (disposing)
+            if (_audioEndpointVolume != null)
             {
-                if (AudioEndpointVolume != null)
-                {
-                    AudioEndpointVolume.Dispose();
-                    AudioEndpointVolume.OnVolumeNotification -= AudioEndpointVolume_OnVolumeNotification;
-                }
+                _audioEndpointVolume.Dispose();
+                _audioEndpointVolume.OnVolumeNotification -= AudioEndpointVolume_OnVolumeNotification;
+                _audioEndpointVolume = null;
+            }
 
-                if (AudioMeterInformation != null)
-                {
-                    AudioMeterInformation.Dispose();
-                    //Un
-                }
+            if (_audioMeterInformation != null)
+            {
+                _audioMeterInformation.Dispose();
+                _audioMeterInformation = null;
             }
 
             _device = null;

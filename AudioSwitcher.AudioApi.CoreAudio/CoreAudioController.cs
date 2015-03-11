@@ -46,20 +46,22 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (_innerEnumerator != null)
             {
-                if (_innerEnumerator != null)
+                ComThread.BeginInvoke(() =>
                 {
-                    ComThread.BeginInvoke(() =>
-                    {
-                        _innerEnumerator.UnregisterEndpointNotificationCallback(_notificationClient);
-                        _notificationClient = null;
-                    });
-                }
-                _deviceCache = null;
-                _innerEnumerator = null;
-                _lock.Dispose();
+                    _innerEnumerator.UnregisterEndpointNotificationCallback(_notificationClient);
+                    _notificationClient = null;
+                });
             }
+            _deviceCache = null;
+            _innerEnumerator = null;
+
+            if (_lock != null)
+                _lock.Dispose();
+
+            if (_refreshLock != null)
+                _refreshLock.Dispose();
 
             GC.SuppressFinalize(this);
         }
