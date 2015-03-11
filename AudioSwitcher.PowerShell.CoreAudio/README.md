@@ -7,7 +7,7 @@ Installation
 Using PsGet enter the following command. 
 
 ```
-Install-Module -ModuleUrl https://github.com/xenolightning/AudioSwitcher/releases/download/1.0.0.0/AudioSwitcher.zip
+Install-Module -ModuleUrl https://github.com/xenolightning/AudioSwitcher/releases/download/Module-1.0.0.1/AudioSwitcher.zip
 ```
 
 Alternatively:
