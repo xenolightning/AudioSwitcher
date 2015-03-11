@@ -7,8 +7,8 @@ using AudioSwitcher.AudioApi.CoreAudio;
 namespace AudioSwitcher.PowerShell.CoreAudio
 {
 
-    [Cmdlet(VerbsCommon.Get, "AudioDevice")]
-    public class GetAudioDevice : Cmdlet, IDisposable
+    [Cmdlet(VerbsCommon.Get, "AudioController")]
+    public class GetAudioController : Cmdlet, IDisposable
     {
         private readonly IAudioController _controller;
 
@@ -26,30 +26,19 @@ namespace AudioSwitcher.PowerShell.CoreAudio
             set;
         }
 
-        public GetAudioDevice()
+        public GetAudioController()
         {
             _controller = new CoreAudioController();
         }
 
         protected override void ProcessRecord()
         {
-            if (Id.HasValue)
-            {
-                WriteObject(_controller.GetDevice(Id.Value));
-            }
-            else
-            {
-                var wildCard = new WildcardPattern(Name, WildcardOptions.IgnoreCase);
-
-                WriteObject(
-                    _controller.GetDevices()
-                        .FirstOrDefault(x => wildCard.IsMatch(x.Name)));
-            }
+            WriteObject(_controller);
         }
 
         public void Dispose()
         {
-            if (_controller != null)
+            if(_controller != null)
                 _controller.Dispose();
         }
     }

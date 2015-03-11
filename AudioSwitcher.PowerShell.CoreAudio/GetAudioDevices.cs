@@ -11,9 +11,9 @@ namespace AudioSwitcher.PowerShell.CoreAudio
 {
 
     [Cmdlet(VerbsCommon.Get, "AudioDevices")]
-    public class GetAudioDevices : Cmdlet
+    public class GetAudioDevices : Cmdlet, IDisposable
     {
-        private IAudioController _controller;
+        private readonly IAudioController _controller;
 
         [Parameter]
         public DeviceType Type
@@ -45,6 +45,12 @@ namespace AudioSwitcher.PowerShell.CoreAudio
             }
             
             WriteObject(devices);
+        }
+
+        public void Dispose()
+        {
+            if (_controller != null)
+                _controller.Dispose();
         }
     }
 }

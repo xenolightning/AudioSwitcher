@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GetAudioController.cs" />
     <Compile Include="GetAudioDevice.cs" />
     <Compile Include="GetAudioDevices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
