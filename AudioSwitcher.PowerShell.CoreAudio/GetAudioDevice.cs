@@ -8,9 +8,9 @@ namespace AudioSwitcher.PowerShell.CoreAudio
 {
 
     [Cmdlet(VerbsCommon.Get, "AudioDevice")]
-    public class GetAudioDevice : Cmdlet, IDisposable
+    public class GetAudioDevice : Cmdlet
     {
-        private readonly IAudioController _controller;
+        private IAudioController _controller;
 
         [Parameter]
         public Guid? Id
@@ -26,7 +26,7 @@ namespace AudioSwitcher.PowerShell.CoreAudio
             set;
         }
 
-        public GetAudioDevice()
+        protected override void BeginProcessing()
         {
             _controller = new CoreAudioController();
         }
@@ -47,10 +47,11 @@ namespace AudioSwitcher.PowerShell.CoreAudio
             }
         }
 
-        public void Dispose()
+        protected override void EndProcessing()
         {
             if (_controller != null)
                 _controller.Dispose();
         }
+
     }
 }

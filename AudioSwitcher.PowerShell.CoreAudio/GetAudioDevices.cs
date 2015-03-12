@@ -11,9 +11,9 @@ namespace AudioSwitcher.PowerShell.CoreAudio
 {
 
     [Cmdlet(VerbsCommon.Get, "AudioDevices")]
-    public class GetAudioDevices : Cmdlet, IDisposable
+    public class GetAudioDevices : Cmdlet
     {
-        private readonly IAudioController _controller;
+        private IAudioController _controller;
 
         [Parameter]
         public DeviceType Type
@@ -22,35 +22,38 @@ namespace AudioSwitcher.PowerShell.CoreAudio
             set;
         }
 
-        public GetAudioDevices()
+
+        protected override void BeginProcessing()
         {
             _controller = new CoreAudioController();
         }
 
         protected override void ProcessRecord()
         {
-            IDevice[] devices;
+            IEnumerable<IDevice> devices;
 
             switch (Type)
             {
                 default:
-                    devices = _controller.GetDevices().ToArray();
+                    devices = _controller.GetDevices();
                     break;
                 case DeviceType.Playback:
-                    devices = _controller.GetPlaybackDevices().ToArray();
+                    devices = _controller.GetPlaybackDevices();
                     break;
                 case DeviceType.Capture:
-                    devices = _controller.GetCaptureDevices().ToArray();
+                    devices = _controller.GetCaptureDevices();
                     break;
             }
-            
-            WriteObject(devices);
+
+            foreach (var device in devices)
+                WriteObject(device);
         }
 
-        public void Dispose()
+        protected override void EndProcessing()
         {
             if (_controller != null)
                 _controller.Dispose();
         }
+
     }
 }

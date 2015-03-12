@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Management.Automation;
+using System.Threading.Tasks;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
 
@@ -8,9 +9,9 @@ namespace AudioSwitcher.PowerShell.CoreAudio
 {
 
     [Cmdlet(VerbsCommon.Get, "AudioController")]
-    public class GetAudioController : Cmdlet, IDisposable
+    public class GetAudioController : Cmdlet
     {
-        private readonly IAudioController _controller;
+        private IAudioController _controller;
 
         [Parameter]
         public Guid? Id
@@ -26,8 +27,9 @@ namespace AudioSwitcher.PowerShell.CoreAudio
             set;
         }
 
-        public GetAudioController()
+        protected override void BeginProcessing()
         {
+            //lazy setup of the controll
             _controller = new CoreAudioController();
         }
 
@@ -36,9 +38,9 @@ namespace AudioSwitcher.PowerShell.CoreAudio
             WriteObject(_controller);
         }
 
-        public void Dispose()
+        protected override void EndProcessing()
         {
-            if(_controller != null)
+            if (_controller != null)
                 _controller.Dispose();
         }
     }

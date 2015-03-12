@@ -108,7 +108,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
 
             //Have to collect here to reduce the memory/handle leak issue in Windows 8 and above
-            GC.Collect();
+            //GC.Collect();
         }
 
         private static bool DeviceIsValid(IMMDevice device)
