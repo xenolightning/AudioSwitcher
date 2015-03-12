@@ -273,27 +273,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             OnPropertyChanged("Volume");
         }
 
-        /// <summary>
-        ///     Mute this device
-        /// </summary>
-        public override bool Mute()
+        public override bool Mute(bool mute)
         {
             if (AudioEndpointVolume == null)
                 return false;
 
-            AudioEndpointVolume.Mute = true;
-            return AudioEndpointVolume.Mute;
-        }
-
-        /// <summary>
-        ///     Unmute this device
-        /// </summary>
-        public override bool UnMute()
-        {
-            if (AudioEndpointVolume == null)
-                return false;
-
-            AudioEndpointVolume.Mute = false;
+            AudioEndpointVolume.Mute = mute;
             return AudioEndpointVolume.Mute;
         }
 

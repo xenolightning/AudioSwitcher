@@ -20,11 +20,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
         [JSFunction(Name = "mute")]
         public bool Mute(bool mute)
         {
-            if (mute)
-                Device.Mute();
-            else
-                Device.UnMute();
-
+            Device.Mute(mute);
             return Device.IsMuted;
         }
 

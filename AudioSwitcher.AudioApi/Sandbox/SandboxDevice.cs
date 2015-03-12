@@ -61,14 +61,9 @@ namespace AudioSwitcher.AudioApi.Sandbox
 
         public override int Volume { get; set; }
 
-        public override bool Mute()
+        public override bool Mute(bool mute)
         {
-            return isMuted = true;
-        }
-
-        public override bool UnMute()
-        {
-            return isMuted = false;
+            return isMuted = mute;
         }
 
         public override event EventHandler<AudioDeviceChangedEventArgs> VolumeChanged;
