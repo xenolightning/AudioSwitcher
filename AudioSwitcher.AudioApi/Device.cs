@@ -91,24 +91,40 @@ namespace AudioSwitcher.AudioApi
             return Controller.SetDefaultCommunicationsDeviceAsync(this);
         }
 
-        public abstract bool Mute();
-        public virtual Task<bool> MuteAsync()
+        public abstract bool Mute(bool mute);
+
+        public virtual Task<bool> MuteAsync(bool mute)
         {
-            return Task.Factory.StartNew(() => Mute());
+            return Task.Factory.StartNew(() => Mute(mute));
         }
 
-        public abstract bool UnMute();
+        [Obsolete("Use Mute(true) instead")]
+        public virtual bool Mute()
+        {
+            return Mute(true);
+        }
+
+        [Obsolete("Use MuteAsync(true) instead")]
+        public virtual Task<bool> MuteAsync()
+        {
+            return Task.Factory.StartNew(() => Mute(true));
+        }
+
+        [Obsolete("Use Mute(false) instead")]
+        public virtual bool UnMute()
+        {
+            return Mute(false);
+        }
+
+        [Obsolete("Use MuteAsync(false) instead")]
         public virtual Task<bool> UnMuteAsync()
         {
-            return Task.Factory.StartNew(() => UnMute());
+            return Task.Factory.StartNew(() => Mute(false));
         }
 
         public virtual bool ToggleMute()
         {
-            if (IsMuted)
-                UnMute();
-            else
-                Mute();
+            Mute(!IsMuted);
 
             return IsMuted;
         }

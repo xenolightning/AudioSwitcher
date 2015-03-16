@@ -63,14 +63,9 @@ namespace AudioSwitcher.Tests.Common
             set;
         }
 
-        public override bool Mute()
+        public override bool Mute(bool mute)
         {
-            return _muted = true;
-        }
-
-        public override bool UnMute()
-        {
-            return _muted = false;
+            return _muted = mute;
         }
 
         public override event EventHandler<AudioDeviceChangedEventArgs> VolumeChanged;
