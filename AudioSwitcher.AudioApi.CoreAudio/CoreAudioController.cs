@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
@@ -121,17 +118,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        private CoreAudioDevice CacheDevice(IMMDevice mDevice)
+        private void CacheDevice(IMMDevice mDevice)
         {
             if (!DeviceIsValid(mDevice))
-                return null;
+                return;
 
             string id;
             mDevice.GetId(out id);
             var device = _deviceCache.FirstOrDefault(x => String.Equals(x.RealId, id, StringComparison.InvariantCultureIgnoreCase));
 
             if (device != null)
-                return device;
+                return;
 
             var lockAcquired = _lock.AcquireWriteLockNonReEntrant();
 
@@ -139,7 +136,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 device = new CoreAudioDevice(mDevice, this);
                 _deviceCache.Add(device);
-                return device;
             }
             finally
             {
@@ -264,7 +260,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 return _deviceCache.Where(x =>
                     (x.DeviceType == deviceType || deviceType == DeviceType.All)
-                    && state.HasFlag(x.State));
+                    && state.HasFlag(x.State)).ToList();
             }
             finally
             {
@@ -301,7 +297,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             Task.Factory.StartNew(() =>
             {
-                Debug.WriteLine("Default Device Changed ThreadId : " + Thread.CurrentThread.ManagedThreadId);
                 AudioDeviceEventType eventType;
 
                 if (role == ERole.Console || role == ERole.Multimedia)
@@ -316,8 +311,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         void ISystemAudioEventClient.OnPropertyValueChanged(string deviceId, PropertyKey key)
         {
-            RefreshSystemDevices();
-
             RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
                     AudioDeviceEventType.PropertyChanged));
         }
