@@ -92,9 +92,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                         CacheDevice(mDev);
                 }
             });
-
-            //Have to collect here to reduce the memory/handle leak issue in Windows 8 and above
-            //GC.Collect();
         }
 
         private void AddDeviceFromRealId(string deviceId)

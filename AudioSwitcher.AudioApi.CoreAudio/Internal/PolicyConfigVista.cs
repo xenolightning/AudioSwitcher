@@ -1,5 +1,6 @@
 ﻿// This has been modified for use by Audio Switcher
 
+using System;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 
@@ -21,7 +22,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             finally
             {
                 if (policyConfig != null && Marshal.IsComObject(policyConfig))
-                    Marshal.ReleaseComObject(policyConfig);
+                    Marshal.FinalReleaseComObject(policyConfig);
+
+                GC.Collect();
             }
         }
 
