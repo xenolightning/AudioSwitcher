@@ -16,6 +16,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         public void CoreAudio_NumberOfHandlesAreWithinAcceptableRange()
         {
             var originalHandles = Process.GetCurrentProcess().HandleCount;
+            Debug.WriteLine("Handles Before: " + originalHandles);
             var controller = CreateTestController();
 
             for (int i = 0; i < 50; i++)
@@ -27,6 +28,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             }
 
             var newHandles = Process.GetCurrentProcess().HandleCount;
+            Debug.WriteLine("Handles After: " + newHandles);
 
             //*15 for each device and the handles it requires
             //*3 because that should cater for at least 2 copies of each device
@@ -40,6 +42,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         public async Task CoreAudio_NumberOfHandlesAreWithinAcceptableRange_Async()
         {
             var originalHandles = Process.GetCurrentProcess().HandleCount;
+            Debug.WriteLine("Handles Before: " + originalHandles);
             var controller = CreateTestController();
 
             for (int i = 0; i < 50; i++)
@@ -51,6 +54,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             }
 
             var newHandles = Process.GetCurrentProcess().HandleCount;
+            Debug.WriteLine("Handles After: " + newHandles);
 
             //*15 for each device and the handles it requires
             //*3 because that should cater for at least 2 copies of each device

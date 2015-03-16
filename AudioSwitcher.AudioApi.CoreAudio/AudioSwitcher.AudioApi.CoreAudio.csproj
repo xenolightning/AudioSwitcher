@@ -77,6 +77,7 @@
     <Compile Include="Internal\Interfaces\StorageAccessMode.cs" />
     <Compile Include="Internal\IPropertyDictionary.cs" />
     <Compile Include="Internal\ISystemAudioEventClient.cs" />
+    <Compile Include="Internal\LockExtensions.cs" />
     <Compile Include="Internal\MMDeviceCollection.cs" />
     <Compile Include="Internal\MMNotificationClient.cs" />
     <Compile Include="Internal\NativeMethods.cs" />
