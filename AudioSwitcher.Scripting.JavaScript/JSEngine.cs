@@ -46,7 +46,7 @@ namespace AudioSwitcher.Scripting.JavaScript
             get { return "JavaScript Engine"; }
         }
 
-        public override IScriptInfo ScriptInfo
+        public override ScriptInfo ScriptInfo
         {
             get { return JSScriptInfo.Instance; }
         }

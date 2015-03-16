@@ -12,7 +12,7 @@ namespace AudioSwitcher.Scripting
             get;
         }
 
-        public abstract IScriptInfo ScriptInfo
+        public abstract ScriptInfo ScriptInfo
         {
             get;
         }

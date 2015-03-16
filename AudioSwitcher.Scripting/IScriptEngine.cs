@@ -10,7 +10,7 @@ namespace AudioSwitcher.Scripting
             get;
         }
 
-        IScriptInfo ScriptInfo
+        ScriptInfo ScriptInfo
         {
             get;
         }

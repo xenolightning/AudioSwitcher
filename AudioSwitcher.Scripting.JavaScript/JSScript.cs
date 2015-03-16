@@ -19,7 +19,7 @@
             set;
         }
 
-        public IScriptInfo ScriptInfo
+        public ScriptInfo ScriptInfo
         {
             get;
             private set;
