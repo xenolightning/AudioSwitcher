@@ -295,14 +295,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         void ISystemAudioEventClient.OnDefaultDeviceChanged(EDataFlow flow, ERole role, string deviceId)
         {
+            //Ignore multimedia, it seems to fire a console event anyway
+            if (role == ERole.Multimedia)
+                return;
+
             Task.Factory.StartNew(() =>
             {
-                AudioDeviceEventType eventType;
-
-                if (role == ERole.Console || role == ERole.Multimedia)
-                    eventType = AudioDeviceEventType.DefaultDevice;
-                else
-                    eventType = AudioDeviceEventType.DefaultCommunicationsDevice;
+                var eventType = role == ERole.Console ? AudioDeviceEventType.DefaultDevice : AudioDeviceEventType.DefaultCommunicationsDevice;
 
                 RaiseAudioDeviceChanged(
                     new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)), eventType));

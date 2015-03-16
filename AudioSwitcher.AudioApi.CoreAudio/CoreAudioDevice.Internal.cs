@@ -48,6 +48,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             if (_properties == null)
                 _properties = new CachedPropertyDictionary();
+
+            //Don't try to load properties for a device that doesn't exist
+            if (State == DeviceState.NotPresent)
+                return;
             
             _properties.TryLoadFrom(device);
         }
