@@ -166,25 +166,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             OnAudioDeviceChanged(this, e);
         }
 
-        public override CoreAudioDevice GetDevice(Guid id)
-        {
-            return GetDevice(id, DeviceState.All);
-        }
-
-        public override bool SetDefaultDevice(IDevice dev)
-        {
-            return SetDefaultDevice(dev as CoreAudioDevice);
-        }
-
-        public override bool SetDefaultCommunicationsDevice(IDevice dev)
-        {
-            return SetDefaultCommunicationsDevice(dev as CoreAudioDevice);
-        }
-
         public override bool SetDefaultDevice(CoreAudioDevice dev)
         {
             if (dev == null)
                 return false;
+
+            var oldDefault = dev.IsPlaybackDevice ? DefaultPlaybackDevice : DefaultCaptureDevice;
 
             try
             {
@@ -199,6 +186,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 return false;
             }
+            finally
+            {
+                //Raise the default changed event on the old device
+                if (oldDefault != null && !oldDefault.IsDefaultDevice)
+                    RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(oldDefault, AudioDeviceEventType.DefaultDevice));
+            }
         }
 
         private static bool IsNotVista()
@@ -212,6 +205,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (dev == null)
                 return false;
 
+            var oldDefault = dev.IsPlaybackDevice ? DefaultPlaybackCommunicationsDevice : DefaultCaptureCommunicationsDevice;
+
             try
             {
                 if (IsNotVista())
@@ -224,6 +219,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             catch
             {
                 return false;
+            }
+            finally
+            {
+                //Raise the default changed event on the old device
+                if(oldDefault != null && !oldDefault.IsDefaultCommunicationsDevice)
+                    RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(oldDefault, AudioDeviceEventType.DefaultCommunicationsDevice));
             }
         }
 

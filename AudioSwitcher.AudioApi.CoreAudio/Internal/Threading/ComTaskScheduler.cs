@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,6 +29,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
                 {
                     TryExecuteTask(t);
                 }
+
+                //lightweight pump of the thread
+                Thread.CurrentThread.Join(1);
             });
 
             _thread.IsBackground = true;

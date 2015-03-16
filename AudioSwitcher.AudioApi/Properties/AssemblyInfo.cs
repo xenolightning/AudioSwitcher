@@ -24,5 +24,5 @@
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("2.2.1.128")]
-[assembly: AssemblyFileVersion("2.2.1.128")]
+[assembly: AssemblyVersion("2.2.2.151")]
+[assembly: AssemblyFileVersion("2.2.2.151")]
