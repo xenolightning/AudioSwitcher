@@ -15,7 +15,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_AddLibrary_Core()
         {
-            using (var engine = new JSEngine())
+            using (var engine = new JsEngine())
             {
                 engine.AddCoreLibrary();
                 engine.Execute("Core = lib('AudioSwitcher');");
@@ -26,7 +26,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Core_sleep_Exists()
         {
-            using (var engine = new JSEngine())
+            using (var engine = new JsEngine())
             {
                 engine.AddCoreLibrary();
                 engine.Execute("Core = lib('Core');");

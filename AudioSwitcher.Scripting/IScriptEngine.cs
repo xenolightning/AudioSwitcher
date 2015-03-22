@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AudioSwitcher.Scripting
@@ -15,21 +16,21 @@ namespace AudioSwitcher.Scripting
         void AddLibrary(string name, IScriptLibrary libraryInstance);
         void AddLibrary(string name, Func<IScriptEngine, IScriptLibrary> libraryInstance);
 
-        ExecutionResult Execute(string script);
+        ExecutionResult Execute(string script, IEnumerable<string> args = null);
 
-        Task<ExecutionResult> ExecuteAsync(string script);
+        Task<ExecutionResult> ExecuteAsync(string script, IEnumerable<string> args = null);
 
-        ExecutionResult Execute(IScriptSource scriptSource);
+        ExecutionResult Execute(IScriptSource scriptSource, IEnumerable<string> args = null);
 
-        Task<ExecutionResult> ExecuteAsync(IScriptSource scriptSource);
+        Task<ExecutionResult> ExecuteAsync(IScriptSource scriptSource, IEnumerable<string> args = null);
 
-        ExecutionResult<TReturn> Evaluate<TReturn>(string script);
+        ExecutionResult<TReturn> Evaluate<TReturn>(string script, IEnumerable<string> args = null);
 
-        Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(string script);
+        Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(string script, IEnumerable<string> args = null);
 
-        ExecutionResult<TReturn> Evaluate<TReturn>(IScriptSource scriptSource);
+        ExecutionResult<TReturn> Evaluate<TReturn>(IScriptSource scriptSource, IEnumerable<string> args = null);
 
-        Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(IScriptSource scriptSource);
+        Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(IScriptSource scriptSource, IEnumerable<string> args = null);
 
     }
 }

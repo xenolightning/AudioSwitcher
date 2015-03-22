@@ -1,4 +1,5 @@
-﻿using Jurassic.Library;
+﻿using System;
+using Jurassic.Library;
 
 namespace AudioSwitcher.Scripting.JavaScript.Internal
 {
@@ -27,7 +28,15 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
         [JSFunction(Name = "setAsDefault")]
         public bool SetAsDefault()
         {
-            Device.SetAsDefault();
+            try
+            {
+                var res = Device.SetAsDefault();
+                
+            }
+            catch(Exception ex)
+            {
+                
+            }
             return true;
         }
 

@@ -66,10 +66,13 @@ namespace AudioSwitcher.Scripting.JavaScript
             AddLibrary(name, libraryInstance(this));
         }
 
-        public override ExecutionResult Execute(IScriptSource scriptSource)
+        public override ExecutionResult Execute(IScriptSource scriptSource, IEnumerable<string> args = null)
         {
             try
             {
+                if (args != null)
+                    InternalEngine.SetGlobalValue("args", InternalEngine.EnumerableToArray(args));
+
                 InternalEngine.Execute(new ScriptSourceProxy(scriptSource));
                 return new ExecutionResult
                 {
@@ -87,10 +90,13 @@ namespace AudioSwitcher.Scripting.JavaScript
         }
 
 
-        public override ExecutionResult<TReturn> Evaluate<TReturn>(IScriptSource scriptSource)
+        public override ExecutionResult<TReturn> Evaluate<TReturn>(IScriptSource scriptSource, IEnumerable<string> args = null)
         {
             try
             {
+                if (args != null)
+                    InternalEngine.SetGlobalValue("args", InternalEngine.EnumerableToArray(args));
+
                 TReturn val;
                 if (typeof(TReturn).IsArray)
                     val = EvaluateArray<TReturn>(scriptSource);

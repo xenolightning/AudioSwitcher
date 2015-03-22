@@ -20,7 +20,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_AddLibrary_Dynamic()
         {
-            using (var engine = new JSEngine())
+            using (var engine = new JsEngine())
             {
                 engine.AddLibrary("Dynamic", new TestLibrary());
 
@@ -32,7 +32,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Value_Exists()
         {
-            using (var engine = new JSEngine())
+            using (var engine = new JsEngine())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
@@ -46,7 +46,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Delegate_Returns()
         {
-            using (var engine = new JSEngine())
+            using (var engine = new JsEngine())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
@@ -65,7 +65,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Delegate_Func_Fail()
         {
-            using (var engine = new JSEngine())
+            using (var engine = new JsEngine())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
@@ -83,7 +83,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Method_Returns()
         {
-            using (var engine = new JSEngine())
+            using (var engine = new JsEngine())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
@@ -100,7 +100,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Method_Returns_Clr()
         {
-            using (var engine = new JSEngine())
+            using (var engine = new JsEngine())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
@@ -117,7 +117,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Method_Returns_ClrArray()
         {
-            using (var engine = new JSEngine())
+            using (var engine = new JsEngine())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
@@ -134,7 +134,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Method_WithArg_Returns()
         {
-            using (var engine = new JSEngine())
+            using (var engine = new JsEngine())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
@@ -151,7 +151,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Method_WithArgs_Returns()
         {
-            using (var engine = new JSEngine())
+            using (var engine = new JsEngine())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
@@ -168,7 +168,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Method_Func_Returns()
         {
-            using (var engine = new JSEngine())
+            using (var engine = new JsEngine())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
