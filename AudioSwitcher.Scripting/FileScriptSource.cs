@@ -6,18 +6,23 @@ namespace AudioSwitcher.Scripting
 {
     public sealed class FileScriptSource : IScriptSource
     {
-        private readonly string _path;
+        public string Path
+        {
+            get;
+            private set;
+        }
+
         private readonly ConcurrentBag<TextReader> _readers;
 
         public FileScriptSource(string path)
         {
-            _path = path;
+            Path = path;
             _readers = new ConcurrentBag<TextReader>();
         }
 
         public TextReader GetReader()
         {
-            var reader = File.OpenText(_path);
+            var reader = File.OpenText(Path);
             _readers.Add(reader);
 
             return reader;

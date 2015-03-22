@@ -50,9 +50,8 @@
     <Compile Include="Internal\ScriptEngineExtensions.cs" />
     <Compile Include="Internal\ScriptOutputProxy.cs" />
     <Compile Include="Internal\ScriptSourceProxy.cs" />
-    <Compile Include="JSEngine.cs" />
-    <Compile Include="JSScript.cs" />
-    <Compile Include="JSScriptInfo.cs" />
+    <Compile Include="JsEngine.cs" />
+    <Compile Include="JsInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

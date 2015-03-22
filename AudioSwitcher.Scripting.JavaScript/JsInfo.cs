@@ -1,15 +1,18 @@
-﻿namespace AudioSwitcher.Scripting.JavaScript
+﻿using System;
+
+namespace AudioSwitcher.Scripting.JavaScript
 {
-    public class JSScriptInfo : ScriptInfo
+    public class JsInfo : IScriptInfo
     {
-        public static readonly JSScriptInfo Instance = new JSScriptInfo();
+        public static readonly JsInfo Instance = new JsInfo();
+
         private readonly string _commonName;
         private readonly string _versionString;
         private readonly string _officialName;
         private readonly string _syntaxHighlightingCode;
         private readonly string _fileExtension;
 
-        private JSScriptInfo()
+        private JsInfo()
         {
             _commonName = "JavaScript";
             _officialName = "ECMAScript";
@@ -18,27 +21,32 @@
             _fileExtension = "js";
         }
 
-        public override string CommonName
+        public string CommonName
         {
             get { return _commonName; }
         }
 
-        public override string OfficialName
+        public string OfficialName
         {
             get { return _officialName; }
         }
 
-        public override string VersionString
+        public string VersionString
         {
             get { return _versionString; }
         }
 
-        public override string SyntaxHighlightingCode
+        public string SyntaxHighlightingCode
         {
             get { return _syntaxHighlightingCode; }
         }
 
-        public override string FileExtension
+        public Type ScriptEngineType
+        {
+            get { return typeof(JsEngine); }
+        }
+
+        public string FileExtension
         {
             get { return _fileExtension; }
         }

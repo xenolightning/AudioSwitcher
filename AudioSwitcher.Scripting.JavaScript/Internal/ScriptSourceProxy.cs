@@ -12,14 +12,6 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             _source = source;
         }
 
-        ~ScriptSourceProxy()
-        {
-            if(_source != null)
-                _source.Dispose();
-
-            _source = null;
-        }
-
         public override TextReader GetReader()
         {
             return _source.GetReader();

@@ -1,4 +1,6 @@
-﻿namespace AudioSwitcher.Scripting
+﻿using System;
+
+namespace AudioSwitcher.Scripting
 {
     public interface IScript
     {
@@ -12,7 +14,7 @@
             get;
         }
 
-        ScriptInfo ScriptInfo
+        Type ScriptInfoType
         {
             get;
         }

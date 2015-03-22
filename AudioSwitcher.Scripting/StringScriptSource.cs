@@ -4,24 +4,24 @@ namespace AudioSwitcher.Scripting
 {
     public sealed class StringScriptSource : IScriptSource
     {
-        private StringReader _reader;
+        public string Script
+        {
+            get;
+            private set;
+        }
 
         public StringScriptSource(string script)
         {
-            _reader = new StringReader(script);
+            Script = script;
         }
 
         public TextReader GetReader()
         {
-            return _reader;
+            return new StringReader(Script);
         }
 
         public void Dispose()
         {
-            if(_reader != null)
-                _reader.Dispose();
-
-            _reader = null;
         }
     }
 }

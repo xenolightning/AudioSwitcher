@@ -103,13 +103,13 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
             switch (type)
             {
                 case JavaScriptDeviceType.ALL:
-                    device = AudioController.GetDevices().FirstOrDefault(x => x.Id == id || x.Name == name);
+                    device = AudioController.GetDevices().FirstOrDefault(x => x.Id == id || String.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase));
                     break;
                 case JavaScriptDeviceType.PLAYBACK:
-                    device = AudioController.GetPlaybackDevices().FirstOrDefault(x => x.Id == id || x.Name == name);
+                    device = AudioController.GetPlaybackDevices().FirstOrDefault(x => x.Id == id || String.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase));
                     break;
                 case JavaScriptDeviceType.CAPTURE:
-                    device = AudioController.GetCaptureDevices().FirstOrDefault(x => x.Id == id || x.Name == name);
+                    device = AudioController.GetCaptureDevices().FirstOrDefault(x => x.Id == id || String.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase));
                     break;
             }
 

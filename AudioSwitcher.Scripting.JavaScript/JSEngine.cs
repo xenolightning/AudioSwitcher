@@ -8,7 +8,7 @@ using AudioSwitcher.Scripting.JavaScript.Internal;
 
 namespace AudioSwitcher.Scripting.JavaScript
 {
-    public class JSEngine : ScriptEngine<JSScript>
+    public class JsEngine : ScriptEngineBase
     {
         private readonly Dictionary<string, IScriptLibrary> _libraryDictionary;
 
@@ -18,7 +18,7 @@ namespace AudioSwitcher.Scripting.JavaScript
             private set;
         }
 
-        public JSEngine()
+        public JsEngine()
         {
             _libraryDictionary = new Dictionary<string, IScriptLibrary>();
 
@@ -44,11 +44,6 @@ namespace AudioSwitcher.Scripting.JavaScript
         public override string FriendlyName
         {
             get { return "JavaScript Engine"; }
-        }
-
-        public override ScriptInfo ScriptInfo
-        {
-            get { return JSScriptInfo.Instance; }
         }
 
         public override void SetOutput(IScriptOutput output)
@@ -152,31 +147,6 @@ namespace AudioSwitcher.Scripting.JavaScript
             return (TReturn)toListMethod.MakeGenericMethod(targetType).Invoke(null, new[] { cast });
         }
 
-
-        public override ExecutionResult Execute(JSScript script)
-        {
-            try
-            {
-                InternalEngine.Execute(new ScriptSourceProxy(script.Source));
-                return new ExecutionResult
-                {
-                    Success = true
-                };
-            }
-            catch (Exception ex)
-            {
-                return new ExecutionResult
-                {
-                    Success = false,
-                    ExecutionException = ex
-                };
-            }
-        }
-
-        public override JSScript NewScript()
-        {
-            return new JSScript();
-        }
 
         protected override void Dispose(bool disposing)
         {

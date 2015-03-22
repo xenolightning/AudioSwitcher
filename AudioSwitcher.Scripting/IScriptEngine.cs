@@ -10,11 +10,6 @@ namespace AudioSwitcher.Scripting
             get;
         }
 
-        ScriptInfo ScriptInfo
-        {
-            get;
-        }
-
         void SetOutput(IScriptOutput output);
 
         void AddLibrary(string name, IScriptLibrary libraryInstance);

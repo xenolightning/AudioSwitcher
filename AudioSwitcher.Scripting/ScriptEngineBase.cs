@@ -3,16 +3,10 @@ using System.Threading.Tasks;
 
 namespace AudioSwitcher.Scripting
 {
-    public abstract class ScriptEngine<T> : IScriptEngine<T>
-        where T : IScript
+    public abstract class ScriptEngineBase : IScriptEngine
     {
 
         public abstract string FriendlyName
-        {
-            get;
-        }
-
-        public abstract ScriptInfo ScriptInfo
         {
             get;
         }
@@ -55,25 +49,6 @@ namespace AudioSwitcher.Scripting
         {
             return Task.Factory.StartNew(() => Evaluate<TReturn>(scriptSource));
         }
-
-        public abstract ExecutionResult Execute(T script);
-
-        public Task<ExecutionResult> ExecuteAsync(T script)
-        {
-            return Task.Factory.StartNew(() => Execute(script));
-        }
-
-        public ExecutionResult<TReturn> Evaluate<TReturn>(T script)
-        {
-            return Evaluate<TReturn>(script.Source);
-        }
-
-        public Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(T script)
-        {
-            return Task.Factory.StartNew(() => Evaluate<TReturn>(script));
-        }
-
-        public abstract T NewScript();
 
         public void Dispose()
         {
