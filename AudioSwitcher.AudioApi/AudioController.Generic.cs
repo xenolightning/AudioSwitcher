@@ -101,14 +101,15 @@ namespace AudioSwitcher.AudioApi
         {
             return Task.Factory.StartNew(() => GetDevices());
         }
+
         public virtual Task<IEnumerable<T>> GetDevicesAsync(DeviceState state)
         {
-            return Task.Factory.StartNew(() => GetDevices());
+            return Task.Factory.StartNew(() => GetDevices(state));
         }
 
         public virtual IEnumerable<T> GetDevices(DeviceState state)
         {
-            return GetDevices(DeviceType.All, DEFAULT_DEVICE_STATE_FILTER);
+            return GetDevices(DeviceType.All, state);
         }
 
         public abstract IEnumerable<T> GetDevices(DeviceType deviceType, DeviceState state);
