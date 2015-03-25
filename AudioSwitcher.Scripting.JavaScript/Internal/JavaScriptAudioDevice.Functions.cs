@@ -28,16 +28,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
         [JSFunction(Name = "setAsDefault")]
         public bool SetAsDefault()
         {
-            try
-            {
-                var res = Device.SetAsDefault();
-                
-            }
-            catch(Exception ex)
-            {
-                
-            }
-            return true;
+            return Device.SetAsDefault();
         }
 
         [JSFunction(Name = "setAsDefaultComm")]
