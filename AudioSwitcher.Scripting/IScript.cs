@@ -14,7 +14,7 @@ namespace AudioSwitcher.Scripting
             get;
         }
 
-        Type ScriptInfoType
+        IScriptInfo ScriptInfo
         {
             get;
         }

@@ -25,6 +25,11 @@ namespace AudioSwitcher.Scripting
             get;
         }
 
+        string FileExtension
+        {
+            get;
+        }
+
         Type ScriptEngineType
         {
             get;
