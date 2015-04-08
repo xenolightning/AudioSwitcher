@@ -10,6 +10,11 @@ namespace AudioSwitcher.Scripting
             private set;
         }
 
+        internal StringScriptSource()
+        {
+            
+        }
+
         public StringScriptSource(string script)
         {
             Script = script;

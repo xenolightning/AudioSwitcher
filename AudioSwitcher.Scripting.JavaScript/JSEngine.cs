@@ -11,11 +11,30 @@ namespace AudioSwitcher.Scripting.JavaScript
     public class JsEngine : ScriptEngineBase
     {
         private readonly Dictionary<string, IScriptLibrary> _libraryDictionary;
+        private bool _isDebug;
 
         public ScriptEngine InternalEngine
         {
             get;
             private set;
+        }
+
+        public override string FriendlyName
+        {
+            get { return "JavaScript Engine"; }
+        }
+
+        public override bool IsDebug
+        {
+            get
+            {
+                return _isDebug;
+            }
+            set
+            {
+                _isDebug = value;
+                InternalEngine.SetGlobalValue("isDebug", value);
+            }
         }
 
         public JsEngine()
@@ -39,11 +58,6 @@ namespace AudioSwitcher.Scripting.JavaScript
                 return library as ObjectInstance;
 
             return new ClrInstanceWrapper(InternalEngine, library);
-        }
-
-        public override string FriendlyName
-        {
-            get { return "JavaScript Engine"; }
         }
 
         public override void SetOutput(IScriptOutput output)

@@ -2,37 +2,17 @@
 
 namespace AudioSwitcher.Scripting
 {
-    public interface IScriptInfo
+    public abstract class ScriptInfo : IScriptInfo
     {
+        public abstract string CommonName { get; }
+        public abstract string OfficialName { get; }
+        public abstract string VersionString { get; }
+        public abstract string SyntaxHighlightingCode { get; }
+        public abstract string FileExtension { get; }
+        public abstract Type ScriptEngineType { get; }
 
-        string CommonName
+        public ScriptInfo()
         {
-            get;
-        }
-
-        string OfficialName
-        {
-            get;
-        }
-
-        string VersionString
-        {
-            get;
-        }
-
-        string SyntaxHighlightingCode
-        {
-            get;
-        }
-
-        string FileExtension
-        {
-            get;
-        }
-
-        Type ScriptEngineType
-        {
-            get;
         }
 
     }

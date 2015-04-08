@@ -14,10 +14,15 @@ namespace AudioSwitcher.Scripting
 
         private readonly ConcurrentBag<TextReader> _readers;
 
+        internal FileScriptSource()
+        {
+            _readers = new ConcurrentBag<TextReader>();
+        }
+
         public FileScriptSource(string path)
+            :this()
         {
             Path = path;
-            _readers = new ConcurrentBag<TextReader>();
         }
 
         public TextReader GetReader()

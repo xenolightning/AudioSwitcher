@@ -36,12 +36,13 @@
     <Compile Include="IScriptEngine.cs" />
     <Compile Include="ExecutionResult.cs" />
     <Compile Include="IScript.cs" />
-    <Compile Include="ScriptInfo.cs" />
+    <Compile Include="IScriptInfo.cs" />
     <Compile Include="IScriptLibrary.cs" />
     <Compile Include="IScriptOutput.cs" />
     <Compile Include="IScriptSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptEngineBase.cs" />
+    <Compile Include="ScriptInfo.cs" />
     <Compile Include="StringScriptSource.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Configuration;
 using System.Threading.Tasks;
 
 namespace AudioSwitcher.Scripting
@@ -10,6 +11,8 @@ namespace AudioSwitcher.Scripting
         {
             get;
         }
+
+        bool IsDebug { get; set; }
 
         void SetOutput(IScriptOutput output);
 

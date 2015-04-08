@@ -12,6 +12,8 @@ namespace AudioSwitcher.Scripting
             get;
         }
 
+        public abstract bool IsDebug { get; set; }
+
         public abstract void SetOutput(IScriptOutput output);
 
         public abstract void AddLibrary(string name, IScriptLibrary libraryInstance);
