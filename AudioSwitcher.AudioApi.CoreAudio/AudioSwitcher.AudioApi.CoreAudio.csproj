@@ -96,14 +96,14 @@
     <Compile Include="Internal\Threading\ComTaskScheduler.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="api.pfx" />
+    <Compile Include="CoreAudioDevice.Internal.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj">
       <Project>{7a4e260c-007e-4615-a92b-e849e7b641ab}</Project>
       <Name>AudioSwitcher.AudioApi</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="api.pfx" />
-    <Compile Include="CoreAudioDevice.Internal.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
