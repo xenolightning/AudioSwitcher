@@ -1,13 +1,7 @@
-﻿using System;
-
-namespace AudioSwitcher.Scripting
+﻿namespace AudioSwitcher.Scripting
 {
     public interface IScript
     {
-        Guid Id
-        {
-            get;
-        }
 
         string Name
         {
