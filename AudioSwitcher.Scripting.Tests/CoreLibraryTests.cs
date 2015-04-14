@@ -30,7 +30,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
             {
                 engine.AddCoreLibrary();
                 engine.Execute("Core = lib('Core');");
-                Assert.DoesNotThrow(() => engine.Execute("Core.sleep(100)"));
+                engine.Execute("Core.sleep(100)");
             }
         }
 

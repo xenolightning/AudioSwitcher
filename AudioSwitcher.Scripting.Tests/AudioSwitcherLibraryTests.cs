@@ -39,7 +39,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
 
 
                     ExecutionResult result = null;
-Assert.DoesNotThrow(() => result = engine.Execute(js));
+result = engine.Execute(js));
 Assert.NotNull(result);
 Assert.Null(result.ExecutionException);
 Assert.True(result.Success);
@@ -57,7 +57,7 @@ Assert.True(result.Success);
                     engine.Global.AddFunction("Lazy", () => result);
 
                     ExecutionResult result = null;
-Assert.DoesNotThrow(() => result = engine.Execute(js));
+result = engine.Execute(js));
 Assert.NotNull(result);
 Assert.Null(result.ExecutionException);
 Assert.True(result.Success);
@@ -83,7 +83,7 @@ Assert.True(result.Success);
             {
                 engine.AddAudioSwitcherLibrary(GetAudioController());
                 engine.Execute("AudioSwitcher = lib('AudioSwitcher');");
-                Assert.DoesNotThrow(() => engine.Execute("AudioSwitcher.getAudioDevices()"));
+                engine.Execute("AudioSwitcher.getAudioDevices()");
                 Assert.Equal(4, engine.Evaluate<int>("AudioSwitcher.getAudioDevices().length").Value);
             }
         }
@@ -96,7 +96,7 @@ Assert.True(result.Success);
             {
                 engine.AddAudioSwitcherLibrary(GetAudioController());
                 engine.Execute("AudioSwitcher = lib('AudioSwitcher');");
-                Assert.DoesNotThrow(() => engine.Execute("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.ALL)"));
+                engine.Execute("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.ALL)");
                 Assert.Equal(4, engine.Evaluate<int>("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.ALL).length").Value);
             }
         }
@@ -109,7 +109,7 @@ Assert.True(result.Success);
             {
                 engine.AddAudioSwitcherLibrary(GetAudioController());
                 engine.Execute("AudioSwitcher = lib('AudioSwitcher');");
-                Assert.DoesNotThrow(() => engine.Execute("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.PLAYBACK)"));
+                engine.Execute("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.PLAYBACK)");
                 Assert.Equal(2, engine.Evaluate<int>("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.PLAYBACK).length").Value);
             }
         }
@@ -152,7 +152,7 @@ Assert.True(result.Success);
             {
                 engine.AddAudioSwitcherLibrary(GetAudioController());
                 engine.Execute("AudioSwitcher = lib('AudioSwitcher');");
-                Assert.DoesNotThrow(() => engine.Execute("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE)"));
+                engine.Execute("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE)");
                 Assert.Equal(2, engine.Evaluate<int>("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE).length").Value);
             }
         }
@@ -248,8 +248,7 @@ Assert.True(result.Success);
                 engine.AddAudioSwitcherLibrary(GetAudioController());
                 engine.Execute("AudioSwitcher = lib('AudioSwitcher');");
 
-                ExecutionResult result = null;
-                Assert.DoesNotThrow(() => result = engine.Execute(js));
+                var result = engine.Execute(js);
                 Assert.NotNull(result);
                 Assert.Null(result.ExecutionException);
                 Assert.True(result.Success);
@@ -274,8 +273,7 @@ Assert.True(result.Success);
 
                 const string js = @"AudioSwitcher.getAudioDevice(AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.PLAYBACK)[0].id, AudioSwitcher.DeviceType.PLAYBACK);";
 
-                ExecutionResult result = null;
-                Assert.DoesNotThrow(() => result = engine.Execute(js));
+                var result = engine.Execute(js);
                 Assert.NotNull(result);
                 Assert.Null(result.ExecutionException);
                 Assert.True(result.Success);
@@ -300,8 +298,7 @@ Assert.True(result.Success);
 
                 const string js = @"AudioSwitcher.getAudioDevice(AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE)[0].id, AudioSwitcher.DeviceType.CAPTURE);";
 
-                ExecutionResult result = null;
-                Assert.DoesNotThrow(() => result = engine.Execute(js));
+                var result = engine.Execute(js);
                 Assert.NotNull(result);
                 Assert.Null(result.ExecutionException);
                 Assert.True(result.Success);
@@ -326,8 +323,7 @@ Assert.True(result.Success);
                 engine.AddAudioSwitcherLibrary(GetAudioController());
                 engine.Execute("AudioSwitcher = lib('AudioSwitcher');");
 
-                ExecutionResult result = null;
-                Assert.DoesNotThrow(() => result = engine.Execute(js));
+                var result = engine.Execute(js);
                 Assert.NotNull(result);
                 Assert.Null(result.ExecutionException);
                 Assert.True(result.Success);
@@ -352,8 +348,7 @@ Assert.True(result.Success);
 
                 const string js = @"AudioSwitcher.getAudioDevice(AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.PLAYBACK)[0].name, AudioSwitcher.DeviceType.PLAYBACK);";
 
-                ExecutionResult result = null;
-                Assert.DoesNotThrow(() => result = engine.Execute(js));
+                var result = engine.Execute(js);
                 Assert.NotNull(result);
                 Assert.Null(result.ExecutionException);
                 Assert.True(result.Success);
@@ -378,8 +373,7 @@ Assert.True(result.Success);
 
                 const string js = @"AudioSwitcher.getAudioDevice(AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE)[0].name, AudioSwitcher.DeviceType.CAPTURE);";
 
-                ExecutionResult result = null;
-                Assert.DoesNotThrow(() => result = engine.Execute(js));
+                var result = engine.Execute(js);
                 Assert.NotNull(result);
                 Assert.Null(result.ExecutionException);
                 Assert.True(result.Success);
@@ -404,8 +398,7 @@ Assert.True(result.Success);
 
                 const string js = @"AudioSwitcher.getAudioDevices()[0];";
 
-                ExecutionResult result = null;
-                Assert.DoesNotThrow(() => result = engine.Execute(js));
+                var result = engine.Execute(js);
                 Assert.NotNull(result);
                 Assert.Null(result.ExecutionException);
                 Assert.True(result.Success);
@@ -473,8 +466,7 @@ Assert.True(result.Success);
                 const string js = @"AudioSwitcher.getAudioDevices()[0].volume()";
 
                 //don't care what it returns, just that it exists
-                ExecutionResult result = null;
-                Assert.DoesNotThrow(() => result = engine.Execute(js));
+                var result = engine.Execute(js);
                 Assert.NotNull(result);
                 Assert.Null(result.ExecutionException);
                 Assert.True(result.Success);
@@ -513,8 +505,7 @@ Assert.True(result.Success);
                 engine.Execute("AudioSwitcher = lib('AudioSwitcher');");
 
                 const string js = @"AudioSwitcher.getAudioDevices()[0].name";
-                ExecutionResult result = null;
-                Assert.DoesNotThrow(() => result = engine.Execute(js));
+                var result = engine.Execute(js);
                 Assert.NotNull(result);
                 Assert.Null(result.ExecutionException);
                 Assert.True(result.Success);
@@ -532,8 +523,7 @@ Assert.True(result.Success);
                 engine.Execute("AudioSwitcher = lib('AudioSwitcher');");
 
                 const string js = @"AudioSwitcher.getAudioDevices()[0].id";
-                ExecutionResult result = null;
-                Assert.DoesNotThrow(() => result = engine.Execute(js));
+                var result = engine.Execute(js);
                 Assert.NotNull(result);
                 Assert.Null(result.ExecutionException);
                 Assert.True(result.Success);
@@ -551,8 +541,7 @@ Assert.True(result.Success);
                 engine.Execute("AudioSwitcher = lib('AudioSwitcher');");
 
                 const string js = @"AudioSwitcher.getAudioDevices()[0].flags";
-                ExecutionResult result = null;
-                Assert.DoesNotThrow(() => result = engine.Execute(js));
+                var result = engine.Execute(js);
                 Assert.NotNull(result);
                 Assert.Null(result.ExecutionException);
                 Assert.True(result.Success);
