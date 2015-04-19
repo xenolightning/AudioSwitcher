@@ -130,7 +130,8 @@ namespace AudioSwitcher.AudioApi.Tests
             var controller = CreateTestController();
             var device = controller.GetCaptureDevices().First(x => !x.IsDefaultDevice);
 
-            Assert.DoesNotThrow(() => controller.DefaultCaptureDevice = device);
+            controller.DefaultCaptureDevice = device;
+
             Assert.Same(controller.DefaultCaptureDevice, device);
         }
 
@@ -160,7 +161,8 @@ namespace AudioSwitcher.AudioApi.Tests
             var controller = CreateTestController();
             var device = controller.GetPlaybackDevices().First(x => !x.IsDefaultDevice);
 
-            Assert.DoesNotThrow(() => controller.DefaultPlaybackDevice = device);
+            controller.DefaultPlaybackDevice = device;
+
             Assert.Same(controller.DefaultPlaybackDevice, device);
         }
 
@@ -190,7 +192,7 @@ namespace AudioSwitcher.AudioApi.Tests
             var controller = CreateTestController();
             var device = controller.GetCaptureDevices().First(x => !x.IsDefaultDevice);
 
-            Assert.DoesNotThrow(() => controller.DefaultCaptureCommunicationsDevice = device);
+            controller.DefaultCaptureCommunicationsDevice = device;
             Assert.Same(controller.DefaultCaptureCommunicationsDevice, device);
         }
 
@@ -220,7 +222,8 @@ namespace AudioSwitcher.AudioApi.Tests
             var controller = CreateTestController();
             var device = controller.GetPlaybackDevices().First(x => !x.IsDefaultDevice);
 
-            Assert.DoesNotThrow(() => controller.DefaultPlaybackCommunicationsDevice = device);
+            controller.DefaultPlaybackCommunicationsDevice = device;
+
             Assert.Same(controller.DefaultPlaybackCommunicationsDevice, device);
         }
     }

@@ -32,9 +32,9 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AudioSwitcher.AudioApi, Version=2.2.2.151, Culture=neutral, PublicKeyToken=fda5729e2db3a64f, processorArchitecture=MSIL">
+    <Reference Include="AudioSwitcher.AudioApi, Version=2.2.4.159, Culture=neutral, PublicKeyToken=fda5729e2db3a64f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\AudioSwitcher.UI\packages\AudioSwitcher.AudioApi.2.2.2\lib\portable-net4+wp7+win8\AudioSwitcher.AudioApi.dll</HintPath>
+      <HintPath>..\packages\AudioSwitcher.AudioApi.2.2.4\lib\portable-net4+wp7+win8\AudioSwitcher.AudioApi.dll</HintPath>
     </Reference>
     <Reference Include="Jurassic">
       <HintPath>..\lib\Jurassic\NET40\Jurassic.dll</HintPath>
