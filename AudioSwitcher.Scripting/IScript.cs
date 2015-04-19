@@ -4,10 +4,6 @@ namespace AudioSwitcher.Scripting
 {
     public interface IScript
     {
-        Guid Id
-        {
-            get;
-        }
 
         string Name
         {
@@ -25,5 +21,6 @@ namespace AudioSwitcher.Scripting
         }
 
         IScript Clone();
+
     }
 }

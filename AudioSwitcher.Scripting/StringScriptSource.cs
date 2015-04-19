@@ -12,7 +12,6 @@ namespace AudioSwitcher.Scripting
 
         internal StringScriptSource()
         {
-            
         }
 
         public StringScriptSource(string script)
@@ -22,7 +21,7 @@ namespace AudioSwitcher.Scripting
 
         public TextReader GetReader()
         {
-            return new StringReader(Script);
+            return new StringReader(Script ?? "");
         }
 
         public void Dispose()

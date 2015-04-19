@@ -59,7 +59,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
         public ArrayInstance GetPlaybackDevices()
         {
             var devices = new List<IDevice>();
-            devices.AddRange(AudioController.GetCaptureDevices());
+            devices.AddRange(AudioController.GetPlaybackDevices());
 
             //if empty then return empty array
             if (devices.Count == 0)
