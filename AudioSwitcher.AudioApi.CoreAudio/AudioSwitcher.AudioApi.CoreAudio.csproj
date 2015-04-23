@@ -57,6 +57,7 @@
     <Compile Include="Internal\EDataFlow.cs" />
     <Compile Include="Internal\EDeviceState.cs" />
     <Compile Include="Internal\EndpointHardwareSupport.cs" />
+    <Compile Include="Internal\Platform.cs" />
     <Compile Include="Internal\Interfaces\AudioVolumeNotificationDataStruct.cs" />
     <Compile Include="Internal\Interfaces\Blob.cs" />
     <Compile Include="Internal\Interfaces\ClsCtx.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Internal\Interfaces\IMMDeviceEnumerator.cs" />
     <Compile Include="Internal\Interfaces\IMMEndpoint.cs" />
     <Compile Include="Internal\Interfaces\IMMNotificationClient.cs" />
+    <Compile Include="Internal\Interfaces\IPolicyConfigX.cs" />
     <Compile Include="Internal\Interfaces\IPolicyConfig.cs" />
     <Compile Include="Internal\Interfaces\IPolicyConfigVista.cs" />
     <Compile Include="Internal\Interfaces\IPropertyStore.cs" />
@@ -81,6 +83,7 @@
     <Compile Include="Internal\MMDeviceCollection.cs" />
     <Compile Include="Internal\MMNotificationClient.cs" />
     <Compile Include="Internal\NativeMethods.cs" />
+    <Compile Include="Internal\PolicyConfigX.cs" />
     <Compile Include="Internal\PolicyConfig.cs" />
     <Compile Include="Internal\PolicyConfigVista.cs" />
     <Compile Include="Internal\PropertyKey.cs" />

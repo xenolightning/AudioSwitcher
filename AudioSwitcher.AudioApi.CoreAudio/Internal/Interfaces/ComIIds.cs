@@ -2,6 +2,8 @@
 {
     internal static class ComIIds
     {
+        internal const string UNKNOWN_IID = "00000000-0000-0000-C000-000000000046";
+
         internal const string IMM_DEVICE_IID = "D666063F-1587-4E43-81F1-B948E807363F";
         internal const string IMM_DEVICE_ENUMERATOR_IID = "A95664D2-9614-4F35-A746-DE8DB63617E6";
         internal const string IMM_DEVICE_COLLECTION_IID = "0BD7A1BE-7A1A-44DB-8397-CC5392387B5E";

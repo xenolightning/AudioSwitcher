@@ -175,10 +175,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             try
             {
-                if (IsNotVista())
-                    PolicyConfig.SetDefaultEndpoint(dev.RealId, ERole.Console | ERole.Multimedia);
-                else
-                    PolicyConfigVista.SetDefaultEndpoint(dev.RealId, ERole.Console | ERole.Multimedia);
+                switch (Platform.OperatingSystem)
+                {
+                    case EOperatingSystem.Vista:
+                        PolicyConfigVista.SetDefaultEndpoint(dev.RealId, ERole.Console | ERole.Multimedia);
+                        break;
+                    case EOperatingSystem.Seven:
+                    case EOperatingSystem.Eight:
+                    case EOperatingSystem.EightOne:
+                        PolicyConfig.SetDefaultEndpoint(dev.RealId, ERole.Console | ERole.Multimedia);
+                        break;
+                    case EOperatingSystem.Ten:
+                        PolicyConfigX.SetDefaultEndpoint(dev.RealId, ERole.Console | ERole.Multimedia);
+                        break;
+                }
 
                 return dev.IsDefaultDevice;
             }
@@ -194,12 +204,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        private static bool IsNotVista()
-        {
-            return Environment.OSVersion.Version.Major > 6
-                   || (Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor >= 1);
-        }
-
         public override bool SetDefaultCommunicationsDevice(CoreAudioDevice dev)
         {
             if (dev == null)
@@ -209,10 +213,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             try
             {
-                if (IsNotVista())
-                    PolicyConfig.SetDefaultEndpoint(dev.RealId, ERole.Communications);
-                else
-                    PolicyConfigVista.SetDefaultEndpoint(dev.RealId, ERole.Communications);
+                switch (Platform.OperatingSystem)
+                {
+                    case EOperatingSystem.Vista:
+                        PolicyConfigVista.SetDefaultEndpoint(dev.RealId, ERole.Communications);
+                        break;
+                    case EOperatingSystem.Seven:
+                    case EOperatingSystem.Eight:
+                    case EOperatingSystem.EightOne:
+                        PolicyConfig.SetDefaultEndpoint(dev.RealId, ERole.Communications);
+                        break;
+                    case EOperatingSystem.Ten:
+                        PolicyConfigX.SetDefaultEndpoint(dev.RealId, ERole.Communications);
+                        break;
+                }
 
                 return dev.IsDefaultCommunicationsDevice;
             }
@@ -223,7 +237,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             finally
             {
                 //Raise the default changed event on the old device
-                if(oldDefault != null && !oldDefault.IsDefaultCommunicationsDevice)
+                if (oldDefault != null && !oldDefault.IsDefaultCommunicationsDevice)
                     RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(oldDefault, AudioDeviceEventType.DefaultCommunicationsDevice));
             }
         }
