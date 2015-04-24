@@ -10,7 +10,7 @@ namespace AudioSwitcher.Scripting
             set;
         }
 
-        public Exception ExecutionException
+        public ExecutionException ExecutionException
         {
             get;
             set;
@@ -22,7 +22,7 @@ namespace AudioSwitcher.Scripting
 
         public ExecutionResult()
         {
-            
+
         }
 
         public ExecutionResult(T value)
@@ -36,5 +36,19 @@ namespace AudioSwitcher.Scripting
             set;
         }
 
+    }
+
+    public class ExecutionException : Exception
+    {
+        public int LineNumber
+        {
+            get;
+            set;
+        }
+
+        public ExecutionException(Exception innerException)
+            : base(innerException.Message, innerException)
+        {
+        }
     }
 }

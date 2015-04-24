@@ -8,7 +8,7 @@ using AudioSwitcher.Scripting.JavaScript.Internal;
 
 namespace AudioSwitcher.Scripting.JavaScript
 {
-    public class JsEngine : ScriptEngineBase
+    public sealed class JsEngine : ScriptEngineBase
     {
         private readonly Dictionary<string, IScriptLibrary> _libraryDictionary;
         private bool _isDebug;
@@ -45,6 +45,7 @@ namespace AudioSwitcher.Scripting.JavaScript
             InternalEngine.EnableExposedClrTypes = true;
 
             InternalEngine.SetGlobalFunction("lib", new Func<string, ObjectInstance>(ImportLibrary));
+            SetOutput(new NullScriptOutput());
         }
 
         private ObjectInstance ImportLibrary(string libraryName)
@@ -93,12 +94,23 @@ namespace AudioSwitcher.Scripting.JavaScript
                     Success = true
                 };
             }
+            catch (JavaScriptException ex)
+            {
+                return new ExecutionResult
+                {
+                    Success = false,
+                    ExecutionException = new ExecutionException(ex)
+                    {
+                        LineNumber = ex.LineNumber
+                    }
+                };
+            }
             catch (Exception ex)
             {
                 return new ExecutionResult
                 {
                     Success = false,
-                    ExecutionException = ex
+                    ExecutionException = new ExecutionException(ex)
                 };
             }
         }
@@ -125,12 +137,23 @@ namespace AudioSwitcher.Scripting.JavaScript
                     Success = true
                 };
             }
+            catch (JavaScriptException ex)
+            {
+                return new ExecutionResult<TReturn>
+                {
+                    Success = false,
+                    ExecutionException = new ExecutionException(ex)
+                    {
+                        LineNumber = ex.LineNumber
+                    }
+                };
+            }
             catch (Exception ex)
             {
                 return new ExecutionResult<TReturn>
                 {
                     Success = false,
-                    ExecutionException = ex
+                    ExecutionException = new ExecutionException(ex)
                 };
             }
         }
