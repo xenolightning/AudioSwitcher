@@ -1,7 +1,4 @@
-﻿// This has been modified for use by Audio Switcher
-
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 
@@ -11,13 +8,28 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         public static void SetDefaultEndpoint(string devId, ERole eRole)
         {
-            IPolicyConfig policyConfig = null;
+            _PolicyConfigClient policyConfig = null;
             try
             {
+                policyConfig = new _PolicyConfigClient();
+
                 // ReSharper disable once SuspiciousTypeConversion.Global
-                policyConfig = new _PolicyConfigClient() as IPolicyConfig;
-                if (policyConfig != null)
-                    Marshal.ThrowExceptionForHR(policyConfig.SetDefaultEndpoint(devId, eRole));
+                var policyConfigX = policyConfig as IPolicyConfigX;
+                if (policyConfigX != null)
+                    Marshal.ThrowExceptionForHR(policyConfigX.SetDefaultEndpoint(devId, eRole));
+
+                // Try the Windows 7 Api Reference
+                // ReSharper disable once SuspiciousTypeConversion.Global
+                var policyConfig7 = policyConfig as IPolicyConfig;
+                if (policyConfig7 != null)
+                    Marshal.ThrowExceptionForHR(policyConfig7.SetDefaultEndpoint(devId, eRole));
+
+                //Try the Vista Api Reference
+
+                // ReSharper disable once SuspiciousTypeConversion.Global
+                var policyConfigVista = policyConfig as IPolicyConfigVista;
+                if (policyConfigVista != null)
+                    Marshal.ThrowExceptionForHR(policyConfigVista.SetDefaultEndpoint(devId, eRole));
             }
             finally
             {

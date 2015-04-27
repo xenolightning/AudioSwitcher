@@ -175,21 +175,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             try
             {
-                switch (Platform.OperatingSystem)
-                {
-                    case EOperatingSystem.Vista:
-                        PolicyConfigVista.SetDefaultEndpoint(dev.RealId, ERole.Console | ERole.Multimedia);
-                        break;
-                    case EOperatingSystem.Seven:
-                    case EOperatingSystem.Eight:
-                    case EOperatingSystem.EightOne:
-                        PolicyConfig.SetDefaultEndpoint(dev.RealId, ERole.Console | ERole.Multimedia);
-                        break;
-                    case EOperatingSystem.Ten:
-                        PolicyConfigX.SetDefaultEndpoint(dev.RealId, ERole.Console | ERole.Multimedia);
-                        break;
-                }
-
+                PolicyConfig.SetDefaultEndpoint(dev.RealId, ERole.Console | ERole.Multimedia);
                 return dev.IsDefaultDevice;
             }
             catch
@@ -213,20 +199,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             try
             {
-                switch (Platform.OperatingSystem)
-                {
-                    case EOperatingSystem.Vista:
-                        PolicyConfigVista.SetDefaultEndpoint(dev.RealId, ERole.Communications);
-                        break;
-                    case EOperatingSystem.Seven:
-                    case EOperatingSystem.Eight:
-                    case EOperatingSystem.EightOne:
-                        PolicyConfig.SetDefaultEndpoint(dev.RealId, ERole.Communications);
-                        break;
-                    case EOperatingSystem.Ten:
-                        PolicyConfigX.SetDefaultEndpoint(dev.RealId, ERole.Communications);
-                        break;
-                }
+                PolicyConfig.SetDefaultEndpoint(dev.RealId, ERole.Communications);
 
                 return dev.IsDefaultCommunicationsDevice;
             }

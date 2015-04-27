@@ -83,9 +83,7 @@
     <Compile Include="Internal\MMDeviceCollection.cs" />
     <Compile Include="Internal\MMNotificationClient.cs" />
     <Compile Include="Internal\NativeMethods.cs" />
-    <Compile Include="Internal\PolicyConfigX.cs" />
     <Compile Include="Internal\PolicyConfig.cs" />
-    <Compile Include="Internal\PolicyConfigVista.cs" />
     <Compile Include="Internal\PropertyKey.cs" />
     <Compile Include="Internal\PropertyKeys.cs" />
     <Compile Include="Internal\PropVariant.cs" />
