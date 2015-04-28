@@ -19,8 +19,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         internal CoreAudioDevice(IMMDevice device, IAudioController<CoreAudioDevice> controller)
             : base(controller)
         {
-            _device = device;
             ComThread.Assert();
+
+            _device = device;
 
             if (device == null)
                 throw new ArgumentNullException("device");
@@ -235,37 +236,39 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (audioDeviceChangedEventArgs.Device.Id != Id)
                 return;
 
-            ComThread.Invoke(() =>
+            ComThread.BeginInvoke(() =>
             {
                 LoadProperties(_device);
-            });
-
-            switch (audioDeviceChangedEventArgs.EventType)
+            })
+            .ContinueWith(x =>
             {
+                switch (audioDeviceChangedEventArgs.EventType)
+                {
 
-                case AudioDeviceEventType.Volume:
-                case AudioDeviceEventType.Level:
-                case AudioDeviceEventType.StateChanged:
-                case AudioDeviceEventType.PropertyChanged:
-                    OnPropertyChanged("DeviceType");
-                    OnPropertyChanged("InterfaceName");
-                    OnPropertyChanged("FullName");
-                    OnPropertyChanged("IconPath");
-                    OnPropertyChanged("Id");
-                    OnPropertyChanged("IsCaptureDevice");
-                    OnPropertyChanged("IsMuted");
-                    OnPropertyChanged("IsPlaybackDevice");
-                    OnPropertyChanged("Name");
-                    OnPropertyChanged("State");
-                    OnPropertyChanged("FullName");
-                    break;
-                case AudioDeviceEventType.DefaultDevice:
-                    OnPropertyChanged("IsDefaultDevice");
-                    break;
-                case AudioDeviceEventType.DefaultCommunicationsDevice:
-                    OnPropertyChanged("IsDefaultCommunicationsDevice");
-                    break;
-            }
+                    case AudioDeviceEventType.Volume:
+                    case AudioDeviceEventType.Level:
+                    case AudioDeviceEventType.StateChanged:
+                    case AudioDeviceEventType.PropertyChanged:
+                        OnPropertyChanged("DeviceType");
+                        OnPropertyChanged("InterfaceName");
+                        OnPropertyChanged("FullName");
+                        OnPropertyChanged("IconPath");
+                        OnPropertyChanged("Id");
+                        OnPropertyChanged("IsCaptureDevice");
+                        OnPropertyChanged("IsMuted");
+                        OnPropertyChanged("IsPlaybackDevice");
+                        OnPropertyChanged("Name");
+                        OnPropertyChanged("State");
+                        OnPropertyChanged("FullName");
+                        break;
+                    case AudioDeviceEventType.DefaultDevice:
+                        OnPropertyChanged("IsDefaultDevice");
+                        break;
+                    case AudioDeviceEventType.DefaultCommunicationsDevice:
+                        OnPropertyChanged("IsDefaultCommunicationsDevice");
+                        break;
+                }
+            });
         }
 
         private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)

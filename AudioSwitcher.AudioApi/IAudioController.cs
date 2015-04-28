@@ -36,6 +36,10 @@ namespace AudioSwitcher.AudioApi
 
         Task<IEnumerable<IDevice>> GetDevicesAsync(DeviceState state);
 
+        IEnumerable<IDevice> GetDevices(DeviceType deviceType);
+
+        Task<IEnumerable<IDevice>> GetDevicesAsync(DeviceType deviceType);
+
         IEnumerable<IDevice> GetDevices(DeviceType deviceType, DeviceState state);
 
         Task<IEnumerable<IDevice>> GetDevicesAsync(DeviceType deviceType, DeviceState state);

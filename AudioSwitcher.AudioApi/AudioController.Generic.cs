@@ -107,6 +107,27 @@ namespace AudioSwitcher.AudioApi
             return Task.Factory.StartNew(() => GetDevices(state));
         }
 
+        public IEnumerable<T> GetDevices(DeviceType deviceType)
+        {
+            return GetDevices(deviceType, DEFAULT_DEVICE_STATE_FILTER);
+        }
+
+        public Task<IEnumerable<T>> GetDevicesAsync(DeviceType deviceType)
+        {
+            return GetDevicesAsync(deviceType, DEFAULT_DEVICE_STATE_FILTER);
+        }
+
+        IEnumerable<IDevice> IAudioController.GetDevices(DeviceType deviceType)
+        {
+            return GetDevices(deviceType);
+        }
+
+        Task<IEnumerable<IDevice>> IAudioController.GetDevicesAsync(DeviceType deviceType)
+        {
+            // ReSharper disable once RedundantEnumerableCastCall
+            return Task.Factory.StartNew(() => GetDevices(deviceType).Cast<IDevice>());
+        }
+
         public virtual IEnumerable<T> GetDevices(DeviceState state)
         {
             return GetDevices(DeviceType.All, state);
