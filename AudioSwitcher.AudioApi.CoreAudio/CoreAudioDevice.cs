@@ -162,8 +162,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return (Controller.DefaultPlaybackDevice != null && Controller.DefaultPlaybackDevice.Id == Id)
-                       || (Controller.DefaultCaptureDevice != null && Controller.DefaultCaptureDevice.Id == Id);
+                IDevice defaultDevice = null;
+
+                if (IsPlaybackDevice)
+                    defaultDevice = Controller.DefaultPlaybackDevice;
+                else if (IsCaptureDevice)
+                    defaultDevice = Controller.DefaultCaptureDevice;
+
+                return defaultDevice != null && defaultDevice.Id == Id;
             }
         }
 
@@ -171,8 +177,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return (Controller.DefaultPlaybackCommunicationsDevice != null && Controller.DefaultPlaybackCommunicationsDevice.Id == Id)
-                       || (Controller.DefaultCaptureCommunicationsDevice != null && Controller.DefaultCaptureCommunicationsDevice.Id == Id);
+                IDevice defaultDevice = null;
+
+                if (IsPlaybackDevice)
+                    defaultDevice = Controller.DefaultPlaybackCommunicationsDevice;
+                else if (IsCaptureDevice)
+                    defaultDevice = Controller.DefaultCaptureCommunicationsDevice;
+
+                return defaultDevice != null && defaultDevice.Id == Id;
             }
         }
 
