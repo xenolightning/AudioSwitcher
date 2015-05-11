@@ -245,7 +245,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void EnumeratorOnAudioDeviceChanged(object sender, AudioDeviceChangedEventArgs audioDeviceChangedEventArgs)
         {
-            if (audioDeviceChangedEventArgs.Device.Id != Id)
+            if (audioDeviceChangedEventArgs.Device == null || audioDeviceChangedEventArgs.Device.Id != Id)
                 return;
 
             ComThread.BeginInvoke(() =>

@@ -75,6 +75,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
+        private CoreAudioDevice GetDevice(string realId)
+        {
+            var acquiredLock = _lock.AcquireReadLockNonReEntrant();
+
+            try
+            {
+                return _deviceCache.FirstOrDefault(x => String.Equals(x.RealId, realId, StringComparison.InvariantCultureIgnoreCase));
+            }
+            finally
+            {
+                if (acquiredLock)
+                    _lock.ExitReadLock();
+            }
+        }
+
         private void RefreshSystemDevices()
         {
             ComThread.Invoke(() =>
@@ -91,25 +106,31 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             });
         }
 
-        private void AddDeviceFromRealId(string deviceId)
+        private CoreAudioDevice AddDeviceFromRealId(string deviceId)
         {
-            ComThread.Invoke(() =>
+            return ComThread.Invoke(() =>
             {
                 IMMDevice mDevice;
                 _innerEnumerator.GetDevice(deviceId, out mDevice);
 
-                if (mDevice != null)
-                    CacheDevice(mDevice);
+                if (mDevice == null)
+                    return null;
+
+                return CacheDevice(mDevice);
             });
         }
 
-        private void RemoveDeviceFromRealId(string deviceId)
+        private IEnumerable<CoreAudioDevice> RemoveFromRealId(string deviceId)
         {
             var lockAcquired = _lock.AcquireWriteLockNonReEntrant();
             try
             {
-                _deviceCache.RemoveWhere(
-                    x => String.Equals(x.RealId, deviceId, StringComparison.InvariantCultureIgnoreCase));
+                var devicesToRemove =
+                    _deviceCache.Where(x => String.Equals(x.RealId, deviceId, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+                _deviceCache.RemoveWhere(x => String.Equals(x.RealId, deviceId, StringComparison.InvariantCultureIgnoreCase));
+
+                return devicesToRemove;
             }
             finally
             {
@@ -118,17 +139,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        private void CacheDevice(IMMDevice mDevice)
+        private CoreAudioDevice CacheDevice(IMMDevice mDevice)
         {
             if (!DeviceIsValid(mDevice))
-                return;
+                return null;
 
             string id;
             mDevice.GetId(out id);
             var device = _deviceCache.FirstOrDefault(x => String.Equals(x.RealId, id, StringComparison.InvariantCultureIgnoreCase));
 
             if (device != null)
-                return;
+                return device;
 
             var lockAcquired = _lock.AcquireWriteLockNonReEntrant();
 
@@ -136,6 +157,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 device = new CoreAudioDevice(mDevice, this);
                 _deviceCache.Add(device);
+
+                return device;
             }
             finally
             {
@@ -261,24 +284,26 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         void ISystemAudioEventClient.OnDeviceStateChanged(string deviceId, EDeviceState newState)
         {
-            RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
-                    AudioDeviceEventType.StateChanged));
+            var dev = GetDevice(deviceId);
+
+            if (dev != null)
+                RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(dev, AudioDeviceEventType.StateChanged));
         }
 
         void ISystemAudioEventClient.OnDeviceAdded(string deviceId)
         {
-            AddDeviceFromRealId(deviceId);
+            var dev = AddDeviceFromRealId(deviceId);
 
-            RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
-                    AudioDeviceEventType.Added));
+            if (dev != null)
+                RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(dev, AudioDeviceEventType.Added));
         }
 
         void ISystemAudioEventClient.OnDeviceRemoved(string deviceId)
         {
-            RemoveDeviceFromRealId(deviceId);
+            var devicesRemoved = RemoveFromRealId(deviceId);
 
-            RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
-                    AudioDeviceEventType.Removed));
+            foreach (var dev in devicesRemoved)
+                RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(dev, AudioDeviceEventType.Removed));
         }
 
         void ISystemAudioEventClient.OnDefaultDeviceChanged(EDataFlow flow, ERole role, string deviceId)
@@ -287,19 +312,24 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (role == ERole.Multimedia)
                 return;
 
+            var dev = GetDevice(deviceId);
+
+            if (dev == null)
+                return;
+
             Task.Factory.StartNew(() =>
             {
                 var eventType = role == ERole.Console ? AudioDeviceEventType.DefaultDevice : AudioDeviceEventType.DefaultCommunicationsDevice;
-
-                RaiseAudioDeviceChanged(
-                    new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)), eventType));
+                RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(dev, eventType));
             });
         }
 
         void ISystemAudioEventClient.OnPropertyValueChanged(string deviceId, PropertyKey key)
         {
-            RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(GetDevice(CoreAudioDevice.SystemIdToGuid(deviceId)),
-                    AudioDeviceEventType.PropertyChanged));
+            var dev = GetDevice(deviceId);
+
+            if (dev != null)
+                RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(dev, AudioDeviceEventType.PropertyChanged));
         }
 
     }
