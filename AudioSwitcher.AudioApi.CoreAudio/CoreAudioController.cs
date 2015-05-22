@@ -52,7 +52,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     _innerEnumerator = null;
                 });
             }
-            _deviceCache = null;
+
+            if (_deviceCache != null)
+                _deviceCache.Clear();
 
             if (_lock != null)
                 _lock.Dispose();
@@ -106,8 +108,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             });
         }
 
-        private CoreAudioDevice AddDeviceFromRealId(string deviceId)
+        private CoreAudioDevice GetOrAddDeviceFromRealId(string deviceId)
         {
+            //This pre-check here may prevent more com objects from being created
+            var device = GetDevice(deviceId);
+            if (device != null)
+                return device;
+
             return ComThread.Invoke(() =>
             {
                 IMMDevice mDevice;
@@ -146,7 +153,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             string id;
             mDevice.GetId(out id);
-            var device = _deviceCache.FirstOrDefault(x => String.Equals(x.RealId, id, StringComparison.InvariantCultureIgnoreCase));
+            var device = GetDevice(id);
 
             if (device != null)
                 return device;
@@ -284,7 +291,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         void ISystemAudioEventClient.OnDeviceStateChanged(string deviceId, EDeviceState newState)
         {
-            var dev = GetDevice(deviceId);
+            var dev = GetOrAddDeviceFromRealId(deviceId);
 
             if (dev != null)
                 RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(dev, AudioDeviceEventType.StateChanged));
@@ -292,7 +299,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         void ISystemAudioEventClient.OnDeviceAdded(string deviceId)
         {
-            var dev = AddDeviceFromRealId(deviceId);
+            var dev = GetOrAddDeviceFromRealId(deviceId);
 
             if (dev != null)
                 RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(dev, AudioDeviceEventType.Added));
@@ -312,7 +319,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (role == ERole.Multimedia)
                 return;
 
-            var dev = GetDevice(deviceId);
+            var dev = GetOrAddDeviceFromRealId(deviceId);
 
             if (dev == null)
                 return;
@@ -326,7 +333,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         void ISystemAudioEventClient.OnPropertyValueChanged(string deviceId, PropertyKey key)
         {
-            var dev = GetDevice(deviceId);
+            var dev = GetOrAddDeviceFromRealId(deviceId);
 
             if (dev != null)
                 RaiseAudioDeviceChanged(new AudioDeviceChangedEventArgs(dev, AudioDeviceEventType.PropertyChanged));
