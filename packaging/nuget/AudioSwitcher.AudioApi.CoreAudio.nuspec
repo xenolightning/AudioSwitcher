@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>AudioSwitcher.AudioApi.CoreAudio</id>
-        <version>1.6.5</version>
+        <version>1.7.0</version>
         <title>Audio Switcher Core Audio</title>
         <authors>Sean Chapman</authors>
         <owners>Sean Chapman</owners>
@@ -15,20 +15,19 @@ This includes all controllers and devices to access Windows System Devices and m
 
 This library can be used on any PC running Windows Vista and above. Supports both x86/x64 runtimes.</description>
         <summary>Windows WASAPI/Core Audio library extension of the Audio Switcher Audio API.</summary>
-        <releaseNotes>- implemented IAudioController.GetDevices(Type) 
-
-- Actively supports Windows 10 TP
-- Fixed a few minor issues</releaseNotes>
+        <releaseNotes>- Device cache now correctly adds devices when the state changes
+- Fixed default device race condition
+- Fixed Audio Endpoint not refreshing on state change</releaseNotes>
         <copyright>Sean Chapman</copyright>
         <language>en-US</language>
         <tags>wasapi audioswitcher audio api</tags>
         <dependencies>
             <group targetFramework=".NETFramework4.0">
-                <dependency id="AudioSwitcher.AudioApi" version="2.2.5" />
+                <dependency id="AudioSwitcher.AudioApi" version="2.3.0" />
             </group>
         </dependencies>
     </metadata>
     <files>
-        <file src="lib\net40\AudioSwitcher.AudioApi.CoreAudio.dll" target="lib\net40\AudioSwitcher.AudioApi.CoreAudio.dll" />
+        <file src="..\..\bin\Release\AudioSwitcher.AudioApi.CoreAudio.dll" target="lib\net40\AudioSwitcher.AudioApi.CoreAudio.dll" />
     </files>
 </package>
