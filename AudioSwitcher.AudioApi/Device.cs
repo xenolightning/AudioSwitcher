@@ -134,6 +134,6 @@ namespace AudioSwitcher.AudioApi
             return Task.Factory.StartNew(() => ToggleMute());
         }
 
-        public abstract event EventHandler<AudioDeviceChangedEventArgs> VolumeChanged;
+        public abstract event EventHandler<DeviceChangedEventArgs> VolumeChanged;
     }
 }

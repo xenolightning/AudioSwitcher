@@ -66,6 +66,6 @@ namespace AudioSwitcher.AudioApi.Sandbox
             return isMuted = mute;
         }
 
-        public override event EventHandler<AudioDeviceChangedEventArgs> VolumeChanged;
+        public override event EventHandler<DeviceChangedEventArgs> VolumeChanged;
     }
 }

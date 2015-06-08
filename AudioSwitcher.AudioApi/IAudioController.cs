@@ -14,7 +14,7 @@ namespace AudioSwitcher.AudioApi
 
         IDevice DefaultCaptureCommunicationsDevice { get; set; }
 
-        event EventHandler<AudioDeviceChangedEventArgs> AudioDeviceChanged;
+        event EventHandler<DeviceChangedEventArgs> AudioDeviceChanged;
 
         IDevice GetDevice(Guid id);
 

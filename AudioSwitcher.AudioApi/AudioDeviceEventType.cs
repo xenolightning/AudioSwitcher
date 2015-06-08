@@ -10,7 +10,6 @@
         Added,
         Removed,
         Volume,
-        Level,
         PropertyChanged,
         StateChanged
     }

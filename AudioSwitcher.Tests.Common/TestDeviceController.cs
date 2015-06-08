@@ -132,7 +132,7 @@ namespace AudioSwitcher.Tests.Common
             return false;
         }
 
-        public event EventHandler<AudioDeviceChangedEventArgs> AudioDeviceChanged;
+        public event EventHandler<DeviceChangedEventArgs> AudioDeviceChanged;
 
         public override bool SetDefaultDevice(IDevice dev)
         {

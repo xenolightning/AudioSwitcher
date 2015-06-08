@@ -10,8 +10,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         private AudioMeterInformation _audioMeterInformation;
         private AudioEndpointVolume _audioEndpointVolume;
-        private bool _audioMeterInformationUnavailable;
-        private bool _audioEndpointVolumeUnavailable;
 
         private IPropertyDictionary Properties
         {
@@ -56,12 +54,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _properties.TryLoadFrom(device);
         }
 
-        private void GetAudioMeterInformation(IMMDevice device)
+        private void LoadAudioMeterInformation(IMMDevice device)
         {
-            //Prevent further look ups
-            if (_audioMeterInformationUnavailable)
-                return;
-
             //This should be all on the COM thread to avoid any
             //weird lookups on the result COM object not on an STA Thread
             ComThread.Assert();
@@ -79,21 +73,24 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 ex = e;
             }
-            _audioMeterInformationUnavailable = ex != null;
-            if (_audioMeterInformationUnavailable)
+
+            if (ex != null)
+            {
+                ClearAudioMeterInformation();
                 return;
+            }
+
             _audioMeterInformation = new AudioMeterInformation(result as IAudioMeterInformation);
         }
 
-        private void GetAudioEndpointVolume(IMMDevice device)
+        private void LoadAudioEndpointVolume(IMMDevice device)
         {
-            //Prevent further look ups
-            if (_audioEndpointVolumeUnavailable)
-                return;
-
             //Don't even bother looking up volume for disconnected devices
-            if (State == DeviceState.NotPresent || State == DeviceState.Unplugged)
+            if (!State.HasFlag(DeviceState.Active))
+            {
+                ClearAudioEndpointVolume();
                 return;
+            }
 
             //This should be all on the COM thread to avoid any
             //weird lookups on the result COM object not on an STA Thread
@@ -112,10 +109,33 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 ex = e;
             }
-            _audioEndpointVolumeUnavailable = ex != null;
-            if (_audioEndpointVolumeUnavailable)
+
+            if (ex != null)
+            {
+                ClearAudioEndpointVolume();
                 return;
+            }
+
             _audioEndpointVolume = new AudioEndpointVolume(result as IAudioEndpointVolume);
+        }
+
+        private void ClearAudioEndpointVolume()
+        {
+            if (_audioEndpointVolume != null)
+            {
+                _audioEndpointVolume.OnVolumeNotification -= AudioEndpointVolume_OnVolumeNotification;
+                _audioEndpointVolume.Dispose();
+                _audioEndpointVolume = null;
+            }
+        }
+
+        private void ClearAudioMeterInformation()
+        {
+            if (_audioMeterInformation != null)
+            {
+                _audioMeterInformation.Dispose();
+                _audioMeterInformation = null;
+            }
         }
 
         private static readonly Dictionary<string, DeviceIcon> ICON_MAP = new Dictionary<string, DeviceIcon>
@@ -168,6 +188,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return DeviceIcon.Unknown;
             }
         }
-
     }
 }

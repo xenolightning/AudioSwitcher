@@ -1,22 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>AudioSwitcher.AudioApi</id>
-        <version>2.0.1-beta</version>
+        <version>2.2.5</version>
         <title>Audio Switcher Api</title>
         <authors>Sean Chapman</authors>
         <owners>Sean Chapman</owners>
         <licenseUrl>https://github.com/xenolightning/AudioSwitcher/blob/master/README.md</licenseUrl>
         <projectUrl>https://github.com/xenolightning/AudioSwitcher</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <developmentDependency>true</developmentDependency>
         <description>.NET Library which facilitates interacting with Audio Devices</description>
         <summary>.NET Library which facilitates interacting with Audio Devices</summary>
+        <releaseNotes>- Added IAudioController.GetDevices(Type)</releaseNotes>
         <copyright />
         <language>en-US</language>
         <tags>audio default device switch audioswitcher</tags>
     </metadata>
     <files>
-        <file src="..\..\AudioSwitcher.AudioApi\bin\Release\AudioSwitcher.AudioApi.dll" target="lib\portable-net4+wp7+win8\AudioSwitcher.AudioApi.dll" />
+        <file src="lib\portable-net4+wp7+win8\AudioSwitcher.AudioApi.dll" target="lib\portable-net4+wp7+win8\AudioSwitcher.AudioApi.dll" />
     </files>
 </package>

@@ -11,9 +11,9 @@ namespace AudioSwitcher.AudioApi
         protected const DeviceState DEFAULT_DEVICE_STATE_FILTER =
             DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled;
 
-        public event EventHandler<AudioDeviceChangedEventArgs> AudioDeviceChanged;
+        public event EventHandler<DeviceChangedEventArgs> AudioDeviceChanged;
 
-        protected virtual void OnAudioDeviceChanged(object sender, AudioDeviceChangedEventArgs e)
+        protected virtual void OnAudioDeviceChanged(object sender, DeviceChangedEventArgs e)
         {
             var handler = AudioDeviceChanged;
 
