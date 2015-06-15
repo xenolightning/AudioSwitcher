@@ -8,10 +8,10 @@ namespace AudioSwitcher.AudioApi.Hooking.ComObjects
     public interface IMMDeviceEnumerator
     {
         [PreserveSig]
-        int EnumAudioEndpoints(DataFlow dataFlow, DeviceState stateMask, out IntPtr device);
+        int EnumAudioEndpoints(EDataFlow eDataFlow, EDeviceState stateMask, out IntPtr device);
 
         [PreserveSig]
-        int GetDefaultAudioEndpoint(DataFlow dataFlow, Role role, out IntPtr ppEndpoint);
+        int GetDefaultAudioEndpoint(EDataFlow eDataFlow, ERole eRole, out IntPtr ppEndpoint);
 
         [PreserveSig]
         int GetDevice(string pwstrId, out IntPtr ppDevice);

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid(ComIIds.AUDIO_ENDPOINT_VOLUME_EX_IID)]
+    [Guid(ComInterfaceIds.AUDIO_ENDPOINT_VOLUME_EX_IID)]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IAudioEndpointVolumeEx
     {

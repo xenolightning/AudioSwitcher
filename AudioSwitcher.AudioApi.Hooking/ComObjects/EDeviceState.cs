@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace AudioSwitcher.AudioApi.CoreAudio
+namespace AudioSwitcher.AudioApi.Hooking.ComObjects
 {
     [Flags]
-    internal enum EDeviceState : uint
+    public enum EDeviceState : uint
     {
         Active = 0x1,
         Disabled = 0x2,

@@ -100,8 +100,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME))
-                    return Properties[PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME] as string;
+                if (Properties != null && Properties.Contains(PropertyKeys.DeviceInterfaceFriendlyName))
+                    return Properties[PropertyKeys.DeviceInterfaceFriendlyName] as string;
                 return "Unknown";
             }
         }
@@ -113,15 +113,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_DESCRIPTION))
-                    return Properties[PropertyKeys.PKEY_DEVICE_DESCRIPTION] as string;
+                if (Properties != null && Properties.Contains(PropertyKeys.DeviceDescription))
+                    return Properties[PropertyKeys.DeviceDescription] as string;
 
                 return InterfaceName;
             }
             set
             {
-                if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_DESCRIPTION))
-                    Properties[PropertyKeys.PKEY_DEVICE_DESCRIPTION] = value;
+                if (Properties != null && Properties.Contains(PropertyKeys.DeviceDescription))
+                    Properties[PropertyKeys.DeviceDescription] = value;
             }
         }
 
@@ -129,8 +129,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME))
-                    return Properties[PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME] as string;
+                if (Properties != null && Properties.Contains(PropertyKeys.DeviceFriendlyName))
+                    return Properties[PropertyKeys.DeviceFriendlyName] as string;
                 return "Unknown";
             }
         }
@@ -139,8 +139,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_ICON))
-                    return IconStringToDeviceIcon(Properties[PropertyKeys.PKEY_DEVICE_ICON] as string);
+                if (Properties != null && Properties.Contains(PropertyKeys.DeviceIcon))
+                    return IconStringToDeviceIcon(Properties[PropertyKeys.DeviceIcon] as string);
 
                 return DeviceIcon.Unknown;
             }

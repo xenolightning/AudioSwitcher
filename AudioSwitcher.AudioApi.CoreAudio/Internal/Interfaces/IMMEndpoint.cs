@@ -2,7 +2,7 @@
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid(ComIIds.IMM_ENDPOINT_IID)]
+    [Guid(ComInterfaceIds.IMM_ENDPOINT_IID)]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IMMEndpoint
     {

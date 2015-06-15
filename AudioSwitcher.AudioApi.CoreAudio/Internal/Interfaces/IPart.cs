@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid(ComIIds.PART_IID), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [Guid(ComInterfaceIds.PART_IID), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IPart
     {
         [PreserveSig]
@@ -37,7 +37,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         int GetTopologyObject([Out] [MarshalAs(UnmanagedType.Interface)] out IDeviceTopology deviceTopology);
 
         [PreserveSig]
-        int Activate([In] ClsCtx classContext, [In] ref Guid interfaceId, [Out, Optional] [MarshalAs(UnmanagedType.IUnknown)] out object instancePtr);
+        int Activate([In] ClassContext classContext, [In] ref Guid interfaceId, [Out, Optional] [MarshalAs(UnmanagedType.IUnknown)] out object instancePtr);
 
         [PreserveSig]
         int RegisterControlChangeCallback([In] ref Guid interfaceId, [In] IControlChangeNotify client);

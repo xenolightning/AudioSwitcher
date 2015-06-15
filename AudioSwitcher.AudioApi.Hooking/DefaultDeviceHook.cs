@@ -12,10 +12,10 @@ namespace AudioSwitcher.AudioApi.Hooking
         public delegate void OnErrorHandler(int processId, Exception exception);
 
         private readonly int _processId;
-        private readonly Func<DataFlow, Role, string> _systemDeviceId;
+        private readonly Func<EDataFlow, ERole, string> _systemDeviceId;
         private string _channelName;
 
-        public DefaultDeviceHook(int processId, Func<DataFlow, Role, string> systemDeviceId)
+        public DefaultDeviceHook(int processId, Func<EDataFlow, ERole, string> systemDeviceId)
         {
             _processId = processId;
             _systemDeviceId = systemDeviceId;
@@ -78,7 +78,7 @@ namespace AudioSwitcher.AudioApi.Hooking
             [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = false)]
             [return: MarshalAs(UnmanagedType.U4)]
             public delegate int DGetDefaultAudioEndpoint(
-                IMMDeviceEnumerator self, DataFlow dataFlow, Role role, out IntPtr ppEndpoint);
+                IMMDeviceEnumerator self, EDataFlow eDataFlow, ERole eRole, out IntPtr ppEndpoint);
 
             public readonly RemoteInterface Interface;
 
@@ -124,33 +124,33 @@ namespace AudioSwitcher.AudioApi.Hooking
                 }
             }
 
-            private static int GetDefaultAudioEndpoint(IMMDeviceEnumerator self, DataFlow dataflow, Role role,
+            private static int GetDefaultAudioEndpoint(IMMDeviceEnumerator self, EDataFlow dataflow, ERole eRole,
                 out IntPtr ppendpoint)
             {
                 var entryPoint = HookRuntimeInfo.Callback as EntryPoint;
 
                 if (entryPoint == null || entryPoint.Interface == null)
-                    return self.GetDefaultAudioEndpoint(dataflow, role, out ppendpoint);
+                    return self.GetDefaultAudioEndpoint(dataflow, eRole, out ppendpoint);
 
                 var remoteInterface = entryPoint.Interface;
 
                 try
                 {
-                    var devId = remoteInterface.GetDefaultDevice(dataflow, role);
+                    var devId = remoteInterface.GetDefaultDevice(dataflow, eRole);
                     return self.GetDevice(devId, out ppendpoint);
                 }
                 catch (Exception ex)
                 {
                     remoteInterface.ReportError(RemoteHooking.GetCurrentProcessId(), ex);
                     //Something failed so return the actual default device
-                    return self.GetDefaultAudioEndpoint(dataflow, role, out ppendpoint);
+                    return self.GetDefaultAudioEndpoint(dataflow, eRole, out ppendpoint);
                 }
             }
         }
 
         public class RemoteInterface : MarshalByRefObject, IRemoteHook
         {
-            public Func<DataFlow, Role, string> SystemId
+            public Func<EDataFlow, ERole, string> SystemId
             {
                 get;
                 set;
@@ -182,12 +182,12 @@ namespace AudioSwitcher.AudioApi.Hooking
                     ErrorHandler(processId, e);
             }
 
-            public string GetDefaultDevice(DataFlow dataFlow, Role role)
+            public string GetDefaultDevice(EDataFlow eDataFlow, ERole eRole)
             {
                 if (SystemId == null)
                     return String.Empty;
 
-                return SystemId(dataFlow, role);
+                return SystemId(eDataFlow, eRole);
             }
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    internal static class ComIIds
+    internal static class ComInterfaceIds
     {
         internal const string UNKNOWN_IID = "00000000-0000-0000-C000-000000000046";
 

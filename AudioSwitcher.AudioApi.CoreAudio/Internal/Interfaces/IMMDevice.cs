@@ -3,14 +3,14 @@ using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid(ComIIds.IMM_DEVICE_IID)]
+    [Guid(ComInterfaceIds.IMM_DEVICE_IID)]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IMMDevice
     {
         [PreserveSig]
         int Activate(
             [In] ref Guid interfaceId,
-            [In] [MarshalAs(UnmanagedType.U4)] ClsCtx classContext,
+            [In] [MarshalAs(UnmanagedType.U4)] ClassContext classContext,
             [In, Optional] IntPtr activationParams,
             [Out] [MarshalAs(UnmanagedType.IUnknown)] out object instancePtr);
 

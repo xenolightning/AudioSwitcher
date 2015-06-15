@@ -93,6 +93,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             if (disposing)
             {
+                if(Marshal.IsComObject(_audioMeterInformation))
+                    Marshal.ReleaseComObject(_audioMeterInformation);
+
                 _audioMeterInformation = null;
                 _channels = null;
             }

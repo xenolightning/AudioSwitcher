@@ -70,8 +70,8 @@
     <Compile Include="Internal\Platform.cs" />
     <Compile Include="Internal\Interfaces\AudioVolumeNotificationDataStruct.cs" />
     <Compile Include="Internal\Interfaces\Blob.cs" />
-    <Compile Include="Internal\Interfaces\ClsCtx.cs" />
-    <Compile Include="Internal\Interfaces\ComIIds.cs" />
+    <Compile Include="Internal\Interfaces\ClassContext.cs" />
+    <Compile Include="Internal\Interfaces\ComInterfaceIds.cs" />
     <Compile Include="Internal\Interfaces\IAudioEndpointVolume.cs" />
     <Compile Include="Internal\Interfaces\IAudioEndpointVolumeCallback.cs" />
     <Compile Include="Internal\Interfaces\IAudioEndpointVolumeEx.cs" />
@@ -90,7 +90,6 @@
     <Compile Include="Internal\IPropertyDictionary.cs" />
     <Compile Include="Internal\ISystemAudioEventClient.cs" />
     <Compile Include="Internal\LockExtensions.cs" />
-    <Compile Include="Internal\MMDeviceCollection.cs" />
     <Compile Include="Internal\MMNotificationClient.cs" />
     <Compile Include="Internal\NativeMethods.cs" />
     <Compile Include="Internal\PolicyConfig.cs" />

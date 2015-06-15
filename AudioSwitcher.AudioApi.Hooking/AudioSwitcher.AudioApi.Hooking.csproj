@@ -53,11 +53,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComClassQuery.cs" />
-    <Compile Include="ComObjects\DataFlow.cs" />
-    <Compile Include="ComObjects\DeviceState.cs" />
+    <Compile Include="ComObjects\EDataFlow.cs" />
+    <Compile Include="ComObjects\EDeviceState.cs" />
+    <Compile Include="ComObjects\ERole.cs" />
     <Compile Include="ComObjects\IMMDeviceEnumerator.cs" />
     <Compile Include="ComObjects\MMDeviceEnumeratorComObject.cs" />
-    <Compile Include="ComObjects\Role.cs" />
     <Compile Include="DefaultDeviceHook.cs" />
     <Compile Include="IHook.cs" />
     <Compile Include="IRemoteHook.cs" />

@@ -1,130 +1,57 @@
-﻿/*
-  LICENSE
-  -------
-  Copyright (C) 2007 Ray Molenkamp
-
-  This source code is provided 'as-is', without any express or implied
-  warranty.  In no event will the authors be held liable for any damages
-  arising from the use of this source code or the software it produces.
-
-  Permission is granted to anyone to use this source code for any purpose,
-  including commercial applications, and to alter it and redistribute it
-  freely, subject to the following restrictions:
-
-  1. The origin of this source code must not be misrepresented; you must not
-     claim that you wrote the original source code.  If you use this source code
-     in a product, an acknowledgment in the product documentation would be
-     appreciated but is not required.
-  2. Altered source versions must be plainly marked as such, and must not be
-     misrepresented as being the original source code.
-  3. This notice may not be removed or altered from any source distribution.
-*/
-
-using System;
-
-// This has been modified for use by Audio Switcher
+﻿using System;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    /// <summary>
-    ///     Property Keys
-    /// </summary>
     internal static class PropertyKeys
     {
-        /// <summary>
-        ///     PKEY_DeviceInterface_FriendlyName
-        /// </summary>
-        public static readonly PropertyKey PKEY_DEVICE_INTERFACE_FRIENDLY_NAME =
-            new PropertyKey(new Guid(0x026e516e, 0xb814, 0x414b, 0x83, 0xcd, 0x85, 0x6d, 0x6f, 0xef, 0x48, 0x22), 2);
+        public static readonly PropertyKey DeviceInterfaceFriendlyName =
+            new PropertyKey(new Guid("026E516E-B814-414B-83CD-856D6FEF4822"), 2);
 
-        /// <summary>
-        ///     PKEY_AudioEndpoint_FormFactor
-        /// </summary>
-        public static readonly PropertyKey PKEY_AUDIO_ENDPOINT_FORM_FACTOR =
-            new PropertyKey(new Guid(0x1da5d803, 0xd492, 0x4edd, 0x8c, 0x23, 0xe0, 0xc0, 0xff, 0xee, 0x7f, 0x0e), 0);
+        public static readonly PropertyKey AudioEndpointFormFactor =
+            new PropertyKey(new Guid("1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E"), 0);
 
-        /// <summary>
-        ///     PKEY_AudioEndpoint_ControlPanelPageProvider
-        /// </summary>
-        public static readonly PropertyKey PKEY_AUDIO_ENDPOINT_CONTROL_PANEL_PAGE_PROVIDER =
-            new PropertyKey(new Guid(0x1da5d803, 0xd492, 0x4edd, 0x8c, 0x23, 0xe0, 0xc0, 0xff, 0xee, 0x7f, 0x0e), 1);
+        public static readonly PropertyKey AudioEndpointControlPanelPageProvider =
+            new PropertyKey(new Guid("1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E"), 1);
 
-        /// <summary>
-        ///     PKEY_AudioEndpoint_Association
-        /// </summary>
-        public static readonly PropertyKey PKEY_AUDIO_ENDPOINT_ASSOCIATION =
-            new PropertyKey(new Guid(0x1da5d803, 0xd492, 0x4edd, 0x8c, 0x23, 0xe0, 0xc0, 0xff, 0xee, 0x7f, 0x0e), 2);
+        public static readonly PropertyKey AudioEndpointAssociation =
+            new PropertyKey(new Guid("1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E"), 2);
 
-        /// <summary>
-        ///     PKEY_AudioEndpoint_PhysicalSpeakers
-        /// </summary>
-        public static readonly PropertyKey PKEY_AUDIO_ENDPOINT_PHYSICAL_SPEAKERS =
-            new PropertyKey(new Guid(0x1da5d803, 0xd492, 0x4edd, 0x8c, 0x23, 0xe0, 0xc0, 0xff, 0xee, 0x7f, 0x0e), 3);
+        public static readonly PropertyKey AudioEndpointPhysicalSpeakers =
+            new PropertyKey(new Guid("1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E"), 3);
 
-        /// <summary>
-        ///     PKEY_AudioEndpoint_GUID
-        /// </summary>
-        public static readonly PropertyKey PKEY_AUDIO_ENDPOINT_GUID =
-            new PropertyKey(new Guid(0x1da5d803, 0xd492, 0x4edd, 0x8c, 0x23, 0xe0, 0xc0, 0xff, 0xee, 0x7f, 0x0e), 4);
+        public static readonly PropertyKey AudioEndpointGuid =
+            new PropertyKey(new Guid("1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E"), 4);
 
-        /// <summary>
-        ///     PKEY_AudioEndpoint_Disable_SysFx
-        /// </summary>
-        public static readonly PropertyKey PKEY_AUDIO_ENDPOINT_DISABLE_SYS_FX =
-            new PropertyKey(new Guid(0x1da5d803, 0xd492, 0x4edd, 0x8c, 0x23, 0xe0, 0xc0, 0xff, 0xee, 0x7f, 0x0e), 5);
+        public static readonly PropertyKey AudioEndpointDisableSysFx =
+            new PropertyKey(new Guid("1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E"), 5);
 
-        /// <summary>
-        ///     PKEY_AudioEndpoint_FullRangeSpeakers
-        /// </summary>
-        public static readonly PropertyKey PKEY_AUDIO_ENDPOINT_FULL_RANGE_SPEAKERS =
-            new PropertyKey(new Guid(0x1da5d803, 0xd492, 0x4edd, 0x8c, 0x23, 0xe0, 0xc0, 0xff, 0xee, 0x7f, 0x0e), 6);
+        public static readonly PropertyKey AudioEndpointFullRangeSpeakers =
+            new PropertyKey(new Guid("1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E"), 6);
 
-        /// <summary>
-        ///     PKEY_AudioEndpoint_Supports_EventDriven_Mode
-        /// </summary>
-        public static readonly PropertyKey PKEY_AUDIO_ENDPOINT_SUPPORTS_EVENT_DRIVEN_MODE =
-            new PropertyKey(new Guid(0x1da5d803, 0xd492, 0x4edd, 0x8c, 0x23, 0xe0, 0xc0, 0xff, 0xee, 0x7f, 0x0e), 7);
+        public static readonly PropertyKey AudioEndpointSupportsEventDrivenMode =
+            new PropertyKey(new Guid("1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E"), 7);
 
-        /// <summary>
-        ///     PKEY_AudioEndpoint_JackSubType
-        /// </summary>
-        public static readonly PropertyKey PKEY_AUDIO_ENDPOINT_JACK_SUB_TYPE =
-            new PropertyKey(new Guid(0x1da5d803, 0xd492, 0x4edd, 0x8c, 0x23, 0xe0, 0xc0, 0xff, 0xee, 0x7f, 0x0e), 8);
+        public static readonly PropertyKey AudioEndpointJackSubType =
+            new PropertyKey(new Guid("1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E"), 8);
 
-        /// <summary>
-        ///     PKEY_AudioEngine_DeviceFormat
-        /// </summary>
-        public static readonly PropertyKey PKEY_AUDIO_ENGINE_DEVICE_FORMAT =
-            new PropertyKey(new Guid(0xf19f064d, 0x82c, 0x4e27, 0xbc, 0x73, 0x68, 0x82, 0xa1, 0xbb, 0x8e, 0x4c), 0);
+        public static readonly PropertyKey AudioEngineDeviceFormat =
+            new PropertyKey(new Guid("F19F064D-082C-4E27-BC73-6882A1BB8E4C"), 0);
 
-        /// <summary>
-        ///     PKEY_AudioEngine_OEMFormat
-        /// </summary>
-        public static readonly PropertyKey PKEY_AUDIO_ENGINE_OEM_FORMAT =
-            new PropertyKey(new Guid(0xe4870e26, 0x3cc5, 0x4cd2, 0xba, 0x46, 0xca, 0xa, 0x9a, 0x70, 0xed, 0x4), 3);
+        public static readonly PropertyKey AudioEngineOemFormat =
+            new PropertyKey(new Guid("E4870E26-3CC5-4CD2-BA46-CA0A9A70ED04"), 3);
 
-        /// <summary>
-        ///     PKEY _Device_FriendlyName
-        /// </summary>
-        public static readonly PropertyKey PKEY_DEVICE_FRIENDLY_NAME =
-            new PropertyKey(new Guid(0xa45c254e, 0xdf1c, 0x4efd, 0x80, 0x20, 0x67, 0xd1, 0x46, 0xa8, 0x50, 0xe0), 14);
+        public static readonly PropertyKey DeviceFriendlyName =
+            new PropertyKey(new Guid("A45C254E-DF1C-4EFD-8020-67D146A850E0"), 14);
 
-        /// <summary>
-        ///     PKEY _Device_Description
-        /// </summary>
-        public static readonly PropertyKey PKEY_DEVICE_DESCRIPTION =
-            new PropertyKey(new Guid(0xa45c254e, 0xdf1c, 0x4efd, 0x80, 0x20, 0x67, 0xd1, 0x46, 0xa8, 0x50, 0xe0), 2);
+        public static readonly PropertyKey DeviceDescription =
+            new PropertyKey(new Guid("A45C254E-DF1C-4EFD-8020-67D146A850E0"), 2);
 
-        /// <summary>
-        ///     PKEY _Device_Icon
-        /// </summary>
-        public static readonly PropertyKey PKEY_DEVICE_ICON =
-            new PropertyKey(new Guid(0x259abffc, 0x50a7, 0x47ce, 0xaf, 0x08, 0x68, 0xc9, 0xa7, 0xd7, 0x33, 0x66), 12);
+        public static readonly PropertyKey DeviceIcon = 
+            new PropertyKey(new Guid("259ABFFC-50A7-47CE-AF08-68C9A7D73366"), 12);
 
-        /// <summary>
-        ///     PKEY _System_Name
-        /// </summary>
-        public static readonly PropertyKey PKEY_SYSTEM_NAME =
-            new PropertyKey(new Guid(0xb3f8fa53, 0x0004, 0x438e, 0x90, 0x03, 0x51, 0xa4, 0x6e, 0x13, 0x9b, 0xfc), 6);
+        public static readonly PropertyKey SystemName = 
+            new PropertyKey(new Guid("B3F8FA53-0004-438E-9003-51A46E139BFC"), 6);
+
     }
+
 }

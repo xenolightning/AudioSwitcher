@@ -2,7 +2,7 @@
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid(ComIIds.DEVICE_TOPOLOGY_IID), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [Guid(ComInterfaceIds.DEVICE_TOPOLOGY_IID), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IDeviceTopology
     {
         [PreserveSig]

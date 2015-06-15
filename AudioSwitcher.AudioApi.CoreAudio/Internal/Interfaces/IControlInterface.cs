@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid(ComIIds.CONTROL_INTERFACE_IID), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [Guid(ComInterfaceIds.CONTROL_INTERFACE_IID), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IControlInterface
     {
         [PreserveSig]

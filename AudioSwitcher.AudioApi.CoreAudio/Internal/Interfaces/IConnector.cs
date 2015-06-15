@@ -2,7 +2,7 @@
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid(ComIIds.CONNECTOR_IID), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [Guid(ComInterfaceIds.CONNECTOR_IID), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IConnector
     {
         [PreserveSig]

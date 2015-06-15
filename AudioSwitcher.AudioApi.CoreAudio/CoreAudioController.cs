@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
@@ -101,11 +102,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 IMMDeviceCollection collection;
                 _innerEnumerator.EnumAudioEndpoints(EDataFlow.All, EDeviceState.All, out collection);
 
-                using (var coll = new MMDeviceCollection(collection))
+                uint count;
+                collection.GetCount(out count);
+
+                for (uint i = 0; i < count; i++)
                 {
-                    foreach (var mDev in coll)
+                    IMMDevice mDev;
+                    collection.Item(i, out mDev);
+
+                    if (mDev != null)
                         CacheDevice(mDev);
                 }
+
+                Marshal.FinalReleaseComObject(collection);
             });
         }
 
@@ -333,10 +342,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private static readonly Dictionary<PropertyKey, Expression<Func<IDevice, object>>> PropertykeyToLambdaMap = new Dictionary<PropertyKey, Expression<Func<IDevice, object>>>
         {
-            {PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME, x => x.InterfaceName},
-            {PropertyKeys.PKEY_DEVICE_DESCRIPTION, x => x.Name},
-            {PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME, x => x.FullName},
-            {PropertyKeys.PKEY_DEVICE_ICON, x => x.Icon},
+            {PropertyKeys.DeviceInterfaceFriendlyName, x => x.InterfaceName},
+            {PropertyKeys.DeviceDescription, x => x.Name},
+            {PropertyKeys.DeviceFriendlyName, x => x.FullName},
+            {PropertyKeys.DeviceIcon, x => x.Icon},
         };
 
         void ISystemAudioEventClient.OnPropertyValueChanged(string deviceId, PropertyKey key)

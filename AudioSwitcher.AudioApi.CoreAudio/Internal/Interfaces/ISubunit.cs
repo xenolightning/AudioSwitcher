@@ -2,7 +2,7 @@
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid(ComIIds.SUBUNIT_IID), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [Guid(ComInterfaceIds.SUBUNIT_IID), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface ISubunit
     {
 

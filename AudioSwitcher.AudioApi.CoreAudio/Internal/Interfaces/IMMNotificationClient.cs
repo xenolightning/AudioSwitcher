@@ -2,7 +2,7 @@
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid(ComIIds.IMM_NOTIFICATION_CLIENT_IID)]
+    [Guid(ComInterfaceIds.IMM_NOTIFICATION_CLIENT_IID)]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IMMNotificationClient
     {

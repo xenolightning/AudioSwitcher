@@ -10,6 +10,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         private AudioMeterInformation _audioMeterInformation;
         private AudioEndpointVolume _audioEndpointVolume;
+        private IDeviceTopology _deviceTopology;
 
         private IPropertyDictionary Properties
         {
@@ -66,8 +67,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //It's not an HR exception, but bubbles up through the .net call stack
             try
             {
-                var clsGuid = new Guid(ComIIds.AUDIO_METER_INFORMATION_IID);
-                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
+                var clsGuid = new Guid(ComInterfaceIds.AUDIO_METER_INFORMATION_IID);
+                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClassContext.Inproc, IntPtr.Zero, out result));
             }
             catch (Exception e)
             {
@@ -89,19 +90,37 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //weird lookups on the result COM object not on an STA Thread
             ComThread.Assert();
 
-            object result = null;
+            try
+            {
+
+                if (_deviceTopology != null)
+                    Marshal.FinalReleaseComObject(_deviceTopology);
+            }
+            catch
+            {
+                
+            }
+
             Exception ex;
+
+
 
             //Need to catch here, as there is a chance that unauthorized is thrown.
             //It's not an HR exception, but bubbles up through the .net call stack
             try
             {
-                var clsGuid = new Guid(ComIIds.DEVICE_TOPOLOGY_IID);
-                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
 
-                var top = result as IDeviceTopology;
+                var clsGuid = new Guid(ComInterfaceIds.DEVICE_TOPOLOGY_IID);
+                object result;
+                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClassContext.Inproc, IntPtr.Zero, out result));
+
+                _deviceTopology = result as IDeviceTopology;
+
+                if (_deviceTopology == null)
+                    return;
+
                 IConnector connector;
-                top.GetConnector(0, out connector);
+                _deviceTopology.GetConnector(0, out connector);
 
                 // If the connector is not connected return.
                 bool isConnected;
@@ -112,19 +131,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
                 var asfdasfd = FindParts(part);
 
-                clsGuid = new Guid(ComIIds.AUDIO_CHANNEL_CONFIG_IID);
-                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
+                clsGuid = new Guid(ComInterfaceIds.AUDIO_CHANNEL_CONFIG_IID);
 
                 foreach (var p in asfdasfd)
                 {
-                    ex = Marshal.GetExceptionForHR(p.Activate(ClsCtx.Inproc, ref clsGuid, out result));
-
+                    p.Activate(ClassContext.Inproc, ref clsGuid, out result);
                     var speaker = result as IAudioChannelConfig;
 
                     if (result != null)
                     {
-                        uint mask;
-                        speaker.GetChannelConfig(out mask);
+                        SpeakerConfiguration config;
+                        speaker.GetChannelConfig(out config);
                     }
                 }
 
@@ -225,8 +242,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //It's not an HR exception, but bubbles up through the .net call stack
             try
             {
-                var clsGuid = new Guid(ComIIds.AUDIO_ENDPOINT_VOLUME_IID);
-                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
+                var clsGuid = new Guid(ComInterfaceIds.AUDIO_ENDPOINT_VOLUME_IID);
+                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClassContext.Inproc, IntPtr.Zero, out result));
             }
             catch (Exception e)
             {
@@ -261,7 +278,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        private static readonly Dictionary<string, DeviceIcon> ICON_MAP = new Dictionary<string, DeviceIcon>
+        private static readonly Dictionary<string, DeviceIcon> IconMap = new Dictionary<string, DeviceIcon>
         {
             {"0", DeviceIcon.Speakers},
             {"1", DeviceIcon.Speakers},
@@ -303,8 +320,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             try
             {
-                string imageKey = iconStr.Substring(iconStr.IndexOf(",") + 1).Replace("-", "");
-                return ICON_MAP[imageKey];
+                string imageKey = iconStr.Substring(iconStr.IndexOf(",", StringComparison.InvariantCultureIgnoreCase) + 1).Replace("-", "");
+                return IconMap[imageKey];
             }
             catch
             {

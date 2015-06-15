@@ -3,7 +3,7 @@
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
     [ComImport]
-    [Guid(ComIIds.DEVICE_ENUMERATOR_CID)]
+    [Guid(ComInterfaceIds.DEVICE_ENUMERATOR_CID)]
     internal class MMDeviceEnumeratorComObject
     {
     }
