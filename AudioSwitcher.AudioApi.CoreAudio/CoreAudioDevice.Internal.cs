@@ -83,6 +83,129 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _audioMeterInformation = new AudioMeterInformation(result as IAudioMeterInformation);
         }
 
+        private void LoadSpeakerConfig(IMMDevice device)
+        {
+            //This should be all on the COM thread to avoid any
+            //weird lookups on the result COM object not on an STA Thread
+            ComThread.Assert();
+
+            object result = null;
+            Exception ex;
+
+            //Need to catch here, as there is a chance that unauthorized is thrown.
+            //It's not an HR exception, but bubbles up through the .net call stack
+            try
+            {
+                var clsGuid = new Guid(ComIIds.DEVICE_TOPOLOGY_IID);
+                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
+
+                var top = result as IDeviceTopology;
+                IConnector connector;
+                top.GetConnector(0, out connector);
+
+                // If the connector is not connected return.
+                bool isConnected;
+                connector.IsConnected(out isConnected);
+                if (!isConnected) throw new Exception();
+
+                var part = connector as IPart;
+
+                var asfdasfd = FindParts(part);
+
+                clsGuid = new Guid(ComIIds.AUDIO_CHANNEL_CONFIG_IID);
+                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
+
+                foreach (var p in asfdasfd)
+                {
+                    ex = Marshal.GetExceptionForHR(p.Activate(ClsCtx.Inproc, ref clsGuid, out result));
+
+                    var speaker = result as IAudioChannelConfig;
+
+                    if (result != null)
+                    {
+                        uint mask;
+                        speaker.GetChannelConfig(out mask);
+                    }
+                }
+
+
+            }
+            catch (Exception e)
+            {
+                ex = e;
+            }
+
+            if (ex != null)
+            {
+                return;
+            }
+        }
+
+        internal static List<IPart> FindParts(IPart part)
+        {
+            List<IPart> allParts = new List<IPart>();
+            allParts.Add(part);
+
+            PartType pType;
+            part.GetPartType(out pType);
+
+            if (pType == PartType.Connector)
+            {
+                var connector = (IConnector) part;
+
+                // If the connector is not connected return.
+                bool isConnected;
+                connector.IsConnected(out isConnected);
+                if (!isConnected) return allParts;
+
+                // Otherwise, get the other connector.
+                IConnector connectedTo;
+                connector.GetConnectedTo(out connectedTo);
+                IPart connectedPart = (IPart) connectedTo;
+
+                // Then enumerate all outgoing parts.
+                IPartsList partsOutgoing;
+                connectedPart.EnumPartsIncoming(out partsOutgoing);
+                if (partsOutgoing == null) return allParts;
+
+                // If there are more outgoing parts, get each one.
+                UInt32 partCount;
+                partsOutgoing.GetCount(out partCount);
+
+                for (uint i = 0; i < partCount; i++)
+                {
+                    IPart nextPart;
+                    partsOutgoing.GetPart(i, out nextPart);
+                    allParts.AddRange(FindParts(nextPart));
+                }
+
+            }
+            else if (pType == PartType.Subunit)
+            {
+                // Get sub type, for debugging purposes.
+                Guid subType;
+                part.GetSubType(out subType);
+
+                // Just enumerate all outgoing parts.
+                IPartsList partsOutgoing;
+                part.EnumPartsIncoming(out partsOutgoing);
+                if (partsOutgoing == null) return allParts;
+
+                // If there are more outgoing parts, get each one.
+                UInt32 partCount;
+                partsOutgoing.GetCount(out partCount);
+
+                for (uint i = 0; i < partCount; i++)
+                {
+                    IPart nextPart;
+                    partsOutgoing.GetPart(i, out nextPart);
+                    allParts.AddRange(FindParts(nextPart));
+                }
+            }
+
+            return allParts;
+        }
+
         private void LoadAudioEndpointVolume(IMMDevice device)
         {
             //Don't even bother looking up volume for disconnected devices

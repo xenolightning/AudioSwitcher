@@ -30,6 +30,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             ReloadAudioMeterInformation(device);
             ReloadAudioEndpointVolume(device);
+            LoadSpeakerConfig(device);
 
             controller.AudioDeviceChanged +=
                 new EventHandler<DeviceChangedEventArgs>(EnumeratorOnAudioDeviceChanged)
