@@ -85,7 +85,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _audioMeterInformation = new AudioMeterInformation(result as IAudioMeterInformation);
         }
 
-        private void LoadSpeakerConfig(IMMDevice device)
+        private void LoadDeviceTopology(IMMDevice device)
         {
             //This should be all on the COM thread to avoid any
             //weird lookups on the result COM object not on an STA Thread
@@ -131,7 +131,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             ComThread.Assert();
 
-            LoadSpeakerConfig(_device);
+            LoadDeviceTopology(_device);
 
             if (_connector == null)
                 return SpeakerConfiguration.NotSupported;
@@ -152,7 +152,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     SpeakerConfiguration speakerConfig;
                     speaker.GetChannelConfig(out speakerConfig);
-                    return SpeakerConfiguration;
+                    return speakerConfig;
                 }
             }
 
@@ -163,7 +163,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             ComThread.Assert();
 
-            LoadSpeakerConfig(_device);
+            LoadDeviceTopology(_device);
 
             if (_connector == null)
                 return;

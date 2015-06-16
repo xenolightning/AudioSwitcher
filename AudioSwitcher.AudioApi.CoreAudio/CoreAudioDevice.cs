@@ -31,7 +31,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             ReloadAudioMeterInformation(device);
             ReloadAudioEndpointVolume(device);
-            LoadSpeakerConfig(device);
+            LoadDeviceTopology(device);
 
             controller.AudioDeviceChanged +=
                 new EventHandler<DeviceChangedEventArgs>(EnumeratorOnAudioDeviceChanged)
@@ -234,7 +234,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return _speakerConfiguration;
+                return ComThread.Invoke(() =>
+                {
+                    _speakerConfiguration = LoadSpeakerConfiguration();
+                    return _speakerConfiguration;
+                });
             }
             set
             {
