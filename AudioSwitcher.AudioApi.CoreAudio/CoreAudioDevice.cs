@@ -229,6 +229,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
+        public override SpeakerConfiguration ActiveSpeakers
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void EnumeratorOnAudioDeviceChanged(object sender, DeviceChangedEventArgs deviceChangedEventArgs)
@@ -301,20 +309,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
         {
-            RaiseVolumeChanged(Volume);
-
-            //Fire the muted changed here too
-            OnPropertyChanged("IsMuted");
+            RaiseVolumeChanged(Volume, data.Muted);
         }
 
-        private void RaiseVolumeChanged(int newVolume)
+        private void RaiseVolumeChanged(int newVolume, bool muted)
         {
             var handler = VolumeChanged;
 
             if (handler != null)
-                handler(this, new DeviceVolumeChangedEventArgs(this, newVolume));
+                handler(this, new DeviceVolumeChangedEventArgs(this, newVolume, muted));
 
             OnPropertyChanged("Volume");
+            OnPropertyChanged("IsMuted");
         }
 
         public override bool Mute(bool mute)
@@ -326,7 +332,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return AudioEndpointVolume.Mute;
         }
 
-        public override event EventHandler<DeviceChangedEventArgs> VolumeChanged;
+        public override event EventHandler<DeviceVolumeChangedEventArgs> VolumeChanged;
+
+        public override int VolumeStepUp()
+        {
+            _audioEndpointVolume.VolumeStepUp();
+            return Volume;
+        }
+
+        public override int VolumeStepDown()
+        {
+            _audioEndpointVolume.VolumeStepDown();
+            return Volume;
+        }
 
         /// <summary>
         ///     Extracts the unique GUID Identifier for a Windows System _device

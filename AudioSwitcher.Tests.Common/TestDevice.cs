@@ -63,11 +63,35 @@ namespace AudioSwitcher.Tests.Common
             set;
         }
 
+        public override SpeakerConfiguration ActiveSpeakers
+        {
+            get { return SpeakerConfiguration.NotSupported; }
+        }
+
         public override bool Mute(bool mute)
         {
             return _muted = mute;
         }
 
-        public override event EventHandler<DeviceChangedEventArgs> VolumeChanged;
+        public override event EventHandler<DeviceVolumeChangedEventArgs> VolumeChanged;
+
+        public override int VolumeStepUp()
+        {
+            RaiseVolumeChanged();
+            return Volume;
+        }
+
+        private void RaiseVolumeChanged()
+        {
+            var handler = VolumeChanged;
+            if(handler != null)
+                handler(this, new DeviceVolumeChangedEventArgs(this, Volume, IsMuted));
+        }
+
+
+        public override int VolumeStepDown()
+        {
+            return Volume;
+        }
     }
 }

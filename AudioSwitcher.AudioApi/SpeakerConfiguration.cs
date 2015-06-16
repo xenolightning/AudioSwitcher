@@ -1,7 +1,8 @@
 ﻿namespace AudioSwitcher.AudioApi
 {
-    public enum SpeakerConfiguration : uint
+    public enum SpeakerConfiguration : int
     {
+        NotSupported = -1,
         SpeakerDirectOut = 0x0,
         SpeakerFrontLeft = 0x1,
         SpeakerFrontRight = 0x2,

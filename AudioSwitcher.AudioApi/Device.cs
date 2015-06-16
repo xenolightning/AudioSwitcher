@@ -65,6 +65,8 @@ namespace AudioSwitcher.AudioApi
 
         public abstract int Volume { get; set; }
 
+        public abstract SpeakerConfiguration ActiveSpeakers { get; }
+
         /// <summary>
         ///     Set this device as the the default device
         /// </summary>
@@ -98,30 +100,6 @@ namespace AudioSwitcher.AudioApi
             return Task.Factory.StartNew(() => Mute(mute));
         }
 
-        [Obsolete("Use Mute(true) instead")]
-        public virtual bool Mute()
-        {
-            return Mute(true);
-        }
-
-        [Obsolete("Use MuteAsync(true) instead")]
-        public virtual Task<bool> MuteAsync()
-        {
-            return Task.Factory.StartNew(() => Mute(true));
-        }
-
-        [Obsolete("Use Mute(false) instead")]
-        public virtual bool UnMute()
-        {
-            return Mute(false);
-        }
-
-        [Obsolete("Use MuteAsync(false) instead")]
-        public virtual Task<bool> UnMuteAsync()
-        {
-            return Task.Factory.StartNew(() => Mute(false));
-        }
-
         public virtual bool ToggleMute()
         {
             Mute(!IsMuted);
@@ -134,6 +112,8 @@ namespace AudioSwitcher.AudioApi
             return Task.Factory.StartNew(() => ToggleMute());
         }
 
-        public abstract event EventHandler<DeviceChangedEventArgs> VolumeChanged;
+        public abstract event EventHandler<DeviceVolumeChangedEventArgs> VolumeChanged;
+        public abstract int VolumeStepUp();
+        public abstract int VolumeStepDown();
     }
 }
