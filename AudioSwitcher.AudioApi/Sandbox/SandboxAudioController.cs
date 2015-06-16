@@ -46,7 +46,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
                     fullName = sourceDev.FullName,
                     type = sourceDev.DeviceType,
                     state = sourceDev.State,
-                    activeSpeakers = sourceDev.ActiveSpeakers,
+                    speakerConfiguration = sourceDev.SpeakerConfiguration,
                     Volume = sourceDev.Volume
                 };
                 _devices.Add(dev);

@@ -12,7 +12,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
         public string name;
         public DeviceState state;
         public string fullName;
-        public SpeakerConfiguration activeSpeakers;
+        public SpeakerConfiguration speakerConfiguration;
 
         public SandboxDevice(IAudioController controller)
             : base(controller)
@@ -62,9 +62,10 @@ namespace AudioSwitcher.AudioApi.Sandbox
 
         public override int Volume { get; set; }
 
-        public override SpeakerConfiguration ActiveSpeakers
+        public override SpeakerConfiguration SpeakerConfiguration
         {
-            get { return activeSpeakers; }
+            get { return speakerConfiguration; }
+            set { speakerConfiguration = value; }
         }
 
         public override bool Mute(bool mute)

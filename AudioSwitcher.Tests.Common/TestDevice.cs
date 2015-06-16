@@ -63,9 +63,10 @@ namespace AudioSwitcher.Tests.Common
             set;
         }
 
-        public override SpeakerConfiguration ActiveSpeakers
+        public override SpeakerConfiguration SpeakerConfiguration
         {
             get { return SpeakerConfiguration.NotSupported; }
+            set { }
         }
 
         public override bool Mute(bool mute)

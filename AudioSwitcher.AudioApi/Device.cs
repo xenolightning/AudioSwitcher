@@ -65,7 +65,7 @@ namespace AudioSwitcher.AudioApi
 
         public abstract int Volume { get; set; }
 
-        public abstract SpeakerConfiguration ActiveSpeakers { get; }
+        public abstract SpeakerConfiguration SpeakerConfiguration { get; set; }
 
         /// <summary>
         ///     Set this device as the the default device

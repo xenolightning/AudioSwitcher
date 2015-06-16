@@ -33,7 +33,7 @@ namespace AudioSwitcher.AudioApi
 
         int Volume { get; set; }
 
-        SpeakerConfiguration ActiveSpeakers { get; }
+        SpeakerConfiguration SpeakerConfiguration { get; set; }
 
         bool SetAsDefault();
 

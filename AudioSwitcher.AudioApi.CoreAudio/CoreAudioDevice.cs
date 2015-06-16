@@ -15,6 +15,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private EDeviceState _state;
         private string _realId;
         private EDataFlow _dataFlow;
+        private SpeakerConfiguration _speakerConfiguration;
 
         internal CoreAudioDevice(IMMDevice device, IAudioController<CoreAudioDevice> controller)
             : base(controller)
@@ -229,11 +230,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public override SpeakerConfiguration ActiveSpeakers
+        public override SpeakerConfiguration SpeakerConfiguration
         {
             get
             {
-                throw new NotImplementedException();
+                return _speakerConfiguration;
+            }
+            set
+            {
+                SetSpeakerConfiguration(value);
             }
         }
 

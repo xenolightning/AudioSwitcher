@@ -11,6 +11,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private AudioMeterInformation _audioMeterInformation;
         private AudioEndpointVolume _audioEndpointVolume;
         private IDeviceTopology _deviceTopology;
+        private IConnector _connector;
 
         private IPropertyDictionary Properties
         {
@@ -51,7 +52,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //Don't try to load properties for a device that doesn't exist
             if (State == DeviceState.NotPresent)
                 return;
-            
+
             _properties.TryLoadFrom(device);
         }
 
@@ -90,20 +91,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //weird lookups on the result COM object not on an STA Thread
             ComThread.Assert();
 
-            try
-            {
-
-                if (_deviceTopology != null)
-                    Marshal.FinalReleaseComObject(_deviceTopology);
-            }
-            catch
-            {
-                
-            }
+            ResetTopology();
 
             Exception ex;
-
-
 
             //Need to catch here, as there is a chance that unauthorized is thrown.
             //It's not an HR exception, but bubbles up through the .net call stack
@@ -113,38 +103,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 var clsGuid = new Guid(ComInterfaceIds.DEVICE_TOPOLOGY_IID);
                 object result;
                 ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClassContext.Inproc, IntPtr.Zero, out result));
-
                 _deviceTopology = result as IDeviceTopology;
-
-                if (_deviceTopology == null)
-                    return;
-
-                IConnector connector;
-                _deviceTopology.GetConnector(0, out connector);
-
-                // If the connector is not connected return.
-                bool isConnected;
-                connector.IsConnected(out isConnected);
-                if (!isConnected) throw new Exception();
-
-                var part = connector as IPart;
-
-                var asfdasfd = FindParts(part);
-
-                clsGuid = new Guid(ComInterfaceIds.AUDIO_CHANNEL_CONFIG_IID);
-
-                foreach (var p in asfdasfd)
-                {
-                    p.Activate(ClassContext.Inproc, ref clsGuid, out result);
-                    var speaker = result as IAudioChannelConfig;
-
-                    if (result != null)
-                    {
-                        SpeakerConfiguration config;
-                        speaker.GetChannelConfig(out config);
-                    }
-                }
-
 
             }
             catch (Exception e)
@@ -152,9 +111,111 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 ex = e;
             }
 
-            if (ex != null)
+            if (ex != null || _deviceTopology == null)
             {
+                ResetTopology();
                 return;
+            }
+
+            _deviceTopology.GetConnector(0, out _connector);
+
+            // If the connector is not connected return.
+            bool isConnected;
+            _connector.IsConnected(out isConnected);
+
+            if (!isConnected)
+                ResetTopology();
+        }
+
+        private SpeakerConfiguration LoadSpeakerConfiguration()
+        {
+            ComThread.Assert();
+
+            LoadSpeakerConfig(_device);
+
+            if (_connector == null)
+                return SpeakerConfiguration.NotSupported;
+
+            var part = _connector as IPart;
+
+            var asfdasfd = FindParts(part);
+
+            var clsGuid = new Guid(ComInterfaceIds.AUDIO_CHANNEL_CONFIG_IID);
+
+            foreach (var p in asfdasfd)
+            {
+                object result;
+                p.Activate(ClassContext.Inproc, ref clsGuid, out result);
+                var speaker = result as IAudioChannelConfig;
+
+                if (speaker != null)
+                {
+                    SpeakerConfiguration speakerConfig;
+                    speaker.GetChannelConfig(out speakerConfig);
+                    return SpeakerConfiguration;
+                }
+            }
+
+            return SpeakerConfiguration.NotSupported;
+        }
+
+        private void SetSpeakerConfiguration(SpeakerConfiguration speakerConfiguration)
+        {
+            ComThread.Assert();
+
+            LoadSpeakerConfig(_device);
+
+            if (_connector == null)
+                return;
+            try
+            {
+                var part = _connector as IPart;
+
+                var parts = FindParts(part);
+
+                var clsGuid = new Guid(ComInterfaceIds.AUDIO_CHANNEL_CONFIG_IID);
+
+                foreach (var p in parts)
+                {
+                    object result;
+                    p.Activate(ClassContext.Inproc, ref clsGuid, out result);
+                    var speaker = result as IAudioChannelConfig;
+
+                    if (speaker != null)
+                        speaker.SetChannelConfig(speakerConfiguration);
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        private void ResetTopology()
+        {
+            if (_deviceTopology != null)
+            {
+                try
+                {
+                    Marshal.FinalReleaseComObject(_deviceTopology);
+                    _deviceTopology = null;
+                }
+                catch
+                {
+                    _deviceTopology = null;
+                }
+            }
+
+            if (_connector != null)
+            {
+                try
+                {
+                    Marshal.FinalReleaseComObject(_connector);
+                    _connector = null;
+                }
+                catch
+                {
+                    _connector = null;
+                }
             }
         }
 
@@ -168,7 +229,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             if (pType == PartType.Connector)
             {
-                var connector = (IConnector) part;
+                var connector = (IConnector)part;
 
                 // If the connector is not connected return.
                 bool isConnected;
@@ -178,7 +239,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 // Otherwise, get the other connector.
                 IConnector connectedTo;
                 connector.GetConnectedTo(out connectedTo);
-                IPart connectedPart = (IPart) connectedTo;
+                IPart connectedPart = (IPart)connectedTo;
 
                 // Then enumerate all outgoing parts.
                 IPartsList partsOutgoing;
