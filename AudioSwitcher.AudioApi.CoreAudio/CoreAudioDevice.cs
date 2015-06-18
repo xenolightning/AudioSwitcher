@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using AudioSwitcher.AudioApi.CoreAudio.DirectSound;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
@@ -15,7 +16,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private EDeviceState _state;
         private string _realId;
         private EDataFlow _dataFlow;
-        private SpeakerConfiguration _speakerConfiguration;
 
         internal CoreAudioDevice(IMMDevice device, IAudioController<CoreAudioDevice> controller)
             : base(controller)
@@ -31,7 +31,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             ReloadAudioMeterInformation(device);
             ReloadAudioEndpointVolume(device);
-            LoadDeviceTopology(device);
 
             controller.AudioDeviceChanged +=
                 new EventHandler<DeviceChangedEventArgs>(EnumeratorOnAudioDeviceChanged)
@@ -234,15 +233,50 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return ComThread.Invoke(() =>
+                IDirectSound directSound = null;
+                try
                 {
-                    _speakerConfiguration = LoadSpeakerConfiguration();
-                    return _speakerConfiguration;
-                });
+                    Guid id = Id;
+                    NativeMethods.DirectSoundCreate8(ref id, out directSound);
+
+                    ESpeakerConfig speakerConfig;
+                    var hresult = directSound.GetSpeakerConfig(out speakerConfig);
+
+                    if (hresult == 0) //ok
+                        return speakerConfig.AsSpeakerConfiguration();
+                }
+                catch
+                {
+                    // ignored
+                }
+                finally
+                {
+                    if (directSound != null)
+                        Marshal.FinalReleaseComObject(directSound);
+                }
+
+                return SpeakerConfiguration.NotSupported;
             }
             set
             {
-                SetSpeakerConfiguration(value);
+                IDirectSound directSound = null;
+                try
+                {
+
+                    Guid id = Id;
+                    NativeMethods.DirectSoundCreate8(ref id, out directSound);
+
+                    directSound.SetSpeakerConfig(value.AsESpeakerConfig());
+                }
+                catch
+                {
+                    // ignored
+                }
+                finally
+                {
+                    if (directSound != null)
+                        Marshal.FinalReleaseComObject(directSound);
+                }
             }
         }
 

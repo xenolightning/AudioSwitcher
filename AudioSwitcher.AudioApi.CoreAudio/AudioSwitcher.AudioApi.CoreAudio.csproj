@@ -55,6 +55,8 @@
     <Compile Include="Internal\AudioVolumeNotificationData.cs" />
     <Compile Include="Internal\CachedPropertyDictionary.cs" />
     <Compile Include="Internal\ConnectorType.cs" />
+    <Compile Include="Internal\DirectSound\IDirectSound.cs" />
+    <Compile Include="Internal\DirectSound\ESpeakerConfig.cs" />
     <Compile Include="Internal\EDataFlow.cs" />
     <Compile Include="Internal\EDeviceState.cs" />
     <Compile Include="Internal\EndpointHardwareSupport.cs" />
