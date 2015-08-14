@@ -22,6 +22,6 @@ namespace AudioSwitcher.AudioApi
         /// <summary>
         ///     Voice communications (talking to another person).
         /// </summary>
-        Communications,
+        Communications
     }
 }

@@ -74,6 +74,7 @@ namespace AudioSwitcher.AudioApi
         }
 
         public abstract IDevice GetDefaultDevice(DeviceType deviceType, Role role);
+
         public virtual Task<IDevice> GetDefaultDeviceAsync(DeviceType deviceType, Role role)
         {
             return Task.Factory.StartNew(() => GetDefaultDevice(deviceType, role));
@@ -88,6 +89,7 @@ namespace AudioSwitcher.AudioApi
         {
             return Task.Factory.StartNew(() => GetDevices());
         }
+
         public virtual Task<IEnumerable<IDevice>> GetDevicesAsync(DeviceState state)
         {
             return Task.Factory.StartNew(() => GetDevices(state));
@@ -109,45 +111,57 @@ namespace AudioSwitcher.AudioApi
         }
 
         public abstract IEnumerable<IDevice> GetDevices(DeviceType deviceType, DeviceState state);
+
         public virtual Task<IEnumerable<IDevice>> GetDevicesAsync(DeviceType deviceType, DeviceState state)
         {
             return Task.Factory.StartNew(() => GetDevices(deviceType, state));
         }
 
         public abstract IEnumerable<IDevice> GetPlaybackDevices();
+
         public virtual Task<IEnumerable<IDevice>> GetPlaybackDevicesAsync()
         {
             return Task.Factory.StartNew(() => GetPlaybackDevices());
         }
 
         public abstract IEnumerable<IDevice> GetPlaybackDevices(DeviceState deviceState);
+
         public virtual Task<IEnumerable<IDevice>> GetPlaybackDevicesAsync(DeviceState deviceState)
         {
             return Task.Factory.StartNew(() => GetPlaybackDevices(deviceState));
         }
 
         public abstract IEnumerable<IDevice> GetCaptureDevices();
+
         public virtual Task<IEnumerable<IDevice>> GetCaptureDevicesAsync()
         {
             return Task.Factory.StartNew(() => GetCaptureDevices());
         }
 
         public abstract IEnumerable<IDevice> GetCaptureDevices(DeviceState deviceState);
+
         public virtual Task<IEnumerable<IDevice>> GetCaptureDevicesAsync(DeviceState deviceState)
         {
             return Task.Factory.StartNew(() => GetCaptureDevices(deviceState));
         }
 
         public abstract bool SetDefaultDevice(IDevice dev);
+
         public virtual Task<bool> SetDefaultDeviceAsync(IDevice dev)
         {
             return Task.Factory.StartNew(() => SetDefaultDevice(dev));
         }
 
         public abstract bool SetDefaultCommunicationsDevice(IDevice dev);
+
         public virtual Task<bool> SetDefaultCommunicationsDeviceAsync(IDevice dev)
         {
             return Task.Factory.StartNew(() => SetDefaultDevice(dev));
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
         }
 
         protected virtual void OnAudioDeviceChanged(object sender, DeviceChangedEventArgs e)
@@ -159,15 +173,8 @@ namespace AudioSwitcher.AudioApi
                 handler(sender, e);
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
         protected virtual void Dispose(bool disposing)
         {
-
         }
-
     }
 }

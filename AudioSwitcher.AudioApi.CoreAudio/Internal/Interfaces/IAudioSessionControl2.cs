@@ -19,8 +19,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
             [In] [MarshalAs(UnmanagedType.LPStruct)] Guid eventContext);
 
         [PreserveSig]
-        int GetIconPath(
-            [Out] [MarshalAs(UnmanagedType.LPWStr)] out string iconPath);
+        int GetIconPath([Out] [MarshalAs(UnmanagedType.LPWStr)] out string iconPath);
 
         [PreserveSig]
         int SetIconPath(

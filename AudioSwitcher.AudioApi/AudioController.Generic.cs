@@ -13,15 +13,6 @@ namespace AudioSwitcher.AudioApi
 
         public event EventHandler<DeviceChangedEventArgs> AudioDeviceChanged;
 
-        protected virtual void OnAudioDeviceChanged(object sender, DeviceChangedEventArgs e)
-        {
-            var handler = AudioDeviceChanged;
-
-            //Bubble the event
-            if (handler != null)
-                handler(sender, e);
-        }
-
         public T DefaultPlaybackDevice
         {
             get
@@ -81,12 +72,14 @@ namespace AudioSwitcher.AudioApi
         }
 
         public abstract T GetDevice(Guid id, DeviceState state);
+
         public virtual Task<T> GetDeviceAsync(Guid id, DeviceState state)
         {
             return Task.Factory.StartNew(() => GetDevice(id, state));
         }
 
         public abstract T GetDefaultDevice(DeviceType deviceType, Role role);
+
         public virtual Task<T> GetDefaultDeviceAsync(DeviceType deviceType, Role role)
         {
             return Task.Factory.StartNew(() => GetDefaultDevice(deviceType, role));
@@ -201,26 +194,50 @@ namespace AudioSwitcher.AudioApi
 
         IDevice IAudioController.DefaultPlaybackDevice
         {
-            get { return DefaultPlaybackDevice; }
-            set { SetDefaultDevice(value); }
+            get
+            {
+                return DefaultPlaybackDevice;
+            }
+            set
+            {
+                SetDefaultDevice(value);
+            }
         }
 
         IDevice IAudioController.DefaultPlaybackCommunicationsDevice
         {
-            get { return DefaultPlaybackCommunicationsDevice; }
-            set { SetDefaultCommunicationsDevice(value); }
+            get
+            {
+                return DefaultPlaybackCommunicationsDevice;
+            }
+            set
+            {
+                SetDefaultCommunicationsDevice(value);
+            }
         }
 
         IDevice IAudioController.DefaultCaptureDevice
         {
-            get { return DefaultCaptureDevice; }
-            set { SetDefaultDevice(value); }
+            get
+            {
+                return DefaultCaptureDevice;
+            }
+            set
+            {
+                SetDefaultDevice(value);
+            }
         }
 
         IDevice IAudioController.DefaultCaptureCommunicationsDevice
         {
-            get { return DefaultCaptureCommunicationsDevice; }
-            set { SetDefaultCommunicationsDevice(value); }
+            get
+            {
+                return DefaultCaptureCommunicationsDevice;
+            }
+            set
+            {
+                SetDefaultCommunicationsDevice(value);
+            }
         }
 
 
@@ -359,7 +376,17 @@ namespace AudioSwitcher.AudioApi
             Dispose(true);
         }
 
-        protected virtual void Dispose(bool disposing) { }
+        protected virtual void OnAudioDeviceChanged(object sender, DeviceChangedEventArgs e)
+        {
+            var handler = AudioDeviceChanged;
 
+            //Bubble the event
+            if (handler != null)
+                handler(sender, e);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+        }
     }
 }

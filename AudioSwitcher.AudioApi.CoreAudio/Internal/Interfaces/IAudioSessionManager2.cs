@@ -24,8 +24,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
             [Out] [MarshalAs(UnmanagedType.Interface)] out IAudioSessionEnumerator sessionList);
 
         [PreserveSig]
-        int RegisterSessionNotification(
-            [In] IAudioSessionNotification client);
+        int RegisterSessionNotification([In] IAudioSessionNotification client);
 
         [PreserveSig]
         int UnregisterSessionNotification([In] IAudioSessionNotification client);
