@@ -143,7 +143,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             int structSize = Marshal.SizeOf(singleInstance);
             if (blobByteLength%structSize != 0)
             {
-                throw new InvalidDataException(String.Format("Blob size {0} not a multiple of struct size {1}",
+                throw new InvalidDataException(string.Format("Blob size {0} not a multiple of struct size {1}",
                     blobByteLength, structSize));
             }
             int items = blobByteLength/structSize;

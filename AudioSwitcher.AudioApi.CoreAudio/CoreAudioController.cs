@@ -84,7 +84,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             try
             {
-                return _deviceCache.FirstOrDefault(x => String.Equals(x.RealId, realId, StringComparison.InvariantCultureIgnoreCase));
+                return _deviceCache.FirstOrDefault(x => string.Equals(x.RealId, realId, StringComparison.InvariantCultureIgnoreCase));
             }
             finally
             {
@@ -134,9 +134,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             try
             {
                 var devicesToRemove =
-                    _deviceCache.Where(x => String.Equals(x.RealId, deviceId, StringComparison.InvariantCultureIgnoreCase)).ToList();
+                    _deviceCache.Where(x => string.Equals(x.RealId, deviceId, StringComparison.InvariantCultureIgnoreCase)).ToList();
 
-                _deviceCache.RemoveWhere(x => String.Equals(x.RealId, deviceId, StringComparison.InvariantCultureIgnoreCase));
+                _deviceCache.RemoveWhere(x => string.Equals(x.RealId, deviceId, StringComparison.InvariantCultureIgnoreCase));
 
                 return devicesToRemove;
             }
@@ -259,7 +259,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
                 string devId;
                 dev.GetId(out devId);
-                if (String.IsNullOrEmpty(devId))
+                if (string.IsNullOrEmpty(devId))
                     return null;
 
                 return _deviceCache.FirstOrDefault(x => x.RealId == devId);

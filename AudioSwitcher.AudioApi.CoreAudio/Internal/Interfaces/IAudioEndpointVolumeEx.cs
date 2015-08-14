@@ -17,7 +17,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 
         [PreserveSig]
         int GetChannelCount(
-            [Out] [MarshalAs(UnmanagedType.U4)] out UInt32 channelCount);
+            [Out] [MarshalAs(UnmanagedType.U4)] out uint channelCount);
 
         [PreserveSig]
         int SetMasterVolumeLevel(
@@ -61,12 +61,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 
         [PreserveSig]
         int SetMute(
-            [In] [MarshalAs(UnmanagedType.Bool)] Boolean isMuted,
+            [In] [MarshalAs(UnmanagedType.Bool)] bool isMuted,
             [In] ref Guid eventContext);
 
         [PreserveSig]
         int GetMute(
-            [Out] [MarshalAs(UnmanagedType.Bool)] out Boolean isMuted);
+            [Out] [MarshalAs(UnmanagedType.Bool)] out bool isMuted);
 
         [PreserveSig]
         int GetVolumeStepInfo(
@@ -83,7 +83,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 
         [PreserveSig]
         int QueryHardwareSupport(
-            [Out] [MarshalAs(UnmanagedType.U4)] out UInt32 hardwareSupportMask);
+            [Out] [MarshalAs(UnmanagedType.U4)] out uint hardwareSupportMask);
 
         [PreserveSig]
         int GetVolumeRange(
@@ -93,7 +93,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 
         [PreserveSig]
         int GetVolumeRangeChannel(
-            [In] [MarshalAs(UnmanagedType.U4)] UInt32 channelNumber,
+            [In] [MarshalAs(UnmanagedType.U4)] uint channelNumber,
             [Out] [MarshalAs(UnmanagedType.R4)] out float volumeMin,
             [Out] [MarshalAs(UnmanagedType.R4)] out float volumeMax,
             [Out] [MarshalAs(UnmanagedType.R4)] out float volumeStep);

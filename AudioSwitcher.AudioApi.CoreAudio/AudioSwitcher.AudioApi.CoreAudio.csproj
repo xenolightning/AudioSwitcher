@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions.cs" />
+    <Compile Include="Internal\EAudioSessionDisconnectReason.cs" />
     <Compile Include="Internal\AudioEndpointVolume.cs" />
     <Compile Include="Internal\AudioEndpointVolumeCallback.cs" />
     <Compile Include="Internal\AudioEndpointVolumeChannel.cs" />
@@ -55,8 +56,18 @@
     <Compile Include="Internal\AudioVolumeNotificationData.cs" />
     <Compile Include="Internal\CachedPropertyDictionary.cs" />
     <Compile Include="Internal\EDataFlow.cs" />
+    <Compile Include="Internal\EAudioSessionState.cs" />
     <Compile Include="Internal\EDeviceState.cs" />
     <Compile Include="Internal\EndpointHardwareSupport.cs" />
+    <Compile Include="Internal\Interfaces\IAudioSessionControl.cs" />
+    <Compile Include="Internal\Interfaces\IAudioSessionControl2.cs" />
+    <Compile Include="Internal\Interfaces\IAudioSessionEnumerator.cs" />
+    <Compile Include="Internal\Interfaces\IAudioSessionEvents.cs" />
+    <Compile Include="Internal\Interfaces\IAudioSessionManager.cs" />
+    <Compile Include="Internal\Interfaces\IAudioSessionManager2.cs" />
+    <Compile Include="Internal\Interfaces\IAudioSessionNotification.cs" />
+    <Compile Include="Internal\Interfaces\IAudioVolumeDuckNotification.cs" />
+    <Compile Include="Internal\Interfaces\ISimpleAudioVolume.cs" />
     <Compile Include="Internal\Platform.cs" />
     <Compile Include="Internal\Interfaces\AudioVolumeNotificationDataStruct.cs" />
     <Compile Include="Internal\Interfaces\Blob.cs" />
