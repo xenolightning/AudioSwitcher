@@ -8,9 +8,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public partial class CoreAudioDevice : IAudioSessionEndpoint
     {
-        public IAudioSessionManager GetSessionManager()
+        public IAudioSessionManager SessionManager
         {
-            throw new NotImplementedException();
+            get;
+            private set;
         }
     }
 }

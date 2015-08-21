@@ -39,7 +39,8 @@
     <AssemblyOriginatorKeyFile>AudioSwitcherApi.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EasyHook">
+    <Reference Include="EasyHook, Version=2.7.5558.0, Culture=neutral, PublicKeyToken=4b580fca19d0b0c5, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\NetFX4.0\EasyHook.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -59,10 +60,12 @@
     <Compile Include="ComObjects\MMDeviceEnumeratorComObject.cs" />
     <Compile Include="ComObjects\Role.cs" />
     <Compile Include="DefaultDeviceHook.cs" />
+    <Compile Include="EntryPoint.cs" />
     <Compile Include="IHook.cs" />
     <Compile Include="IRemoteHook.cs" />
     <Compile Include="KERNEL32.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoteInterface.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\lib\NetFX4.0\EasyHook32.dll">
@@ -79,6 +82,14 @@
     </Content>
     <Content Include="..\lib\NetFX4.0\EasyHook64Svc.exe">
       <Link>EasyHook64Svc.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\lib\NetFX4.0\EasyLoad32.dll">
+      <Link>EasyLoad32.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\lib\NetFX4.0\EasyLoad64.dll">
+      <Link>EasyLoad64.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
