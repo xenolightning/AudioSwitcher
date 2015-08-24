@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
+
 // ReSharper disable SuspiciousTypeConversion.Global
 
 namespace AudioSwitcher.AudioApi.CoreAudio

@@ -15,35 +15,35 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         public void OnDeviceStateChanged(string deviceId, EDeviceState newState)
         {
             var inner = GetInner();
-            if(inner != null)
+            if (inner != null)
                 inner.OnDeviceStateChanged(deviceId, newState);
         }
 
         public void OnDeviceAdded(string pwstrDeviceId)
         {
             var inner = GetInner();
-            if(inner != null)
+            if (inner != null)
                 inner.OnDeviceAdded(pwstrDeviceId);
         }
 
         public void OnDeviceRemoved(string deviceId)
         {
             var inner = GetInner();
-            if(inner != null)
+            if (inner != null)
                 inner.OnDeviceRemoved(deviceId);
         }
 
         public void OnDefaultDeviceChanged(EDataFlow flow, ERole role, string defaultDeviceId)
         {
             var inner = GetInner();
-            if(inner != null)
+            if (inner != null)
                 inner.OnDefaultDeviceChanged(flow, role, defaultDeviceId);
         }
 
         public void OnPropertyValueChanged(string pwstrDeviceId, PropertyKey key)
         {
             var inner = GetInner();
-            if(inner != null)
+            if (inner != null)
                 inner.OnPropertyValueChanged(pwstrDeviceId, key);
         }
 

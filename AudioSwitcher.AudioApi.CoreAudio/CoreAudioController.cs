@@ -84,7 +84,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             try
             {
-                return _deviceCache.FirstOrDefault(x => string.Equals(x.RealId, realId, StringComparison.InvariantCultureIgnoreCase));
+                return
+                    _deviceCache.FirstOrDefault(
+                        x => string.Equals(x.RealId, realId, StringComparison.InvariantCultureIgnoreCase));
             }
             finally
             {
@@ -134,9 +136,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             try
             {
                 var devicesToRemove =
-                    _deviceCache.Where(x => string.Equals(x.RealId, deviceId, StringComparison.InvariantCultureIgnoreCase)).ToList();
+                    _deviceCache.Where(
+                        x => string.Equals(x.RealId, deviceId, StringComparison.InvariantCultureIgnoreCase)).ToList();
 
-                _deviceCache.RemoveWhere(x => string.Equals(x.RealId, deviceId, StringComparison.InvariantCultureIgnoreCase));
+                _deviceCache.RemoveWhere(
+                    x => string.Equals(x.RealId, deviceId, StringComparison.InvariantCultureIgnoreCase));
 
                 return devicesToRemove;
             }
@@ -226,7 +230,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (dev == null)
                 return false;
 
-            var oldDefault = dev.IsPlaybackDevice ? DefaultPlaybackCommunicationsDevice : DefaultCaptureCommunicationsDevice;
+            var oldDefault = dev.IsPlaybackDevice
+                ? DefaultPlaybackCommunicationsDevice
+                : DefaultCaptureCommunicationsDevice;
 
             try
             {
@@ -325,13 +331,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (dev == null)
                 return;
 
-            Task.Factory.StartNew(() =>
-            {
-                RaiseAudioDeviceChanged(new DefaultDeviceChangedEventArgs(dev, role == ERole.Communications));
-            });
+            Task.Factory.StartNew(
+                () => { RaiseAudioDeviceChanged(new DefaultDeviceChangedEventArgs(dev, role == ERole.Communications)); });
         }
 
-        private static readonly Dictionary<PropertyKey, Expression<Func<IDevice, object>>> PropertykeyToLambdaMap = new Dictionary<PropertyKey, Expression<Func<IDevice, object>>>
+        private static readonly Dictionary<PropertyKey, Expression<Func<IDevice, object>>> PropertykeyToLambdaMap = new Dictionary
+            <PropertyKey, Expression<Func<IDevice, object>>>
         {
             {PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME, x => x.InterfaceName},
             {PropertyKeys.PKEY_DEVICE_DESCRIPTION, x => x.Name},
@@ -343,7 +348,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             var dev = GetOrAddDeviceFromRealId(deviceId);
 
-            if(dev == null)
+            if (dev == null)
                 return;
 
             if (PropertykeyToLambdaMap.ContainsKey(key))
@@ -355,6 +360,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //Unknown property changed
             RaiseAudioDeviceChanged(new DevicePropertyChangedEventArgs(dev));
         }
-
     }
 }

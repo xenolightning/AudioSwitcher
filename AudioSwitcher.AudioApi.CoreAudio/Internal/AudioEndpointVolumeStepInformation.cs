@@ -43,7 +43,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public uint Step
         {
-            get { return _step; }
+            get
+            {
+                return _step;
+            }
         }
 
         /// <summary>
@@ -51,7 +54,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public uint StepCount
         {
-            get { return _stepCount; }
+            get
+            {
+                return _stepCount;
+            }
         }
     }
 }

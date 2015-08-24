@@ -43,7 +43,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             _audioMeterInformation = realInterface;
             Marshal.ThrowExceptionForHR(_audioMeterInformation.QueryHardwareSupport(out hardwareSupp));
-            _hardwareSupport = (EndpointHardwareSupport)hardwareSupp;
+            _hardwareSupport = (EndpointHardwareSupport) hardwareSupp;
             _channels = new AudioMeterInformationChannels(_audioMeterInformation);
         }
 
@@ -57,7 +57,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public AudioMeterInformationChannels PeakValues
         {
-            get { return _channels; }
+            get
+            {
+                return _channels;
+            }
         }
 
         /// <summary>
@@ -65,7 +68,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public EndpointHardwareSupport HardwareSupport
         {
-            get { return _hardwareSupport; }
+            get
+            {
+                return _hardwareSupport;
+            }
         }
 
         /// <summary>

@@ -52,7 +52,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _channels = new AudioEndpointVolumeChannels(_audioEndPointVolume);
             _stepInformation = new AudioEndpointVolumeStepInformation(_audioEndPointVolume);
             Marshal.ThrowExceptionForHR(_audioEndPointVolume.QueryHardwareSupport(out hardwareSupp));
-            _hardwareSupport = (EndpointHardwareSupport)hardwareSupp;
+            _hardwareSupport = (EndpointHardwareSupport) hardwareSupp;
             _volumeRange = new AudioEndpointVolumeVolumeRange(_audioEndPointVolume);
 
             _callBack = new AudioEndpointVolumeCallback(this);
@@ -64,7 +64,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public AudioEndpointVolumeVolumeRange VolumeRange
         {
-            get { return _volumeRange; }
+            get
+            {
+                return _volumeRange;
+            }
         }
 
         /// <summary>
@@ -72,7 +75,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public EndpointHardwareSupport HardwareSupport
         {
-            get { return _hardwareSupport; }
+            get
+            {
+                return _hardwareSupport;
+            }
         }
 
         /// <summary>
@@ -80,7 +86,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public AudioEndpointVolumeStepInformation StepInformation
         {
-            get { return _stepInformation; }
+            get
+            {
+                return _stepInformation;
+            }
         }
 
         /// <summary>
@@ -88,7 +97,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public AudioEndpointVolumeChannels Channels
         {
-            get { return _channels; }
+            get
+            {
+                return _channels;
+            }
         }
 
         /// <summary>
@@ -107,7 +119,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
             set
             {
-                ComThread.Invoke(() => Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMasterVolumeLevel(value, Guid.Empty)));
+                ComThread.Invoke(
+                    () => Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMasterVolumeLevel(value, Guid.Empty)));
             }
         }
 
@@ -127,7 +140,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
             set
             {
-                ComThread.Invoke(() => Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMasterVolumeLevelScalar(value, Guid.Empty)));
+                ComThread.Invoke(
+                    () =>
+                        Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMasterVolumeLevelScalar(value, Guid.Empty)));
             }
         }
 

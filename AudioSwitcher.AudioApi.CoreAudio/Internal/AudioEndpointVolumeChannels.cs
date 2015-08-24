@@ -70,10 +70,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return ComThread.Invoke(() =>
-                {
-                    return _channels[index];
-                });
+                return ComThread.Invoke(() => { return _channels[index]; });
             }
         }
     }

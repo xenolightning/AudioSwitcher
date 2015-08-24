@@ -10,12 +10,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 
         private static bool InvokeRequired
         {
-            get { return Thread.CurrentThread.ManagedThreadId != Scheduler.ThreadId; }
+            get
+            {
+                return Thread.CurrentThread.ManagedThreadId != Scheduler.ThreadId;
+            }
         }
 
         private static ComTaskScheduler Scheduler
         {
-            get { return COM_SCHEDULER; }
+            get
+            {
+                return COM_SCHEDULER;
+            }
         }
 
         /// <summary>
@@ -25,7 +31,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
         public static void Assert()
         {
             if (InvokeRequired)
-                throw new InvalidThreadException(string.Format("This operation must be run on the ComThread ThreadId: {0}", Scheduler.ThreadId));
+                throw new InvalidThreadException(
+                    string.Format("This operation must be run on the ComThread ThreadId: {0}", Scheduler.ThreadId));
         }
 
         public static void Invoke(Action action)

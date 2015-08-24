@@ -29,6 +29,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return _audioMeterInformation;
             }
         }
+
         /// <summary>
         /// Audio Endpoint Volume
         /// </summary>
@@ -50,7 +51,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //Don't try to load properties for a device that doesn't exist
             if (State == DeviceState.NotPresent)
                 return;
-            
+
             _properties.TryLoadFrom(device);
         }
 

@@ -45,7 +45,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public float MinDecibels
         {
-            get { return _volumeMindB; }
+            get
+            {
+                return _volumeMindB;
+            }
         }
 
         /// <summary>
@@ -53,7 +56,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public float MaxDecibels
         {
-            get { return _volumeMaxdB; }
+            get
+            {
+                return _volumeMaxdB;
+            }
         }
 
         /// <summary>
@@ -61,7 +67,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public float IncrementDecibels
         {
-            get { return _volumeIncrementdB; }
+            get
+            {
+                return _volumeIncrementdB;
+            }
         }
     }
 }

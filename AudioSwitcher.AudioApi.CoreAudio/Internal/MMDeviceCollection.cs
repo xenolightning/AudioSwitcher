@@ -79,7 +79,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     uint result;
                     Marshal.ThrowExceptionForHR(_mmDeviceCollection.GetCount(out result));
                     return Convert.ToInt32(result);
-
                 });
             }
         }

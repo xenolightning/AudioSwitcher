@@ -3,7 +3,8 @@ using System.Diagnostics;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    public delegate void UnregisterCallback<TEventArgs>(EventHandler<TEventArgs> eventHandler) where TEventArgs : EventArgs;
+    public delegate void UnregisterCallback<TEventArgs>(EventHandler<TEventArgs> eventHandler)
+        where TEventArgs : EventArgs;
 
     public interface IWeakEventHandler<TEventArgs>
         where TEventArgs : EventArgs
@@ -27,8 +28,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         public WeakEventHandler(EventHandler<TEventArgs> eventHandler, UnregisterCallback<TEventArgs> unregister)
         {
             _targetRef = new WeakReference(eventHandler.Target);
-            _openHandler = (OpenEventHandler)Delegate.CreateDelegate(typeof(OpenEventHandler),
-              null, eventHandler.Method);
+            _openHandler = (OpenEventHandler) Delegate.CreateDelegate(typeof (OpenEventHandler),
+                null, eventHandler.Method);
             _handler = Invoke;
             _unregister = unregister;
         }
@@ -36,7 +37,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         [DebuggerNonUserCode]
         public void Invoke(object sender, TEventArgs e)
         {
-            T target = (T)_targetRef.Target;
+            T target = (T) _targetRef.Target;
 
             if (target != null)
                 _openHandler.Invoke(target, sender, e);
@@ -50,7 +51,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         [DebuggerNonUserCode]
         public EventHandler<TEventArgs> Handler
         {
-            get { return _handler; }
+            get
+            {
+                return _handler;
+            }
         }
 
         [DebuggerNonUserCode]
@@ -62,7 +66,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
     public static class EventHandlerUtils
     {
-        public static EventHandler<TEventArgs> MakeWeak<TEventArgs>(this EventHandler<TEventArgs> eventHandler, UnregisterCallback<TEventArgs> unregister)
+        public static EventHandler<TEventArgs> MakeWeak<TEventArgs>(this EventHandler<TEventArgs> eventHandler,
+            UnregisterCallback<TEventArgs> unregister)
             where TEventArgs : EventArgs
         {
             if (eventHandler == null)
@@ -70,14 +75,16 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (eventHandler.Method.IsStatic || eventHandler.Target == null)
                 throw new ArgumentException("Only instance methods are supported.", "eventHandler");
 
-            var wehType = typeof(WeakEventHandler<,>).MakeGenericType(eventHandler.Method.DeclaringType, typeof(TEventArgs));
-            var wehConstructor = wehType.GetConstructor(new[] { typeof(EventHandler<TEventArgs>), typeof(UnregisterCallback<TEventArgs>) });
+            var wehType = typeof (WeakEventHandler<,>).MakeGenericType(eventHandler.Method.DeclaringType,
+                typeof (TEventArgs));
+            var wehConstructor =
+                wehType.GetConstructor(new[]
+                {typeof (EventHandler<TEventArgs>), typeof (UnregisterCallback<TEventArgs>)});
 
-            var weh = (IWeakEventHandler<TEventArgs>)wehConstructor.Invoke(
-              new object[] { eventHandler, unregister });
+            var weh = (IWeakEventHandler<TEventArgs>) wehConstructor.Invoke(
+                new object[] {eventHandler, unregister});
 
             return weh.Handler;
         }
     }
-
 }

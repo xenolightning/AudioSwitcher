@@ -161,7 +161,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public VarEnum DataType
         {
-            get { return (VarEnum) vt; }
+            get
+            {
+                return (VarEnum) vt;
+            }
         }
 
         /// <summary>

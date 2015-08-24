@@ -32,7 +32,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (!(obj is PropertyKey))
                 return false;
 
-            PropertyKey key = (PropertyKey)obj;
+            PropertyKey key = (PropertyKey) obj;
 
             return key.FormatId == this.FormatId && key.PropertyId == this.PropertyId;
         }
@@ -49,7 +49,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public override int GetHashCode()
         {
-            return this.FormatId.GetHashCode() * 17 + this.PropertyId.GetHashCode();
+            return this.FormatId.GetHashCode()*17 + this.PropertyId.GetHashCode();
         }
     }
 }

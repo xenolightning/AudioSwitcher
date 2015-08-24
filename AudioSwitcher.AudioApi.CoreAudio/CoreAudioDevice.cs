@@ -33,10 +33,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             controller.AudioDeviceChanged +=
                 new EventHandler<DeviceChangedEventArgs>(EnumeratorOnAudioDeviceChanged)
-                    .MakeWeak(x =>
-                    {
-                        controller.AudioDeviceChanged -= x;
-                    });
+                    .MakeWeak(x => { controller.AudioDeviceChanged -= x; });
         }
 
         private void LoadProperties(IMMDevice device)
@@ -177,12 +174,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public override DeviceState State
         {
-            get { return _state.AsDeviceState(); }
+            get
+            {
+                return _state.AsDeviceState();
+            }
         }
 
         public override DeviceType DeviceType
         {
-            get { return _dataFlow.AsDeviceType(); }
+            get
+            {
+                return _dataFlow.AsDeviceType();
+            }
         }
 
         public override bool IsMuted
@@ -206,7 +209,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (AudioEndpointVolume == null)
                     return -1;
 
-                return (int)Math.Round(AudioEndpointVolume.MasterVolumeLevelScalar * 100, 0);
+                return (int) Math.Round(AudioEndpointVolume.MasterVolumeLevelScalar*100, 0);
             }
             set
             {
@@ -215,7 +218,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 else if (value > 100)
                     value = 100;
 
-                float val = (float)value / 100;
+                float val = (float) value/100;
 
                 if (AudioEndpointVolume == null)
                     return;
@@ -251,14 +254,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void HandlePropertyChanged(DevicePropertyChangedEventArgs propertyChangedEvent)
         {
-            ComThread.BeginInvoke(() =>
-            {
-                LoadProperties(_device);
-            })
-            .ContinueWith(x =>
-            {
-                OnPropertyChanged(propertyChangedEvent.PropertyName);
-            });
+            ComThread.BeginInvoke(() => { LoadProperties(_device); })
+                .ContinueWith(x => { OnPropertyChanged(propertyChangedEvent.PropertyName); });
         }
 
         private void HandleStateChanged(DeviceStateChangedEventArgs stateChangedEvent)
@@ -273,10 +270,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void ReloadAudioMeterInformation(IMMDevice device)
         {
-            ComThread.BeginInvoke(() =>
-            {
-                LoadAudioMeterInformation(device);
-            });
+            ComThread.BeginInvoke(() => { LoadAudioMeterInformation(device); });
         }
 
         private void ReloadAudioEndpointVolume(IMMDevice device)
@@ -342,6 +336,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
-
     }
 }

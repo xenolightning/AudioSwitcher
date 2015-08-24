@@ -28,6 +28,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <param name="pwstrDeviceId"></param>
         /// <param name="key"></param>
         void OnPropertyValueChanged(string pwstrDeviceId, PropertyKey key);
-
     }
 }

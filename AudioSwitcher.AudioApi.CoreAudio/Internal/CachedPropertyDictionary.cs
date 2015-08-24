@@ -9,7 +9,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     internal class CachedPropertyDictionary : IPropertyDictionary
     {
         private Dictionary<PropertyKey, object> _properties;
-        IPropertyStore _propertyStoreInteface = null;
+        private IPropertyStore _propertyStoreInteface = null;
 
         public CachedPropertyDictionary()
         {
@@ -38,7 +38,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //This tries to open in write mode if available
             try
             {
-                Marshal.ThrowExceptionForHR(device.OpenPropertyStore(StorageAccessMode.ReadWrite, out _propertyStoreInteface));
+                Marshal.ThrowExceptionForHR(device.OpenPropertyStore(StorageAccessMode.ReadWrite,
+                    out _propertyStoreInteface));
                 Mode = AccessMode.ReadWrite;
             }
             catch
@@ -76,15 +77,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return properties;
         }
 
-        public AccessMode Mode
-        {
-            get;
-            private set;
-        }
+        public AccessMode Mode { get; private set; }
 
         public int Count
         {
-            get { return _properties == null ? 0 : _properties.Count; }
+            get
+            {
+                return _properties == null ? 0 : _properties.Count;
+            }
         }
 
         public object this[PropertyKey key]
@@ -131,10 +131,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         public void Dispose()
         {
             _properties = null;
-            ComThread.BeginInvoke(() =>
-            {
-                _propertyStoreInteface = null;
-            });
+            ComThread.BeginInvoke(() => { _propertyStoreInteface = null; });
         }
     }
 }

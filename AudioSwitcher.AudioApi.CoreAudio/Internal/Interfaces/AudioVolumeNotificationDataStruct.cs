@@ -47,6 +47,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
             nChannels = 0;
             ChannelVolume = 0;
         }
-
     }
 }

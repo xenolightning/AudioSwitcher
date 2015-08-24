@@ -4,8 +4,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public static class LockExtensions
     {
-
-
         public static bool AcquireWriteLockNonReEntrant(this ReaderWriterLockSlim @lock)
         {
             //Lock is already held, so signal that the caller should not release the lock
@@ -27,6 +25,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             return true;
         }
-
     }
 }

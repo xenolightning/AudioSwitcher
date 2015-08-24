@@ -27,6 +27,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         int RegisterEndpointNotificationCallback([In] [MarshalAs(UnmanagedType.Interface)] IMMNotificationClient client);
 
         [PreserveSig]
-        int UnregisterEndpointNotificationCallback([In] [MarshalAs(UnmanagedType.Interface)] IMMNotificationClient client);
+        int UnregisterEndpointNotificationCallback(
+            [In] [MarshalAs(UnmanagedType.Interface)] IMMNotificationClient client);
     }
 }

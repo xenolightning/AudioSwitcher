@@ -56,7 +56,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public Guid EventContext
         {
-            get { return _eventContext; }
+            get
+            {
+                return _eventContext;
+            }
         }
 
         /// <summary>
@@ -64,7 +67,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public bool Muted
         {
-            get { return _muted; }
+            get
+            {
+                return _muted;
+            }
         }
 
         /// <summary>
@@ -72,7 +78,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public float MasterVolume
         {
-            get { return _masterVolume; }
+            get
+            {
+                return _masterVolume;
+            }
         }
 
         /// <summary>
@@ -80,7 +89,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public int Channels
         {
-            get { return _channels; }
+            get
+            {
+                return _channels;
+            }
         }
 
         /// <summary>
@@ -88,7 +100,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public float[] ChannelVolume
         {
-            get { return _channelVolume; }
+            get
+            {
+                return _channelVolume;
+            }
         }
     }
 }
