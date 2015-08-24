@@ -10,8 +10,7 @@ namespace AudioSwitcher.AudioApi.Hooking
     {
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = false)]
         [return: MarshalAs(UnmanagedType.U4)]
-        public delegate int DGetDefaultAudioEndpoint(
-            IMMDeviceEnumerator self, DataFlow dataFlow, Role role, out IntPtr ppEndpoint);
+        public delegate int DGetDefaultAudioEndpoint(IMMDeviceEnumerator self, DataFlow dataFlow, Role role, out IntPtr ppEndpoint);
 
         public readonly RemoteInterface Interface;
 
@@ -22,14 +21,25 @@ namespace AudioSwitcher.AudioApi.Hooking
 
         public void Run(RemoteHooking.IContext inContext, string inChannelName)
         {
+            try
+            {
+                //Create the DefaultDevice Hook
+                var cci = new ComClassQuery.ComClassInfo(typeof(MMDeviceEnumeratorComObject), typeof(IMMDeviceEnumerator), "GetDefaultAudioEndpoint");
+                ComClassQuery.Query(cci);
 
-            //Create the DefaultDevice Hook
-            var cci = new ComClassQuery.ComClassInfo(typeof(MMDeviceEnumeratorComObject),
-                typeof(IMMDeviceEnumerator), "GetDefaultAudioEndpoint");
-            ComClassQuery.Query(cci);
+                var hook = LocalHook.Create(cci.FunctionPointer, new DGetDefaultAudioEndpoint(GetDefaultAudioEndpoint),
+                    this);
+                hook.ThreadACL.SetExclusiveACL(new[] { 1 });
 
-            var hook = LocalHook.Create(cci.FunctionPointer, new DGetDefaultAudioEndpoint(GetDefaultAudioEndpoint), this);
-            hook.ThreadACL.SetExclusiveACL(new[] { 1 });
+            }
+            catch (Exception e)
+            {
+                ReportError(Interface, e);
+            }
+
+            //Signal the hook installed, and get the response from the server
+            if (!Interface.HookInstalled())
+                return;
 
             try
             {
@@ -40,12 +50,10 @@ namespace AudioSwitcher.AudioApi.Hooking
             }
             catch (Exception e)
             {
-                Interface.ReportError(RemoteHooking.GetCurrentProcessId(), e);
+                ReportError(Interface, e);
             }
-            finally
-            {
-                hook.Dispose();
-            }
+
+            Interface.HookUninstalled();
         }
 
         private static int GetDefaultAudioEndpoint(IMMDeviceEnumerator self, DataFlow dataflow, Role role,
@@ -65,9 +73,22 @@ namespace AudioSwitcher.AudioApi.Hooking
             }
             catch (Exception ex)
             {
+                ReportError(remoteInterface, ex);
+            }
+
+            //Something failed so return the actual default device
+            return self.GetDefaultAudioEndpoint(dataflow, role, out ppendpoint);
+        }
+
+        private static void ReportError(RemoteInterface remoteInterface, Exception ex)
+        {
+            try
+            {
                 remoteInterface.ReportError(RemoteHooking.GetCurrentProcessId(), ex);
-                //Something failed so return the actual default device
-                return self.GetDefaultAudioEndpoint(dataflow, role, out ppendpoint);
+            }
+            catch
+            {
+                // ignored
             }
         }
     }

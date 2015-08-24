@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Ipc;
+using System.Threading;
 using AudioSwitcher.AudioApi.Hooking.ComObjects;
 using EasyHook;
 
@@ -9,20 +12,23 @@ namespace AudioSwitcher.AudioApi.Hooking
     {
         public delegate void OnErrorHandler(int processId, Exception exception);
 
-        private readonly int _processId;
         private readonly Func<DataFlow, Role, string> _systemDeviceId;
         private string _channelName;
+        private IpcServerChannel _ipcChannel;
+        private Timer _hookIsLiveTimer;
+        private RemoteInterface _interface;
+        private int _lastMessageCount;
 
-        public DefaultDeviceHook(int processId, Func<DataFlow, Role, string> systemDeviceId)
-        {
-            _processId = processId;
-            _systemDeviceId = systemDeviceId;
-        }
-
-        public bool IsHooked
+        public EHookStatus Status
         {
             get;
             private set;
+        }
+
+        public DefaultDeviceHook(Func<DataFlow, Role, string> systemDeviceId)
+        {
+            _systemDeviceId = systemDeviceId;
+            Status = EHookStatus.Inactive;
         }
 
         public void Dispose()
@@ -30,40 +36,65 @@ namespace AudioSwitcher.AudioApi.Hooking
             UnHook();
         }
 
-        public void Hook()
+        public void Hook(int processId)
         {
-            if (IsHooked)
+            if (Status == EHookStatus.Active || Status == EHookStatus.Pending)
                 return;
 
-            var ri = new RemoteInterface
-            {
-                //Wrap the target delegate in our own delegate for reference safety
-                SystemId = (x, y) => _systemDeviceId(x, y),
-                Unload = () =>
-                {
-                    return !IsHooked;
-                },
-                ErrorHandler = RaiseOnError
-            };
+            Status = EHookStatus.Pending;
 
-            RemoteHooking.IpcCreateServer(ref _channelName, WellKnownObjectMode.Singleton, ri);
+            _interface = new RemoteInterface
+            (
+                (x, y) => _systemDeviceId(x, y),
+                () => Status == EHookStatus.Inactive,
+                () => Status = EHookStatus.Active,
+                UnHook,
+                RaiseOnError
+            );
+
+            _ipcChannel = RemoteHooking.IpcCreateServer(ref _channelName, WellKnownObjectMode.Singleton, _interface);
 
             RemoteHooking.Inject(
-                _processId,
+                processId,
                 InjectionOptions.DoNotRequireStrongName,
                 typeof(IMMDeviceEnumerator).Assembly.Location,
                 typeof(IMMDeviceEnumerator).Assembly.Location,
                 _channelName);
 
-            IsHooked = true;
+            _hookIsLiveTimer = new Timer(HookIsLive, null, 0, 2000);
+            _lastMessageCount = -1;
+        }
+
+        private void HookIsLive(object state)
+        {
+            var messageCount = _interface.MessageCount;
+
+            if (_interface.MessageCount > _lastMessageCount)
+                _lastMessageCount = messageCount;
+            else
+                UnHook();
+
         }
 
         public void UnHook()
         {
-            if (!IsHooked)
+            if (Status == EHookStatus.Inactive)
                 return;
 
-            IsHooked = false;
+            if (_hookIsLiveTimer != null)
+            {
+                _hookIsLiveTimer.Dispose();
+                _hookIsLiveTimer = null;
+            }
+
+            if (_ipcChannel != null)
+            {
+                ChannelServices.UnregisterChannel(_ipcChannel);
+                _ipcChannel.StopListening(null);
+                _ipcChannel = null;
+            }
+
+            Status = EHookStatus.Inactive;
         }
 
         public event OnErrorHandler OnError;

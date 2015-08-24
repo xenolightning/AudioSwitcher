@@ -3,46 +3,86 @@ using AudioSwitcher.AudioApi.Hooking.ComObjects;
 
 namespace AudioSwitcher.AudioApi.Hooking
 {
-    public class RemoteInterface : MarshalByRefObject, IRemoteHook
+    public class RemoteInterface : MarshalByRefObject
     {
-        public Func<DataFlow, Role, string> SystemId
+        private readonly Func<DataFlow, Role, string> _systemId;
+        private readonly Func<bool> _canUnload;
+        private readonly Action _hookInstalled;
+        private readonly Action _hookUninstalled;
+        private readonly Action<int, Exception> _errorHandler;
+        private int _messageCount;
+
+        public int MessageCount
         {
-            get;
-            set;
+            get
+            {
+                return _messageCount;
+            }
         }
 
-        public Func<bool> Unload
+        public RemoteInterface(
+            Func<DataFlow, Role, string> systemId,
+            Func<bool> canUnload,
+            Action hookInstalled,
+            Action hookUninstalled,
+            Action<int, Exception> errorHandler
+            )
         {
-            get;
-            set;
-        }
+            if (systemId == null) throw new ArgumentNullException("systemId");
+            if (canUnload == null) throw new ArgumentNullException("canUnload");
 
-        public Action<int, Exception> ErrorHandler
-        {
-            get;
-            set;
+            _systemId = systemId;
+            _canUnload = canUnload;
+            _hookInstalled = hookInstalled;
+            _hookUninstalled = hookUninstalled;
+            _errorHandler = errorHandler;
+            _messageCount = 0;
         }
 
         public bool CanUnload()
         {
-            if (Unload == null)
+            System.Threading.Interlocked.Increment(ref _messageCount);
+
+            if (_canUnload == null)
                 return true;
 
-            return Unload();
+            return _canUnload();
+        }
+
+        public bool HookInstalled()
+        {
+            System.Threading.Interlocked.Increment(ref _messageCount);
+
+            if (_hookInstalled != null)
+                _hookInstalled();
+
+            return true;
+        }
+
+        public void HookUninstalled()
+        {
+            System.Threading.Interlocked.Increment(ref _messageCount);
+
+            if (_hookUninstalled != null)
+                _hookUninstalled();
         }
 
         public void ReportError(int processId, Exception e)
         {
-            if (ErrorHandler != null)
-                ErrorHandler(processId, e);
+            System.Threading.Interlocked.Increment(ref _messageCount);
+
+            if (_errorHandler != null)
+                _errorHandler(processId, e);
         }
 
         public string GetDefaultDevice(DataFlow dataFlow, Role role)
         {
-            if (SystemId == null)
-                return String.Empty;
+            System.Threading.Interlocked.Increment(ref _messageCount);
 
-            return SystemId(dataFlow, role);
+            if (_systemId == null)
+                return null;
+
+            return _systemId(dataFlow, role);
         }
     }
 }

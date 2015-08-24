@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
@@ -18,6 +19,7 @@ namespace HookingSample
         private DefaultDeviceHook _hook;
         private Process _selectedProcess;
         private CoreAudioDevice _selectedAudioDevice;
+        private Timer _hookCheckTimer;
 
         public ObservableCollection<Process> Processes
         {
@@ -86,6 +88,14 @@ namespace HookingSample
             Controller = new CoreAudioController();
 
             DataContext = this;
+
+            _hookCheckTimer = new Timer(CheckHook, null, 0, 1000);
+        }
+
+        private void CheckHook(object state)
+        {
+            if (Hook != null && Hook.Status == EHookStatus.Inactive)
+                UnHook();
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -122,11 +132,10 @@ namespace HookingSample
 
             var sId = SelectedAudioDevice.RealId;
 
-            Hook = new DefaultDeviceHook(SelectedProcess.Id, (dataFlow, role) =>
-            {
-                return sId;
-            });
-            Hook.Hook();
+            Hook = new DefaultDeviceHook((dataFlow, role) => sId);
+
+            Hook.Hook(SelectedProcess.Id);
+
             Controller.SetDefaultDevice(Controller.DefaultPlaybackDevice);
         }
 

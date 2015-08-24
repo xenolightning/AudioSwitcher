@@ -2,8 +2,17 @@ namespace AudioSwitcher.AudioApi.Hooking
 {
     public interface IHook
     {
-        void Hook();
+        EHookStatus Status { get; }
+
+        void Hook(int processId);
 
         void UnHook();
+    }
+
+    public enum EHookStatus
+    {
+        Inactive,
+        Pending,
+        Active
     }
 }

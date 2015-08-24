@@ -62,7 +62,6 @@
     <Compile Include="DefaultDeviceHook.cs" />
     <Compile Include="EntryPoint.cs" />
     <Compile Include="IHook.cs" />
-    <Compile Include="IRemoteHook.cs" />
     <Compile Include="KERNEL32.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteInterface.cs" />
