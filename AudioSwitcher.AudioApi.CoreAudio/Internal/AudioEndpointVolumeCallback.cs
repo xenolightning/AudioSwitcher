@@ -62,20 +62,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             var firstFloatPtr = (IntPtr) ((long) notifyData + (long) offset);
 
             //Something weird happened, better to ignore it and move on
-            if (data.nChannels > 100)
+            if (data.Channels > 100)
                 return 0;
 
-            var voldata = new float[data.nChannels];
+            var voldata = new float[data.Channels];
 
             //Read all floats from memory.
-            for (int i = 0; i < data.nChannels; i++)
+            for (int i = 0; i < data.Channels; i++)
             {
                 voldata[i] = (float) Marshal.PtrToStructure(firstFloatPtr, typeof (float));
             }
 
             //Create combined structure and Fire Event in parent class.
-            var notificationData = new AudioVolumeNotificationData(data.guidEventContext, data.bMuted,
-                data.fMasterVolume, voldata);
+            var notificationData = new AudioVolumeNotificationData(data.EventContext, data.Muted,
+                data.MasterVolume, voldata);
 
             var p = _handler.Target as AudioEndpointVolume;
 

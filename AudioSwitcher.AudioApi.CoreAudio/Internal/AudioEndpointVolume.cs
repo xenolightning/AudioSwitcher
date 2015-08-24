@@ -27,9 +27,9 @@ using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    /// <summary>
-    ///     Audio Endpoint Volume
-    /// </summary>
+
+    internal delegate void AudioEndpointVolumeNotificationDelegate(AudioVolumeNotificationData data);
+
     internal class AudioEndpointVolume : IDisposable
     {
         private IAudioEndpointVolume _audioEndPointVolume;
@@ -189,7 +189,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         internal void FireNotification(AudioVolumeNotificationData notificationData)
         {
-            AudioEndpointVolumeNotificationDelegate del = OnVolumeNotification;
+            var del = OnVolumeNotification;
             if (del != null)
             {
                 del(notificationData);

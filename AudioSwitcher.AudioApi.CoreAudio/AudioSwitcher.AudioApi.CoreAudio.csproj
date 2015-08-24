@@ -48,7 +48,6 @@
     <Compile Include="Internal\AudioEndpointVolumeCallback.cs" />
     <Compile Include="Internal\AudioEndpointVolumeChannel.cs" />
     <Compile Include="Internal\AudioEndpointVolumeChannels.cs" />
-    <Compile Include="Internal\AudioEndpointVolumeNotificationDelegate.cs" />
     <Compile Include="Internal\AudioEndpointVolumeStepInformation.cs" />
     <Compile Include="Internal\AudioEndpointVolumeVolumeRange.cs" />
     <Compile Include="Internal\AudioMeterInformation.cs" />
