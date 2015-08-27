@@ -65,7 +65,7 @@
     </Compile>
     <Compile Include="Session\IAudioSession.cs" />
     <Compile Include="Session\IAudioSessionEndpoint.cs" />
-    <Compile Include="Session\IAudioSessionManager.cs" />
+    <Compile Include="Session\IAudioSessionController.cs" />
     <Compile Include="Sandbox\SandboxAudioController.cs" />
     <Compile Include="Sandbox\SandboxDevice.cs" />
     <Compile Include="IDevice.cs" />
@@ -77,7 +77,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="api.pfx" />
-    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

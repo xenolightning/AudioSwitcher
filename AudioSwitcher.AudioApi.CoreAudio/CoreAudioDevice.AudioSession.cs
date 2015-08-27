@@ -8,6 +8,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public partial class CoreAudioDevice : IAudioSessionEndpoint
     {
-        public IAudioSessionManager SessionManager { get; private set; }
+        public IAudioSessionController SessionController { get; private set; }
     }
 }

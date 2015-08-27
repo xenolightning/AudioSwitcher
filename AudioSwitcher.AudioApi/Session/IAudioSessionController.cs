@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi.Session
 {
-    public interface IAudioSessionManager
+    public interface IAudioSessionController
     {
         IEnumerable<IAudioSession> All();
         Task<IEnumerable<IAudioSession>> AllAsync();

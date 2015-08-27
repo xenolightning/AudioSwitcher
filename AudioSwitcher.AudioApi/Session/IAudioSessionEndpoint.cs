@@ -2,6 +2,6 @@
 {
     public interface IAudioSessionEndpoint
     {
-        IAudioSessionManager SessionManager { get; }
+        IAudioSessionController SessionController { get; }
     }
 }
