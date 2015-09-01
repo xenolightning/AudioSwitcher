@@ -4,7 +4,7 @@ namespace AudioSwitcher.AudioApi.Session
 {
     public interface IAudioSession
     {
-        Guid SessionId { get; }
+        string SessionId { get; }
 
         int ProcessId { get; }
 

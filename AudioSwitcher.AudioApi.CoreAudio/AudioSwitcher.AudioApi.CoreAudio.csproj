@@ -42,6 +42,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CoreAudioSession.cs" />
     <Compile Include="CoreAudioSessionController.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Internal\EAudioSessionDisconnectReason.cs" />

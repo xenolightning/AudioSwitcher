@@ -176,7 +176,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 engine.Execute("Dynamic = require('Dynamic');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
 
-                var result = engine.Evaluate<string>("Dynamic.MethodFunc()");
+                var result = engine.Evaluate<string>("(Dynamic.MethodFunc())()");
 
                 Assert.NotNull(result.ExecutionException);
                 //Assert.Equal(testLib.MethodFunc()(), result.Value);
