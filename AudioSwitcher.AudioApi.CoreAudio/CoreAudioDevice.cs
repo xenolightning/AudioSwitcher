@@ -30,6 +30,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             ReloadAudioMeterInformation(device);
             ReloadAudioEndpointVolume(device);
+            ReloadAudioSessionController(device);
 
             controller.AudioDeviceChanged +=
                 new EventHandler<DeviceChangedEventArgs>(EnumeratorOnAudioDeviceChanged)
@@ -209,7 +210,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (AudioEndpointVolume == null)
                     return -1;
 
-                return (int) Math.Round(AudioEndpointVolume.MasterVolumeLevelScalar*100, 0);
+                return (int)Math.Round(AudioEndpointVolume.MasterVolumeLevelScalar * 100, 0);
             }
             set
             {
@@ -218,7 +219,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 else if (value > 100)
                     value = 100;
 
-                float val = (float) value/100;
+                float val = (float)value / 100;
 
                 if (AudioEndpointVolume == null)
                     return;
@@ -271,6 +272,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private void ReloadAudioMeterInformation(IMMDevice device)
         {
             ComThread.BeginInvoke(() => { LoadAudioMeterInformation(device); });
+        }
+
+        private void ReloadAudioSessionController(IMMDevice device)
+        {
+            ComThread.BeginInvoke(() =>
+            {
+                LoadAudioSessionController(device);
+            });
         }
 
         private void ReloadAudioEndpointVolume(IMMDevice device)

@@ -44,7 +44,7 @@ namespace AudioSwitcher.Scripting.JavaScript
             InternalEngine = new ScriptEngine();
             InternalEngine.EnableExposedClrTypes = true;
 
-            InternalEngine.SetGlobalFunction("lib", new Func<string, ObjectInstance>(ImportLibrary));
+            InternalEngine.SetGlobalFunction("require", new Func<string, ObjectInstance>(ImportLibrary));
             SetOutput(new NullScriptOutput());
         }
 

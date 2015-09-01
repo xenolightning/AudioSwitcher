@@ -18,7 +18,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
             using (var engine = new JsEngine())
             {
                 engine.AddCoreLibrary();
-                engine.Execute("Core = lib('AudioSwitcher');");
+                engine.Execute("Core = require('AudioSwitcher');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Core"));
             }
         }
@@ -29,7 +29,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
             using (var engine = new JsEngine())
             {
                 engine.AddCoreLibrary();
-                engine.Execute("Core = lib('Core');");
+                engine.Execute("Core = require('Core');");
                 engine.Execute("Core.sleep(100)");
             }
         }

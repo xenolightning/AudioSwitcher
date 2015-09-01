@@ -2,6 +2,9 @@
 {
     public interface IAudioSessionEndpoint
     {
+
+        bool IsSupported { get; }
+
         IAudioSessionController SessionController { get; }
     }
 }

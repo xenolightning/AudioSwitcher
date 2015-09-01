@@ -38,8 +38,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //This tries to open in write mode if available
             try
             {
-                Marshal.ThrowExceptionForHR(device.OpenPropertyStore(StorageAccessMode.ReadWrite,
-                    out _propertyStoreInteface));
+                device.OpenPropertyStore(StorageAccessMode.ReadWrite, out _propertyStoreInteface);
                 Mode = AccessMode.ReadWrite;
             }
             catch

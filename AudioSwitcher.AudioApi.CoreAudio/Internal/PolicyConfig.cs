@@ -21,15 +21,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
                 if (policyConfigX != null)
                 {
-                    Marshal.ThrowExceptionForHR(policyConfigX.SetDefaultEndpoint(devId, eRole));
+                    policyConfigX.SetDefaultEndpoint(devId, eRole);
                 }
                 else if (policyConfig7 != null)
                 {
-                    Marshal.ThrowExceptionForHR(policyConfig7.SetDefaultEndpoint(devId, eRole));
+                    policyConfig7.SetDefaultEndpoint(devId, eRole);
                 }
                 else if (policyConfigVista != null)
                 {
-                    Marshal.ThrowExceptionForHR(policyConfigVista.SetDefaultEndpoint(devId, eRole));
+                    policyConfigVista.SetDefaultEndpoint(devId, eRole);
                 }
             }
             finally

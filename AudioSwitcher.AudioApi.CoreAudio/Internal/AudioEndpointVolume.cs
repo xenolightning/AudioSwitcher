@@ -52,7 +52,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _channels = new AudioEndpointVolumeChannels(_audioEndPointVolume);
             _stepInformation = new AudioEndpointVolumeStepInformation(_audioEndPointVolume);
             Marshal.ThrowExceptionForHR(_audioEndPointVolume.QueryHardwareSupport(out hardwareSupp));
-            _hardwareSupport = (EndpointHardwareSupport) hardwareSupp;
+            _hardwareSupport = (EndpointHardwareSupport)hardwareSupp;
             _volumeRange = new AudioEndpointVolumeVolumeRange(_audioEndPointVolume);
 
             _callBack = new AudioEndpointVolumeCallback(this);
@@ -205,7 +205,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 ComThread.BeginInvoke(() =>
                 {
-                    _audioEndPointVolume.UnregisterControlChangeNotify(_callBack);
+                    if (_audioEndPointVolume != null)
+                        _audioEndPointVolume.UnregisterControlChangeNotify(_callBack);
+
                     _callBack = null;
                     _audioEndPointVolume = null;
                 });

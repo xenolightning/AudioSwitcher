@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    internal sealed class MMNotificationClient : IMMNotificationClient
+    internal sealed class MMNotificationClient : IMMNotificationClient, IDisposable
     {
         private readonly WeakReference _innerClient;
 
@@ -53,6 +54,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return _innerClient.Target as ISystemAudioEventClient;
 
             return null;
+        }
+
+
+        public void Dispose()
+        {
+            Marshal.ReleaseComObject(this);
         }
     }
 }

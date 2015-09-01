@@ -1,6 +1,6 @@
-﻿AudioSwitcher = lib('AudioSwitcher');
+﻿AudioSwitcher = require('AudioSwitcher');
 _ = AudioSwitcher;
-Core = lib('Core');
+Core = require('Core');
 
 var devices;
 
