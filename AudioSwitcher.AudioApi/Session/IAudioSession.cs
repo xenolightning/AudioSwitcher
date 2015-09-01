@@ -6,9 +6,9 @@ namespace AudioSwitcher.AudioApi.Session
     {
         string SessionId { get; }
 
-        int ProcessId { get; }
+        uint ProcessId { get; }
 
-        int ProcessName { get; }
+        string DisplayName { get; }
 
         bool IsSystemSession { get; }
 

@@ -44,6 +44,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     SessionController = new CoreAudioSessionController(_audioSessionManager);
                     IsSupported = true;
+
+                    var wut = SessionController.All();
                 }
             }
             catch (Exception)
