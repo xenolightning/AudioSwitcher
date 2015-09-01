@@ -1,90 +1,142 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
+using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Session;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
     internal class CoreAudioSessionController : IAudioSessionController, IAudioSessionNotification
     {
+        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+
         private readonly IAudioSessionManager2 _audioSessionManager2;
 
-        private readonly List<CoreAudioSession> _sessionCache;
+        private List<CoreAudioSession> _sessionCache;
 
         public CoreAudioSessionController(IAudioSessionManager2 audioSessionManager2)
         {
             if (audioSessionManager2 == null)
                 throw new ArgumentNullException("audioSessionManager2");
 
+            ComThread.Assert();
+
             _audioSessionManager2 = audioSessionManager2;
             _audioSessionManager2.RegisterSessionNotification(this);
 
+            RefreshSessions();
+        }
+
+        private void RefreshSessions()
+        {
             IAudioSessionEnumerator enumerator;
             _audioSessionManager2.GetSessionEnumerator(out enumerator);
 
             int count;
             enumerator.GetCount(out count);
 
-            _sessionCache = new List<CoreAudioSession>(count);
+            var acquiredLock = _lock.AcquireReadLockNonReEntrant();
 
-            for (int i = 0; i < count; i++)
+            try
             {
-                IAudioSessionControl session;
-                enumerator.GetSession(i, out session);
-                var asdf = session as IAudioSessionControl2;
-                var vol = session as ISimpleAudioVolume;
-                string asdfas;
-                asdf.GetSessionIdentifier(out asdfas);
-                string fair;
-                asdf.GetSessionInstanceIdentifier(out fair);
+                _sessionCache = new List<CoreAudioSession>(count);
 
-                float dsafdsafdsfdsafdsafdsafdsafdsa;
-                vol.GetMasterVolume(out dsafdsafdsfdsafdsafdsafdsafdsa);
+                for (var i = 0; i < count; i++)
+                {
+                    IAudioSessionControl session;
+                    enumerator.GetSession(i, out session);
+
+                    _sessionCache.Add(new CoreAudioSession(session));
+                }
             }
-
+            finally
+            {
+                if (acquiredLock)
+                    _lock.ExitReadLock();
+            }
         }
 
         public IEnumerable<IAudioSession> All()
         {
+            var acquiredLock = _lock.AcquireReadLockNonReEntrant();
 
-
-            throw new NotImplementedException();
+            try
+            {
+                return _sessionCache.ToList();
+            }
+            finally
+            {
+                if (acquiredLock)
+                    _lock.ExitReadLock();
+            }
         }
 
         public Task<IEnumerable<IAudioSession>> AllAsync()
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() => All());
         }
 
         public IEnumerable<IAudioSession> GetActiveSessions()
         {
-            throw new NotImplementedException();
+            var acquiredLock = _lock.AcquireReadLockNonReEntrant();
+
+            try
+            {
+                return _sessionCache.Where(x => x.SessionState == AudioSessionState.Active).ToList();
+            }
+            finally
+            {
+                if (acquiredLock)
+                    _lock.ExitReadLock();
+            }
         }
 
         public Task<IEnumerable<IAudioSession>> GetActiveSessionsAsync()
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() => GetActiveSessions());
         }
 
         public IEnumerable<IAudioSession> GetInactiveSessions()
         {
-            throw new NotImplementedException();
+            var acquiredLock = _lock.AcquireReadLockNonReEntrant();
+
+            try
+            {
+                return _sessionCache.Where(x => x.SessionState == AudioSessionState.Inactive).ToList();
+            }
+            finally
+            {
+                if (acquiredLock)
+                    _lock.ExitReadLock();
+            }
         }
 
         public Task<IEnumerable<IAudioSession>> GetInactiveSessionsAsync()
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() => GetInactiveSessions());
         }
 
         public IEnumerable<IAudioSession> GetExpiredSessions()
         {
-            throw new NotImplementedException();
+            var acquiredLock = _lock.AcquireReadLockNonReEntrant();
+
+            try
+            {
+                return _sessionCache.Where(x => x.SessionState == AudioSessionState.Expired).ToList();
+            }
+            finally
+            {
+                if (acquiredLock)
+                    _lock.ExitReadLock();
+            }
         }
 
         public Task<IEnumerable<IAudioSession>> GetExpiredSessionsAsync()
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(() => GetExpiredSessions());
         }
 
         public int OnSessionCreated(IAudioSessionControl sessionControl)

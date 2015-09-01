@@ -18,10 +18,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         public int Volume { get; set; }
         public AudioSessionState SessionState { get; private set; }
 
-        public CoreAudioSession(IAudioSessionControl2 control, ISimpleAudioVolume volume)
+        public CoreAudioSession(IAudioSessionControl control)
         {
-            _control = control;
-            _volume = volume;
+            _control = control as IAudioSessionControl2;
+            _volume = control as ISimpleAudioVolume;
         }
     }
 }

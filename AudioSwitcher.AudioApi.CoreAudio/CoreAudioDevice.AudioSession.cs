@@ -10,6 +10,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public partial class CoreAudioDevice : IAudioSessionEndpoint
     {
+
+        private IAudioSessionManager2 _audioSessionManager;
+
         public bool IsSupported
         {
             get;
@@ -36,8 +39,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 object result;
                 Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
 
-                SessionController = new CoreAudioSessionController(result as IAudioSessionManager2);
-                IsSupported = true;
+                _audioSessionManager = result as IAudioSessionManager2;
+                if (_audioSessionManager != null)
+                {
+                    SessionController = new CoreAudioSessionController(_audioSessionManager);
+                    IsSupported = true;
+                }
             }
             catch (Exception)
             {
