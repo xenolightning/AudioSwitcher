@@ -6,7 +6,7 @@ using AudioSwitcher.AudioApi.Session;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    internal class CoreAudioSession : IAudioSession
+    internal class CoreAudioSession : IAudioSession, IAudioSessionEvents
     {
         private readonly IAudioSessionControl2 _control;
         private readonly ISimpleAudioVolume _volume;
@@ -99,6 +99,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _control = control as IAudioSessionControl2;
             _volume = control as ISimpleAudioVolume;
 
+            _control.RegisterAudioSessionNotification(this);
+
             try
             {
                 if (ProcessId > 0)
@@ -111,6 +113,47 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 _fileDescription = "";
             }
+        }
+
+        public int OnDisplayNameChanged(string displayName, ref Guid eventContext)
+        {
+
+            return 0;
+        }
+
+        public int OnIconPathChanged(string iconPath, ref Guid eventContext)
+        {
+
+            return 0;
+        }
+
+        public int OnSimpleVolumeChanged(float volume, bool isMuted, ref Guid eventContext)
+        {
+
+            return 0;
+        }
+
+        public int OnChannelVolumeChanged(uint channelCount, IntPtr newVolumes, uint channelIndex, ref Guid eventContext)
+        {
+
+            return 0;
+        }
+
+        public int OnGroupingParamChanged(ref Guid groupingId, ref Guid eventContext)
+        {
+
+            return 0;
+        }
+
+        public int OnStateChanged(EAudioSessionState state)
+        {
+
+            return 0;
+        }
+
+        public int OnSessionDisconnected(EAudioSessionDisconnectReason disconnectReason)
+        {
+            return 0;
         }
     }
 }
