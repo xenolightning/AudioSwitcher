@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Session;
@@ -12,6 +10,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         private readonly IAudioSessionControl2 _control;
         private readonly ISimpleAudioVolume _volume;
+        private readonly string _fileDescription;
 
         public string SessionId
         {
@@ -47,7 +46,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     string display;
                     _control.GetDisplayName(out display);
-                    return display;
+                    return String.IsNullOrEmpty(display) ? _fileDescription : display;
                 });
             }
         }
@@ -102,6 +101,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             _control = control as IAudioSessionControl2;
             _volume = control as ISimpleAudioVolume;
+
+            try
+            {
+                if (ProcessId > 0)
+                {
+                    var proc = Process.GetProcessById((int)ProcessId);
+                    _fileDescription = proc.MainModule.FileVersionInfo.FileDescription;
+                }
+            }
+            catch
+            {
+                _fileDescription = "";
+            }
         }
     }
 }
