@@ -40,12 +40,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
 
                 _audioSessionManager = result as IAudioSessionManager2;
+
                 if (_audioSessionManager != null)
                 {
                     SessionController = new CoreAudioSessionController(_audioSessionManager);
                     IsSupported = true;
-
-                    var wut = SessionController.All();
                 }
             }
             catch (Exception)

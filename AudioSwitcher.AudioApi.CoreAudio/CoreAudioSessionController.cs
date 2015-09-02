@@ -35,13 +35,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             IAudioSessionEnumerator enumerator;
             _audioSessionManager2.GetSessionEnumerator(out enumerator);
 
-            int count;
-            enumerator.GetCount(out count);
-
             var acquiredLock = _lock.AcquireReadLockNonReEntrant();
 
             try
             {
+                int count;
+                enumerator.GetCount(out count);
+
                 _sessionCache = new List<CoreAudioSession>(count);
 
                 for (var i = 0; i < count; i++)
