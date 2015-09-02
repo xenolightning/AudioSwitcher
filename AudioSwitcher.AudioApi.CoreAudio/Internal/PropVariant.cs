@@ -138,17 +138,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public T[] GetBlobAsArrayOf<T>()
         {
-            int blobByteLength = blobVal.Length;
+            var blobByteLength = blobVal.Length;
             var singleInstance = (T) Activator.CreateInstance(typeof (T));
-            int structSize = Marshal.SizeOf(singleInstance);
+            var structSize = Marshal.SizeOf(singleInstance);
             if (blobByteLength%structSize != 0)
             {
                 throw new InvalidDataException(string.Format("Blob size {0} not a multiple of struct size {1}",
                     blobByteLength, structSize));
             }
-            int items = blobByteLength/structSize;
+            var items = blobByteLength/structSize;
             var array = new T[items];
-            for (int n = 0; n < items; n++)
+            for (var n = 0; n < items; n++)
             {
                 array[n] = (T) Activator.CreateInstance(typeof (T));
                 Marshal.PtrToStructure(new IntPtr((long) blobVal.Data + n*structSize), array[n]);
@@ -174,7 +174,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                VarEnum ve = DataType;
+                var ve = DataType;
                 switch (ve)
                 {
                     case VarEnum.VT_I1:

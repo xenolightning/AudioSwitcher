@@ -19,7 +19,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             Debug.WriteLine("Handles Before: " + originalHandles);
             var controller = CreateTestController();
 
-            for (int i = 0; i < 50; i++)
+            for (var i = 0; i < 50; i++)
             {
                 controller.GetDevices();
                 var isDefault = controller.DefaultPlaybackDevice.SetAsDefault();
@@ -45,7 +45,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             Debug.WriteLine("Handles Before: " + originalHandles);
             var controller = CreateTestController();
 
-            for (int i = 0; i < 50; i++)
+            for (var i = 0; i < 50; i++)
             {
                 await controller.GetCaptureDevicesAsync();
                 var isDefault = await controller.DefaultPlaybackDevice.SetAsDefaultAsync();

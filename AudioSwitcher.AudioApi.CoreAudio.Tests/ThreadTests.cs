@@ -20,7 +20,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             Debug.WriteLine("Handles Before: " + originalHandles);
             var controller = CreateTestController();
 
-            for (int i = 0; i < 50; i++)
+            for (var i = 0; i < 50; i++)
             {
                 controller.AudioDeviceChanged += (sender, args) =>
                 {
@@ -51,7 +51,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             var controller = CreateTestController();
             var tasks = new List<Task>();
 
-            for (int i = 0; i < 50; i++)
+            for (var i = 0; i < 50; i++)
             {
                 controller.AudioDeviceChanged += (sender, args) =>
                 {
@@ -85,7 +85,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
             foreach (var d in devices)
             {
-                bool isDefault = await d.SetAsDefaultAsync();
+                var isDefault = await d.SetAsDefaultAsync();
                 Assert.Equal(isDefault, d.IsDefaultDevice);
 
                 if (dev.Id != d.Id && isDefault)
@@ -109,7 +109,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
             foreach (var d in devices)
             {
-                bool isDefault = await d.SetAsDefaultAsync();
+                var isDefault = await d.SetAsDefaultAsync();
                 Assert.Equal(isDefault, d.IsDefaultDevice);
 
                 if (dev.Id != d.Id && isDefault)

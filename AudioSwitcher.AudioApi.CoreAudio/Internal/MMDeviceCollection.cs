@@ -50,7 +50,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <returns>Device enumerator</returns>
         public IEnumerator<IMMDevice> GetEnumerator()
         {
-            for (int index = 0; index < Count; index++)
+            for (var index = 0; index < Count; index++)
             {
                 yield return this[index];
             }

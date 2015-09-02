@@ -68,7 +68,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             var voldata = new float[data.Channels];
 
             //Read all floats from memory.
-            for (int i = 0; i < data.Channels; i++)
+            for (var i = 0; i < data.Channels; i++)
             {
                 voldata[i] = (float) Marshal.PtrToStructure(firstFloatPtr, typeof (float));
             }

@@ -28,7 +28,7 @@ namespace AudioSwitcher.CLI
             }
 
             //Process file name
-            string fName = args[args.Length - 1];
+            var fName = args[args.Length - 1];
             if (!fName.EndsWith(".js"))
             {
                 Console.WriteLine("Invalid input file");

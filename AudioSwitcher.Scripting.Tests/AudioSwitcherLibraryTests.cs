@@ -486,7 +486,7 @@ Assert.True(result.Success);
                 const string setTo10 = @"AudioSwitcher.getAudioDevices()[0].volume(10)";
                 const string getVolume = @"AudioSwitcher.getAudioDevices()[0].volume()";
                 var orignalVol = engine.Evaluate<int>(getVolume).Value;
-                string setToOriginal = @"AudioSwitcher.getAudioDevices()[0].volume(" + orignalVol + ")";
+                var setToOriginal = @"AudioSwitcher.getAudioDevices()[0].volume(" + orignalVol + ")";
 
                 Assert.Equal(10, engine.Evaluate<int>(setTo10).Value);
                 Assert.Equal(10, engine.Evaluate<int>(getVolume).Value);

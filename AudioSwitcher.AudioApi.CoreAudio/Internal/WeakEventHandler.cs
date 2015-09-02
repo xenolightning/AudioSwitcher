@@ -37,7 +37,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         [DebuggerNonUserCode]
         public void Invoke(object sender, TEventArgs e)
         {
-            T target = (T) _targetRef.Target;
+            var target = (T) _targetRef.Target;
 
             if (target != null)
                 _openHandler.Invoke(target, sender, e);

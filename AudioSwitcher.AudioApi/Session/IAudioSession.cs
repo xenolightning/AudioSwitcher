@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AudioSwitcher.AudioApi.Session
+﻿namespace AudioSwitcher.AudioApi.Session
 {
     public interface IAudioSession
     {

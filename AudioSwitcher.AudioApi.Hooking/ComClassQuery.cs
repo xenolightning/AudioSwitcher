@@ -54,10 +54,10 @@ namespace AudioSwitcher.AudioApi.Hooking
     {
         public static unsafe void Query(ComClassInfo cci)
         {
-            Guid classguid = cci.ClassType.GUID;
-            Guid interfguid = cci.InterfaceType.GUID;
-            Guid classfactoryguid = typeof (IClassFactory).GUID;
-            Guid classfactory2guid = typeof (IClassFactory2).GUID;
+            var classguid = cci.ClassType.GUID;
+            var interfguid = cci.InterfaceType.GUID;
+            var classfactoryguid = typeof (IClassFactory).GUID;
+            var classfactory2guid = typeof (IClassFactory2).GUID;
             object classinstance = null;
 
 #if false
@@ -109,14 +109,14 @@ namespace AudioSwitcher.AudioApi.Hooking
             {
                 do
                 {
-                    RegistryKey rk = Registry.ClassesRoot.OpenSubKey("CLSID\\{" + classguid + "}\\InprocServer32");
+                    var rk = Registry.ClassesRoot.OpenSubKey("CLSID\\{" + classguid + "}\\InprocServer32");
                     if (rk == null)
                         break;
-                    string classdllname = rk.GetValue(null).ToString();
-                    IntPtr libH = KERNEL32.LoadLibrary(classdllname);
+                    var classdllname = rk.GetValue(null).ToString();
+                    var libH = KERNEL32.LoadLibrary(classdllname);
                     if (libH == IntPtr.Zero)
                         break;
-                    IntPtr factoryFunc = KERNEL32.GetProcAddress(libH, "DllGetClassObject");
+                    var factoryFunc = KERNEL32.GetProcAddress(libH, "DllGetClassObject");
                     if (factoryFunc == IntPtr.Zero)
                         break;
                     var factoryDel =
@@ -140,14 +140,14 @@ namespace AudioSwitcher.AudioApi.Hooking
                 {
                     do
                     {
-                        RegistryKey rk = Registry.ClassesRoot.OpenSubKey("CLSID\\{" + classguid + "}\\InprocServer32");
+                        var rk = Registry.ClassesRoot.OpenSubKey("CLSID\\{" + classguid + "}\\InprocServer32");
                         if (rk == null)
                             break;
-                        string classdllname = rk.GetValue(null).ToString();
-                        IntPtr libH = KERNEL32.LoadLibrary(classdllname);
+                        var classdllname = rk.GetValue(null).ToString();
+                        var libH = KERNEL32.LoadLibrary(classdllname);
                         if (libH == IntPtr.Zero)
                             break;
-                        IntPtr factoryFunc = KERNEL32.GetProcAddress(libH, "DllGetClassObject");
+                        var factoryFunc = KERNEL32.GetProcAddress(libH, "DllGetClassObject");
                         if (factoryFunc == IntPtr.Zero)
                             break;
                         var factoryDel =
@@ -172,14 +172,14 @@ namespace AudioSwitcher.AudioApi.Hooking
             }
 #endif
 
-            IntPtr interfaceIntPtr = Marshal.GetComInterfaceForObject(classinstance, cci.InterfaceType);
+            var interfaceIntPtr = Marshal.GetComInterfaceForObject(classinstance, cci.InterfaceType);
             var interfaceRawPtr = (int***) interfaceIntPtr.ToPointer();
             // get vtable
-            int** vTable = *interfaceRawPtr;
+            var vTable = *interfaceRawPtr;
             // get com-slot-number (vtable-index) of function X
             // get function-address from vtable
-            int mi_vto = Marshal.GetComSlotForMethodInfo(cci.Method);
-            int* faddr = vTable[mi_vto];
+            var mi_vto = Marshal.GetComSlotForMethodInfo(cci.Method);
+            var faddr = vTable[mi_vto];
             cci.MFunctionPointer = new IntPtr(faddr);
             // release intptr
             Marshal.Release(interfaceIntPtr);
@@ -247,7 +247,7 @@ namespace AudioSwitcher.AudioApi.Hooking
 
             internal void DetermineModuleHandle()
             {
-                Process pr = Process.GetCurrentProcess();
+                var pr = Process.GetCurrentProcess();
                 foreach (ProcessModule pm in pr.Modules)
                 {
                     if (MFunctionPointer.ToInt64() >= pm.BaseAddress.ToInt64() &&

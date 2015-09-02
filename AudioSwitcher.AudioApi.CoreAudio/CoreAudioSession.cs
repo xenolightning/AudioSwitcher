@@ -55,10 +55,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return ComThread.Invoke(() =>
-                {
-                    return _control.IsSystemSoundsSession() == 0;
-                });
+                return ComThread.Invoke(() => _control.IsSystemSoundsSession() == 0);
             }
         }
 

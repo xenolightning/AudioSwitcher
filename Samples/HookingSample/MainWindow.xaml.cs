@@ -110,7 +110,7 @@ namespace HookingSample
         {
             Dispatcher.BeginInvoke((Action)(() =>
             {
-                Process[] processlist = Process.GetProcesses();
+                var processlist = Process.GetProcesses();
                 Processes.Clear();
                 foreach (var p in processlist.OrderBy(x => x.ProcessName))
                 {
@@ -166,7 +166,7 @@ namespace HookingSample
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }

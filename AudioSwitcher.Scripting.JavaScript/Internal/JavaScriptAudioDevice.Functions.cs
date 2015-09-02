@@ -1,5 +1,4 @@
-﻿using System;
-using Jurassic.Library;
+﻿using Jurassic.Library;
 
 namespace AudioSwitcher.Scripting.JavaScript.Internal
 {

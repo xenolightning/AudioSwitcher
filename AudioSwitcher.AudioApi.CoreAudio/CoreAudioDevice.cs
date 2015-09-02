@@ -219,7 +219,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 else if (value > 100)
                     value = 100;
 
-                float val = (float)value / 100;
+                var val = (float)value / 100;
 
                 if (AudioEndpointVolume == null)
                     return;
@@ -342,7 +342,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void OnPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }

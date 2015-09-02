@@ -20,14 +20,14 @@ namespace AudioSwitcher.Tests.Common
         {
             _devices = new ConcurrentBag<TestDevice>();
 
-            for (int i = 0; i < numPlaybackDevices; i++)
+            for (var i = 0; i < numPlaybackDevices; i++)
             {
                 var id = Guid.NewGuid();
                 var dev = new TestDevice(id, DeviceType.Playback, this);
                 _devices.Add(dev);
             }
 
-            for (int i = 0; i < numCaptureDevices; i++)
+            for (var i = 0; i < numCaptureDevices; i++)
             {
                 var id = Guid.NewGuid();
                 var dev = new TestDevice(id, DeviceType.Capture, this);
@@ -53,7 +53,7 @@ namespace AudioSwitcher.Tests.Common
 
         public override TestDevice GetDefaultDevice(DeviceType deviceType, Role role)
         {
-            Guid devId = Guid.Empty;
+            var devId = Guid.Empty;
             switch (deviceType)
             {
                 case DeviceType.Capture:
