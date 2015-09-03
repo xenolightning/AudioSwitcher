@@ -3,8 +3,10 @@
     public interface IAudioSessionEndpoint
     {
 
-        bool IsSessionEndpoint { get; }
-
+        /// <summary>
+        /// Returns null if sessions are not available
+        /// </summary>
         IAudioSessionController SessionController { get; }
+
     }
 }

@@ -9,12 +9,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     public partial class CoreAudioDevice : IAudioSessionEndpoint
     {
 
-        public bool IsSessionEndpoint
-        {
-            get;
-            private set;
-        }
-
         public IAudioSessionController SessionController
         {
             get;
@@ -53,12 +47,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (audioSessionManager != null)
                 {
                     SessionController = new CoreAudioSessionController(audioSessionManager);
-                    IsSessionEndpoint = true;
                 }
             }
             catch (Exception)
             {
-                IsSessionEndpoint = false;
+                IsSessionEndpointAvailable = false;
+                if (SessionController != null)
+                    SessionController.Dispose();
+
+                SessionController = null;
             }
         }
     }
