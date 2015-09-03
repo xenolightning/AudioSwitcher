@@ -9,7 +9,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     public partial class CoreAudioDevice : IAudioSessionEndpoint
     {
 
-        public bool IsSupported
+        public bool IsSessionEndpoint
         {
             get;
             private set;
@@ -32,6 +32,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void LoadAudioSessionController(IMultimediaDevice device)
         {
+            if (SessionController != null)
+                return;
+
             //This should be all on the COM thread to avoid any
             //weird lookups on the result COM object not on an STA Thread
             ComThread.Assert();
@@ -50,12 +53,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (audioSessionManager != null)
                 {
                     SessionController = new CoreAudioSessionController(audioSessionManager);
-                    IsSupported = true;
+                    IsSessionEndpoint = true;
                 }
             }
             catch (Exception)
             {
-                IsSupported = false;
+                IsSessionEndpoint = false;
             }
         }
     }

@@ -3,7 +3,7 @@
     public interface IAudioSessionEndpoint
     {
 
-        bool IsSupported { get; }
+        bool IsSessionEndpoint { get; }
 
         IAudioSessionController SessionController { get; }
     }

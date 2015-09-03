@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Session;
+using Timer = System.Timers.Timer;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
@@ -17,6 +19,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly IAudioSessionManager2 _audioSessionManager;
 
         private List<CoreAudioSession> _sessionCache;
+        private Timer _processTimer;
 
         public CoreAudioSessionController(IAudioSessionManager2 audioSessionManager)
         {
@@ -29,6 +32,25 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _audioSessionManager.RegisterSessionNotification(this);
 
             RefreshSessions();
+
+            _processTimer = new Timer
+            {
+                Interval = 2000,
+                AutoReset = true,
+                Enabled = true,
+            };
+
+            _processTimer.Elapsed += (sender, args) =>
+            {
+                _processTimer.Enabled = false;
+
+                var processes = Process.GetProcesses();
+
+                //remove all sessions from processes that don't exist
+                RemoveSessions(_sessionCache.Where(x => processes.All(y => y.Id != x.ProcessId)));
+
+                _processTimer.Enabled = true;
+            };
         }
 
         private void RefreshSessions()
@@ -49,14 +71,66 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     IAudioSessionControl session;
                     enumerator.GetSession(i, out session);
+                    var managedSession = new CoreAudioSession(session);
+                    managedSession.Disconnected += ManagedSessionOnDisconnected;
+                    managedSession.StateChanged += ManagedSessionOnStateChanged;
 
-                    _sessionCache.Add(new CoreAudioSession(session));
+                    _sessionCache.Add(managedSession);
                 }
             }
             finally
             {
                 if (acquiredLock)
                     _lock.ExitReadLock();
+            }
+        }
+
+        private void ManagedSessionOnStateChanged(IAudioSession sender, AudioSessionState state)
+        {
+            FireSessionChanged();
+        }
+
+        private void ManagedSessionOnDisconnected(IAudioSession sender)
+        {
+            var sessions = _sessionCache.Where(x => x.SessionId == sender.SessionId);
+
+            RemoveSessions(sessions);
+
+            FireSessionChanged();
+        }
+
+        private void FireSessionChanged()
+        {
+            var handler = SessionChanged;
+            if (handler != null)
+                handler(this, EventArgs.Empty);
+        }
+
+        private void RemoveSessions(IEnumerable<CoreAudioSession> sessions)
+        {
+            var coreAudioSessions = sessions as IList<CoreAudioSession> ?? sessions.ToList();
+
+            if (!coreAudioSessions.Any())
+                return;
+
+            var acquiredLock = _lock.AcquireWriteLockNonReEntrant();
+
+            try
+            {
+                _sessionCache.RemoveAll(x => coreAudioSessions.Any(y => y.SessionId == x.SessionId));
+
+                foreach (var s in coreAudioSessions)
+                {
+                    s.StateChanged -= ManagedSessionOnStateChanged;
+                    s.Disconnected -= ManagedSessionOnDisconnected;
+
+                    s.Dispose();
+                }
+            }
+            finally
+            {
+                if (acquiredLock)
+                    _lock.ExitWriteLock();
             }
         }
 
@@ -144,7 +218,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public int OnSessionCreated(IAudioSessionControl sessionControl)
         {
-            var acquiredLock = _lock.AcquireReadLockNonReEntrant();
+            var acquiredLock = _lock.AcquireWriteLockNonReEntrant();
 
             try
             {
@@ -158,8 +232,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             finally
             {
                 if (acquiredLock)
-                    _lock.ExitReadLock();
+                    _lock.ExitWriteLock();
             }
+
+
+            FireSessionChanged();
 
             return 0;
         }
@@ -168,5 +245,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             Marshal.FinalReleaseComObject(_audioSessionManager);
         }
+
     }
 }

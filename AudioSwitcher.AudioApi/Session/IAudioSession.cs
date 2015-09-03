@@ -6,7 +6,7 @@ namespace AudioSwitcher.AudioApi.Session
     {
         string SessionId { get; }
 
-        uint ProcessId { get; }
+        int ProcessId { get; }
 
         string DisplayName { get; }
 
@@ -15,5 +15,12 @@ namespace AudioSwitcher.AudioApi.Session
         int Volume { get; set; }
 
         AudioSessionState SessionState { get; }
+
+        event SessionStateChangedEventHandler StateChanged;
+        event SessionDisconnectedEventHandler Disconnected;
     }
+
+    public delegate void SessionDisconnectedEventHandler(IAudioSession sender);
+
+    public delegate void SessionStateChangedEventHandler(IAudioSession sender, AudioSessionState state);
 }

@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Session;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    internal class CoreAudioSession : IAudioSession, IAudioSessionEvents, IDisposable
+    internal class CoreAudioSession : IAudioSession, IAudioSessionEvents
     {
         private readonly IAudioSessionControl2 _control;
         private readonly ISimpleAudioVolume _volume;
@@ -26,7 +28,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public uint ProcessId
+        public int ProcessId
         {
             get
             {
@@ -34,7 +36,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     uint processId;
                     _control.GetProcessId(out processId);
-                    return processId;
+                    return (int)processId;
                 });
             }
         }
@@ -88,17 +90,26 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     EAudioSessionState state;
                     _control.GetState(out state);
-                    return (AudioSessionState)state;
+                    return state.AsAudioSessionState();
                 });
             }
         }
+
+        public event SessionStateChangedEventHandler StateChanged;
+        public event SessionDisconnectedEventHandler Disconnected;
 
         public CoreAudioSession(IAudioSessionControl control)
         {
             ComThread.Assert();
 
+            // ReSharper disable once SuspiciousTypeConversion.Global
             _control = control as IAudioSessionControl2;
+
+            // ReSharper disable once SuspiciousTypeConversion.Global
             _volume = control as ISimpleAudioVolume;
+
+            if (_control == null || _volume == null)
+                throw new InvalidComObjectException("control");
 
             _control.RegisterAudioSessionNotification(this);
 
@@ -106,7 +117,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 if (ProcessId > 0)
                 {
-                    var proc = Process.GetProcessById((int)ProcessId);
+                    var proc = Process.GetProcessById(ProcessId);
                     _fileDescription = proc.MainModule.FileVersionInfo.FileDescription;
                 }
             }
@@ -116,45 +127,57 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public int OnDisplayNameChanged(string displayName, ref Guid eventContext)
+        int IAudioSessionEvents.OnDisplayNameChanged(string displayName, ref Guid eventContext)
         {
 
             return 0;
         }
 
-        public int OnIconPathChanged(string iconPath, ref Guid eventContext)
+        int IAudioSessionEvents.OnIconPathChanged(string iconPath, ref Guid eventContext)
         {
+            return 0;
+        }
+
+        int IAudioSessionEvents.OnSimpleVolumeChanged(float volume, bool isMuted, ref Guid eventContext)
+        {
+            return 0;
+        }
+
+        int IAudioSessionEvents.OnChannelVolumeChanged(uint channelCount, IntPtr newVolumes, uint channelIndex, ref Guid eventContext)
+        {
+            return 0;
+        }
+
+        int IAudioSessionEvents.OnGroupingParamChanged(ref Guid groupingId, ref Guid eventContext)
+        {
+            return 0;
+        }
+
+        int IAudioSessionEvents.OnSessionDisconnected(EAudioSessionDisconnectReason disconnectReason)
+        {
+            FireDisconnected();
+            return 0;
+        }
+
+        int IAudioSessionEvents.OnStateChanged(EAudioSessionState state)
+        {
+            FireStateChanged(state);
 
             return 0;
         }
 
-        public int OnSimpleVolumeChanged(float volume, bool isMuted, ref Guid eventContext)
+        private void FireStateChanged(EAudioSessionState state)
         {
-
-            return 0;
+            var handler = StateChanged;
+            if (handler != null)
+                handler(this, state.AsAudioSessionState());
         }
 
-        public int OnChannelVolumeChanged(uint channelCount, IntPtr newVolumes, uint channelIndex, ref Guid eventContext)
+        private void FireDisconnected()
         {
-
-            return 0;
-        }
-
-        public int OnGroupingParamChanged(ref Guid groupingId, ref Guid eventContext)
-        {
-
-            return 0;
-        }
-
-        public int OnStateChanged(EAudioSessionState state)
-        {
-
-            return 0;
-        }
-
-        public int OnSessionDisconnected(EAudioSessionDisconnectReason disconnectReason)
-        {
-            return 0;
+            var handler = Disconnected;
+            if (handler != null)
+                handler(this);
         }
 
         public void Dispose()

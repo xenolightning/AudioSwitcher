@@ -266,18 +266,22 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             ReloadAudioEndpointVolume(_device);
             ReloadAudioMeterInformation(_device);
+            ReloadAudioSessionController(_device);
 
             OnPropertyChanged("State");
         }
 
         private void ReloadAudioMeterInformation(IMultimediaDevice device)
         {
-            ComThread.BeginInvoke(() => { LoadAudioMeterInformation(device); });
+            ComThread.Invoke(() =>
+            {
+                LoadAudioMeterInformation(device);
+            });
         }
 
         private void ReloadAudioSessionController(IMultimediaDevice device)
         {
-            ComThread.BeginInvoke(() =>
+            ComThread.Invoke(() =>
             {
                 LoadAudioSessionController(device);
             });
@@ -285,7 +289,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void ReloadAudioEndpointVolume(IMultimediaDevice device)
         {
-            ComThread.BeginInvoke(() =>
+            ComThread.Invoke(() =>
             {
                 LoadAudioEndpointVolume(device);
 
