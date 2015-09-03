@@ -9,14 +9,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public sealed partial class CoreAudioDevice : Device, INotifyPropertyChanged, IDisposable
     {
-        private IMMDevice _device;
+        private IMultimediaDevice _device;
         private Guid? _id;
         private CachedPropertyDictionary _properties;
         private EDeviceState _state;
         private string _realId;
         private EDataFlow _dataFlow;
 
-        internal CoreAudioDevice(IMMDevice device, IAudioController<CoreAudioDevice> controller)
+        internal CoreAudioDevice(IMultimediaDevice device, IAudioController<CoreAudioDevice> controller)
             : base(controller)
         {
             ComThread.Assert();
@@ -37,7 +37,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     .MakeWeak(x => { controller.AudioDeviceChanged -= x; });
         }
 
-        private void LoadProperties(IMMDevice device)
+        private void LoadProperties(IMultimediaDevice device)
         {
             ComThread.Assert();
 
@@ -46,7 +46,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             Marshal.ThrowExceptionForHR(device.GetState(out _state));
 
             // ReSharper disable once SuspiciousTypeConversion.Global
-            var ep = device as IMMEndpoint;
+            var ep = device as IMultimediaEndpoint;
             if (ep != null)
                 ep.GetDataFlow(out _dataFlow);
 
@@ -67,6 +67,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             ClearAudioEndpointVolume();
             ClearAudioMeterInformation();
+            ClearAudioSession();
 
             _device = null;
         }
@@ -269,12 +270,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             OnPropertyChanged("State");
         }
 
-        private void ReloadAudioMeterInformation(IMMDevice device)
+        private void ReloadAudioMeterInformation(IMultimediaDevice device)
         {
             ComThread.BeginInvoke(() => { LoadAudioMeterInformation(device); });
         }
 
-        private void ReloadAudioSessionController(IMMDevice device)
+        private void ReloadAudioSessionController(IMultimediaDevice device)
         {
             ComThread.BeginInvoke(() =>
             {
@@ -282,7 +283,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             });
         }
 
-        private void ReloadAudioEndpointVolume(IMMDevice device)
+        private void ReloadAudioEndpointVolume(IMultimediaDevice device)
         {
             ComThread.BeginInvoke(() =>
             {

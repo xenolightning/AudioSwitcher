@@ -5,7 +5,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
     [Guid(ComIIds.IMM_DEVICE_IID)]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    internal interface IMMDevice
+    internal interface IMultimediaDevice
     {
         [PreserveSig]
         int Activate(

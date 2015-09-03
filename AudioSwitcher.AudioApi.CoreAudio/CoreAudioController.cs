@@ -17,7 +17,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
 
-        private IMMDeviceEnumerator _innerEnumerator;
+        private IMultimediaDeviceEnumerator _innerEnumerator;
         private HashSet<CoreAudioDevice> _deviceCache = new HashSet<CoreAudioDevice>();
 
         public CoreAudioController()
@@ -25,12 +25,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ComThread.Invoke(() =>
             {
                 // ReSharper disable once SuspiciousTypeConversion.Global
-                _innerEnumerator = new MMDeviceEnumeratorComObject() as IMMDeviceEnumerator;
+                _innerEnumerator = new MultimediaDeviceEnumeratorComObject() as IMultimediaDeviceEnumerator;
 
                 if (_innerEnumerator == null)
                     return;
 
-                _notificationClient = new MMNotificationClient(this);
+                _notificationClient = new MultimediaNotificationClient(this);
                 _innerEnumerator.RegisterEndpointNotificationCallback(_notificationClient);
             });
 
@@ -44,21 +44,23 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         protected override void Dispose(bool disposing)
         {
-            if (_innerEnumerator != null)
+            ComThread.BeginInvoke(() =>
             {
-                ComThread.BeginInvoke(() =>
+                if (_innerEnumerator != null)
                 {
                     _innerEnumerator.UnregisterEndpointNotificationCallback(_notificationClient);
                     _notificationClient = null;
                     _innerEnumerator = null;
-                });
-            }
+                }
+            })
+            .ContinueWith(x =>
+            {
+                if (_deviceCache != null)
+                    _deviceCache.Clear();
 
-            if (_deviceCache != null)
-                _deviceCache.Clear();
-
-            if (_lock != null)
-                _lock.Dispose();
+                if (_lock != null)
+                    _lock.Dispose();
+            });
 
             GC.SuppressFinalize(this);
         }
@@ -100,10 +102,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ComThread.Invoke(() =>
             {
                 _deviceCache = new HashSet<CoreAudioDevice>();
-                IMMDeviceCollection collection;
+                IMultimediaDeviceCollection collection;
                 _innerEnumerator.EnumAudioEndpoints(EDataFlow.All, EDeviceState.All, out collection);
 
-                using (var coll = new MMDeviceCollection(collection))
+                using (var coll = new MultimediaDeviceCollection(collection))
                 {
                     foreach (var mDev in coll)
                         CacheDevice(mDev);
@@ -120,7 +122,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             return ComThread.Invoke(() =>
             {
-                IMMDevice mDevice;
+                IMultimediaDevice mDevice;
                 _innerEnumerator.GetDevice(deviceId, out mDevice);
 
                 if (mDevice == null)
@@ -151,7 +153,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        private CoreAudioDevice CacheDevice(IMMDevice mDevice)
+        private CoreAudioDevice CacheDevice(IMultimediaDevice mDevice)
         {
             if (!DeviceIsValid(mDevice))
                 return null;
@@ -179,7 +181,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        private static bool DeviceIsValid(IMMDevice device)
+        private static bool DeviceIsValid(IMultimediaDevice device)
         {
             try
             {
@@ -258,7 +260,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             try
             {
-                IMMDevice dev;
+                IMultimediaDevice dev;
                 _innerEnumerator.GetDefaultAudioEndpoint(deviceType.AsEDataFlow(), role.AsERole(), out dev);
                 if (dev == null)
                     return null;
@@ -294,7 +296,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        private MMNotificationClient _notificationClient;
+        private MultimediaNotificationClient _notificationClient;
 
         void ISystemAudioEventClient.OnDeviceStateChanged(string deviceId, EDeviceState newState)
         {

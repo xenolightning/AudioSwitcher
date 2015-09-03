@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Session;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    internal class CoreAudioSession : IAudioSession, IAudioSessionEvents
+    internal class CoreAudioSession : IAudioSession, IAudioSessionEvents, IDisposable
     {
         private readonly IAudioSessionControl2 _control;
         private readonly ISimpleAudioVolume _volume;
@@ -154,6 +155,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         public int OnSessionDisconnected(EAudioSessionDisconnectReason disconnectReason)
         {
             return 0;
+        }
+
+        public void Dispose()
+        {
+            Marshal.FinalReleaseComObject(_control);
         }
     }
 }

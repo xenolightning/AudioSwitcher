@@ -1,10 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi.Session
 {
-    public interface IAudioSessionController
+    public interface IAudioSessionController : IDisposable
     {
+
+        event EventHandler SessionChanged;
+
         IEnumerable<IAudioSession> All();
         Task<IEnumerable<IAudioSession>> AllAsync();
 

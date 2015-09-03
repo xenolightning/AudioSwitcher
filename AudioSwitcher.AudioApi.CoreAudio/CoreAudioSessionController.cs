@@ -14,19 +14,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
 
-        private readonly IAudioSessionManager2 _audioSessionManager2;
+        private readonly IAudioSessionManager2 _audioSessionManager;
 
         private List<CoreAudioSession> _sessionCache;
 
-        public CoreAudioSessionController(IAudioSessionManager2 audioSessionManager2)
+        public CoreAudioSessionController(IAudioSessionManager2 audioSessionManager)
         {
-            if (audioSessionManager2 == null)
-                throw new ArgumentNullException("audioSessionManager2");
+            if (audioSessionManager == null)
+                throw new ArgumentNullException("audioSessionManager");
 
             ComThread.Assert();
 
-            _audioSessionManager2 = audioSessionManager2;
-            _audioSessionManager2.RegisterSessionNotification(this);
+            _audioSessionManager = audioSessionManager;
+            _audioSessionManager.RegisterSessionNotification(this);
 
             RefreshSessions();
         }
@@ -34,7 +34,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private void RefreshSessions()
         {
             IAudioSessionEnumerator enumerator;
-            _audioSessionManager2.GetSessionEnumerator(out enumerator);
+            _audioSessionManager.GetSessionEnumerator(out enumerator);
 
             var acquiredLock = _lock.AcquireReadLockNonReEntrant();
 
@@ -59,6 +59,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     _lock.ExitReadLock();
             }
         }
+
+        public event EventHandler SessionChanged;
 
         public IEnumerable<IAudioSession> All()
         {
@@ -160,6 +162,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
 
             return 0;
+        }
+
+        public void Dispose()
+        {
+            Marshal.FinalReleaseComObject(_audioSessionManager);
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace AudioSwitcher.AudioApi.Session
+﻿using System;
+
+namespace AudioSwitcher.AudioApi.Session
 {
-    public interface IAudioSession
+    public interface IAudioSession : IDisposable
     {
         string SessionId { get; }
 

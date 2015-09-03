@@ -4,7 +4,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
     [Guid(ComIIds.IMM_NOTIFICATION_CLIENT_IID)]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    internal interface IMMNotificationClient
+    internal interface IMultimediaNotificationClient
     {
         void OnDeviceStateChanged(
             [MarshalAs(UnmanagedType.LPWStr)] string deviceId,

@@ -41,7 +41,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        private void GetPropertyInformation(IMMDevice device)
+        private void GetPropertyInformation(IMultimediaDevice device)
         {
             ComThread.Assert();
 
@@ -55,7 +55,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _properties.TryLoadFrom(device);
         }
 
-        private void LoadAudioMeterInformation(IMMDevice device)
+        private void LoadAudioMeterInformation(IMultimediaDevice device)
         {
             //This should be all on the COM thread to avoid any
             //weird lookups on the result COM object not on an STA Thread
@@ -84,7 +84,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _audioMeterInformation = new AudioMeterInformation(result as IAudioMeterInformation);
         }
 
-        private void LoadAudioEndpointVolume(IMMDevice device)
+        private void LoadAudioEndpointVolume(IMultimediaDevice device)
         {
             //Don't even bother looking up volume for disconnected devices
             if (!State.HasFlag(DeviceState.Active))

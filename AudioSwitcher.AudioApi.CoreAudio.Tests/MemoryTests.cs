@@ -1,10 +1,13 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 {
+    [Collection("CoreAudio")]
     public class ControllerTests
     {
         private IAudioController CreateTestController()
@@ -62,6 +65,38 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
             //Ensure it doesn't blow out the handles
             Assert.True(newHandles - originalHandles < maxHandles);
+        }
+
+        /// <summary>
+        /// This test isn't overly reliable because it uses signals from the system.
+        /// But it's almost impossible to test COM disposal properly
+        /// </summary>
+        [Fact]
+        public async void CoreAudio_Controller_Dispose_EventPropagation()
+        {
+            var count = 0;
+            var ev = new TaskCompletionSource<bool>();
+            using (var outerController = new CoreAudioController())
+            {
+                using (var controller = new CoreAudioController())
+                {
+
+                    controller.AudioDeviceChanged += (sender, args) =>
+                    {
+                        count++;
+                        ev.TrySetResult(true);
+                    };
+
+                    controller.DefaultPlaybackDevice.SetAsDefault();
+                }
+
+                outerController.DefaultPlaybackDevice.SetAsDefault();
+            }
+
+            await ev.Task;
+
+            //The event should only fire once because the inner controller is disposed before the second fire
+            Assert.Equal(1, count);
         }
 
     }

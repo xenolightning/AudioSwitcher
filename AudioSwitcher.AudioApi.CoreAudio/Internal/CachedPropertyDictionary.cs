@@ -23,7 +23,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// an invalid state it will continue to use it's current internal property cache
         /// </summary>
         /// <param name="device"></param>
-        public void TryLoadFrom(IMMDevice device)
+        public void TryLoadFrom(IMultimediaDevice device)
         {
             var properties = GetProperties(device);
 
@@ -31,7 +31,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 _properties = properties;
         }
 
-        private Dictionary<PropertyKey, object> GetProperties(IMMDevice device)
+        private Dictionary<PropertyKey, object> GetProperties(IMultimediaDevice device)
         {
             var properties = new Dictionary<PropertyKey, object>();
             //Opening in write mode, can cause exceptions to be thrown when not run as admin.
