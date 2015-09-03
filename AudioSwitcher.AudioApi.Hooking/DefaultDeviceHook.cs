@@ -57,8 +57,8 @@ namespace AudioSwitcher.AudioApi.Hooking
             RemoteHooking.Inject(
                 processId,
                 InjectionOptions.DoNotRequireStrongName,
-                typeof(IMMDeviceEnumerator).Assembly.Location,
-                typeof(IMMDeviceEnumerator).Assembly.Location,
+                typeof(IMultimediaDeviceEnumerator).Assembly.Location,
+                typeof(IMultimediaDeviceEnumerator).Assembly.Location,
                 _channelName);
 
             _hookIsLiveTimer = new Timer(HookIsLive, null, 0, 2000);

@@ -10,7 +10,7 @@ namespace AudioSwitcher.AudioApi.Hooking
     {
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = false)]
         [return: MarshalAs(UnmanagedType.U4)]
-        public delegate int DGetDefaultAudioEndpoint(IMMDeviceEnumerator self, DataFlow dataFlow, Role role, out IntPtr ppEndpoint);
+        public delegate int DGetDefaultAudioEndpoint(IMultimediaDeviceEnumerator self, DataFlow dataFlow, Role role, out IntPtr ppEndpoint);
 
         public readonly RemoteInterface Interface;
 
@@ -24,7 +24,7 @@ namespace AudioSwitcher.AudioApi.Hooking
             try
             {
                 //Create the DefaultDevice Hook
-                var cci = new ComClassQuery.ComClassInfo(typeof(MMDeviceEnumeratorComObject), typeof(IMMDeviceEnumerator), "GetDefaultAudioEndpoint");
+                var cci = new ComClassQuery.ComClassInfo(typeof(MultimediaDeviceEnumeratorComObject), typeof(IMultimediaDeviceEnumerator), "GetDefaultAudioEndpoint");
                 ComClassQuery.Query(cci);
 
                 var hook = LocalHook.Create(cci.FunctionPointer, new DGetDefaultAudioEndpoint(GetDefaultAudioEndpoint),
@@ -56,7 +56,7 @@ namespace AudioSwitcher.AudioApi.Hooking
             Interface.HookUninstalled();
         }
 
-        private static int GetDefaultAudioEndpoint(IMMDeviceEnumerator self, DataFlow dataflow, Role role,
+        private static int GetDefaultAudioEndpoint(IMultimediaDeviceEnumerator self, DataFlow dataflow, Role role,
             out IntPtr ppendpoint)
         {
             var entryPoint = HookRuntimeInfo.Callback as EntryPoint;

@@ -56,8 +56,8 @@
     <Compile Include="ComClassQuery.cs" />
     <Compile Include="ComObjects\DataFlow.cs" />
     <Compile Include="ComObjects\DeviceState.cs" />
-    <Compile Include="ComObjects\IMMDeviceEnumerator.cs" />
-    <Compile Include="ComObjects\MMDeviceEnumeratorComObject.cs" />
+    <Compile Include="ComObjects\IMultimediaDeviceEnumerator.cs" />
+    <Compile Include="ComObjects\MultimediaDeviceEnumeratorComObject.cs" />
     <Compile Include="ComObjects\Role.cs" />
     <Compile Include="DefaultDeviceHook.cs" />
     <Compile Include="EntryPoint.cs" />

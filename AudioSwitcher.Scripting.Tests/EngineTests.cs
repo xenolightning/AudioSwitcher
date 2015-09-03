@@ -16,7 +16,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         public void Engine_WithArgs()
         {
 
-            var test = new string[]
+            var test = new[]
             {
                 "One",
                 "Two"

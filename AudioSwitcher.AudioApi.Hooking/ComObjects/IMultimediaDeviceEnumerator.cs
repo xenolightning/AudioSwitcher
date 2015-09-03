@@ -5,7 +5,7 @@ namespace AudioSwitcher.AudioApi.Hooking.ComObjects
 {
     [Guid("A95664D2-9614-4F35-A746-DE8DB63617E6"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [ComVisible(true)]
-    public interface IMMDeviceEnumerator
+    public interface IMultimediaDeviceEnumerator
     {
         [PreserveSig]
         int EnumAudioEndpoints(DataFlow dataFlow, DeviceState stateMask, out IntPtr device);
