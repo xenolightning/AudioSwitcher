@@ -45,13 +45,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 var audioSessionManager = result as IAudioSessionManager2;
 
                 if (audioSessionManager != null)
-                {
                     SessionController = new CoreAudioSessionController(audioSessionManager);
-                }
+
             }
             catch (Exception)
             {
-                IsSessionEndpointAvailable = false;
                 if (SessionController != null)
                     SessionController.Dispose();
 

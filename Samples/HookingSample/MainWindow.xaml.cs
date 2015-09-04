@@ -91,14 +91,6 @@ namespace HookingSample
 
             _hookCheckTimer = new Timer(CheckHook, null, 0, 1000);
 
-            if (Controller.DefaultPlaybackDevice.IsSessionEndpointAvailable)
-            {
-                Controller.DefaultPlaybackDevice.SessionController.SessionChanged += (sender, args) =>
-                {
-                    var test = Controller.DefaultPlaybackDevice.SessionController.All().ToList();
-                    Console.WriteLine();
-                };
-            }
         }
 
         private void CheckHook(object state)

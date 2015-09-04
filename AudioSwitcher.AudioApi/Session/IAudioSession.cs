@@ -16,11 +16,6 @@ namespace AudioSwitcher.AudioApi.Session
 
         AudioSessionState SessionState { get; }
 
-        event SessionStateChangedEventHandler StateChanged;
-        event SessionDisconnectedEventHandler Disconnected;
+        //IObservable<AudioSessionState> StateChanged { get; }
     }
-
-    public delegate void SessionDisconnectedEventHandler(IAudioSession sender);
-
-    public delegate void SessionStateChangedEventHandler(IAudioSession sender, AudioSessionState state);
 }

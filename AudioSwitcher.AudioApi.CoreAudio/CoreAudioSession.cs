@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Session;
@@ -95,9 +93,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public event SessionStateChangedEventHandler StateChanged;
-        public event SessionDisconnectedEventHandler Disconnected;
-
         public CoreAudioSession(IAudioSessionControl control)
         {
             ComThread.Assert();
@@ -168,16 +163,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void FireStateChanged(EAudioSessionState state)
         {
-            var handler = StateChanged;
-            if (handler != null)
-                handler(this, state.AsAudioSessionState());
         }
 
         private void FireDisconnected()
         {
-            var handler = Disconnected;
-            if (handler != null)
-                handler(this);
         }
 
         public void Dispose()

@@ -7,8 +7,6 @@ namespace AudioSwitcher.AudioApi.Session
     public interface IAudioSessionController : IDisposable
     {
 
-        event EventHandler SessionChanged;
-
         IEnumerable<IAudioSession> All();
         Task<IEnumerable<IAudioSession>> AllAsync();
 

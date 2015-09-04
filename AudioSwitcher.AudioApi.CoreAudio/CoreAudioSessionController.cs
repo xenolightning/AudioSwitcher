@@ -72,8 +72,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     IAudioSessionControl session;
                     enumerator.GetSession(i, out session);
                     var managedSession = new CoreAudioSession(session);
-                    managedSession.Disconnected += ManagedSessionOnDisconnected;
-                    managedSession.StateChanged += ManagedSessionOnStateChanged;
+                    //managedSession.Disconnected += ManagedSessionOnDisconnected;
+                    //managedSession.StateChanged += ManagedSessionOnStateChanged;
 
                     _sessionCache.Add(managedSession);
                 }
@@ -121,8 +121,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
                 foreach (var s in coreAudioSessions)
                 {
-                    s.StateChanged -= ManagedSessionOnStateChanged;
-                    s.Disconnected -= ManagedSessionOnDisconnected;
+                    //s.StateChanged -= ManagedSessionOnStateChanged;
+                    //s.Disconnected -= ManagedSessionOnDisconnected;
 
                     s.Dispose();
                 }
