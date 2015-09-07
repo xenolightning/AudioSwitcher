@@ -2,7 +2,10 @@
 
 namespace AudioSwitcher.AudioApi.Session
 {
-    public interface IAudioSession : IDisposable
+    public interface IAudioSession : 
+        IObservable<AudioSessionStateChanged>, 
+        IObservable<AudioSessionDisconnected>, 
+        IDisposable
     {
         string SessionId { get; }
 
@@ -14,8 +17,9 @@ namespace AudioSwitcher.AudioApi.Session
 
         int Volume { get; set; }
 
+        bool IsMuted { get; set; }
+
         AudioSessionState SessionState { get; }
 
-        //IObservable<AudioSessionState> StateChanged { get; }
     }
 }

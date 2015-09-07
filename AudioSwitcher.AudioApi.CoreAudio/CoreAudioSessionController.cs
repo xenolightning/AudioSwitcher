@@ -71,11 +71,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     IAudioSessionControl session;
                     enumerator.GetSession(i, out session);
-                    var managedSession = new CoreAudioSession(session);
-                    //managedSession.Disconnected += ManagedSessionOnDisconnected;
-                    //managedSession.StateChanged += ManagedSessionOnStateChanged;
-
-                    _sessionCache.Add(managedSession);
+                    CreateSessionWrapper(session);
                 }
             }
             finally
@@ -83,6 +79,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (acquiredLock)
                     _lock.ExitReadLock();
             }
+        }
+
+        private void CreateSessionWrapper(IAudioSessionControl session)
+        {
+            var managedSession = new CoreAudioSession(session);
+            //managedSession.Disconnected += ManagedSessionOnDisconnected;
+            //managedSession.StateChanged += ManagedSessionOnStateChanged;
+
+            _sessionCache.Add(managedSession);
         }
 
         private void ManagedSessionOnStateChanged(IAudioSession sender, AudioSessionState state)
@@ -224,10 +229,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 var ptr = Marshal.GetIUnknownForObject(sessionControl);
                 Marshal.AddRef(ptr);
-                ComThread.Invoke(() =>
-                {
-                    _sessionCache.Add(new CoreAudioSession(sessionControl));
-                });
+                CreateSessionWrapper(sessionControl);
             }
             finally
             {
@@ -246,5 +248,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             Marshal.FinalReleaseComObject(_audioSessionManager);
         }
 
+        public IDisposable Subscribe(IObserver<AudioSessionsChanged> observer)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -51,6 +51,7 @@
     <Compile Include="AudioController.Generic.cs" />
     <Compile Include="AudioDeviceEventType.cs" />
     <Compile Include="DefaultDeviceChangedEventArgs.cs" />
+    <Compile Include="DelegateDisposable.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="DeviceAddedEventArgs.cs" />
     <Compile Include="DeviceChangedEventArgs.cs" />
@@ -68,12 +69,13 @@
     <Compile Include="Role.cs" />
     <Compile Include="Sandbox\SandboxAudioController.cs" />
     <Compile Include="Sandbox\SandboxDevice.cs" />
-    <Compile Include="Session\AudioSessionsChangedArgs.cs" />
+    <Compile Include="Session\AudioSessionDisconnected.cs" />
+    <Compile Include="Session\AudioSessionsChanged.cs" />
     <Compile Include="Session\AudioSessionState.cs" />
+    <Compile Include="Session\AudioSessionStateChanged.cs" />
     <Compile Include="Session\IAudioSession.cs" />
     <Compile Include="Session\IAudioSessionController.cs" />
     <Compile Include="Session\IAudioSessionEndpoint.cs" />
-    <Compile Include="Session\SessionVolumeChangedEventHandlerArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="api.pfx" />
