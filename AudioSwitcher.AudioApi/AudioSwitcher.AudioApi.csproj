@@ -73,7 +73,7 @@
     <Compile Include="Sandbox\SandboxAudioController.cs" />
     <Compile Include="Sandbox\SandboxDevice.cs" />
     <Compile Include="Session\AudioSessionDisconnected.cs" />
-    <Compile Include="Session\AudioSessionsChanged.cs" />
+    <Compile Include="Session\AudioSessionChanged.cs" />
     <Compile Include="Session\AudioSessionState.cs" />
     <Compile Include="Session\AudioSessionStateChanged.cs" />
     <Compile Include="Session\IAudioSession.cs" />

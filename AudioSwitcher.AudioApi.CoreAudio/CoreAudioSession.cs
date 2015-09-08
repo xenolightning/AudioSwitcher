@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Observables;
@@ -122,7 +123,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 float vol;
                 _simpleAudioVolume.GetMasterVolume(out vol);
-                _volume = (int)vol * 100;
+                _volume = (int)(vol * 100);
             });
         }
 
@@ -172,7 +173,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         int IAudioSessionEvents.OnSimpleVolumeChanged(float volume, bool isMuted, ref Guid eventContext)
         {
-            _volume = (int)volume * 100;
+            _volume = (int)(volume * 100);
             return 0;
         }
 
@@ -202,7 +203,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             lock (_stateLock)
             {
-                _stateObservers.ForEach(x => x.OnNext(new AudioSessionStateChanged(this, state.AsAudioSessionState())));
+                foreach (var obs in _stateObservers)
+                {
+                    var lObs = obs;
+                    Task.Factory.StartNew(() =>
+                    {
+                        try
+                        {
+                            lObs.OnNext(new AudioSessionStateChanged(this, state.AsAudioSessionState()));
+                        }
+                        catch (Exception e)
+                        {
+                            lObs.OnError(e);
+                        }
+                    });
+                }
             }
         }
 
@@ -210,7 +225,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             lock (_disconnectedLock)
             {
-                _disconnectedObservers.ForEach(x => x.OnNext(new AudioSessionDisconnected(this)));
+                foreach (var obs in _disconnectedObservers)
+                {
+                    var lObs = obs;
+                    Task.Factory.StartNew(() =>
+                    {
+                        try
+                        {
+                            lObs.OnNext(new AudioSessionDisconnected(this));
+                        }
+                        catch(Exception e)
+                        {
+                            lObs.OnError(e);
+                        }
+                    });
+                }
             }
         }
 

@@ -1,18 +1,18 @@
 ﻿namespace AudioSwitcher.AudioApi.Session
 {
-    public sealed class AudioSessionsChanged
+    public sealed class AudioSessionChanged
     {
         public string SessionId { get; private set; }
-        public AudioSessionsChangedType ChangeType { get; private set; }
+        public AudioSessionChangedType ChangeType { get; private set; }
 
-        public AudioSessionsChanged(string sessionId, AudioSessionsChangedType changeType)
+        public AudioSessionChanged(string sessionId, AudioSessionChangedType changeType)
         {
             SessionId = sessionId;
             ChangeType = changeType;
         }
     }
 
-    public enum AudioSessionsChangedType
+    public enum AudioSessionChangedType
     {
         Created,
         Disconnected
