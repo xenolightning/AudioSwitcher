@@ -2,9 +2,9 @@
 
 namespace AudioSwitcher.AudioApi.Session
 {
-    public interface IAudioSession : 
-        IObservable<AudioSessionStateChanged>, 
-        IObservable<AudioSessionDisconnected>, 
+    public interface IAudioSession :
+        IObservable<AudioSessionStateChanged>,
+        IObservable<AudioSessionDisconnected>,
         IDisposable
     {
         string Id { get; }
@@ -12,6 +12,8 @@ namespace AudioSwitcher.AudioApi.Session
         int ProcessId { get; }
 
         string DisplayName { get; }
+
+        string ExecutablePath { get; }
 
         bool IsSystemSession { get; }
 

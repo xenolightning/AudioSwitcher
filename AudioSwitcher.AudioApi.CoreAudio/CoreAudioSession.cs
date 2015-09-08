@@ -9,7 +9,7 @@ using AudioSwitcher.AudioApi.Session;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    internal class CoreAudioSession : IAudioSession, IObservable<AudioSessionStateChanged>, IAudioSessionEvents
+    internal class CoreAudioSession : IAudioSession, IAudioSessionEvents
     {
 
         private readonly IAudioSessionControl2 _audioSessionControl;
@@ -20,13 +20,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly List<IObserver<AudioSessionStateChanged>> _stateObservers;
         private readonly List<IObserver<AudioSessionDisconnected>> _disconnectedObservers;
 
-        private readonly string _fileDescription;
+        private string _fileDescription;
         private int _volume;
         private string _id;
         private int _processId;
         private string _displayName;
         private bool _isSystemSession;
         private AudioSessionState _state;
+        private string _executablePath;
 
         public string Id
         {
@@ -49,6 +50,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get
             {
                 return String.IsNullOrWhiteSpace(_displayName) ? _fileDescription : _displayName;
+            }
+        }
+
+        public string ExecutablePath
+        {
+            get
+            {
+                return _executablePath;
             }
         }
 
@@ -105,19 +114,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             RefreshProperties();
             RefreshVolume();
-
-            try
-            {
-                if (ProcessId > 0)
-                {
-                    var proc = Process.GetProcessById(ProcessId);
-                    _fileDescription = proc.MainModule.FileVersionInfo.FileDescription;
-                }
-            }
-            catch
-            {
-                _fileDescription = "";
-            }
         }
 
         private void RefreshVolume()
@@ -146,6 +142,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 _processId = (int)processId;
 
                 _audioSessionControl.GetSessionIdentifier(out _id);
+
+                try
+                {
+                    if (ProcessId > 0)
+                    {
+                        var proc = Process.GetProcessById(ProcessId);
+                        _executablePath = proc.MainModule.FileName;
+                        _fileDescription = proc.MainModule.FileVersionInfo.FileDescription;
+                    }
+                }
+                catch
+                {
+                    _fileDescription = "";
+                }
             });
         }
 
@@ -217,7 +227,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 _disconnectedObservers.ForEach(x => x.OnCompleted());
                 _disconnectedObservers.Clear();
             }
-
 
             Marshal.FinalReleaseComObject(_audioSessionControl);
         }
