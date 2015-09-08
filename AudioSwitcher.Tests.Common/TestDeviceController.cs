@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AudioSwitcher.AudioApi;
 
 namespace AudioSwitcher.Tests.Common
@@ -78,21 +77,6 @@ namespace AudioSwitcher.Tests.Common
             return _devices.Where(x => deviceType.HasFlag(x.DeviceType) && state.HasFlag(x.State));
         }
 
-        public Task<TestDevice> GetDeviceAsync(Guid id)
-        {
-            return Task.Factory.StartNew(() => GetDevice(id));
-        }
-
-        public Task<TestDevice> GetDefaultDeviceAsync(DeviceType deviceType, Role role)
-        {
-            return Task.Factory.StartNew(() => GetDefaultDevice(deviceType, role));
-        }
-
-        public Task<IEnumerable<TestDevice>> GetDevicesAsync(DeviceType deviceType, DeviceState state)
-        {
-            return Task.Factory.StartNew(() => GetDevices(deviceType, state));
-        }
-
         public override bool SetDefaultDevice(TestDevice dev)
         {
             if (dev.IsPlaybackDevice)
@@ -108,11 +92,6 @@ namespace AudioSwitcher.Tests.Common
             }
 
             return false;
-        }
-
-        public Task<bool> SetDefaultDeviceAsync(TestDevice dev)
-        {
-            return Task.Factory.StartNew(() => SetDefaultDevice(dev));
         }
 
         public override bool SetDefaultCommunicationsDevice(TestDevice dev)
@@ -131,8 +110,6 @@ namespace AudioSwitcher.Tests.Common
 
             return false;
         }
-
-        public event EventHandler<DeviceChangedEventArgs> AudioDeviceChanged;
 
         public override bool SetDefaultDevice(IDevice dev)
         {

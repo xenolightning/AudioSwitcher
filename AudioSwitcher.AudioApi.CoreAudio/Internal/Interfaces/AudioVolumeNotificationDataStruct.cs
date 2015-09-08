@@ -1,4 +1,6 @@
 ﻿using System;
+#pragma warning disable 169
+#pragma warning disable 649
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {

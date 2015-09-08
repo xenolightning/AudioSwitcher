@@ -91,6 +91,10 @@ namespace HookingSample
 
             _hookCheckTimer = new Timer(CheckHook, null, 0, 1000);
 
+            Controller.DefaultPlaybackDevice.SessionController.Subscribe(x =>
+            {
+                Console.WriteLine("{0}: {1}", x.ChangeType, x.SessionId);
+            });
         }
 
         private void CheckHook(object state)

@@ -208,7 +208,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 if (value is string && DataType == VarEnum.VT_LPWSTR)
                 {
-                    pointerValue = Marshal.StringToBSTR(value as string);
+                    pointerValue = Marshal.StringToBSTR((string) value);
                 }
             }
         }

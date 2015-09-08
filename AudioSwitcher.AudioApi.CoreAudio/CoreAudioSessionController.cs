@@ -1,25 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
+using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
-using Timer = System.Timers.Timer;
+using System.Management;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    internal class CoreAudioSessionController : IAudioSessionController, IAudioSessionNotification
+    internal sealed class CoreAudioSessionController : IAudioSessionController, IAudioSessionNotification
     {
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
 
         private readonly IAudioSessionManager2 _audioSessionManager;
 
         private List<CoreAudioSession> _sessionCache;
-        private Timer _processTimer;
+
+        private readonly object _sessionObserverLock = new object();
+        private readonly List<IObserver<AudioSessionsChanged>> _sessionObservers;
+        private readonly ManagementEventWatcher _processStopEvent;
 
         public CoreAudioSessionController(IAudioSessionManager2 audioSessionManager)
         {
@@ -31,115 +34,42 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _audioSessionManager = audioSessionManager;
             _audioSessionManager.RegisterSessionNotification(this);
 
+            _sessionObservers = new List<IObserver<AudioSessionsChanged>>();
+
             RefreshSessions();
 
-            _processTimer = new Timer
+            _processStopEvent = new ManagementEventWatcher();
+
+            //Subscribe to process exit events from WMI
+            _processStopEvent.Query = new WqlEventQuery("__InstanceDeletionEvent", new TimeSpan(0, 0, 1), "TargetInstance isa \"Win32_Process\"");
+            _processStopEvent.EventArrived += (sender, args) =>
             {
-                Interval = 2000,
-                AutoReset = true,
-                Enabled = true,
+                var process = args.NewEvent["TargetInstance"] as ManagementBaseObject;
+
+                if (process == null)
+                    return;
+
+                var processId = (int) (uint) process["ProcessId"]; //This is silly but WMI won't cast directly to an int
+
+                RemoveSessions(_sessionCache.Where(x => x.ProcessId == processId));
             };
 
-            _processTimer.Elapsed += (sender, args) =>
-            {
-                _processTimer.Enabled = false;
-
-                var processes = Process.GetProcesses();
-
-                //remove all sessions from processes that don't exist
-                RemoveSessions(_sessionCache.Where(x => processes.All(y => y.Id != x.ProcessId)));
-
-                _processTimer.Enabled = true;
-            };
+            _processStopEvent.Start();
         }
 
-        private void RefreshSessions()
+        public void Dispose()
         {
-            IAudioSessionEnumerator enumerator;
-            _audioSessionManager.GetSessionEnumerator(out enumerator);
+            _processStopEvent.Stop();
+            _processStopEvent.Dispose();
 
-            var acquiredLock = _lock.AcquireReadLockNonReEntrant();
-
-            try
+            lock (_sessionObserverLock)
             {
-                int count;
-                enumerator.GetCount(out count);
-
-                _sessionCache = new List<CoreAudioSession>(count);
-
-                for (var i = 0; i < count; i++)
-                {
-                    IAudioSessionControl session;
-                    enumerator.GetSession(i, out session);
-                    CreateSessionWrapper(session);
-                }
+                _sessionObservers.ForEach(x => x.OnCompleted());
+                _sessionObservers.Clear();
             }
-            finally
-            {
-                if (acquiredLock)
-                    _lock.ExitReadLock();
-            }
+
+            Marshal.FinalReleaseComObject(_audioSessionManager);
         }
-
-        private void CreateSessionWrapper(IAudioSessionControl session)
-        {
-            var managedSession = new CoreAudioSession(session);
-            //managedSession.Disconnected += ManagedSessionOnDisconnected;
-            //managedSession.StateChanged += ManagedSessionOnStateChanged;
-
-            _sessionCache.Add(managedSession);
-        }
-
-        private void ManagedSessionOnStateChanged(IAudioSession sender, AudioSessionState state)
-        {
-            FireSessionChanged();
-        }
-
-        private void ManagedSessionOnDisconnected(IAudioSession sender)
-        {
-            var sessions = _sessionCache.Where(x => x.SessionId == sender.SessionId);
-
-            RemoveSessions(sessions);
-
-            FireSessionChanged();
-        }
-
-        private void FireSessionChanged()
-        {
-            var handler = SessionChanged;
-            if (handler != null)
-                handler(this, EventArgs.Empty);
-        }
-
-        private void RemoveSessions(IEnumerable<CoreAudioSession> sessions)
-        {
-            var coreAudioSessions = sessions as IList<CoreAudioSession> ?? sessions.ToList();
-
-            if (!coreAudioSessions.Any())
-                return;
-
-            var acquiredLock = _lock.AcquireWriteLockNonReEntrant();
-
-            try
-            {
-                _sessionCache.RemoveAll(x => coreAudioSessions.Any(y => y.SessionId == x.SessionId));
-
-                foreach (var s in coreAudioSessions)
-                {
-                    //s.StateChanged -= ManagedSessionOnStateChanged;
-                    //s.Disconnected -= ManagedSessionOnDisconnected;
-
-                    s.Dispose();
-                }
-            }
-            finally
-            {
-                if (acquiredLock)
-                    _lock.ExitWriteLock();
-            }
-        }
-
-        public event EventHandler SessionChanged;
 
         public IEnumerable<IAudioSession> All()
         {
@@ -225,11 +155,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             var acquiredLock = _lock.AcquireWriteLockNonReEntrant();
 
+
             try
             {
                 var ptr = Marshal.GetIUnknownForObject(sessionControl);
                 Marshal.AddRef(ptr);
-                CreateSessionWrapper(sessionControl);
+                var managedSession = ComThread.Invoke(() => CreateSessionWrapper(sessionControl));
+
+                lock (_sessionObserverLock)
+                {
+                    _sessionObservers.ForEach(x => x.OnNext(new AudioSessionsChanged(managedSession.Id, AudioSessionsChangedType.Created)));
+                }
             }
             finally
             {
@@ -237,20 +173,118 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     _lock.ExitWriteLock();
             }
 
-
-            FireSessionChanged();
-
             return 0;
-        }
-
-        public void Dispose()
-        {
-            Marshal.FinalReleaseComObject(_audioSessionManager);
         }
 
         public IDisposable Subscribe(IObserver<AudioSessionsChanged> observer)
         {
-            throw new NotImplementedException();
+            lock (_sessionObservers)
+            {
+                _sessionObservers.Add(observer);
+            }
+
+            return DelegateDisposable.Create(() =>
+            {
+                lock (_sessionObserverLock)
+                {
+                    _sessionObservers.Remove(observer);
+                }
+            });
         }
+
+        private void RefreshSessions()
+        {
+            IAudioSessionEnumerator enumerator;
+            _audioSessionManager.GetSessionEnumerator(out enumerator);
+
+            var acquiredLock = _lock.AcquireReadLockNonReEntrant();
+
+            try
+            {
+                int count;
+                enumerator.GetCount(out count);
+
+                _sessionCache = new List<CoreAudioSession>(count);
+
+                for (var i = 0; i < count; i++)
+                {
+                    IAudioSessionControl session;
+                    enumerator.GetSession(i, out session);
+                    CreateSessionWrapper(session);
+                }
+            }
+            finally
+            {
+                if (acquiredLock)
+                    _lock.ExitReadLock();
+            }
+        }
+
+        private CoreAudioSession CreateSessionWrapper(IAudioSessionControl session)
+        {
+            var managedSession = new CoreAudioSession(session);
+
+            managedSession.Subscribe<AudioSessionStateChanged>(ManagedSessionOnStateChanged);
+            managedSession.Subscribe<AudioSessionDisconnected>(ManagedSessionOnDisconnected);
+
+            _sessionCache.Add(managedSession);
+
+            return managedSession;
+        }
+
+        private void ManagedSessionOnStateChanged(AudioSessionStateChanged changed)
+        {
+            //Asynchronously check that the process is still alive after a session change
+            Task.Factory.StartNew(() =>
+            {
+                Thread.Sleep(500);
+            })
+            .ContinueWith(task =>
+            {
+            });
+        }
+
+        private void ManagedSessionOnDisconnected(AudioSessionDisconnected disconnected)
+        {
+            var sessions = _sessionCache.Where(x => x.Id == disconnected.Session.Id);
+
+            RemoveSessions(sessions);
+
+            lock (_sessionObserverLock)
+            {
+                _sessionObservers.ForEach(x => x.OnNext(new AudioSessionsChanged(disconnected.Session.Id, AudioSessionsChangedType.Disconnected)));
+            }
+        }
+
+        private void RemoveSessions(IEnumerable<CoreAudioSession> sessions)
+        {
+            var coreAudioSessions = sessions as IList<CoreAudioSession> ?? sessions.ToList();
+
+            if (!coreAudioSessions.Any())
+                return;
+
+            var acquiredLock = _lock.AcquireWriteLockNonReEntrant();
+
+            try
+            {
+                _sessionCache.RemoveAll(x => coreAudioSessions.Any(y => y.Id == x.Id));
+
+                foreach (var s in coreAudioSessions)
+                {
+                    lock (_sessionObserverLock)
+                    {
+                        _sessionObservers.ForEach(x => x.OnNext(new AudioSessionsChanged(s.Id, AudioSessionsChangedType.Disconnected)));
+                    }
+
+                    s.Dispose();
+                }
+            }
+            finally
+            {
+                if (acquiredLock)
+                    _lock.ExitWriteLock();
+            }
+        }
+
     }
 }

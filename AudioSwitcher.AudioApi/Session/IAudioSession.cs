@@ -7,7 +7,7 @@ namespace AudioSwitcher.AudioApi.Session
         IObservable<AudioSessionDisconnected>, 
         IDisposable
     {
-        string SessionId { get; }
+        string Id { get; }
 
         int ProcessId { get; }
 

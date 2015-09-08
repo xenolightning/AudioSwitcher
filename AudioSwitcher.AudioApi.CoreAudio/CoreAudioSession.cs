@@ -4,11 +4,12 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
+using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    internal class CoreAudioSession : IAudioSession, IAudioSessionEvents
+    internal class CoreAudioSession : IAudioSession, IObservable<AudioSessionStateChanged>, IAudioSessionEvents
     {
 
         private readonly IAudioSessionControl2 _audioSessionControl;
@@ -21,17 +22,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private readonly string _fileDescription;
         private int _volume;
-        private string _sessionId;
+        private string _id;
         private int _processId;
         private string _displayName;
         private bool _isSystemSession;
         private AudioSessionState _state;
 
-        public string SessionId
+        public string Id
         {
             get
             {
-                return _sessionId;
+                return _id;
             }
         }
 
@@ -144,7 +145,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 _audioSessionControl.GetProcessId(out processId);
                 _processId = (int)processId;
 
-                _audioSessionControl.GetSessionIdentifier(out _sessionId);
+                _audioSessionControl.GetSessionIdentifier(out _id);
             });
         }
 
@@ -208,11 +209,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             lock (_stateLock)
             {
                 _stateObservers.ForEach(x => x.OnCompleted());
+                _stateObservers.Clear();
             }
-            _disconnectedObservers.ForEach(x => x.OnCompleted());
 
-            _stateObservers.Clear();
-            _disconnectedObservers.Clear();
+            lock (_disconnectedLock)
+            {
+                _disconnectedObservers.ForEach(x => x.OnCompleted());
+                _disconnectedObservers.Clear();
+            }
+
 
             Marshal.FinalReleaseComObject(_audioSessionControl);
         }
@@ -224,7 +229,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 _stateObservers.Add(observer);
             }
 
-            return new DelegateDisposable(() =>
+            return DelegateDisposable.Create(() =>
             {
                 lock (_stateLock)
                 {
@@ -240,7 +245,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 _disconnectedObservers.Add(observer);
             }
 
-            return new DelegateDisposable(() =>
+            return DelegateDisposable.Create(() =>
             {
                 lock (_disconnectedLock)
                 {
