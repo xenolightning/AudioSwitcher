@@ -271,24 +271,23 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void FireSessionChanged(IAudioSession session, AudioSessionChangedType type)
         {
-            lock (_sessionObservers)
+            Task.Factory.StartNew(() =>
             {
-                foreach (var s in _sessionObservers)
+                lock (_sessionObserverLock)
                 {
-                    var localObserver = s;
-                    Task.Factory.StartNew(() =>
+                    Parallel.ForEach(_sessionObservers, x =>
                     {
                         try
                         {
-                            localObserver.OnNext(new AudioSessionChanged(session.Id, type));
+                            x.OnNext(new AudioSessionChanged(session.Id, type));
                         }
-                        catch (Exception ex)
+                        catch (Exception e)
                         {
-                            localObserver.OnError(ex);
+                            x.OnError(e);
                         }
                     });
                 }
-            }
+            });
         }
     }
 }

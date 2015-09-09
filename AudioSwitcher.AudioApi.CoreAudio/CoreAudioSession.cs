@@ -201,46 +201,44 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void FireStateChanged(EAudioSessionState state)
         {
-            lock (_stateLock)
+            Task.Factory.StartNew(() =>
             {
-                foreach (var obs in _stateObservers)
+                lock (_stateLock)
                 {
-                    var lObs = obs;
-                    Task.Factory.StartNew(() =>
+                    Parallel.ForEach(_stateObservers, x =>
                     {
                         try
                         {
-                            lObs.OnNext(new AudioSessionStateChanged(this, state.AsAudioSessionState()));
+                            x.OnNext(new AudioSessionStateChanged(this, state.AsAudioSessionState()));
                         }
                         catch (Exception e)
                         {
-                            lObs.OnError(e);
+                            x.OnError(e);
                         }
                     });
                 }
-            }
+            });
         }
 
         private void FireDisconnected()
         {
-            lock (_disconnectedLock)
+            Task.Factory.StartNew(() =>
             {
-                foreach (var obs in _disconnectedObservers)
+                lock (_disconnectedLock)
                 {
-                    var lObs = obs;
-                    Task.Factory.StartNew(() =>
+                    Parallel.ForEach(_disconnectedObservers, x =>
                     {
                         try
                         {
-                            lObs.OnNext(new AudioSessionDisconnected(this));
+                            x.OnNext(new AudioSessionDisconnected(this));
                         }
-                        catch(Exception e)
+                        catch (Exception e)
                         {
-                            lObs.OnError(e);
+                            x.OnError(e);
                         }
                     });
                 }
-            }
+            });
         }
 
         public void Dispose()
