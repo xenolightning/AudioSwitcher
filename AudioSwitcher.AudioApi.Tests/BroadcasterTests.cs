@@ -8,6 +8,51 @@ namespace AudioSwitcher.AudioApi.Tests
     public class BroadcasterTests
     {
         [Fact]
+        public void Broadcaster_Empty()
+        {
+            var b = new Broadcaster<int>();
+
+            Assert.False(b.IsDisposed);
+            Assert.False(b.HasObservers);
+        }
+
+        [Fact]
+        public void Broadcaster_Dispose()
+        {
+            var b = new Broadcaster<int>();
+            b.Dispose();
+            Assert.True(b.IsDisposed);
+        }
+
+        [Fact]
+        public void Broacaster_Disposed_HasObservers()
+        {
+            var b = new Broadcaster<int>();
+
+            var sub = b.Subscribe(x => { });
+
+            Assert.NotNull(sub);
+
+            b.Dispose();
+
+            Assert.False(b.HasObservers);
+        }
+
+        [Fact]
+        public void Broacaster_SubscriptionDisposed_HasObservers()
+        {
+            var b = new Broadcaster<int>();
+
+            var sub = b.Subscribe(x => { });
+
+            Assert.NotNull(sub);
+
+            sub.Dispose();
+
+            Assert.False(b.HasObservers);
+        }
+
+        [Fact]
         public void Broacaster_Subscribe()
         {
             var b = new Broadcaster<int>();
@@ -15,6 +60,18 @@ namespace AudioSwitcher.AudioApi.Tests
             var sub = b.Subscribe(x => { });
 
             Assert.NotNull(sub);
+        }
+
+        [Fact]
+        public void Broacaster_Subscribe_HasObservers()
+        {
+            var b = new Broadcaster<int>();
+
+            var sub = b.Subscribe(x => { });
+
+            Assert.NotNull(sub);
+
+            Assert.True(b.HasObservers);
         }
 
         [Fact]
