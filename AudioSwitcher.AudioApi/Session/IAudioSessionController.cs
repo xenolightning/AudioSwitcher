@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi.Session
 {
-    public interface IAudioSessionController : IObservable<AudioSessionChanged>, IDisposable
+    public interface IAudioSessionController : IDisposable
     {
 
         /// <summary>
@@ -35,5 +35,6 @@ namespace AudioSwitcher.AudioApi.Session
         IEnumerable<IAudioSession> GetExpiredSessions();
         Task<IEnumerable<IAudioSession>> GetExpiredSessionsAsync();
 
+        IObservable<AudioSessionChanged> SessionChanged { get; }
     }
 }

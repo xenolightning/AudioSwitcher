@@ -91,8 +91,11 @@ namespace HookingSample
 
             _hookCheckTimer = new Timer(CheckHook, null, 0, 1000);
 
-            Controller.DefaultPlaybackDevice.SessionController.Subscribe(x =>
+            Controller.DefaultPlaybackDevice.SessionController.SessionChanged.Subscribe(x =>
             {
+
+                Console.WriteLine("{0} - {1}", x.ChangeType, x.SessionId);
+
                 foreach (var session in Controller.DefaultPlaybackDevice.SessionController.All())
                 {
                     Console.WriteLine("{0} - {1} - {2}", session.ProcessId, session.DisplayName, session.Volume);

@@ -67,10 +67,10 @@
     <Compile Include="IDevice.cs" />
     <Compile Include="Observables\DelegateObserverSafe.cs" />
     <Compile Include="Observables\DelegateObserver.cs" />
-    <Compile Include="Observables\AsyncDispatcher.cs" />
-    <Compile Include="Observables\Dispatcher.cs" />
-    <Compile Include="Observables\DispatcherBase.cs" />
-    <Compile Include="Observables\IDispatcher.cs" />
+    <Compile Include="Observables\AsyncBroadcaster.cs" />
+    <Compile Include="Observables\Broadcaster.cs" />
+    <Compile Include="Observables\BroadcasterBase.cs" />
+    <Compile Include="Observables\IBroadcaster.cs" />
     <Compile Include="Observables\ObservableExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Role.cs" />

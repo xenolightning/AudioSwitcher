@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Observables;
@@ -16,11 +14,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly IAudioSessionControl2 _audioSessionControl;
         private readonly ISimpleAudioVolume _simpleAudioVolume;
 
-        private readonly object _stateLock = new object();
-        private readonly object _disconnectedLock = new object();
-        private readonly List<IObserver<AudioSessionStateChanged>> _stateObservers;
-        private readonly List<IObserver<AudioSessionDisconnected>> _disconnectedObservers;
-
         private string _fileDescription;
         private int _volume;
         private string _id;
@@ -29,6 +22,24 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private bool _isSystemSession;
         private AudioSessionState _state;
         private string _executablePath;
+        private readonly AsyncBroadcaster<AudioSessionStateChanged> _stateChanged;
+        private readonly AsyncBroadcaster<AudioSessionDisconnected> _disconnected;
+
+        public IObservable<AudioSessionStateChanged> StateChanged
+        {
+            get
+            {
+                return _stateChanged.AsObservable();
+            }
+        }
+
+        public IObservable<AudioSessionDisconnected> Disconnected
+        {
+            get
+            {
+                return _disconnected.AsObservable();
+            }
+        }
 
         public string Id
         {
@@ -108,8 +119,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (_audioSessionControl == null || _simpleAudioVolume == null)
                 throw new InvalidComObjectException("control");
 
-            _stateObservers = new List<IObserver<AudioSessionStateChanged>>();
-            _disconnectedObservers = new List<IObserver<AudioSessionDisconnected>>();
+            _stateChanged = new AsyncBroadcaster<AudioSessionStateChanged>();
+            _disconnected = new AsyncBroadcaster<AudioSessionDisconnected>();
 
             _audioSessionControl.RegisterAudioSessionNotification(this);
 
@@ -201,93 +212,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void FireStateChanged(EAudioSessionState state)
         {
-            Task.Factory.StartNew(() =>
-            {
-                lock (_stateLock)
-                {
-                    Parallel.ForEach(_stateObservers, x =>
-                    {
-                        try
-                        {
-                            x.OnNext(new AudioSessionStateChanged(this, state.AsAudioSessionState()));
-                        }
-                        catch (Exception e)
-                        {
-                            x.OnError(e);
-                        }
-                    });
-                }
-            });
+            _stateChanged.OnNext(new AudioSessionStateChanged(this, state.AsAudioSessionState()));
         }
 
         private void FireDisconnected()
         {
-            Task.Factory.StartNew(() =>
-            {
-                lock (_disconnectedLock)
-                {
-                    Parallel.ForEach(_disconnectedObservers, x =>
-                    {
-                        try
-                        {
-                            x.OnNext(new AudioSessionDisconnected(this));
-                        }
-                        catch (Exception e)
-                        {
-                            x.OnError(e);
-                        }
-                    });
-                }
-            });
+            _disconnected.OnNext(new AudioSessionDisconnected(this));
         }
 
         public void Dispose()
         {
-            lock (_stateLock)
-            {
-                _stateObservers.ForEach(x => x.OnCompleted());
-                _stateObservers.Clear();
-            }
-
-            lock (_disconnectedLock)
-            {
-                _disconnectedObservers.ForEach(x => x.OnCompleted());
-                _disconnectedObservers.Clear();
-            }
+            _stateChanged.Dispose();
+            _disconnected.Dispose();
 
             Marshal.FinalReleaseComObject(_audioSessionControl);
-        }
-
-        public IDisposable Subscribe(IObserver<AudioSessionStateChanged> observer)
-        {
-            lock (_stateLock)
-            {
-                _stateObservers.Add(observer);
-            }
-
-            return DelegateDisposable.Create(() =>
-            {
-                lock (_stateLock)
-                {
-                    _stateObservers.Remove(observer);
-                }
-            });
-        }
-
-        public IDisposable Subscribe(IObserver<AudioSessionDisconnected> observer)
-        {
-            lock (_disconnectedLock)
-            {
-                _disconnectedObservers.Add(observer);
-            }
-
-            return DelegateDisposable.Create(() =>
-            {
-                lock (_disconnectedLock)
-                {
-                    _disconnectedObservers.Remove(observer);
-                }
-            });
         }
     }
 }

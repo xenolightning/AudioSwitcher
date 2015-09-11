@@ -11,5 +11,12 @@ namespace AudioSwitcher.AudioApi.Observables
         {
             return observable.Subscribe(new DelegateObserver<T>(onNext));
         }
+
+        public static IObservable<T> AsObservable<T>(this IObservable<T> observable)
+        {
+            if (observable == null) throw new ArgumentNullException("observable");
+
+            return observable;
+        }
     }
 }

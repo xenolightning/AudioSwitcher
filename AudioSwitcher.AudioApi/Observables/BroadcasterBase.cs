@@ -2,7 +2,7 @@
 
 namespace AudioSwitcher.AudioApi.Observables
 {
-    public abstract class DispatcherBase<T> : IDispatcher<T>, IDisposable
+    public abstract class BroadcasterBase<T> : IBroadcaster<T>, IDisposable
     {
         public abstract bool HasObservers { get; }
 
