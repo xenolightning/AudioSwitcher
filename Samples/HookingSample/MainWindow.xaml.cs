@@ -98,6 +98,11 @@ namespace HookingSample
                 {
                     Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.Volume);
                 });
+
+                audioSession.MuteChanged.Subscribe(m =>
+                {
+                    Console.WriteLine("{0} - {1}", m.Session.DisplayName, m.IsMuted);
+                });
             }
 
             Controller.DefaultPlaybackDevice.SessionController.SessionChanged.Subscribe(x =>

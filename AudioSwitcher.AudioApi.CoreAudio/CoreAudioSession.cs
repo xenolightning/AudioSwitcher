@@ -25,11 +25,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly AsyncBroadcaster<SessionStateChangedArgs> _stateChanged;
         private readonly AsyncBroadcaster<SessionDisconnectedArgs> _disconnected;
         private readonly AsyncBroadcaster<SessionVolumeChangedArgs> _volumeChanged;
+        private readonly AsyncBroadcaster<SessionMuteChangedArgs> _muteChanged;
         private bool _isMuted;
 
         public IObservable<SessionVolumeChangedArgs> VolumeChanged
         {
             get { return _volumeChanged.AsObservable(); }
+        }
+
+        public IObservable<SessionMuteChangedArgs> MuteChanged
+        {
+            get { return _muteChanged.AsObservable(); }
         }
 
         public IObservable<SessionStateChangedArgs> StateChanged
@@ -96,22 +102,27 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
             set
             {
-                ComThread.Invoke(() =>
-                {
-                    _simpleAudioVolume.SetMasterVolume(((float)value) / 100, Guid.Empty);
-                });
+                ComThread.Invoke(() => _simpleAudioVolume.SetMasterVolume((float)(value / 100), Guid.Empty));
+                _volume = value;
+                FireVolumeChanged(_volume);
             }
         }
 
         public bool IsMuted
         {
-            get { return _isMuted; }
+            get
+            {
+                return _isMuted;
+            }
             set
             {
-                ComThread.Invoke(() =>
-                {
-                    _simpleAudioVolume.SetMute(value, Guid.Empty);
-                });
+                if (_isMuted == value)
+                    return;
+
+                ComThread.Invoke(() => _simpleAudioVolume.SetMute(value, Guid.Empty));
+
+                _isMuted = value;
+                FireMuteChanged(_isMuted);
             }
         }
 
@@ -139,6 +150,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _stateChanged = new AsyncBroadcaster<SessionStateChangedArgs>();
             _disconnected = new AsyncBroadcaster<SessionDisconnectedArgs>();
             _volumeChanged = new AsyncBroadcaster<SessionVolumeChangedArgs>();
+            _muteChanged = new AsyncBroadcaster<SessionMuteChangedArgs>();
 
             _audioSessionControl.RegisterAudioSessionNotification(this);
 
@@ -207,8 +219,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         int IAudioSessionEvents.OnSimpleVolumeChanged(float volume, bool isMuted, ref Guid eventContext)
         {
-            _volume = volume * 100;
-            FireVolumeChanged(_volume);
+            if (Math.Abs(_volume - volume * 100) > 0)
+            {
+                _volume = volume * 100;
+                FireVolumeChanged(_volume);
+            }
+
+            if (isMuted != _isMuted)
+            {
+                _isMuted = isMuted;
+                FireMuteChanged(_isMuted);
+            }
+
             return 0;
         }
 
@@ -247,6 +269,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private void FireDisconnected()
         {
             _disconnected.OnNext(new SessionDisconnectedArgs(this));
+        }
+
+        private void FireMuteChanged(bool isMuted)
+        {
+            _muteChanged.OnNext(new SessionMuteChangedArgs(this, isMuted));
         }
 
         public void Dispose()

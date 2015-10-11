@@ -79,6 +79,7 @@
     <Compile Include="Session\SessionDisconnectedArgs.cs" />
     <Compile Include="Session\AudioSessionChanged.cs" />
     <Compile Include="Session\AudioSessionState.cs" />
+    <Compile Include="Session\SessionMuteChangedArgs.cs" />
     <Compile Include="Session\SessionStateChangedArgs.cs" />
     <Compile Include="Session\IAudioSession.cs" />
     <Compile Include="Session\IAudioSessionController.cs" />
