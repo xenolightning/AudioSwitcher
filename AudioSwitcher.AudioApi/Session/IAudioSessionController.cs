@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi.Session
 {
-    public interface IAudioSessionController : IDisposable
+    public interface IAudioSessionController : IEnumerable<IAudioSession>, IDisposable
     {
 
         /// <summary>

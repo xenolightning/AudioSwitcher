@@ -14,14 +14,16 @@ namespace AudioSwitcher.AudioApi.Session
 
         bool IsSystemSession { get; }
 
-        int Volume { get; set; }
+        double Volume { get; set; }
 
         bool IsMuted { get; set; }
 
         AudioSessionState SessionState { get; }
 
-        IObservable<AudioSessionStateChanged> StateChanged { get; }
-        IObservable<AudioSessionDisconnected> Disconnected { get; }
+        IObservable<SessionVolumeChangedArgs> VolumeChanged { get; }
+
+        IObservable<SessionStateChangedArgs> StateChanged { get; }
+        IObservable<SessionDisconnectedArgs> Disconnected { get; }
 
     }
 }

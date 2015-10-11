@@ -8,6 +8,7 @@ using System.Windows;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
 using AudioSwitcher.AudioApi.Hooking;
+using AudioSwitcher.AudioApi.Session;
 
 namespace HookingSample
 {
@@ -91,12 +92,28 @@ namespace HookingSample
 
             _hookCheckTimer = new Timer(CheckHook, null, 0, 1000);
 
+            foreach (var audioSession in Controller.DefaultPlaybackDevice.SessionController.All())
+            {
+                audioSession.VolumeChanged.Subscribe(v =>
+                {
+                    Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.Volume);
+                });
+            }
+
             Controller.DefaultPlaybackDevice.SessionController.SessionChanged.Subscribe(x =>
             {
+                if (x.ChangeType == AudioSessionChangedType.Created)
+                {
+                    var newSession = Controller.DefaultPlaybackDevice.SessionController.First(y => y.Id == x.SessionId);
+                    newSession.VolumeChanged.Subscribe(v =>
+                    {
+                        Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.Volume);
+                    });
+                }
 
                 Console.WriteLine("{0} - {1}", x.ChangeType, x.SessionId);
 
-                foreach (var session in Controller.DefaultPlaybackDevice.SessionController.All())
+                foreach (var session in Controller.DefaultPlaybackDevice.SessionController)
                 {
                     Console.WriteLine("{0} - {1} - {2}", session.ProcessId, session.DisplayName, session.Volume);
                 }

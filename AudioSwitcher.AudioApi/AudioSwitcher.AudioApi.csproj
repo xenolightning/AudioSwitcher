@@ -76,13 +76,14 @@
     <Compile Include="Role.cs" />
     <Compile Include="Sandbox\SandboxAudioController.cs" />
     <Compile Include="Sandbox\SandboxDevice.cs" />
-    <Compile Include="Session\AudioSessionDisconnected.cs" />
+    <Compile Include="Session\SessionDisconnectedArgs.cs" />
     <Compile Include="Session\AudioSessionChanged.cs" />
     <Compile Include="Session\AudioSessionState.cs" />
-    <Compile Include="Session\AudioSessionStateChanged.cs" />
+    <Compile Include="Session\SessionStateChangedArgs.cs" />
     <Compile Include="Session\IAudioSession.cs" />
     <Compile Include="Session\IAudioSessionController.cs" />
     <Compile Include="Session\IAudioSessionEndpoint.cs" />
+    <Compile Include="Session\SessionVolumeChangedArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="api.pfx" />

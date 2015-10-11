@@ -1,6 +1,6 @@
 namespace AudioSwitcher.AudioApi.Session
 {
-    public class AudioSessionStateChanged
+    public class SessionStateChangedArgs
     {
 
         public IAudioSession Session
@@ -15,7 +15,7 @@ namespace AudioSwitcher.AudioApi.Session
             private set;
         }
 
-        public AudioSessionStateChanged(IAudioSession session, AudioSessionState state)
+        public SessionStateChangedArgs(IAudioSession session, AudioSessionState state)
         {
             Session = session;
             State = state;

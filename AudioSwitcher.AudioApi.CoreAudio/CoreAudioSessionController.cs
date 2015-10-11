@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -50,9 +51,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     return;
 
                 var processId = (int)(uint)process["ProcessId"]; //This is silly but WMI won't cast directly to an int
-
-                Debug.WriteLine(processId);
-                Console.WriteLine(processId);
 
                 RemoveSessions(_sessionCache.Where(x => x.ProcessId == processId));
             };
@@ -225,13 +223,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return managedSession;
         }
 
-        private void ManagedSessionOnStateChanged(AudioSessionStateChanged changed)
+        private void ManagedSessionOnStateChanged(SessionStateChangedArgs changedArgs)
         {
         }
 
-        private void ManagedSessionOnDisconnected(AudioSessionDisconnected disconnected)
+        private void ManagedSessionOnDisconnected(SessionDisconnectedArgs disconnectedArgs)
         {
-            var sessions = _sessionCache.Where(x => x.Id == disconnected.Session.Id);
+            var sessions = _sessionCache.Where(x => x.Id == disconnectedArgs.Session.Id);
 
             RemoveSessions(sessions);
         }
@@ -265,6 +263,16 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private void FireSessionChanged(IAudioSession session, AudioSessionChangedType type)
         {
             _sessionChanged.OnNext(new AudioSessionChanged(session.Id, type));
+        }
+
+        public IEnumerator<IAudioSession> GetEnumerator()
+        {
+            return All().GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
