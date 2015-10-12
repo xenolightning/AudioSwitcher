@@ -20,6 +20,7 @@ namespace AudioSwitcher.AudioApi.Hooking
         private Timer _hookIsLiveTimer;
         private RemoteInterface _interface;
         private int _lastMessageCount;
+        private bool _completeSignalled;
 
         public EHookStatus Status
         {
@@ -50,7 +51,7 @@ namespace AudioSwitcher.AudioApi.Hooking
                 (x, y) => _systemDeviceId(x, y),
                 () => Status == EHookStatus.Inactive,
                 () => Status = EHookStatus.Active,
-                () => RaiseOnComplete(),
+                RaiseOnComplete,
                 RaiseOnError
             );
 
@@ -65,6 +66,8 @@ namespace AudioSwitcher.AudioApi.Hooking
 
             _hookIsLiveTimer = new Timer(HookIsLive, null, 0, 2000);
             _lastMessageCount = -1;
+
+            _completeSignalled = false;
         }
 
         private void HookIsLive(object state)
@@ -75,7 +78,6 @@ namespace AudioSwitcher.AudioApi.Hooking
                 _lastMessageCount = messageCount;
             else
                 UnHook();
-
         }
 
         public void UnHook()
@@ -97,7 +99,6 @@ namespace AudioSwitcher.AudioApi.Hooking
                 _ipcChannel.StopListening(null);
                 _ipcChannel = null;
 
-                //TODO Check this isn't fired twice when this is invoked.
                 RaiseOnComplete();
             }
         }
@@ -106,10 +107,16 @@ namespace AudioSwitcher.AudioApi.Hooking
 
         private void RaiseOnComplete()
         {
+            if (_completeSignalled)
+                return;
+
             var handler = OnComplete;
 
             if (handler != null)
+            {
+                _completeSignalled = true;
                 handler();
+            }
         }
 
         public event OnErrorHandler OnError;
