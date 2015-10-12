@@ -12,6 +12,8 @@ namespace AudioSwitcher.AudioApi.Hooking
     {
         public delegate void OnErrorHandler(int processId, Exception exception);
 
+        public delegate void OnCompleteHandler();
+
         private readonly Func<DataFlow, Role, string> _systemDeviceId;
         private string _channelName;
         private IpcServerChannel _ipcChannel;
@@ -48,7 +50,7 @@ namespace AudioSwitcher.AudioApi.Hooking
                 (x, y) => _systemDeviceId(x, y),
                 () => Status == EHookStatus.Inactive,
                 () => Status = EHookStatus.Active,
-                UnHook,
+                () => RaiseOnComplete(),
                 RaiseOnError
             );
 
@@ -81,6 +83,8 @@ namespace AudioSwitcher.AudioApi.Hooking
             if (Status == EHookStatus.Inactive)
                 return;
 
+            Status = EHookStatus.Inactive;
+
             if (_hookIsLiveTimer != null)
             {
                 _hookIsLiveTimer.Dispose();
@@ -92,17 +96,30 @@ namespace AudioSwitcher.AudioApi.Hooking
                 ChannelServices.UnregisterChannel(_ipcChannel);
                 _ipcChannel.StopListening(null);
                 _ipcChannel = null;
-            }
 
-            Status = EHookStatus.Inactive;
+                //TODO Check this isn't fired twice when this is invoked.
+                RaiseOnComplete();
+            }
+        }
+
+        public event OnCompleteHandler OnComplete;
+
+        private void RaiseOnComplete()
+        {
+            var handler = OnComplete;
+
+            if (handler != null)
+                handler();
         }
 
         public event OnErrorHandler OnError;
 
         private void RaiseOnError(int processId, Exception exception)
         {
-            if (OnError != null)
-                OnError(processId, exception);
+            var handler = OnError;
+
+            if (handler != null)
+                handler(processId, exception);
         }
 
     }

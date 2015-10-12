@@ -127,8 +127,8 @@ namespace HookingSample
 
         private void CheckHook(object state)
         {
-            if (Hook != null && Hook.Status == EHookStatus.Inactive)
-                UnHook();
+            //if (Hook != null && Hook.Status == EHookStatus.Inactive)
+            //    UnHook();
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -169,6 +169,12 @@ namespace HookingSample
 
             Hook.Hook(SelectedProcess.Id);
 
+            Hook.OnComplete += () =>
+            {
+                UnHook();
+                Controller.SetDefaultDevice(Controller.DefaultPlaybackDevice);
+            };
+
             Controller.SetDefaultDevice(Controller.DefaultPlaybackDevice);
         }
 
@@ -178,6 +184,9 @@ namespace HookingSample
             {
                 Hook.Dispose();
                 Hook = null;
+
+                Thread.Sleep(1000);
+
                 Controller.SetDefaultDevice(Controller.DefaultPlaybackDevice);
             }
         }
@@ -200,7 +209,8 @@ namespace HookingSample
         protected virtual void OnPropertyChanged(string propertyName)
         {
             var handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            if (handler != null)
+                handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
