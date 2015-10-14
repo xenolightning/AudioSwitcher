@@ -20,3 +20,4 @@ using System.Reflection;
 
 [assembly: AssemblyVersion("3.0.0.209")]
 [assembly: AssemblyFileVersion("3.0.0.209")]
+[assembly: AssemblyInformationalVersion("3.0.0.209")]
