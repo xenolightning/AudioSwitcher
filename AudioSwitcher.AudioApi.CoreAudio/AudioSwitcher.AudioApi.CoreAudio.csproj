@@ -44,6 +44,9 @@
     <Reference Include="System.Management" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="CoreAudioSession.cs" />
     <Compile Include="CoreAudioSessionController.cs" />
     <Compile Include="Extensions.cs" />
