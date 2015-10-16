@@ -68,6 +68,5 @@ namespace AudioSwitcher.Tests.Common
             return _muted = mute;
         }
 
-        public override event EventHandler<DeviceChangedEventArgs> VolumeChanged;
     }
 }

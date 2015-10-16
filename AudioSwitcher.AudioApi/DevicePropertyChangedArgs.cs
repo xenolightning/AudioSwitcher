@@ -3,10 +3,10 @@ using System.Linq.Expressions;
 
 namespace AudioSwitcher.AudioApi
 {
-    public class DevicePropertyChangedEventArgs : DeviceChangedEventArgs
+    public class DevicePropertyChangedArgs : DeviceChangedArgs
     {
-        public DevicePropertyChangedEventArgs(IDevice dev, string propertyName = null)
-            : base(dev, AudioDeviceEventType.PropertyChanged)
+        public DevicePropertyChangedArgs(IDevice dev, string propertyName = null)
+            : base(dev, DeviceChangedType.PropertyChanged)
         {
             PropertyName = propertyName;
         }
@@ -26,10 +26,10 @@ namespace AudioSwitcher.AudioApi
             return body.Member.Name;
         }
 
-        public static DevicePropertyChangedEventArgs FromExpression(IDevice dev,
+        public static DevicePropertyChangedArgs FromExpression(IDevice dev,
             Expression<Func<IDevice, object>> propertyNameExpression)
         {
-            return new DevicePropertyChangedEventArgs(dev, GetName(propertyNameExpression));
+            return new DevicePropertyChangedArgs(dev, GetName(propertyNameExpression));
         }
     }
 }

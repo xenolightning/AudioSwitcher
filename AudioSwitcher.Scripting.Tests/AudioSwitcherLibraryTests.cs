@@ -455,7 +455,7 @@ Assert.True(result.Success);
 
         [Fact]
         [Trait("Type", "AudioDevice")]
-        [Trait("Function", "Volume")]
+        [Trait("Function", "VolumeChanged")]
         public void AudioSwitcher_AudioDevice_getVolume()
         {
             using (var engine = new JsEngine())
@@ -475,7 +475,7 @@ Assert.True(result.Success);
 
         [Fact]
         [Trait("Type", "AudioDevice")]
-        [Trait("Function", "Volume")]
+        [Trait("Function", "VolumeChanged")]
         public void AudioSwitcher_AudioDevice_setVolume()
         {
             using (var engine = new JsEngine())

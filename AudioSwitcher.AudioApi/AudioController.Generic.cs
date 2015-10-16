@@ -2,16 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AudioSwitcher.AudioApi.Observables;
 
 namespace AudioSwitcher.AudioApi
 {
     public abstract class AudioController<T> : IAudioController<T>
         where T : class, IDevice
     {
+        private readonly AsyncBroadcaster<DeviceChangedArgs> _audioDeviceChanged;
+
+        protected AudioController()
+        {
+            _audioDeviceChanged = new AsyncBroadcaster<DeviceChangedArgs>();
+        }
+
         protected const DeviceState DEFAULT_DEVICE_STATE_FILTER =
             DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled;
-
-        public event EventHandler<DeviceChangedEventArgs> AudioDeviceChanged;
 
         public T DefaultPlaybackDevice
         {
@@ -59,6 +65,11 @@ namespace AudioSwitcher.AudioApi
             {
                 SetDefaultCommunicationsDevice(value);
             }
+        }
+
+        public IObservable<DeviceChangedArgs> AudioDeviceChanged
+        {
+            get { return _audioDeviceChanged.AsObservable(); }
         }
 
         public virtual T GetDevice(Guid id)
@@ -376,13 +387,9 @@ namespace AudioSwitcher.AudioApi
             Dispose(true);
         }
 
-        protected virtual void OnAudioDeviceChanged(object sender, DeviceChangedEventArgs e)
+        protected virtual void OnAudioDeviceChanged(DeviceChangedArgs e)
         {
-            var handler = AudioDeviceChanged;
-
-            //Bubble the event
-            if (handler != null)
-                handler(sender, e);
+            _audioDeviceChanged.OnNext(e);
         }
 
         protected virtual void Dispose(bool disposing)

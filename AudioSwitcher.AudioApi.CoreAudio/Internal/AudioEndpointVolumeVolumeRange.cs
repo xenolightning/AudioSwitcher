@@ -27,7 +27,7 @@ using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
-    ///     Audio Endpoint Volume Volume Range
+    ///     Audio Endpoint VolumeChanged VolumeChanged Range
     /// </summary>
     internal class AudioEndpointVolumeVolumeRange
     {

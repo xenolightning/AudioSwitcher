@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using AudioSwitcher.AudioApi.Observables;
 using Xunit;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Tests
@@ -79,11 +80,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
                 using (var controller = new CoreAudioController())
                 {
 
-                    controller.AudioDeviceChanged += (sender, args) =>
+                    controller.AudioDeviceChanged.Subscribe(args =>
                     {
                         count++;
                         ev.TrySetResult(true);
-                    };
+                    });
 
                     controller.DefaultPlaybackDevice.SetAsDefault();
                 }

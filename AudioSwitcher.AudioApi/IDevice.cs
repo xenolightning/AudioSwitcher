@@ -49,18 +49,10 @@ namespace AudioSwitcher.AudioApi
 
         Task<bool> ToggleMuteAsync();
 
-        event EventHandler<DeviceChangedEventArgs> VolumeChanged;
+        IObservable<DeviceVolumeChangedArgs> VolumeChanged
+        {
+            get;
+        }
 
-        [Obsolete("Use Mute(true) instead")]
-        bool Mute();
-
-        [Obsolete("Use MuteAsync(true) instead")]
-        Task<bool> MuteAsync();
-
-        [Obsolete("Use Mute(false) instead")]
-        bool UnMute();
-
-        [Obsolete("Use MuteAsync(false) instead")]
-        Task<bool> UnMuteAsync();
     }
 }

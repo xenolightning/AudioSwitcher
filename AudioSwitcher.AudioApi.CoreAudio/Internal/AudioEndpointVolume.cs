@@ -60,7 +60,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
 
         /// <summary>
-        ///     Volume Range
+        ///     VolumeChanged Range
         /// </summary>
         public AudioEndpointVolumeVolumeRange VolumeRange
         {
@@ -104,7 +104,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
 
         /// <summary>
-        ///     Master Volume Level
+        ///     Master VolumeChanged Level
         /// </summary>
         public float MasterVolumeLevel
         {
@@ -125,7 +125,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
 
         /// <summary>
-        ///     Master Volume Level Scalar
+        ///     Master VolumeChanged Level Scalar
         /// </summary>
         public float MasterVolumeLevelScalar
         {
@@ -167,12 +167,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
 
         /// <summary>
-        ///     On Volume Notification
+        ///     On VolumeChanged Notification
         /// </summary>
         public event AudioEndpointVolumeNotificationDelegate OnVolumeNotification;
 
         /// <summary>
-        ///     Volume Step Up
+        ///     VolumeChanged Step Up
         /// </summary>
         public void VolumeStepUp()
         {
@@ -180,7 +180,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
 
         /// <summary>
-        ///     Volume Step Down
+        ///     VolumeChanged Step Down
         /// </summary>
         public void VolumeStepDown()
         {

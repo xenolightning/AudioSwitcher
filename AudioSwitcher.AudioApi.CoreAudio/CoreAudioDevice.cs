@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
+using AudioSwitcher.AudioApi.Observables;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
@@ -32,9 +33,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ReloadAudioEndpointVolume(device);
             ReloadAudioSessionController(device);
 
-            controller.AudioDeviceChanged +=
-                new EventHandler<DeviceChangedEventArgs>(EnumeratorOnAudioDeviceChanged)
-                    .MakeWeak(x => { controller.AudioDeviceChanged -= x; });
+            controller.AudioDeviceChanged.Subscribe(EnumeratorOnAudioDeviceChanged);
         }
 
         private void LoadProperties(IMultimediaDevice device)
@@ -235,14 +234,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void EnumeratorOnAudioDeviceChanged(object sender, DeviceChangedEventArgs deviceChangedEventArgs)
+        private void EnumeratorOnAudioDeviceChanged(DeviceChangedArgs deviceChangedArgs)
         {
-            if (deviceChangedEventArgs.Device == null || deviceChangedEventArgs.Device.Id != Id)
+            if (deviceChangedArgs.Device == null || deviceChangedArgs.Device.Id != Id)
                 return;
 
-            var propertyChangedEvent = deviceChangedEventArgs as DevicePropertyChangedEventArgs;
-            var stateChangedEvent = deviceChangedEventArgs as DeviceStateChangedEventArgs;
-            var defaultChangedEvent = deviceChangedEventArgs as DefaultDeviceChangedEventArgs;
+            var propertyChangedEvent = deviceChangedArgs as DevicePropertyChangedArgs;
+            var stateChangedEvent = deviceChangedArgs as DeviceStateChangedArgs;
+            var defaultChangedEvent = deviceChangedArgs as DefaultDeviceChangedArgs;
 
             if (propertyChangedEvent != null)
                 HandlePropertyChanged(propertyChangedEvent);
@@ -254,15 +253,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 HandleDefaultChanged(defaultChangedEvent);
         }
 
-        private void HandlePropertyChanged(DevicePropertyChangedEventArgs propertyChangedEvent)
+        private void HandlePropertyChanged(DevicePropertyChangedArgs propertyChanged)
         {
-            ComThread.BeginInvoke(() => { LoadProperties(_device); })
-                .ContinueWith(x => { OnPropertyChanged(propertyChangedEvent.PropertyName); });
+            ComThread.BeginInvoke(() =>
+            {
+                LoadProperties(_device);
+            })
+            .ContinueWith(x =>
+            {
+                OnPropertyChanged(propertyChanged.PropertyName);
+            });
         }
 
-        private void HandleStateChanged(DeviceStateChangedEventArgs stateChangedEvent)
+        private void HandleStateChanged(DeviceStateChangedArgs stateChanged)
         {
-            _state = stateChangedEvent.State.AsEDeviceState();
+            _state = stateChanged.State.AsEDeviceState();
 
             ReloadAudioEndpointVolume(_device);
             ReloadAudioMeterInformation(_device);
@@ -298,30 +303,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             });
         }
 
-        private void HandleDefaultChanged(DefaultDeviceChangedEventArgs defaultChangedEvent)
+        private void HandleDefaultChanged(DefaultDeviceChangedArgs defaultChanged)
         {
-            if (defaultChangedEvent.IsDefaultEvent)
+            if (defaultChanged.IsDefaultEvent)
                 OnPropertyChanged("IsDefaultDevice");
-            else if (defaultChangedEvent.IsDefaultCommunicationsEvent)
+            else if (defaultChanged.IsDefaultCommunicationsEvent)
                 OnPropertyChanged("IsDefaultCommunicationsDevice");
         }
 
         private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
         {
-            RaiseVolumeChanged(Volume);
+            OnVolumeChanged(Volume);
 
             //Fire the muted changed here too
             OnPropertyChanged("IsMuted");
-        }
-
-        private void RaiseVolumeChanged(int newVolume)
-        {
-            var handler = VolumeChanged;
-
-            if (handler != null)
-                handler(this, new DeviceVolumeChangedEventArgs(this, newVolume));
-
-            OnPropertyChanged("Volume");
         }
 
         public override bool Mute(bool mute)
@@ -332,8 +327,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             AudioEndpointVolume.Mute = mute;
             return AudioEndpointVolume.Mute;
         }
-
-        public override event EventHandler<DeviceChangedEventArgs> VolumeChanged;
 
         /// <summary>
         ///     Extracts the unique GUID Identifier for a Windows System _device

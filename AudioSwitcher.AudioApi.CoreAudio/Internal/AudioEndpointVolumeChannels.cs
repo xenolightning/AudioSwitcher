@@ -27,7 +27,7 @@ using AudioSwitcher.AudioApi.CoreAudio.Threading;
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
-    ///     Audio Endpoint Volume Channels
+    ///     Audio Endpoint VolumeChanged Channels
     /// </summary>
     internal class AudioEndpointVolumeChannels
     {

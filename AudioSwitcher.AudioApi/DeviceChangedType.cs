@@ -3,13 +3,12 @@
     /// <summary>
     ///     The type of change raised
     /// </summary>
-    public enum AudioDeviceEventType
+    public enum DeviceChangedType
     {
         DefaultDevice,
         DefaultCommunicationsDevice,
-        Added,
-        Removed,
-        Volume,
+        DeviceAdded,
+        DeviceRemoved,
         PropertyChanged,
         StateChanged
     }

@@ -31,7 +31,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
 
         /// <summary>
-        /// Audio Endpoint Volume
+        /// Audio Endpoint VolumeChanged
         /// </summary>
         private AudioEndpointVolume AudioEndpointVolume
         {

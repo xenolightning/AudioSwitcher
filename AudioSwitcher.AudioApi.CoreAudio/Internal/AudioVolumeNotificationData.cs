@@ -25,7 +25,7 @@ using System;
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
-    ///     Audio Volume Notification Data
+    ///     Audio VolumeChanged Notification Data
     /// </summary>
     internal class AudioVolumeNotificationData
     {
@@ -36,7 +36,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly bool _muted;
 
         /// <summary>
-        ///     Audio Volume Notification Data
+        ///     Audio VolumeChanged Notification Data
         /// </summary>
         /// <param name="eventContext"></param>
         /// <param name="muted"></param>
@@ -74,7 +74,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
 
         /// <summary>
-        ///     Master Volume
+        ///     Master VolumeChanged
         /// </summary>
         public float MasterVolume
         {
@@ -96,7 +96,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
 
         /// <summary>
-        ///     Channel Volume
+        ///     Channel VolumeChanged
         /// </summary>
         public float[] ChannelVolume
         {

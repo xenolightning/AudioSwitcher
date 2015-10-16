@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AudioSwitcher.AudioApi.Observables;
 
 namespace AudioSwitcher.AudioApi
 {
@@ -9,9 +10,12 @@ namespace AudioSwitcher.AudioApi
     /// </summary>
     public abstract class Device : IDevice
     {
+        private readonly AsyncBroadcaster<DeviceVolumeChangedArgs> _volumeChanged;
+
         protected Device(IAudioController controller)
         {
             Controller = controller;
+            _volumeChanged = new AsyncBroadcaster<DeviceVolumeChangedArgs>();
         }
 
         public IAudioController Controller { get; private set; }
@@ -104,30 +108,6 @@ namespace AudioSwitcher.AudioApi
             return Task.Factory.StartNew(() => Mute(mute));
         }
 
-        [Obsolete("Use Mute(true) instead")]
-        public virtual bool Mute()
-        {
-            return Mute(true);
-        }
-
-        [Obsolete("Use MuteAsync(true) instead")]
-        public virtual Task<bool> MuteAsync()
-        {
-            return Task.Factory.StartNew(() => Mute(true));
-        }
-
-        [Obsolete("Use Mute(false) instead")]
-        public virtual bool UnMute()
-        {
-            return Mute(false);
-        }
-
-        [Obsolete("Use MuteAsync(false) instead")]
-        public virtual Task<bool> UnMuteAsync()
-        {
-            return Task.Factory.StartNew(() => Mute(false));
-        }
-
         public virtual bool ToggleMute()
         {
             Mute(!IsMuted);
@@ -140,6 +120,14 @@ namespace AudioSwitcher.AudioApi
             return Task.Factory.StartNew(() => ToggleMute());
         }
 
-        public abstract event EventHandler<DeviceChangedEventArgs> VolumeChanged;
+        public IObservable<DeviceVolumeChangedArgs> VolumeChanged
+        {
+            get { return _volumeChanged.AsObservable(); }
+        }
+
+        protected virtual void OnVolumeChanged(int volume)
+        {
+            _volumeChanged.OnNext(new DeviceVolumeChangedArgs(this, volume));
+        }
     }
 }

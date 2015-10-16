@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using AudioSwitcher.AudioApi.Observables;
 using Xunit;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Tests
@@ -23,10 +24,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
             for (var i = 0; i < 50; i++)
             {
-                controller.AudioDeviceChanged += (sender, args) =>
+                controller.AudioDeviceChanged.Subscribe(args =>
                 {
                     controller.GetDevices(DeviceState.Active).ToList();
-                };
+                });
 
                 controller.DefaultPlaybackDevice.SetAsDefault();
                 controller.DefaultPlaybackDevice.SetAsDefault();
@@ -54,10 +55,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
             for (var i = 0; i < 50; i++)
             {
-                controller.AudioDeviceChanged += (sender, args) =>
+                controller.AudioDeviceChanged.Subscribe(args =>
                 {
                     controller.GetDevices(DeviceState.Active).ToList();
-                };
+                });
 
                 tasks.Add(controller.DefaultPlaybackDevice.SetAsDefaultAsync());
                 tasks.Add(controller.DefaultPlaybackDevice.SetAsDefaultAsync());

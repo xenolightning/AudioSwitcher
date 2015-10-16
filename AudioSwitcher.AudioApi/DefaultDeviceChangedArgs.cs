@@ -1,11 +1,11 @@
 ﻿namespace AudioSwitcher.AudioApi
 {
-    public sealed class DefaultDeviceChangedEventArgs : DeviceChangedEventArgs
+    public sealed class DefaultDeviceChangedArgs : DeviceChangedArgs
     {
-        public DefaultDeviceChangedEventArgs(IDevice dev, bool isCommunications = false)
+        public DefaultDeviceChangedArgs(IDevice dev, bool isCommunications = false)
             : base(
                 dev,
-                isCommunications ? AudioDeviceEventType.DefaultCommunicationsDevice : AudioDeviceEventType.DefaultDevice
+                isCommunications ? DeviceChangedType.DefaultCommunicationsDevice : DeviceChangedType.DefaultDevice
                 )
         {
             IsDefaultEvent = !isCommunications;

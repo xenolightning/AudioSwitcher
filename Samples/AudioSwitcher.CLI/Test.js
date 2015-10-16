@@ -60,10 +60,10 @@ if (defaultDevice !== undefined) {
     defaultDevice.setAsDefault();
     defaultDevice.setAsDefaultComm();
 
-    console.log("Current Volume: " + vol);
-    console.log("Set Volume To: " + defaultDevice.volume(10));
+    console.log("Current VolumeChanged: " + vol);
+    console.log("Set VolumeChanged To: " + defaultDevice.volume(10));
     Core.sleep(2000);
-    console.log("Set Volume To: " + defaultDevice.volume(vol));
+    console.log("Set VolumeChanged To: " + defaultDevice.volume(vol));
     Core.sleep(2000);
     console.log("Setting Mute to false");
     defaultDevice.mute(false);
