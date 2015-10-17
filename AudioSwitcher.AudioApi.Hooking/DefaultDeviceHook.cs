@@ -39,10 +39,10 @@ namespace AudioSwitcher.AudioApi.Hooking
             UnHook();
         }
 
-        public void Hook(int processId)
+        public bool Hook(int processId)
         {
             if (Status == EHookStatus.Active || Status == EHookStatus.Pending)
-                return;
+                return false;
 
             Status = EHookStatus.Pending;
 
@@ -57,17 +57,28 @@ namespace AudioSwitcher.AudioApi.Hooking
 
             _ipcChannel = RemoteHooking.IpcCreateServer(ref _channelName, WellKnownObjectMode.Singleton, _interface);
 
-            RemoteHooking.Inject(
-                processId,
-                InjectionOptions.DoNotRequireStrongName,
-                typeof(IMultimediaDeviceEnumerator).Assembly.Location,
-                typeof(IMultimediaDeviceEnumerator).Assembly.Location,
-                _channelName);
+            try
+            {
+                RemoteHooking.Inject(
+                    processId,
+                    InjectionOptions.DoNotRequireStrongName,
+                    typeof (IMultimediaDeviceEnumerator).Assembly.Location,
+                    typeof (IMultimediaDeviceEnumerator).Assembly.Location,
+                    _channelName);
 
-            _hookIsLiveTimer = new Timer(HookIsLive, null, 0, 2000);
-            _lastMessageCount = -1;
+                _hookIsLiveTimer = new Timer(HookIsLive, null, 0, 2000);
+                _lastMessageCount = -1;
 
-            _completeSignalled = false;
+                _completeSignalled = false;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Status = EHookStatus.Inactive;
+            }
+
+            return false;
         }
 
         private void HookIsLive(object state)
@@ -80,10 +91,10 @@ namespace AudioSwitcher.AudioApi.Hooking
                 UnHook();
         }
 
-        public void UnHook()
+        public bool UnHook()
         {
             if (Status == EHookStatus.Inactive)
-                return;
+                return false;
 
             Status = EHookStatus.Inactive;
 
@@ -101,6 +112,8 @@ namespace AudioSwitcher.AudioApi.Hooking
 
                 RaiseOnComplete();
             }
+
+            return true;
         }
 
         public event OnCompleteHandler OnComplete;

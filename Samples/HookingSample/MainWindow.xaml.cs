@@ -167,15 +167,21 @@ namespace HookingSample
 
             Hook = new DefaultDeviceHook((dataFlow, role) => sId);
 
-            Hook.Hook(SelectedProcess.Id);
-
-            Hook.OnComplete += () =>
+            if (Hook.Hook(SelectedProcess.Id))
             {
-                UnHook();
-                Controller.SetDefaultDevice(Controller.DefaultPlaybackDevice);
-            };
+                Hook.OnComplete += () =>
+                {
+                    UnHook();
+                    Controller.SetDefaultDevice(Controller.DefaultPlaybackDevice);
+                };
 
-            Controller.SetDefaultDevice(Controller.DefaultPlaybackDevice);
+                Controller.SetDefaultDevice(Controller.DefaultPlaybackDevice);
+            }
+            else
+            {
+                Hook = null;
+                MessageBox.Show(this, "Could not hook process");
+            }
         }
 
         private void UnHook()
