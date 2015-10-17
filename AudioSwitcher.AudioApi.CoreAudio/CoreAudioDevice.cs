@@ -69,6 +69,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _device = null;
 
             base.Dispose(disposing);
+
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>

@@ -104,7 +104,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 ComThread.Invoke(() => _simpleAudioVolume.SetMasterVolume((float)(value / 100), Guid.Empty));
                 _volume = value;
-                FireVolumeChanged(_volume);
+                OnVolumeChanged(_volume);
             }
         }
 
@@ -122,7 +122,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 ComThread.Invoke(() => _simpleAudioVolume.SetMute(value, Guid.Empty));
 
                 _isMuted = value;
-                FireMuteChanged(_isMuted);
+                OnMuteChanged(_isMuted);
             }
         }
 
@@ -156,6 +156,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             RefreshProperties();
             RefreshVolume();
+        }
+
+        ~CoreAudioSession()
+        {
+            Dispose(false);
         }
 
         private void RefreshVolume()
@@ -222,13 +227,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (Math.Abs(_volume - volume * 100) > 0)
             {
                 _volume = volume * 100;
-                FireVolumeChanged(_volume);
+                OnVolumeChanged(_volume);
             }
 
             if (isMuted != _isMuted)
             {
                 _isMuted = isMuted;
-                FireMuteChanged(_isMuted);
+                OnMuteChanged(_isMuted);
             }
 
             return 0;
@@ -246,43 +251,50 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         int IAudioSessionEvents.OnSessionDisconnected(EAudioSessionDisconnectReason disconnectReason)
         {
-            FireDisconnected();
+            OnDisconnected();
             return 0;
         }
 
         int IAudioSessionEvents.OnStateChanged(EAudioSessionState state)
         {
-            FireStateChanged(state);
+            OnStateChanged(state);
             return 0;
         }
 
-        private void FireVolumeChanged(double volume)
+        private void OnVolumeChanged(double volume)
         {
             _volumeChanged.OnNext(new SessionVolumeChangedArgs(this, volume));
         }
 
-        private void FireStateChanged(EAudioSessionState state)
+        private void OnStateChanged(EAudioSessionState state)
         {
             _stateChanged.OnNext(new SessionStateChangedArgs(this, state.AsAudioSessionState()));
         }
 
-        private void FireDisconnected()
+        private void OnDisconnected()
         {
             _disconnected.OnNext(new SessionDisconnectedArgs(this));
         }
 
-        private void FireMuteChanged(bool isMuted)
+        private void OnMuteChanged(bool isMuted)
         {
             _muteChanged.OnNext(new SessionMuteChangedArgs(this, isMuted));
         }
 
         public void Dispose()
         {
+            Dispose(true);
+        }
+
+        private void Dispose(bool disposing)
+        {
             _stateChanged.Dispose();
             _disconnected.Dispose();
             _volumeChanged.Dispose();
 
             Marshal.FinalReleaseComObject(_audioSessionControl);
+
+            GC.SuppressFinalize(this);
         }
     }
 }
