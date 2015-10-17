@@ -8,7 +8,7 @@ using AudioSwitcher.AudioApi.Observables;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    public sealed partial class CoreAudioDevice : Device, INotifyPropertyChanged, IDisposable
+    public sealed partial class CoreAudioDevice : Device, INotifyPropertyChanged
     {
         private IMultimediaDevice _device;
         private Guid? _id;
@@ -16,6 +16,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private EDeviceState _state;
         private string _realId;
         private EDataFlow _dataFlow;
+        private IDisposable _changeSubscription;
 
         internal CoreAudioDevice(IMultimediaDevice device, IAudioController<CoreAudioDevice> controller)
             : base(controller)
@@ -33,7 +34,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ReloadAudioEndpointVolume(device);
             ReloadAudioSessionController(device);
 
-            controller.AudioDeviceChanged.Subscribe(EnumeratorOnAudioDeviceChanged);
+            _changeSubscription = controller.AudioDeviceChanged.Subscribe(EnumeratorOnAudioDeviceChanged);
         }
 
         private void LoadProperties(IMultimediaDevice device)
@@ -57,18 +58,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             Dispose(false);
         }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            Dispose(true);
-        }
+            _changeSubscription.Dispose();
 
-        private void Dispose(bool disposing)
-        {
             ClearAudioEndpointVolume();
             ClearAudioMeterInformation();
             ClearAudioSession();
 
             _device = null;
+
+            base.Dispose(disposing);
         }
 
         /// <summary>
@@ -232,8 +232,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private void EnumeratorOnAudioDeviceChanged(DeviceChangedArgs deviceChangedArgs)
         {
             if (deviceChangedArgs.Device == null || deviceChangedArgs.Device.Id != Id)
@@ -341,7 +339,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private void OnPropertyChanged(string propertyName)
         {
             var handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            if (handler != null)
+                handler(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
     }
 }

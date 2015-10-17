@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
-using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
@@ -61,6 +60,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (_lock != null)
                     _lock.Dispose();
             });
+
+            base.Dispose(disposing);
 
             GC.SuppressFinalize(this);
         }
@@ -198,11 +199,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        private void RaiseAudioDeviceChanged(DeviceChangedArgs e)
-        {
-            OnAudioDeviceChanged(e);
-        }
-
         public override bool SetDefaultDevice(CoreAudioDevice dev)
         {
             if (dev == null)
@@ -223,7 +219,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 //Raise the default changed event on the old device
                 if (oldDefault != null && !oldDefault.IsDefaultDevice)
-                    RaiseAudioDeviceChanged(new DefaultDeviceChangedArgs(oldDefault));
+                    OnAudioDeviceChanged(new DefaultDeviceChangedArgs(oldDefault));
             }
         }
 
@@ -250,7 +246,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 //Raise the default changed event on the old device
                 if (oldDefault != null && !oldDefault.IsDefaultCommunicationsDevice)
-                    RaiseAudioDeviceChanged(new DefaultDeviceChangedArgs(oldDefault, true));
+                    OnAudioDeviceChanged(new DefaultDeviceChangedArgs(oldDefault, true));
             }
         }
 
@@ -303,7 +299,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             var dev = GetOrAddDeviceFromRealId(deviceId);
 
             if (dev != null)
-                RaiseAudioDeviceChanged(new DeviceStateChangedArgs(dev, newState.AsDeviceState()));
+                OnAudioDeviceChanged(new DeviceStateChangedArgs(dev, newState.AsDeviceState()));
         }
 
         void ISystemAudioEventClient.OnDeviceAdded(string deviceId)
@@ -311,7 +307,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             var dev = GetOrAddDeviceFromRealId(deviceId);
 
             if (dev != null)
-                RaiseAudioDeviceChanged(new DeviceAddedArgs(dev));
+                OnAudioDeviceChanged(new DeviceAddedArgs(dev));
         }
 
         void ISystemAudioEventClient.OnDeviceRemoved(string deviceId)
@@ -319,7 +315,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             var devicesRemoved = RemoveFromRealId(deviceId);
 
             foreach (var dev in devicesRemoved)
-                RaiseAudioDeviceChanged(new DeviceRemovedArgs(dev));
+                OnAudioDeviceChanged(new DeviceRemovedArgs(dev));
         }
 
         void ISystemAudioEventClient.OnDefaultDeviceChanged(EDataFlow flow, ERole role, string deviceId)
@@ -333,8 +329,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (dev == null)
                 return;
 
-            Task.Factory.StartNew(
-                () => { RaiseAudioDeviceChanged(new DefaultDeviceChangedArgs(dev, role == ERole.Communications)); });
+            OnAudioDeviceChanged(new DefaultDeviceChangedArgs(dev, role == ERole.Communications));
         }
 
         private static readonly Dictionary<PropertyKey, Expression<Func<IDevice, object>>> PropertykeyToLambdaMap = new Dictionary
@@ -353,14 +348,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (dev == null)
                 return;
 
-            if (PropertykeyToLambdaMap.ContainsKey(key))
-            {
-                RaiseAudioDeviceChanged(DevicePropertyChangedArgs.FromExpression(dev, PropertykeyToLambdaMap[key]));
+            //Ignore the properties we don't care about
+            if (!PropertykeyToLambdaMap.ContainsKey(key))
                 return;
-            }
 
-            //Unknown property changed
-            RaiseAudioDeviceChanged(new DevicePropertyChangedArgs(dev));
+            OnAudioDeviceChanged(DevicePropertyChangedArgs.FromExpression(dev, PropertykeyToLambdaMap[key]));
         }
     }
 }

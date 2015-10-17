@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using AudioSwitcher.AudioApi.Hooking.ComObjects;
 
 namespace AudioSwitcher.AudioApi.Hooking
@@ -41,7 +42,7 @@ namespace AudioSwitcher.AudioApi.Hooking
 
         public bool CanUnload()
         {
-            System.Threading.Interlocked.Increment(ref _messageCount);
+            Interlocked.Increment(ref _messageCount);
 
             if (_canUnload == null)
                 return true;
@@ -51,7 +52,7 @@ namespace AudioSwitcher.AudioApi.Hooking
 
         public bool HookInstalled()
         {
-            System.Threading.Interlocked.Increment(ref _messageCount);
+            Interlocked.Increment(ref _messageCount);
 
             if (_hookInstalled != null)
                 _hookInstalled();
@@ -61,7 +62,7 @@ namespace AudioSwitcher.AudioApi.Hooking
 
         public void HookUninstalled()
         {
-            System.Threading.Interlocked.Increment(ref _messageCount);
+            Interlocked.Increment(ref _messageCount);
 
             if (_hookUninstalled != null)
                 _hookUninstalled();
@@ -69,7 +70,7 @@ namespace AudioSwitcher.AudioApi.Hooking
 
         public void ReportError(int processId, Exception e)
         {
-            System.Threading.Interlocked.Increment(ref _messageCount);
+            Interlocked.Increment(ref _messageCount);
 
             if (_errorHandler != null)
                 _errorHandler(processId, e);
@@ -77,7 +78,7 @@ namespace AudioSwitcher.AudioApi.Hooking
 
         public string GetDefaultDevice(DataFlow dataFlow, Role role)
         {
-            System.Threading.Interlocked.Increment(ref _messageCount);
+            Interlocked.Increment(ref _messageCount);
 
             if (_systemId == null)
                 return null;

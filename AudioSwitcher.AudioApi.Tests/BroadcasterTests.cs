@@ -1,6 +1,5 @@
 ﻿using System;
 using AudioSwitcher.AudioApi.Observables;
-using Moq;
 using Xunit;
 
 namespace AudioSwitcher.AudioApi.Tests

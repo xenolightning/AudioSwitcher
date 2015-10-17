@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,7 +10,6 @@ using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
-using System.Management;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
@@ -50,7 +49,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (process == null)
                     return;
 
-                var processId = (int)(uint)process["ProcessId"]; //This is silly but WMI won't cast directly to an int
+                var processId = Convert.ToInt32(process["ProcessId"]);
 
                 RemoveSessions(_sessionCache.Where(x => x.ProcessId == processId));
             };

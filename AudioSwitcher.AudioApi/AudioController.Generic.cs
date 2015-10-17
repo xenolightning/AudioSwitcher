@@ -394,6 +394,7 @@ namespace AudioSwitcher.AudioApi
 
         protected virtual void Dispose(bool disposing)
         {
+            _audioDeviceChanged.Dispose();
         }
     }
 }

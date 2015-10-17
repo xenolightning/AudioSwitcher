@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using AudioSwitcher.Scripting.JavaScript.Internal;
 using Jurassic;
 using Jurassic.Library;
-using AudioSwitcher.Scripting.JavaScript.Internal;
 
 namespace AudioSwitcher.Scripting.JavaScript
 {

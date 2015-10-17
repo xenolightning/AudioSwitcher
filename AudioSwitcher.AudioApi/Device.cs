@@ -8,7 +8,7 @@ namespace AudioSwitcher.AudioApi
     ///     Provides a basic implementation of IDevice so that developers need not implement very common functionality.
     ///     Should be used in place of IDevice where possible
     /// </summary>
-    public abstract class Device : IDevice
+    public abstract class Device : IDevice, IDisposable
     {
         private readonly AsyncBroadcaster<DeviceVolumeChangedArgs> _volumeChanged;
 
@@ -128,6 +128,16 @@ namespace AudioSwitcher.AudioApi
         protected virtual void OnVolumeChanged(int volume)
         {
             _volumeChanged.OnNext(new DeviceVolumeChangedArgs(this, volume));
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            _volumeChanged.Dispose();
         }
     }
 }
