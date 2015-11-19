@@ -15,7 +15,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         [PreserveSig]
         int GetDeviceFormat(
             [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
-            [In] bool bDefault,
+            [In] [MarshalAs(UnmanagedType.Bool)] bool bDefault,
             [Out] out WaveFormatExtensible ppFormat);
 
         [PreserveSig]

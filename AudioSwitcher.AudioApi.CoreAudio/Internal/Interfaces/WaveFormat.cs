@@ -5,9 +5,6 @@ using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    /// <summary>
-    /// Represents a Wave file format
-    /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi, Pack=2)]
     public class WaveFormat
     {
@@ -45,19 +42,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
                 throw new ArgumentOutOfRangeException("channels", "Channels must be 1 or greater");
             }
             // minimum 16 bytes, sometimes 18 for PCM
-            this.waveFormatTag = WaveFormatEncoding.Pcm;
+            waveFormatTag = WaveFormatEncoding.Pcm;
             this.channels = (short)channels;
-            this.sampleRate = rate;
-            this.bitsPerSample = (short)bits;
-            this.extraSize = 0;
+            sampleRate = rate;
+            bitsPerSample = (short)bits;
+            extraSize = 0;
                    
-            this.blockAlign = (short)(channels * (bits / 8));
-            this.averageBytesPerSecond = this.sampleRate * this.blockAlign;
+            blockAlign = (short)(channels * (bits / 8));
+            averageBytesPerSecond = sampleRate * blockAlign;
         }
 
         public override string ToString()
         {
-            switch (this.waveFormatTag)
+            switch (waveFormatTag)
             {
                 case WaveFormatEncoding.Pcm:
                 case WaveFormatEncoding.Extensible:
@@ -65,33 +62,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
                     return String.Format("{0} bit PCM: {1}kHz {2} channels",
                         bitsPerSample, sampleRate / 1000, channels);
                 default:
-                    return this.waveFormatTag.ToString();
+                    return waveFormatTag.ToString();
             }
         }
 
-        /// <summary>
-        /// Compares with another WaveFormat object
-        /// </summary>
-        /// <param name="obj">Object to compare to</param>
-        /// <returns>True if the objects are the same</returns>
-        public override bool Equals(object obj)
-        {
-            WaveFormat other = obj as WaveFormat;
-            if(other != null)
-            {
-                return waveFormatTag == other.waveFormatTag &&
-                    channels == other.channels &&
-                    sampleRate == other.sampleRate &&
-                    averageBytesPerSecond == other.averageBytesPerSecond &&
-                    blockAlign == other.blockAlign &&
-                    bitsPerSample == other.bitsPerSample;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Returns the encoding type used
-        /// </summary>
         public WaveFormatEncoding Encoding
         {
             get	
@@ -108,9 +82,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
             }
         }
 
-        /// <summary>
-        /// Returns the sample rate (samples per second)
-        /// </summary>
         public int SampleRate
         {
             get
@@ -119,9 +90,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
             }
         }
 
-        /// <summary>
-        /// Returns the average number of bytes used per second
-        /// </summary>
         public int AverageBytesPerSecond
         {
             get
@@ -130,9 +98,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
             }
         }
 
-        /// <summary>
-        /// Returns the block alignment
-        /// </summary>
         public virtual int BlockAlign
         {
             get
@@ -141,10 +106,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
             }
         }
 
-        /// <summary>
-        /// Returns the number of bits per sample (usually 16 or 32, sometimes 24 or 8)
-        /// Can be 0 for some codecs
-        /// </summary>
         public int BitsPerSample
         {
             get
@@ -153,51 +114,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
             }
         }
 
-        /// <summary>
-        /// Returns the number of extra bytes used by this waveformat. Often 0,
-        /// except for compressed formats which store extra data after the WAVEFORMATEX header
-        /// </summary>
         public int ExtraSize
         {
             get
             {
                 return extraSize;
             }
-        }
-
-        /// <summary>
-        /// Helper function to retrieve a WaveFormat structure from a pointer
-        /// </summary>
-        /// <param name="pointer">WaveFormat structure</param>
-        /// <returns></returns>
-        public static WaveFormat MarshalFromPtr(IntPtr pointer)
-        {
-            WaveFormat waveFormat = (WaveFormat)Marshal.PtrToStructure(pointer, typeof(WaveFormat));
-            switch (waveFormat.Encoding)
-            {
-                case WaveFormatEncoding.Pcm:
-                    // can't rely on extra size even being there for PCM so blank it to avoid reading
-                    // corrupt data
-                    waveFormat.extraSize = 0;
-                    break;
-                case WaveFormatEncoding.Extensible:
-                    waveFormat = (WaveFormatExtensible)Marshal.PtrToStructure(pointer, typeof(WaveFormatExtensible));
-                    break;
-            }
-            return waveFormat;
-        }
-
-        /// <summary>
-        /// Helper function to marshal WaveFormat to an IntPtr
-        /// </summary>
-        /// <param name="format">WaveFormat</param>
-        /// <returns>IntPtr to WaveFormat structure (needs to be freed by callee)</returns>
-        public static IntPtr MarshalToPtr(WaveFormat format)
-        {
-            int formatSize = Marshal.SizeOf(format);
-            IntPtr formatPointer = Marshal.AllocHGlobal(formatSize);
-            Marshal.StructureToPtr(format, formatPointer, false);
-            return formatPointer;
         }
 
     }

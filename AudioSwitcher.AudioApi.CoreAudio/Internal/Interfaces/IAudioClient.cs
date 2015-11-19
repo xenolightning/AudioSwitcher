@@ -51,6 +51,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         int SetEventHandle(IntPtr eventHandle);
 
         [PreserveSig]
-        int GetService([In, MarshalAs(UnmanagedType.LPStruct)] Guid interfaceId, [Out, MarshalAs(UnmanagedType.IUnknown)] out object interfacePointer);
+        int GetService(
+            [In, MarshalAs(UnmanagedType.LPStruct)] Guid interfaceId, 
+            [Out, MarshalAs(UnmanagedType.IUnknown)] out object interfacePointer);
     }
 }

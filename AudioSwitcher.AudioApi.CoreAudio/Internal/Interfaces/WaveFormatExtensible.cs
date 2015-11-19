@@ -3,16 +3,12 @@ using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    /// <summary>
-    /// WaveFormatExtensible
-    /// http://www.microsoft.com/whdc/device/audio/multichaud.mspx
-    /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 2)]
     public class WaveFormatExtensible : WaveFormat
     {
-        short wValidBitsPerSample; // bits of precision, or is wSamplesPerBlock if wBitsPerSample==0
-        int dwChannelMask; // which channels are present in stream
-        Guid subFormat;
+        private short wValidBitsPerSample;
+        private int dwChannelMask;
+        private Guid subFormat;
 
         /// <summary>
         /// Parameterless constructor for marshalling
