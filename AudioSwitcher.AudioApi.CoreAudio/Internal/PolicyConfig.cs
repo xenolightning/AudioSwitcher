@@ -32,6 +32,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     policyConfigVista.SetDefaultEndpoint(devId, eRole);
                 }
             }
+            catch (Exception ex)
+            {
+
+            }
             finally
             {
                 if (policyConfig != null && Marshal.IsComObject(policyConfig))

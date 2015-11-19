@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -65,6 +66,8 @@
     <Compile Include="Internal\EAudioSessionState.cs" />
     <Compile Include="Internal\EDeviceState.cs" />
     <Compile Include="Internal\EndpointHardwareSupport.cs" />
+    <Compile Include="Internal\Interfaces\DeviceShareMode.cs" />
+    <Compile Include="Internal\Interfaces\IAudioClient.cs" />
     <Compile Include="Internal\Interfaces\IAudioSessionControl.cs" />
     <Compile Include="Internal\Interfaces\IAudioSessionControl2.cs" />
     <Compile Include="Internal\Interfaces\IAudioSessionEnumerator.cs" />
@@ -93,6 +96,9 @@
     <Compile Include="Internal\Interfaces\IPropertyStore.cs" />
     <Compile Include="Internal\Interfaces\MultimediaDeviceEnumeratorComObject.cs" />
     <Compile Include="Internal\Interfaces\StorageAccessMode.cs" />
+    <Compile Include="Internal\Interfaces\WaveFormat.cs" />
+    <Compile Include="Internal\Interfaces\WaveFormatEncoding.cs" />
+    <Compile Include="Internal\Interfaces\WaveFormatExtensible.cs" />
     <Compile Include="Internal\IPropertyDictionary.cs" />
     <Compile Include="Internal\ISystemAudioEventClient.cs" />
     <Compile Include="Internal\LockExtensions.cs" />
