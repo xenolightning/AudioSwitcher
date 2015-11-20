@@ -10,6 +10,8 @@ namespace AudioSwitcher.AudioApi.Session
 
         string DisplayName { get; }
 
+        string IconPath { get; }
+
         string ExecutablePath { get; }
 
         bool IsSystemSession { get; }

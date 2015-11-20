@@ -8,7 +8,7 @@ using AudioSwitcher.AudioApi.Session;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    internal class CoreAudioSession : IAudioSession, IAudioSessionEvents
+    internal sealed class CoreAudioSession : IAudioSession, IAudioSessionEvents
     {
 
         private readonly IAudioSessionControl2 _audioSessionControl;
@@ -19,6 +19,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private string _id;
         private int _processId;
         private string _displayName;
+        private string _iconPath;
         private bool _isSystemSession;
         private AudioSessionState _state;
         private string _executablePath;
@@ -75,6 +76,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get
             {
                 return String.IsNullOrWhiteSpace(_displayName) ? _fileDescription : _displayName;
+            }
+        }
+
+        public string IconPath
+        {
+            get
+            {
+                return _iconPath;
             }
         }
 
@@ -160,7 +169,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         ~CoreAudioSession()
         {
-            Dispose(false);
+            Dispose();
         }
 
         private void RefreshVolume()
@@ -184,6 +193,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 _isSystemSession = _audioSessionControl.IsSystemSoundsSession() == 0;
                 _audioSessionControl.GetDisplayName(out _displayName);
+
+                _audioSessionControl.GetIconPath(out _iconPath);
 
                 EAudioSessionState state;
                 _audioSessionControl.GetState(out state);
@@ -219,6 +230,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         int IAudioSessionEvents.OnIconPathChanged(string iconPath, ref Guid eventContext)
         {
+            _iconPath = iconPath;
             return 0;
         }
 
@@ -282,11 +294,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
 
         public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        private void Dispose(bool disposing)
         {
             _stateChanged.Dispose();
             _disconnected.Dispose();
