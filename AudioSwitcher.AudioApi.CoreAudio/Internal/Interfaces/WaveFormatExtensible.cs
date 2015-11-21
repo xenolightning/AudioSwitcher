@@ -20,27 +20,24 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         /// <summary>
         /// Creates a new WaveFormatExtensible for PCM or IEEE
         /// </summary>
-        public WaveFormatExtensible(int rate, int bits, int channels)
-            : base(rate, bits, channels)
+        public WaveFormatExtensible(int rate, int bits, int channelMask)
+            : base(rate, bits, channelMask)
         {
             waveFormatTag = WaveFormatEncoding.Extensible;
             extraSize = 22;
             wValidBitsPerSample = (short)bits;
-            for (int n = 0; n < channels; n++)
-            {
-                dwChannelMask |= (1 << n);
-            }
+            //dwChannelMask = channelMask;
 
-            if (bits == 32)
-            {
-                // KSDATAFORMAT_SUBTYPE_IEEE_FLOAT
-                subFormat = new Guid("00000003-0000-0010-8000-00aa00389b71");
-            }
-            else
-            {
+            //if (bits == 32)
+            //{
+            //    // KSDATAFORMAT_SUBTYPE_IEEE_FLOAT
+            //    subFormat = new Guid("00000003-0000-0010-8000-00aa00389b71");
+            //}
+            //else
+            //{
                 // KSDATAFORMAT_SUBTYPE_PCM
                 subFormat = new Guid("00000001-0000-0010-8000-00aa00389b71");
-            }
+            //}
 
         }
 

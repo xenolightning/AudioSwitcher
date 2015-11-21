@@ -88,6 +88,8 @@ namespace HookingSample
 
             Controller = new CoreAudioController();
 
+            Controller.DefaultPlaybackCommunicationsDevice.SetAsDefault();
+
             DataContext = this;
 
             _hookCheckTimer = new Timer(CheckHook, null, 0, 1000);

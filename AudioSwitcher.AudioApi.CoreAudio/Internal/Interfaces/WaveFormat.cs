@@ -19,7 +19,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         /// <summary>
         /// Creates a new PCM 44.1Khz stereo 16 bit format
         /// </summary>
-        public WaveFormat() : this(44100,16,2)
+        public WaveFormat() : this(44100,16,3)
         {
 
         }
@@ -30,26 +30,40 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         /// </summary>
         /// <param name="sampleRate">Sample Rate</param>
         /// <param name="channels">Number of channels</param>
-        public WaveFormat(int sampleRate, int channels)
-            : this(sampleRate, 16, channels)
+        public WaveFormat(int sampleRate, int channelMask)
+            : this(sampleRate, 16, channelMask)
         {
         }
 
-        public WaveFormat(int rate, int bits, int channels)
+        public WaveFormat(int rate, int bits, int channelMask)
         {
+            channels = ChannelsFromMask(channelMask);
+
             if (channels < 1)
             {
                 throw new ArgumentOutOfRangeException("channels", "Channels must be 1 or greater");
             }
             // minimum 16 bytes, sometimes 18 for PCM
             waveFormatTag = WaveFormatEncoding.Pcm;
-            this.channels = (short)channels;
+
             sampleRate = rate;
             bitsPerSample = (short)bits;
             extraSize = 0;
                    
             blockAlign = (short)(channels * (bits / 8));
             averageBytesPerSecond = sampleRate * blockAlign;
+        }
+
+        short ChannelsFromMask(int channelMask)
+        {
+            short count = 0;
+            while (channelMask > 0)
+            {           // until all bits are zero
+                if ((channelMask & 1) == 1)     // check lower bit
+                    count++;
+                channelMask >>= 1;              // shift bits, removing lower bit
+            }
+            return count;
         }
 
         public override string ToString()
@@ -88,6 +102,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
             {
                 return sampleRate;
             }
+            set { sampleRate = value; }
         }
 
         public int AverageBytesPerSecond
