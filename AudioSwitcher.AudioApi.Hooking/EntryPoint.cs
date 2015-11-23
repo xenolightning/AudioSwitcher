@@ -6,7 +6,7 @@ using EasyHook;
 
 namespace AudioSwitcher.AudioApi.Hooking
 {
-    public class EntryPoint : IEntryPoint
+    public sealed class EntryPoint : IEntryPoint
     {
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = false)]
         [return: MarshalAs(UnmanagedType.U4)]

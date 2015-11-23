@@ -8,7 +8,7 @@ using EasyHook;
 
 namespace AudioSwitcher.AudioApi.Hooking
 {
-    public class DefaultDeviceHook : IHook, IDisposable
+    public sealed class DefaultDeviceHook : IHook, IDisposable
     {
         public delegate void OnErrorHandler(int processId, Exception exception);
 
@@ -73,7 +73,7 @@ namespace AudioSwitcher.AudioApi.Hooking
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Status = EHookStatus.Inactive;
             }
