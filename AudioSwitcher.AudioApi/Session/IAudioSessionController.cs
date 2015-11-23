@@ -35,6 +35,8 @@ namespace AudioSwitcher.AudioApi.Session
         IEnumerable<IAudioSession> GetExpiredSessions();
         Task<IEnumerable<IAudioSession>> GetExpiredSessionsAsync();
 
-        IObservable<AudioSessionChanged> SessionChanged { get; }
+        IObservable<IAudioSession> SessionCreated { get; }
+
+        IObservable<string> SessionDisconnected { get; }
     }
 }

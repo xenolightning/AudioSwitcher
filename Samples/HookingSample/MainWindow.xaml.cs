@@ -96,6 +96,11 @@ namespace HookingSample
 
             foreach (var audioSession in Controller.DefaultPlaybackDevice.SessionController.All())
             {
+                Console.WriteLine(audioSession.Id);    
+            }
+            
+            foreach (var audioSession in Controller.DefaultPlaybackDevice.SessionController.All())
+            {
                 audioSession.VolumeChanged.Subscribe(v =>
                 {
                     Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.Volume);
@@ -107,23 +112,23 @@ namespace HookingSample
                 });
             }
 
-            Controller.DefaultPlaybackDevice.SessionController.SessionChanged.Subscribe(x =>
+            Controller.DefaultPlaybackDevice.SessionController.SessionCreated.Subscribe(x =>
             {
-                if (x.ChangeType == AudioSessionChangedType.Created)
+                x.VolumeChanged.Subscribe(v =>
                 {
-                    var newSession = Controller.DefaultPlaybackDevice.SessionController.First(y => y.Id == x.SessionId);
-                    newSession.VolumeChanged.Subscribe(v =>
-                    {
-                        Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.Volume);
-                    });
-                }
+                    Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.Volume);
+                });
+            });
 
-                Console.WriteLine("{0} - {1}", x.ChangeType, x.SessionId);
+            Controller.DefaultPlaybackDevice.SessionController.SessionDisconnected.Subscribe(x =>
+            {
+                Console.WriteLine(x);
 
                 foreach (var session in Controller.DefaultPlaybackDevice.SessionController)
                 {
-                    Console.WriteLine("{0} - {1} - {2}", session.ProcessId, session.DisplayName, session.Volume);
+                    Console.WriteLine("{0} - {1}", session.DisplayName, session.Volume);
                 }
+
             });
         }
 
