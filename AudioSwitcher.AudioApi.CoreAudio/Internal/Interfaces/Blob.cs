@@ -29,7 +29,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
     internal struct Blob
     {
-        public IntPtr Data;
-        public int Length;
+        internal uint Length;
+        internal IntPtr Data;
     }
+
 }

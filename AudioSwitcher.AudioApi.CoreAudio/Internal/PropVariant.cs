@@ -23,6 +23,7 @@
 
 using System;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
@@ -37,34 +38,56 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     [StructLayout(LayoutKind.Explicit)]
     public struct PropVariant
     {
-        [FieldOffset(0)] private short vt;
-        [FieldOffset(2)] private readonly short wReserved1;
-        [FieldOffset(4)] private readonly short wReserved2;
-        [FieldOffset(6)] private readonly short wReserved3;
-        [FieldOffset(8)] private readonly sbyte cVal;
-        [FieldOffset(8)] private readonly byte bVal;
-        [FieldOffset(8)] private readonly short iVal;
-        [FieldOffset(8)] private readonly ushort uiVal;
-        [FieldOffset(8)] private readonly int lVal;
-        [FieldOffset(8)] private readonly uint ulVal;
-        [FieldOffset(8)] private readonly int intVal;
-        [FieldOffset(8)] private readonly uint uintVal;
-        [FieldOffset(8)] private long hVal;
-        [FieldOffset(8)] private readonly long uhVal;
-        [FieldOffset(8)] private readonly float fltVal;
-        [FieldOffset(8)] private readonly double dblVal;
-        [FieldOffset(8)] private readonly bool boolVal;
-        [FieldOffset(8)] private readonly int scode;
+        [FieldOffset(0)]
+        private short vt;
+        [FieldOffset(2)]
+        private readonly short wReserved1;
+        [FieldOffset(4)]
+        private readonly short wReserved2;
+        [FieldOffset(6)]
+        private readonly short wReserved3;
+        [FieldOffset(8)]
+        private readonly sbyte cVal;
+        [FieldOffset(8)]
+        private readonly byte bVal;
+        [FieldOffset(8)]
+        private readonly short iVal;
+        [FieldOffset(8)]
+        private readonly ushort uiVal;
+        [FieldOffset(8)]
+        private readonly int lVal;
+        [FieldOffset(8)]
+        private readonly uint ulVal;
+        [FieldOffset(8)]
+        private readonly int intVal;
+        [FieldOffset(8)]
+        private readonly uint uintVal;
+        [FieldOffset(8)]
+        private long hVal;
+        [FieldOffset(8)]
+        private readonly long uhVal;
+        [FieldOffset(8)]
+        private readonly float fltVal;
+        [FieldOffset(8)]
+        private readonly double dblVal;
+        [FieldOffset(8)]
+        private readonly bool boolVal;
+        [FieldOffset(8)]
+        private readonly int scode;
         //CY cyVal;
-        [FieldOffset(8)] private readonly DateTime date;
-        [FieldOffset(8)] private readonly FILETIME filetime;
+        [FieldOffset(8)]
+        private readonly DateTime date;
+        [FieldOffset(8)]
+        private readonly FILETIME filetime;
         //CLSID* puuid;
         //CLIPDATA* pclipdata;
         //BSTR bstrVal;
         //BSTRBLOB bstrblobVal;
-        [FieldOffset(8)] private Blob blobVal;
+        [FieldOffset(8)]
+        private Blob blobVal;
         //LPSTR pszVal;
-        [FieldOffset(8)] private IntPtr pointerValue; //LPWSTR 
+        [FieldOffset(8)]
+        private IntPtr pointerValue; //LPWSTR 
         //IUnknown* punkVal;
         /*IDispatch* pdispVal;
         IStream* pStream;
@@ -120,7 +143,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public static PropVariant FromLong(long value)
         {
-            return new PropVariant {vt = (short) VarEnum.VT_I8, hVal = value};
+            return new PropVariant { vt = (short)VarEnum.VT_I8, hVal = value };
         }
 
         /// <summary>
@@ -139,19 +162,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         public T[] GetBlobAsArrayOf<T>()
         {
             var blobByteLength = blobVal.Length;
-            var singleInstance = (T) Activator.CreateInstance(typeof (T));
+            var singleInstance = (T)Activator.CreateInstance(typeof(T), true);
             var structSize = Marshal.SizeOf(singleInstance);
-            if (blobByteLength%structSize != 0)
+            if (blobByteLength % structSize != 0)
             {
                 throw new InvalidDataException(string.Format("Blob size {0} not a multiple of struct size {1}",
                     blobByteLength, structSize));
             }
-            var items = blobByteLength/structSize;
+            var items = blobByteLength / structSize;
             var array = new T[items];
             for (var n = 0; n < items; n++)
             {
-                array[n] = (T) Activator.CreateInstance(typeof (T));
-                Marshal.PtrToStructure(new IntPtr((long) blobVal.Data + n*structSize), array[n]);
+                array[n] = (T)Activator.CreateInstance(typeof(T), true);
+                Marshal.PtrToStructure(new IntPtr((long)blobVal.Data + n * structSize), array[n]);
             }
             return array;
         }
@@ -163,7 +186,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return (VarEnum) vt;
+                return (VarEnum)vt;
             }
         }
 
@@ -195,12 +218,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                         return boolVal;
                     case VarEnum.VT_LPWSTR:
                         return Marshal.PtrToStringUni(pointerValue);
-                    //case VarEnum.VT_BLOB:
-                    //case VarEnum.VT_VECTOR:
-                    //case VarEnum.VT_UI1:
-                    //    return GetBlob();
+                    case VarEnum.VT_BLOB:
+                    case VarEnum.VT_VECTOR:
+                    case VarEnum.VT_UI1:
+                        return GetBlob();
                     case VarEnum.VT_CLSID:
-                        return (Guid) Marshal.PtrToStructure(pointerValue, typeof (Guid));
+                        return (Guid)Marshal.PtrToStructure(pointerValue, typeof(Guid));
                 }
                 throw new NotSupportedException("PropVariant " + ve);
             }
@@ -208,7 +231,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 if (value is string && DataType == VarEnum.VT_LPWSTR)
                 {
-                    pointerValue = Marshal.StringToBSTR((string) value);
+                    pointerValue = Marshal.StringToBSTR((string)value);
                 }
             }
         }
@@ -237,6 +260,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     return true;
                 case VarEnum.VT_CLSID:
                     return true;
+                case VarEnum.VT_BLOB:
+                case VarEnum.VT_VECTOR:
+                case VarEnum.VT_UI1:
+                    {
+
+                        try
+                        {
+                            GetBlob();
+                            return true;
+                        }
+                        catch
+                        {
+                            return false;
+                        }
+                    }
                 default:
                     return false;
             }

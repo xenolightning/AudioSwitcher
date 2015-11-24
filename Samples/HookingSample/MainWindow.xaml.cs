@@ -87,7 +87,7 @@ namespace HookingSample
 
             Controller = new CoreAudioController();
 
-            Controller.DefaultPlaybackCommunicationsDevice.SetAsDefault();
+            Controller.DefaultPlaybackDevice.SetAsDefault();
 
             DataContext = this;
 

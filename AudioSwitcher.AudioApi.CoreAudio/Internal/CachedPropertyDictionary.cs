@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
@@ -65,9 +66,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
                     if (variant.IsSupported())
                         properties.Add(key, variant.Value);
+
+                    if (key == PropertyKeys.PKEY_AUDIO_ENGINE_DEVICE_FORMAT)
+                    {
+                        var ohai = variant.GetBlobAsArrayOf<WaveFormatExtensible>();
+                    }
                 }
             }
-            catch
+            catch(Exception)
             {
                 Debug.WriteLine("Cannot get property values");
                 return new Dictionary<PropertyKey, object>();

@@ -26,8 +26,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
             waveFormatTag = WaveFormatEncoding.Extensible;
             extraSize = 22;
             wValidBitsPerSample = (short)bits;
-            //dwChannelMask = channelMask;
+            dwChannelMask = channelMask;
 
+            //TODO, probably should handle non PCM?
             //if (bits == 32)
             //{
             //    // KSDATAFORMAT_SUBTYPE_IEEE_FLOAT
