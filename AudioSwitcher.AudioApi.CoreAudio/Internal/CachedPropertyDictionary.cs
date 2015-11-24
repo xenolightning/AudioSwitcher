@@ -66,11 +66,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
                     if (variant.IsSupported())
                         properties.Add(key, variant.Value);
-
-                    if (key == PropertyKeys.PKEY_AUDIO_ENGINE_DEVICE_FORMAT)
-                    {
-                        var ohai = variant.GetBlobAsArrayOf<WaveFormatExtensible>();
-                    }
                 }
             }
             catch(Exception)
