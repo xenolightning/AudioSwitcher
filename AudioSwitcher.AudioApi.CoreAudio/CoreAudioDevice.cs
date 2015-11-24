@@ -16,7 +16,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private EDeviceState _state;
         private string _realId;
         private EDataFlow _dataFlow;
-        private IDisposable _changeSubscription;
+        private readonly IDisposable _changeSubscription;
 
         internal CoreAudioDevice(IMultimediaDevice device, IAudioController<CoreAudioDevice> controller)
             : base(controller)

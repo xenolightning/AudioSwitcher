@@ -8,7 +8,6 @@ using System.Windows;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
 using AudioSwitcher.AudioApi.Hooking;
-using AudioSwitcher.AudioApi.Session;
 
 namespace HookingSample
 {

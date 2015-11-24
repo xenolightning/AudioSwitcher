@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace AudioSwitcher.AudioApi
+﻿namespace AudioSwitcher.AudioApi
 {
     public enum SpeakerConfiguration
     {
@@ -28,13 +23,13 @@ namespace AudioSwitcher.AudioApi
         TopBackCenter = 0x10000,
         TopBackRight = 0x20000,
 
-        Mono = (FrontCenter),
-        Stereo = (FrontLeft | FrontRight),
-        Quad = (Stereo | BackLeft | BackRight),
-        Surround = (Stereo | FrontCenter | BackCenter),
-        FivePointOne = (Quad | LowFrequency),
-        FivePointOneSurround = (Stereo | FrontCenter | LowFrequency | SideLeft | SideRight),
-        SevenPointOne = (FivePointOne | FrontLeftOfCenter | FrontRightOfCenter),
-        SevenPointOneSurround = (FivePointOneSurround | BackLeft | BackRight)
+        Mono = FrontCenter,
+        Stereo = FrontLeft | FrontRight,
+        Quad = Stereo | BackLeft | BackRight,
+        Surround = Stereo | FrontCenter | BackCenter,
+        FivePointOne = Quad | LowFrequency,
+        FivePointOneSurround = Stereo | FrontCenter | LowFrequency | SideLeft | SideRight,
+        SevenPointOne = FivePointOne | FrontLeftOfCenter | FrontRightOfCenter,
+        SevenPointOneSurround = FivePointOneSurround | BackLeft | BackRight
     }
 }

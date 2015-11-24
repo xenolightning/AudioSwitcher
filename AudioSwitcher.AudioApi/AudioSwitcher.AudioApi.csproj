@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -80,7 +81,6 @@
     <Compile Include="Sandbox\SandboxAudioController.cs" />
     <Compile Include="Sandbox\SandboxDevice.cs" />
     <Compile Include="Session\SessionDisconnectedArgs.cs" />
-    <Compile Include="Session\AudioSessionChanged.cs" />
     <Compile Include="Session\AudioSessionState.cs" />
     <Compile Include="Session\SessionMuteChangedArgs.cs" />
     <Compile Include="Session\SessionStateChangedArgs.cs" />

@@ -12,7 +12,16 @@
             IsDefaultCommunicationsEvent = isCommunications;
         }
 
-        public bool IsDefaultEvent { get; set; }
-        public bool IsDefaultCommunicationsEvent { get; set; }
+        public bool IsDefaultEvent
+        {
+            get;
+            private set;
+        }
+
+        public bool IsDefaultCommunicationsEvent
+        {
+            get;
+            private set;
+        }
     }
 }
