@@ -19,17 +19,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 var policyConfig7 = policyConfig as IPolicyConfig;
                 var policyConfigVista = policyConfig as IPolicyConfigVista;
 
-                if (policyConfigX != null)
-                {
-                    policyConfigX.SetDefaultEndpoint(devId, eRole);
-                }
-                else if (policyConfig7 != null)
+                if (policyConfig7 != null)
                 {
                     policyConfig7.SetDefaultEndpoint(devId, eRole);
                 }
                 else if (policyConfigVista != null)
                 {
                     policyConfigVista.SetDefaultEndpoint(devId, eRole);
+                }
+                else if(policyConfigX != null)
+                {
+                    policyConfigX.SetDefaultEndpoint(devId, eRole);
                 }
             }
             finally
