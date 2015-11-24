@@ -42,6 +42,13 @@ namespace AudioSwitcher.Tests.Common
             get { return DeviceIcon.Unknown; }
         }
 
+        public override string IconPath {
+            get
+            {
+                return "";
+            }
+        }
+
         public override DeviceState State
         {
             get { return DeviceState.Active; }

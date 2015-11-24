@@ -169,9 +169,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public int OnSessionCreated(IAudioSessionControl sessionControl)
         {
-            var ptr = Marshal.GetIUnknownForObject(sessionControl);
-            Marshal.AddRef(ptr);
-
             ComThread.BeginInvoke(() => CacheSessionWrapper(sessionControl))
             .ContinueWith(x =>
             {

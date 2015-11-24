@@ -174,7 +174,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {"3030", DeviceIcon.Speakers},
             {"3031", DeviceIcon.Headphones},
             {"3050", DeviceIcon.Speakers},
-            {"3051", DeviceIcon.Headphones},
+            {"3051", DeviceIcon.Headphones}
         };
 
         private static DeviceIcon IconStringToDeviceIcon(string iconStr)

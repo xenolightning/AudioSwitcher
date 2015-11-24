@@ -12,6 +12,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
         public string name;
         public DeviceState state;
         public DeviceType type;
+        public string iconPath;
 
         public SandboxDevice(IAudioController controller)
             : base(controller)
@@ -58,6 +59,14 @@ namespace AudioSwitcher.AudioApi.Sandbox
             get
             {
                 return icon;
+            }
+        }
+
+        public override string IconPath
+        {
+            get
+            {
+                return iconPath;
             }
         }
 
