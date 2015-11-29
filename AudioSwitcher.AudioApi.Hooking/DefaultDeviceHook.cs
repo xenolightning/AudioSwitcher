@@ -12,7 +12,7 @@ namespace AudioSwitcher.AudioApi.Hooking
     {
         public delegate void OnErrorHandler(int processId, Exception exception);
 
-        public delegate void OnCompleteHandler();
+        public delegate void OnCompleteHandler(int processId);
 
         private readonly Func<DataFlow, Role, string> _systemDeviceId;
         private string _channelName;
@@ -21,6 +21,7 @@ namespace AudioSwitcher.AudioApi.Hooking
         private RemoteInterface _interface;
         private int _lastMessageCount;
         private bool _completeSignalled;
+        private int _hookedProcessId;
 
         public EHookStatus Status
         {
@@ -45,6 +46,7 @@ namespace AudioSwitcher.AudioApi.Hooking
                 return false;
 
             Status = EHookStatus.Pending;
+            _hookedProcessId = processId;
 
             _interface = new RemoteInterface
             (
@@ -66,7 +68,7 @@ namespace AudioSwitcher.AudioApi.Hooking
                     typeof (IMultimediaDeviceEnumerator).Assembly.Location,
                     _channelName);
 
-                _hookIsLiveTimer = new Timer(HookIsLive, null, 0, 2000);
+                _hookIsLiveTimer = new Timer(HookIsLive, null, 0, 500);
                 _lastMessageCount = -1;
 
                 _completeSignalled = false;
@@ -110,7 +112,7 @@ namespace AudioSwitcher.AudioApi.Hooking
                 _ipcChannel.StopListening(null);
                 _ipcChannel = null;
 
-                RaiseOnComplete();
+                RaiseOnComplete(_hookedProcessId);
             }
 
             return true;
@@ -118,7 +120,7 @@ namespace AudioSwitcher.AudioApi.Hooking
 
         public event OnCompleteHandler OnComplete;
 
-        private void RaiseOnComplete()
+        private void RaiseOnComplete(int processId)
         {
             if (_completeSignalled)
                 return;
@@ -128,7 +130,7 @@ namespace AudioSwitcher.AudioApi.Hooking
             if (handler != null)
             {
                 _completeSignalled = true;
-                handler();
+                handler(processId);
             }
         }
 

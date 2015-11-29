@@ -79,7 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj">
-      <Project>{7a4e260c-007e-4615-a92b-e849e7b641ab}</Project>
+      <Project>{8fc5a778-2a85-4cc8-a445-b9f2019a945b}</Project>
       <Name>AudioSwitcher.AudioApi</Name>
     </ProjectReference>
     <ProjectReference Include="..\AudioSwitcher.Tests.Common\AudioSwitcher.Tests.Common.csproj">

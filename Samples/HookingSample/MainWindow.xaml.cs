@@ -93,6 +93,7 @@ namespace HookingSample
 
             _hookCheckTimer = new Timer(CheckHook, null, 0, 1000);
 
+
             foreach (var audioSession in Controller.DefaultPlaybackDevice.SessionController.All())
             {
                 Console.WriteLine(audioSession.Id);    
@@ -175,7 +176,7 @@ namespace HookingSample
 
             if (Hook.Hook(SelectedProcess.Id))
             {
-                Hook.OnComplete += () =>
+                Hook.OnComplete += pid =>
                 {
                     UnHook();
                     Controller.SetDefaultDevice(Controller.DefaultPlaybackDevice);

@@ -9,7 +9,7 @@ namespace AudioSwitcher.AudioApi.Hooking
         private readonly Func<DataFlow, Role, string> _systemId;
         private readonly Func<bool> _canUnload;
         private readonly Action _hookInstalled;
-        private readonly Action _hookUninstalled;
+        private readonly Action<int> _hookUninstalled;
         private readonly Action<int, Exception> _errorHandler;
         private int _messageCount;
 
@@ -25,7 +25,7 @@ namespace AudioSwitcher.AudioApi.Hooking
             Func<DataFlow, Role, string> systemId,
             Func<bool> canUnload,
             Action hookInstalled,
-            Action hookUninstalled,
+            Action<int> hookUninstalled,
             Action<int, Exception> errorHandler
             )
         {
@@ -60,12 +60,12 @@ namespace AudioSwitcher.AudioApi.Hooking
             return true;
         }
 
-        public void HookUninstalled()
+        public void HookUninstalled(int processId)
         {
             Interlocked.Increment(ref _messageCount);
 
             if (_hookUninstalled != null)
-                _hookUninstalled();
+                _hookUninstalled(processId);
         }
 
         public void ReportError(int processId, Exception e)

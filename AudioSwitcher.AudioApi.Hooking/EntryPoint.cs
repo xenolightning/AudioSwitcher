@@ -44,7 +44,7 @@ namespace AudioSwitcher.AudioApi.Hooking
             {
                 while (!Interface.CanUnload())
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(200);
                 }
             }
             catch (Exception e)
@@ -52,7 +52,7 @@ namespace AudioSwitcher.AudioApi.Hooking
                 ReportError(Interface, e);
             }
 
-            Interface.HookUninstalled();
+            Interface.HookUninstalled(RemoteHooking.GetCurrentProcessId());
         }
 
         private static int GetDefaultAudioEndpoint(IMultimediaDeviceEnumerator self, DataFlow dataflow, Role role,
