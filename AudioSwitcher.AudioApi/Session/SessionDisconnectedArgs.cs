@@ -1,6 +1,6 @@
 namespace AudioSwitcher.AudioApi.Session
 {
-    public class SessionDisconnectedArgs
+    public sealed class SessionDisconnectedArgs
     {
 
         public IAudioSession Session

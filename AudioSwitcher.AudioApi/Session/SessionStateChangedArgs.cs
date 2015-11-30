@@ -1,6 +1,6 @@
 namespace AudioSwitcher.AudioApi.Session
 {
-    public class SessionStateChangedArgs
+    public sealed class SessionStateChangedArgs
     {
 
         public IAudioSession Session

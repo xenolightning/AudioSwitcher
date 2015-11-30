@@ -1,6 +1,6 @@
 ﻿namespace AudioSwitcher.AudioApi.Session
 {
-    public sealed class SessionVolumeChangedArgs
+    public sealed class PeakValueChangedArgs
     {
         public IAudioSession Session
         {
@@ -8,16 +8,16 @@
             private set;
         }
 
-        public double Volume
+        public double PeakValue
         {
             get;
             private set;
         }
 
-        public SessionVolumeChangedArgs(IAudioSession session, double volume)
+        public PeakValueChangedArgs(IAudioSession session, double peakValue)
         {
             Session = session;
-            Volume = volume;
+            PeakValue = peakValue;
         }
     }
 }

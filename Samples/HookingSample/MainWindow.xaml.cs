@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Windows;
 using AudioSwitcher.AudioApi;
@@ -104,6 +105,11 @@ namespace HookingSample
                 audioSession.VolumeChanged.Subscribe(v =>
                 {
                     Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.Volume);
+                });
+
+                audioSession.PeakValueChanged.Throttle(TimeSpan.FromMilliseconds(10)).Subscribe(v =>
+                {
+                    Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.PeakValue);
                 });
 
                 audioSession.MuteChanged.Subscribe(m =>

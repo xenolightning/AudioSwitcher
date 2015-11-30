@@ -24,6 +24,8 @@ namespace AudioSwitcher.AudioApi.Session
 
         IObservable<SessionVolumeChangedArgs> VolumeChanged { get; }
 
+        IObservable<PeakValueChangedArgs> PeakValueChanged { get; }
+
         IObservable<SessionMuteChangedArgs> MuteChanged { get; }
 
         IObservable<SessionStateChangedArgs> StateChanged { get; }

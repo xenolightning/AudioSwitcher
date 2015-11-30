@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Observables;
@@ -13,6 +14,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private readonly IAudioSessionControl2 _audioSessionControl;
         private readonly ISimpleAudioVolume _simpleAudioVolume;
+        private readonly IAudioMeterInformation _meterInformation;
 
         private string _fileDescription;
         private double _volume;
@@ -27,11 +29,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly AsyncBroadcaster<SessionDisconnectedArgs> _disconnected;
         private readonly AsyncBroadcaster<SessionVolumeChangedArgs> _volumeChanged;
         private readonly AsyncBroadcaster<SessionMuteChangedArgs> _muteChanged;
+        private readonly AsyncBroadcaster<PeakValueChangedArgs> _peakValueChanged;
         private bool _isMuted;
+        private Timer _timer;
 
         public IObservable<SessionVolumeChangedArgs> VolumeChanged
         {
             get { return _volumeChanged.AsObservable(); }
+        }
+
+        public IObservable<PeakValueChangedArgs> PeakValueChanged
+        {
+            get
+            {
+                return _peakValueChanged;
+            }
         }
 
         public IObservable<SessionMuteChangedArgs> MuteChanged
@@ -153,13 +165,32 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             // ReSharper disable once SuspiciousTypeConversion.Global
             _simpleAudioVolume = control as ISimpleAudioVolume;
 
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            _meterInformation = control as IAudioMeterInformation;
+
             if (_audioSessionControl == null || _simpleAudioVolume == null)
                 throw new InvalidComObjectException("control");
+
+            if (_meterInformation != null)
+            {
+                //start a timer to poll for peak value changes
+                _timer = new Timer(state =>
+                {
+                    float peakValue = 0;
+                    ComThread.Invoke(() =>
+                    {
+                        _meterInformation.GetPeakValue(out peakValue);
+                    });
+
+                    OnPeakValueChanged(peakValue * 100);
+                }, null, 0, 20);
+            }
 
             _stateChanged = new AsyncBroadcaster<SessionStateChangedArgs>();
             _disconnected = new AsyncBroadcaster<SessionDisconnectedArgs>();
             _volumeChanged = new AsyncBroadcaster<SessionVolumeChangedArgs>();
             _muteChanged = new AsyncBroadcaster<SessionMuteChangedArgs>();
+            _peakValueChanged = new AsyncBroadcaster<PeakValueChangedArgs>();
 
             _audioSessionControl.RegisterAudioSessionNotification(this);
 
@@ -294,11 +325,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _muteChanged.OnNext(new SessionMuteChangedArgs(this, isMuted));
         }
 
+        private void OnPeakValueChanged(double peakValue)
+        {
+            _peakValueChanged.OnNext(new PeakValueChangedArgs(this, peakValue));
+        }
+
         public void Dispose()
         {
+            if (_timer != null)
+                _timer.Dispose();
+
             _stateChanged.Dispose();
             _disconnected.Dispose();
             _volumeChanged.Dispose();
+
+            _audioSessionControl.UnregisterAudioSessionNotification(this);
 
             Marshal.FinalReleaseComObject(_audioSessionControl);
 
