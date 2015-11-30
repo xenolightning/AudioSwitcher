@@ -185,10 +185,7 @@ namespace HookingSample
                 Hook.Complete += pid =>
                 {
                     UnHook();
-                    Controller.SetDefaultDevice(Controller.DefaultPlaybackDevice);
                 };
-
-                Controller.SetDefaultDevice(Controller.DefaultPlaybackDevice);
             }
             else
             {

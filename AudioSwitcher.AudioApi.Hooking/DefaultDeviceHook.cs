@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
@@ -16,6 +17,7 @@ namespace AudioSwitcher.AudioApi.Hooking
         public delegate void CompleteEventHandler(int processId);
 
         private readonly Func<DataFlow, Role, string> _systemDeviceId;
+        private readonly ManualResetEvent _unhookWaitEvent;
         private string _channelName;
         private IpcServerChannel _ipcChannel;
         private Timer _hookIsLiveTimer;
@@ -34,6 +36,7 @@ namespace AudioSwitcher.AudioApi.Hooking
         {
             _systemDeviceId = systemDeviceId;
             Status = EHookStatus.Inactive;
+            _unhookWaitEvent = new ManualResetEvent(false);
         }
 
         public void Dispose()
@@ -52,8 +55,8 @@ namespace AudioSwitcher.AudioApi.Hooking
             _interface = new RemoteInterface
             (
                 (x, y) => _systemDeviceId(x, y),
-                () => Status == EHookStatus.Inactive,
-                () => Status = EHookStatus.Active,
+                CanUnload,
+                HookInstalled,
                 OnComplete,
                 OnError
             );
@@ -65,8 +68,8 @@ namespace AudioSwitcher.AudioApi.Hooking
                 RemoteHooking.Inject(
                     processId,
                     InjectionOptions.DoNotRequireStrongName,
-                    typeof (IMultimediaDeviceEnumerator).Assembly.Location,
-                    typeof (IMultimediaDeviceEnumerator).Assembly.Location,
+                    typeof(IMultimediaDeviceEnumerator).Assembly.Location,
+                    typeof(IMultimediaDeviceEnumerator).Assembly.Location,
                     _channelName);
 
                 //2000ms due time. This will give the hook 2seconds to become active
@@ -76,14 +79,59 @@ namespace AudioSwitcher.AudioApi.Hooking
 
                 _completeSignalled = false;
 
+                SetDefaults();
+
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Status = EHookStatus.Inactive;
             }
 
+
             return false;
+        }
+
+        private void HookInstalled()
+        {
+            Status = EHookStatus.Active;
+            SetDefaults();
+        }
+
+        private static void SetDefaults()
+        {
+            try
+            {
+                //var asdf = new MultimediaDeviceEnumeratorComObject();
+                //var asdfasdf = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("BCDE0395-E52F-467C-8E3D-C4579291692E"))) as IMultimediaDeviceEnumerator;
+                //IMultimediaDevice device;
+                //string devId;
+                //IntPtr devptr;
+
+                //deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Communications, out devptr);
+                //device = (IMultimediaDevice)Marshal.PtrToStructure(devptr, typeof(IMultimediaDevice));
+                //device.GetId(out devId);
+                //PolicyConfig.SetDefaultEndpoint(devId, Role.Communications);
+
+                //deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console, out devptr);
+                //device = (IMultimediaDevice)Marshal.PtrToStructure(devptr, typeof(IMultimediaDevice));
+                //device.GetId(out devId);
+                //PolicyConfig.SetDefaultEndpoint(devId, Role.Console);
+            }
+            catch(Exception ex)
+            {
+                // not worth failing for
+            }
+        }
+
+        public void GetObject()
+        {
+            var enumerator = new MultimediaDeviceEnumeratorComObject();
+        }
+
+        private bool CanUnload()
+        {
+            return Status == EHookStatus.Inactive;
         }
 
         private void HookIsLive(object state)
@@ -109,14 +157,16 @@ namespace AudioSwitcher.AudioApi.Hooking
                 _hookIsLiveTimer = null;
             }
 
+            _unhookWaitEvent.WaitOne(1000);
+
             if (_ipcChannel != null)
             {
                 ChannelServices.UnregisterChannel(_ipcChannel);
                 _ipcChannel.StopListening(null);
                 _ipcChannel = null;
-
-                OnComplete(_hookedProcessId);
             }
+
+            SetDefaults();
 
             return true;
         }
@@ -128,13 +178,12 @@ namespace AudioSwitcher.AudioApi.Hooking
             if (_completeSignalled)
                 return;
 
-            var handler = Complete;
+            _completeSignalled = true;
+            _unhookWaitEvent.Set();
 
+            var handler = Complete;
             if (handler != null)
-            {
-                _completeSignalled = true;
                 handler(processId);
-            }
         }
 
         public event ErrorEventHandler Error;
