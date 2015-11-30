@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
@@ -10,9 +11,9 @@ namespace AudioSwitcher.AudioApi.Hooking
 {
     public sealed class DefaultDeviceHook : IHook, IDisposable
     {
-        public delegate void OnErrorHandler(int processId, Exception exception);
+        public delegate void ErrorEventHandler(int processId, Exception exception);
 
-        public delegate void OnCompleteHandler(int processId);
+        public delegate void CompleteEventHandler(int processId);
 
         private readonly Func<DataFlow, Role, string> _systemDeviceId;
         private string _channelName;
@@ -53,8 +54,8 @@ namespace AudioSwitcher.AudioApi.Hooking
                 (x, y) => _systemDeviceId(x, y),
                 () => Status == EHookStatus.Inactive,
                 () => Status = EHookStatus.Active,
-                RaiseOnComplete,
-                RaiseOnError
+                OnComplete,
+                OnError
             );
 
             _ipcChannel = RemoteHooking.IpcCreateServer(ref _channelName, WellKnownObjectMode.Singleton, _interface);
@@ -68,7 +69,9 @@ namespace AudioSwitcher.AudioApi.Hooking
                     typeof (IMultimediaDeviceEnumerator).Assembly.Location,
                     _channelName);
 
-                _hookIsLiveTimer = new Timer(HookIsLive, null, 0, 500);
+                //2000ms due time. This will give the hook 2seconds to become active
+                //then it will check every 500ms
+                _hookIsLiveTimer = new Timer(HookIsLive, null, 2000, 500);
                 _lastMessageCount = -1;
 
                 _completeSignalled = false;
@@ -112,20 +115,20 @@ namespace AudioSwitcher.AudioApi.Hooking
                 _ipcChannel.StopListening(null);
                 _ipcChannel = null;
 
-                RaiseOnComplete(_hookedProcessId);
+                OnComplete(_hookedProcessId);
             }
 
             return true;
         }
 
-        public event OnCompleteHandler OnComplete;
+        public event CompleteEventHandler Complete;
 
-        private void RaiseOnComplete(int processId)
+        private void OnComplete(int processId)
         {
             if (_completeSignalled)
                 return;
 
-            var handler = OnComplete;
+            var handler = Complete;
 
             if (handler != null)
             {
@@ -134,11 +137,11 @@ namespace AudioSwitcher.AudioApi.Hooking
             }
         }
 
-        public event OnErrorHandler OnError;
+        public event ErrorEventHandler Error;
 
-        private void RaiseOnError(int processId, Exception exception)
+        private void OnError(int processId, Exception exception)
         {
-            var handler = OnError;
+            var handler = Error;
 
             if (handler != null)
                 handler(processId, exception);

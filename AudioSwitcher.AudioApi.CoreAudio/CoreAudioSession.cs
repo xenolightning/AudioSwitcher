@@ -269,6 +269,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         int IAudioSessionEvents.OnStateChanged(EAudioSessionState state)
         {
+            _state = state.AsAudioSessionState();
             OnStateChanged(state);
             return 0;
         }

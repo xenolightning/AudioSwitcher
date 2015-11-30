@@ -176,7 +176,7 @@ namespace HookingSample
 
             if (Hook.Hook(SelectedProcess.Id))
             {
-                Hook.OnComplete += pid =>
+                Hook.Complete += pid =>
                 {
                     UnHook();
                     Controller.SetDefaultDevice(Controller.DefaultPlaybackDevice);
