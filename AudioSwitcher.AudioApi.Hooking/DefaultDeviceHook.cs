@@ -136,9 +136,13 @@ namespace AudioSwitcher.AudioApi.Hooking
             var messageCount = _interface.MessageCount;
 
             if (_interface.MessageCount > _lastMessageCount)
+            {
                 _lastMessageCount = messageCount;
+            }
             else
-                UnHook();
+            {
+                OnComplete(_hookedProcessId);
+            }
         }
 
         public bool UnHook()
@@ -177,6 +181,7 @@ namespace AudioSwitcher.AudioApi.Hooking
 
             _completeSignalled = true;
             _unhookWaitEvent.Set();
+            UnHook();
 
             var handler = Complete;
             if (handler != null)
@@ -188,6 +193,9 @@ namespace AudioSwitcher.AudioApi.Hooking
         private void OnError(int processId, Exception exception)
         {
             var handler = Error;
+
+            _unhookWaitEvent.Set();
+            UnHook();
 
             if (handler != null)
                 handler(processId, exception);

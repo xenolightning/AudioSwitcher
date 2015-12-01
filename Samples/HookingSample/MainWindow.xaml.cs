@@ -88,61 +88,52 @@ namespace HookingSample
 
             Controller = new CoreAudioController();
 
-            Controller.DefaultPlaybackDevice.SetAsDefault();
-
             DataContext = this;
 
-            _hookCheckTimer = new Timer(CheckHook, null, 0, 1000);
 
-
-            foreach (var audioSession in Controller.DefaultPlaybackDevice.SessionController.All())
-            {
-                Console.WriteLine(audioSession.Id);    
-            }
+            //foreach (var audioSession in Controller.DefaultPlaybackDevice.SessionController.All())
+            //{
+            //    Console.WriteLine(audioSession.Id);    
+            //}
             
-            foreach (var audioSession in Controller.DefaultPlaybackDevice.SessionController.All())
-            {
-                audioSession.VolumeChanged.Subscribe(v =>
-                {
-                    Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.Volume);
-                });
+            //foreach (var audioSession in Controller.DefaultPlaybackDevice.SessionController.All())
+            //{
+            //    audioSession.VolumeChanged.Subscribe(v =>
+            //    {
+            //        Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.Volume);
+            //    });
 
-                audioSession.PeakValueChanged.Throttle(TimeSpan.FromMilliseconds(10)).Subscribe(v =>
-                {
-                    Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.PeakValue);
-                });
+            //    audioSession.PeakValueChanged.Throttle(TimeSpan.FromMilliseconds(10)).Subscribe(v =>
+            //    {
+            //        Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.PeakValue);
+            //    });
 
-                audioSession.MuteChanged.Subscribe(m =>
-                {
-                    Console.WriteLine("{0} - {1}", m.Session.DisplayName, m.IsMuted);
-                });
-            }
+            //    audioSession.MuteChanged.Subscribe(m =>
+            //    {
+            //        Console.WriteLine("{0} - {1}", m.Session.DisplayName, m.IsMuted);
+            //    });
+            //}
 
-            Controller.DefaultPlaybackDevice.SessionController.SessionCreated.Subscribe(x =>
-            {
-                x.VolumeChanged.Subscribe(v =>
-                {
-                    Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.Volume);
-                });
-            });
+            //Controller.DefaultPlaybackDevice.SessionController.SessionCreated.Subscribe(x =>
+            //{
+            //    x.VolumeChanged.Subscribe(v =>
+            //    {
+            //        Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.Volume);
+            //    });
+            //});
 
-            Controller.DefaultPlaybackDevice.SessionController.SessionDisconnected.Subscribe(x =>
-            {
-                Console.WriteLine(x);
+            //Controller.DefaultPlaybackDevice.SessionController.SessionDisconnected.Subscribe(x =>
+            //{
+            //    Console.WriteLine(x);
 
-                foreach (var session in Controller.DefaultPlaybackDevice.SessionController)
-                {
-                    Console.WriteLine("{0} - {1}", session.DisplayName, session.Volume);
-                }
+            //    foreach (var session in Controller.DefaultPlaybackDevice.SessionController)
+            //    {
+            //        Console.WriteLine("{0} - {1}", session.DisplayName, session.Volume);
+            //    }
 
-            });
+            //});
         }
 
-        private void CheckHook(object state)
-        {
-            //if (Hook != null && Hook.Status == EHookStatus.Inactive)
-            //    UnHook();
-        }
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
