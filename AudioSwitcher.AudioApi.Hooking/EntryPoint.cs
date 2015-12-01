@@ -23,17 +23,19 @@ namespace AudioSwitcher.AudioApi.Hooking
         {
             try
             {
+
                 //Create the DefaultDevice Hook
                 var cci = new COMClassInfo(typeof(MultimediaDeviceEnumerator), typeof(IMultimediaDeviceEnumerator), "GetDefaultAudioEndpoint");
                 cci.Query();
 
-                var hook = LocalHook.Create(cci.MethodPointers[0], new DGetDefaultAudioEndpoint(GetDefaultAudioEndpoint),
-                    this);
-                hook.ThreadACL.SetExclusiveACL(new[] { 1 });
+                var hook = LocalHook.Create(cci.MethodPointers[0], new DGetDefaultAudioEndpoint(GetDefaultAudioEndpoint), this);
+
+                hook.ThreadACL.SetExclusiveACL(new[] { 0 });
             }
             catch (Exception e)
             {
                 ReportError(Interface, e);
+                return;
             }
 
             //Signal the hook installed, and get the response from the server
