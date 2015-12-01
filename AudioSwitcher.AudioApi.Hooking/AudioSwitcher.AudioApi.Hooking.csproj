@@ -54,9 +54,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComObjects\ComIIds.cs" />
+    <Compile Include="ComObjects\ComObjectFactory.cs" />
     <Compile Include="ComObjects\DataFlow.cs" />
     <Compile Include="ComObjects\DeviceState.cs" />
+    <Compile Include="ComObjects\IMultimediaDevice.cs" />
     <Compile Include="ComObjects\IMultimediaDeviceEnumerator.cs" />
+    <Compile Include="ComObjects\IPolicyConfigUnknown.cs" />
     <Compile Include="ComObjects\MultimediaDeviceEnumeratorComObject.cs" />
     <Compile Include="ComObjects\Role.cs" />
     <Compile Include="DefaultDeviceHook.cs" />

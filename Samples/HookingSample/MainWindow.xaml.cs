@@ -200,10 +200,6 @@ namespace HookingSample
             {
                 Hook.Dispose();
                 Hook = null;
-
-                Thread.Sleep(1000);
-
-                Controller.SetDefaultDevice(Controller.DefaultPlaybackDevice);
             }
         }
 

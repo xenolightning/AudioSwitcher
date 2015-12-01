@@ -102,31 +102,28 @@ namespace AudioSwitcher.AudioApi.Hooking
         {
             try
             {
-                //var asdf = new MultimediaDeviceEnumeratorComObject();
-                //var asdfasdf = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("BCDE0395-E52F-467C-8E3D-C4579291692E"))) as IMultimediaDeviceEnumerator;
-                //IMultimediaDevice device;
-                //string devId;
-                //IntPtr devptr;
 
-                //deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Communications, out devptr);
-                //device = (IMultimediaDevice)Marshal.PtrToStructure(devptr, typeof(IMultimediaDevice));
-                //device.GetId(out devId);
-                //PolicyConfig.SetDefaultEndpoint(devId, Role.Communications);
+                IMultimediaDevice device;
+                string devId;
+                IntPtr devptr;
+                var policyConfig = ComObjectFactory.GetPolicyConfig();
+                var deviceEnumerator = ComObjectFactory.GetDeviceEnumerator();
 
-                //deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console, out devptr);
-                //device = (IMultimediaDevice)Marshal.PtrToStructure(devptr, typeof(IMultimediaDevice));
-                //device.GetId(out devId);
-                //PolicyConfig.SetDefaultEndpoint(devId, Role.Console);
+                deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Communications, out devptr);
+                device = Marshal.GetObjectForIUnknown(devptr) as IMultimediaDevice;
+                device.GetId(out devId);
+                policyConfig.SetDefaultEndpoint(devId, Role.Communications);
+
+                deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console, out devptr);
+                device = Marshal.GetObjectForIUnknown(devptr) as IMultimediaDevice;
+                device.GetId(out devId);
+                policyConfig.SetDefaultEndpoint(devId, Role.Console);
+
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 // not worth failing for
             }
-        }
-
-        public void GetObject()
-        {
-            var enumerator = new MultimediaDeviceEnumeratorComObject();
         }
 
         private bool CanUnload()
@@ -159,14 +156,14 @@ namespace AudioSwitcher.AudioApi.Hooking
 
             _unhookWaitEvent.WaitOne(1000);
 
+            SetDefaults();
+
             if (_ipcChannel != null)
             {
                 ChannelServices.UnregisterChannel(_ipcChannel);
                 _ipcChannel.StopListening(null);
                 _ipcChannel = null;
             }
-
-            SetDefaults();
 
             return true;
         }

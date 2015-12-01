@@ -10,10 +10,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         public static void SetDefaultEndpoint(string devId, ERole eRole)
         {
-            _PolicyConfigClient policyConfig = null;
+            object policyConfig = null;
             try
             {
-                policyConfig = new _PolicyConfigClient();
+                policyConfig = ComObjectFactory.GetPolicyConfig();
 
                 var policyConfigX = policyConfig as IPolicyConfigX;
                 var policyConfig7 = policyConfig as IPolicyConfig;
@@ -41,9 +41,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        [ComImport, Guid("870AF99C-171D-4F9E-AF0D-E63DF40C2BC9")]
-        private class _PolicyConfigClient
-        {
-        }
     }
 }

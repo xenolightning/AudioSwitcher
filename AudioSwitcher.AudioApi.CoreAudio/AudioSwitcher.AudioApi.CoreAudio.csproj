@@ -52,6 +52,7 @@
     <Compile Include="CoreAudioSession.cs" />
     <Compile Include="CoreAudioSessionController.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Internal\ComObjectFactory.cs" />
     <Compile Include="Internal\EAudioSessionDisconnectReason.cs" />
     <Compile Include="Internal\AudioEndpointVolume.cs" />
     <Compile Include="Internal\AudioEndpointVolumeCallback.cs" />
@@ -95,7 +96,6 @@
     <Compile Include="Internal\Interfaces\IPolicyConfig.cs" />
     <Compile Include="Internal\Interfaces\IPolicyConfigVista.cs" />
     <Compile Include="Internal\Interfaces\IPropertyStore.cs" />
-    <Compile Include="Internal\Interfaces\MultimediaDeviceEnumeratorComObject.cs" />
     <Compile Include="Internal\Interfaces\StorageAccessMode.cs" />
     <Compile Include="Internal\Interfaces\WaveFormat.cs" />
     <Compile Include="Internal\Interfaces\WaveFormatEncoding.cs" />

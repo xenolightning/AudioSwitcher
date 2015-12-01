@@ -24,7 +24,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ComThread.Invoke(() =>
             {
                 // ReSharper disable once SuspiciousTypeConversion.Global
-                _innerEnumerator = new MultimediaDeviceEnumeratorComObject() as IMultimediaDeviceEnumerator;
+                _innerEnumerator = ComObjectFactory.GetDeviceEnumerator();
 
                 if (_innerEnumerator == null)
                     return;

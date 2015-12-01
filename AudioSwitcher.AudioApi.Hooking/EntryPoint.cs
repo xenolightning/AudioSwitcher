@@ -24,7 +24,7 @@ namespace AudioSwitcher.AudioApi.Hooking
             try
             {
                 //Create the DefaultDevice Hook
-                var cci = new COMClassInfo(typeof(MultimediaDeviceEnumeratorComObject), typeof(IMultimediaDeviceEnumerator), "GetDefaultAudioEndpoint");
+                var cci = new COMClassInfo(typeof(MultimediaDeviceEnumerator), typeof(IMultimediaDeviceEnumerator), "GetDefaultAudioEndpoint");
                 cci.Query();
 
                 var hook = LocalHook.Create(cci.MethodPointers[0], new DGetDefaultAudioEndpoint(GetDefaultAudioEndpoint),
@@ -46,13 +46,13 @@ namespace AudioSwitcher.AudioApi.Hooking
                 {
                     Thread.Sleep(200);
                 }
+
+                Interface.HookUninstalled(RemoteHooking.GetCurrentProcessId());
             }
             catch (Exception e)
             {
                 ReportError(Interface, e);
             }
-
-            Interface.HookUninstalled(RemoteHooking.GetCurrentProcessId());
         }
 
         private static int GetDefaultAudioEndpoint(IMultimediaDeviceEnumerator self, DataFlow dataflow, Role role,
