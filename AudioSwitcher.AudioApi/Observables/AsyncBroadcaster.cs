@@ -37,25 +37,16 @@ namespace AudioSwitcher.AudioApi.Observables
             if (IsDisposed)
                 return;
 
-            Task.Factory.StartNew(() =>
+            RaiseAllObserversAsync(x =>
             {
-                IEnumerable<IObserver<T>> coll;
-                lock (_observerLock)
+                try
                 {
-                    coll = _observers.ToList();
+                    x.OnNext(value);
                 }
-
-                Parallel.ForEach(coll, x =>
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        x.OnNext(value);
-                    }
-                    catch (Exception ex)
-                    {
-                        x.OnError(ex);
-                    }
-                });
+                    x.OnError(ex);
+                }
             });
         }
 
@@ -64,20 +55,7 @@ namespace AudioSwitcher.AudioApi.Observables
             if (IsDisposed)
                 return;
 
-
-            Task.Factory.StartNew(() =>
-            {
-                IEnumerable<IObserver<T>> coll;
-                lock (_observerLock)
-                {
-                    coll = _observers.ToList();
-                }
-
-                Parallel.ForEach(coll, x =>
-                {
-                    x.OnError(error);
-                });
-            });
+            RaiseAllObserversAsync(x => x.OnError(error));
         }
 
         public override void OnCompleted()
@@ -85,7 +63,11 @@ namespace AudioSwitcher.AudioApi.Observables
             if (IsDisposed)
                 return;
 
+            RaiseAllObserversAsync(x => x.OnCompleted());
+        }
 
+        private void RaiseAllObserversAsync(Action<IObserver<T>> observerAction)
+        {
             Task.Factory.StartNew(() =>
             {
                 IEnumerable<IObserver<T>> coll;
@@ -94,10 +76,7 @@ namespace AudioSwitcher.AudioApi.Observables
                     coll = _observers.ToList();
                 }
 
-                Parallel.ForEach(coll, x =>
-                {
-                    x.OnCompleted();
-                });
+                Parallel.ForEach(coll, observerAction);
             });
         }
 

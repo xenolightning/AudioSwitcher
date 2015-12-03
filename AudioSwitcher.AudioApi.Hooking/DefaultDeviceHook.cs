@@ -13,8 +13,8 @@ namespace AudioSwitcher.AudioApi.Hooking
     public sealed class DefaultDeviceHook : IHook, IDisposable
     {
         public delegate void ErrorEventHandler(int processId, Exception exception);
-
         public delegate void CompleteEventHandler(int processId);
+        public delegate void StatusChangedEventHandler(EHookStatus status);
 
         private readonly Func<DataFlow, Role, string> _systemDeviceId;
         private readonly ManualResetEvent _unhookWaitEvent;
@@ -25,11 +25,24 @@ namespace AudioSwitcher.AudioApi.Hooking
         private int _lastMessageCount;
         private bool _completeSignalled;
         private int _hookedProcessId;
+        private EHookStatus _status;
+
+        public event StatusChangedEventHandler StatusChanged;
+        public event CompleteEventHandler Complete;
+        public event ErrorEventHandler Error;
 
         public EHookStatus Status
         {
-            get;
-            private set;
+            get
+            {
+                return _status;
+            }
+            private set
+            {
+                _status = value;
+
+                OnStatusChanged(_status);
+            }
         }
 
         public DefaultDeviceHook(Func<DataFlow, Role, string> systemDeviceId)
@@ -172,7 +185,12 @@ namespace AudioSwitcher.AudioApi.Hooking
             return true;
         }
 
-        public event CompleteEventHandler Complete;
+        private void OnStatusChanged(EHookStatus status)
+        {
+            var handler = StatusChanged;
+            if (handler != null)
+                handler(status);
+        }
 
         private void OnComplete(int processId)
         {
@@ -187,8 +205,6 @@ namespace AudioSwitcher.AudioApi.Hooking
             if (handler != null)
                 handler(processId);
         }
-
-        public event ErrorEventHandler Error;
 
         private void OnError(int processId, Exception exception)
         {

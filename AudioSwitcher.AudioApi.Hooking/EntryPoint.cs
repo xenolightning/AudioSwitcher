@@ -31,16 +31,16 @@ namespace AudioSwitcher.AudioApi.Hooking
                 var hook = LocalHook.Create(cci.MethodPointers[0], new DGetDefaultAudioEndpoint(GetDefaultAudioEndpoint), this);
 
                 hook.ThreadACL.SetExclusiveACL(new[] { 0 });
+
+                //Signal the hook installed, and get the response from the server
+                if (!Interface.HookInstalled())
+                    return;
             }
             catch (Exception e)
             {
                 ReportError(Interface, e);
                 return;
             }
-
-            //Signal the hook installed, and get the response from the server
-            if (!Interface.HookInstalled())
-                return;
 
             try
             {
@@ -53,28 +53,42 @@ namespace AudioSwitcher.AudioApi.Hooking
             }
             catch (Exception e)
             {
-                ReportError(Interface, e);
+                try
+                {
+                    ReportError(Interface, e);
+                }
+                catch
+                {
+                    //need to double wrap this to prevent crashes in the host app
+                }
             }
         }
 
         private static int GetDefaultAudioEndpoint(IMultimediaDeviceEnumerator self, DataFlow dataflow, Role role,
             out IntPtr ppendpoint)
         {
-            var entryPoint = HookRuntimeInfo.Callback as EntryPoint;
-
-            if (entryPoint == null || entryPoint.Interface == null)
-                return self.GetDefaultAudioEndpoint(dataflow, role, out ppendpoint);
-
-            var remoteInterface = entryPoint.Interface;
-
             try
             {
-                var devId = remoteInterface.GetDefaultDevice(dataflow, role);
-                return self.GetDevice(devId, out ppendpoint);
+                var entryPoint = HookRuntimeInfo.Callback as EntryPoint;
+
+                if (entryPoint == null || entryPoint.Interface == null)
+                    return self.GetDefaultAudioEndpoint(dataflow, role, out ppendpoint);
+
+                var remoteInterface = entryPoint.Interface;
+
+                try
+                {
+                    var devId = remoteInterface.GetDefaultDevice(dataflow, role);
+                    return self.GetDevice(devId, out ppendpoint);
+                }
+                catch (Exception ex)
+                {
+                    ReportError(remoteInterface, ex);
+                }
             }
-            catch (Exception ex)
+            catch
             {
-                ReportError(remoteInterface, ex);
+                // ignored
             }
 
             //Something failed so return the actual default device
