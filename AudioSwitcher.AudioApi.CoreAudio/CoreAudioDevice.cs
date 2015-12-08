@@ -146,8 +146,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME))
-                    return Properties[PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME] as string;
+                if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_ICON))
+                    return Properties[PropertyKeys.PKEY_DEVICE_ICON] as string;
 
                 return "Unknown";
             }
