@@ -61,7 +61,6 @@
     <Compile Include="ComObjects\IMultimediaDevice.cs" />
     <Compile Include="ComObjects\IMultimediaDeviceEnumerator.cs" />
     <Compile Include="ComObjects\IPolicyConfigUnknown.cs" />
-    <Compile Include="ComObjects\MultimediaDeviceEnumeratorComObject.cs" />
     <Compile Include="ComObjects\Role.cs" />
     <Compile Include="DefaultDeviceHook.cs" />
     <Compile Include="EntryPoint.cs" />
@@ -84,6 +83,10 @@
     </Content>
     <Content Include="..\lib\NetFX4.0\EasyHook64Svc.exe">
       <Link>EasyHook64Svc.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\lib\NetFX4.0\EasyHookSvc.exe">
+      <Link>EasyHookSvc.exe</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\lib\NetFX4.0\EasyLoad32.dll">

@@ -38,7 +38,10 @@
                     </ListBox.Style>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding ProcessName, StringFormat={}{0}.exe}"/>
+                            <StackPanel>
+                                <TextBlock Text="{Binding ProcessName, StringFormat={}{0}.exe}"/>
+                                <TextBlock Text="{Binding Id}"/>
+                            </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>

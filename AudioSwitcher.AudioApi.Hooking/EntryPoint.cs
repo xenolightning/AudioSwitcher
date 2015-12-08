@@ -21,25 +21,26 @@ namespace AudioSwitcher.AudioApi.Hooking
 
         public void Run(RemoteHooking.IContext inContext, string inChannelName)
         {
+            LocalHook hook = null;
             try
             {
-
                 //Create the DefaultDevice Hook
-                var cci = new COMClassInfo(typeof(MultimediaDeviceEnumerator), typeof(IMultimediaDeviceEnumerator), "GetDefaultAudioEndpoint");
+                var cci = new COMClassInfo(Type.GetTypeFromCLSID(new Guid(ComIIds.DEVICE_ENUMERATOR_CID)), typeof(IMultimediaDeviceEnumerator), "GetDefaultAudioEndpoint");
                 cci.Query();
 
-                var hook = LocalHook.Create(cci.MethodPointers[0], new DGetDefaultAudioEndpoint(GetDefaultAudioEndpoint), this);
+                hook = LocalHook.Create(cci.MethodPointers[0], new DGetDefaultAudioEndpoint(GetDefaultAudioEndpoint),
+                    this);
 
                 hook.ThreadACL.SetExclusiveACL(new[] { 0 });
 
                 //Signal the hook installed, and get the response from the server
                 if (!Interface.HookInstalled())
                     return;
+
             }
             catch (Exception e)
             {
                 ReportError(Interface, e);
-                return;
             }
 
             try
@@ -53,42 +54,31 @@ namespace AudioSwitcher.AudioApi.Hooking
             }
             catch (Exception e)
             {
-                try
-                {
-                    ReportError(Interface, e);
-                }
-                catch
-                {
-                    //need to double wrap this to prevent crashes in the host app
-                }
+                ReportError(Interface, e);
             }
+
+            if(hook != null)
+                hook.Dispose();
         }
 
         private static int GetDefaultAudioEndpoint(IMultimediaDeviceEnumerator self, DataFlow dataflow, Role role,
             out IntPtr ppendpoint)
         {
+            var entryPoint = HookRuntimeInfo.Callback as EntryPoint;
+
+            if (entryPoint == null || entryPoint.Interface == null)
+                return self.GetDefaultAudioEndpoint(dataflow, role, out ppendpoint);
+
+            var remoteInterface = entryPoint.Interface;
+
             try
             {
-                var entryPoint = HookRuntimeInfo.Callback as EntryPoint;
-
-                if (entryPoint == null || entryPoint.Interface == null)
-                    return self.GetDefaultAudioEndpoint(dataflow, role, out ppendpoint);
-
-                var remoteInterface = entryPoint.Interface;
-
-                try
-                {
-                    var devId = remoteInterface.GetDefaultDevice(dataflow, role);
-                    return self.GetDevice(devId, out ppendpoint);
-                }
-                catch (Exception ex)
-                {
-                    ReportError(remoteInterface, ex);
-                }
+                var devId = remoteInterface.GetDefaultDevice(dataflow, role);
+                return self.GetDevice(devId, out ppendpoint);
             }
-            catch
+            catch (Exception ex)
             {
-                // ignored
+                ReportError(remoteInterface, ex);
             }
 
             //Something failed so return the actual default device
