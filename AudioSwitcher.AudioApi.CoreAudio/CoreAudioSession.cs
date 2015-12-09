@@ -174,16 +174,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (_meterInformation != null)
             {
                 //start a timer to poll for peak value changes
-                _timer = new Timer(state =>
-                {
-                    float peakValue = 0;
-                    ComThread.Invoke(() =>
-                    {
-                        _meterInformation.GetPeakValue(out peakValue);
-                    });
-
-                    OnPeakValueChanged(peakValue * 100);
-                }, null, 0, 20);
+                _timer = new Timer(Timer_UpdatePeakValue, null, 0, 20);
             }
 
             _stateChanged = new AsyncBroadcaster<SessionStateChangedArgs>();
@@ -196,6 +187,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             RefreshProperties();
             RefreshVolume();
+        }
+
+        private void Timer_UpdatePeakValue(object state)
+        {
+            try
+            {
+                float peakValue = 0;
+                ComThread.Invoke(() => { _meterInformation.GetPeakValue(out peakValue); });
+
+                OnPeakValueChanged(peakValue*100);
+            }
+            catch (InvalidComObjectException)
+            {
+                //ignored - usually means the com object has been released, but the timer is ticking
+            }
         }
 
         ~CoreAudioSession()
