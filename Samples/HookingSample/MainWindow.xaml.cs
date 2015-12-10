@@ -90,12 +90,15 @@ namespace HookingSample
 
             DataContext = this;
 
+            Controller.DefaultPlaybackDevice.SessionController.All();
 
-            //foreach (var audioSession in Controller.DefaultPlaybackDevice.SessionController.All())
-            //{
-            //    Console.WriteLine(audioSession.Id);    
-            //}
-            
+            Thread.Sleep(100);
+
+            foreach (var audioSession in Controller.DefaultPlaybackDevice.SessionController.All())
+            {
+                Console.WriteLine(audioSession.Id);
+            }
+
             //foreach (var audioSession in Controller.DefaultPlaybackDevice.SessionController.All())
             //{
             //    audioSession.VolumeChanged.Subscribe(v =>

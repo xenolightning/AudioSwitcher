@@ -32,6 +32,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly AsyncBroadcaster<PeakValueChangedArgs> _peakValueChanged;
         private bool _isMuted;
         private Timer _timer;
+        private bool _isDisposed;
 
         public IObservable<SessionVolumeChangedArgs> VolumeChanged
         {
@@ -123,6 +124,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
             set
             {
+                if (_isDisposed)
+                    return;
+
                 ComThread.Invoke(() => _simpleAudioVolume.SetMasterVolume((float)(value / 100), Guid.Empty));
                 _volume = value;
                 OnVolumeChanged(_volume);
@@ -137,7 +141,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
             set
             {
-                if (_isMuted == value)
+                if (_isMuted == value || _isDisposed)
                     return;
 
                 ComThread.Invoke(() => _simpleAudioVolume.SetMute(value, Guid.Empty));
@@ -191,17 +195,24 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void Timer_UpdatePeakValue(object state)
         {
-            try
+            float peakValue = 0;
+            ComThread.Invoke(() =>
             {
-                float peakValue = 0;
-                ComThread.Invoke(() => { _meterInformation.GetPeakValue(out peakValue); });
+                if (_isDisposed)
+                    return;
 
-                OnPeakValueChanged(peakValue*100);
-            }
-            catch (InvalidComObjectException)
-            {
-                //ignored - usually means the com object has been released, but the timer is ticking
-            }
+                try
+                {
+                    _meterInformation.GetPeakValue(out peakValue);
+                }
+                catch (InvalidComObjectException)
+                {
+                    //ignored - usually means the com object has been released, but the timer is still ticking
+                    if (_timer != null)
+                        _timer.Dispose();
+                }
+            });
+            OnPeakValueChanged(peakValue * 100);
         }
 
         ~CoreAudioSession()
@@ -211,6 +222,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void RefreshVolume()
         {
+            if (_isDisposed)
+                return;
+
             ComThread.Invoke(() =>
             {
                 float vol;
@@ -226,6 +240,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void RefreshProperties()
         {
+            if (_isDisposed)
+                return;
+
             ComThread.Invoke(() =>
             {
                 _isSystemSession = _audioSessionControl.IsSystemSoundsSession() == 0;
@@ -338,6 +355,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public void Dispose()
         {
+            _isDisposed = true;
+
             if (_timer != null)
                 _timer.Dispose();
 

@@ -8,19 +8,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public partial class CoreAudioDevice : IAudioSessionEndpoint
     {
+        private CoreAudioSessionController _sessionController;
 
         public IAudioSessionController SessionController
         {
-            get;
-            private set;
+            get { return _sessionController; }
         }
 
         private void ClearAudioSession()
         {
-            if (SessionController != null)
+            if (_sessionController != null)
             {
-                SessionController.Dispose();
-                SessionController = null;
+                _sessionController.Dispose();
+                _sessionController = null;
             }
         }
 
@@ -45,15 +45,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 var audioSessionManager = result as IAudioSessionManager2;
 
                 if (audioSessionManager != null)
-                    SessionController = new CoreAudioSessionController(audioSessionManager);
+                    _sessionController = new CoreAudioSessionController(audioSessionManager);
 
             }
             catch (Exception)
             {
-                if (SessionController != null)
-                    SessionController.Dispose();
+                if (_sessionController != null)
+                    _sessionController.Dispose();
 
-                SessionController = null;
+                _sessionController = null;
             }
         }
     }

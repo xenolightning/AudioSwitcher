@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
     <metadata>
         <id>AudioSwitcher.AudioApi</id>
-        <version>3.0.0-beta3</version>
+        <version>3.0.0-beta5</version>
         <title>Audio Switcher Api</title>
         <authors>Sean Chapman</authors>
         <owners>Sean Chapman</owners>
