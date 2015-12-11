@@ -107,6 +107,7 @@
     <Compile Include="Internal\MultimediaNotificationClient.cs" />
     <Compile Include="Internal\NativeMethods.cs" />
     <Compile Include="Internal\PolicyConfig.cs" />
+    <Compile Include="Internal\ProcessMonitor.cs" />
     <Compile Include="Internal\PropertyKey.cs" />
     <Compile Include="Internal\PropertyKeys.cs" />
     <Compile Include="Internal\PropVariant.cs" />

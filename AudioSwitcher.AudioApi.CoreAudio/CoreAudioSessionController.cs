@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,9 +21,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private List<CoreAudioSession> _sessionCache;
 
-        private readonly ManagementEventWatcher _processStopEvent;
         private readonly AsyncBroadcaster<IAudioSession> _sessionCreated;
         private readonly AsyncBroadcaster<string> _sessionDisconnected;
+        private readonly IDisposable _processTerminatedSubscription;
 
         public CoreAudioSessionController(IAudioSessionManager2 audioSessionManager)
         {
@@ -41,29 +40,16 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             RefreshSessions();
 
-            _processStopEvent = new ManagementEventWatcher();
-
-            //Subscribe to process exit events from WMI
-            _processStopEvent.Query = new WqlEventQuery("__InstanceDeletionEvent", new TimeSpan(0, 0, 1), "TargetInstance isa \"Win32_Process\"");
-            _processStopEvent.EventArrived += (sender, args) =>
+            _processTerminatedSubscription = ProcessMonitor.ProcessTerminated.Subscribe(processId =>
             {
-                var process = args.NewEvent["TargetInstance"] as ManagementBaseObject;
-
-                if (process == null)
-                    return;
-
-                var processId = Convert.ToInt32(process["ProcessId"]);
-
                 RemoveSessions(_sessionCache.Where(x => x.ProcessId == processId));
-            };
+            });
 
-            _processStopEvent.Start();
         }
 
         public void Dispose()
         {
-            _processStopEvent.Stop();
-            _processStopEvent.Dispose();
+            _processTerminatedSubscription.Dispose();
 
             _sessionCreated.Dispose();
             _sessionDisconnected.Dispose();
