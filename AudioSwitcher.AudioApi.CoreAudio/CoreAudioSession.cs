@@ -196,22 +196,28 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private void Timer_UpdatePeakValue(object state)
         {
             float peakValue = 0;
+
             ComThread.Invoke(() =>
             {
                 if (_isDisposed)
+                {
+                    _timer.Dispose();
                     return;
+                }
 
                 try
                 {
+                    if (_meterInformation == null)
+                        return;
+
                     _meterInformation.GetPeakValue(out peakValue);
                 }
                 catch (InvalidComObjectException)
                 {
                     //ignored - usually means the com object has been released, but the timer is still ticking
-                    if (_timer != null)
-                        _timer.Dispose();
                 }
             });
+
             OnPeakValueChanged(peakValue * 100);
         }
 
@@ -364,9 +370,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _disconnected.Dispose();
             _volumeChanged.Dispose();
 
-            _audioSessionControl.UnregisterAudioSessionNotification(this);
+            //Run this on the com thread to ensure it's diposed correctly
+            ComThread.BeginInvoke(() =>
+            {
+                _audioSessionControl.UnregisterAudioSessionNotification(this);
 
-            Marshal.FinalReleaseComObject(_audioSessionControl);
+                Marshal.FinalReleaseComObject(_audioSessionControl);
+            });
 
             GC.SuppressFinalize(this);
         }
