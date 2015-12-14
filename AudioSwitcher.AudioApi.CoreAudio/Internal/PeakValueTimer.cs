@@ -26,7 +26,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _peakValueTick = new AsyncBroadcaster<long>();
             _peakValueTimer = new Timer
             {
-                Interval = 50,
+                Interval = 100,
                 AutoReset = false
             };
 
