@@ -173,14 +173,16 @@ namespace AudioSwitcher.AudioApi.Hooking
 
             _unhookWaitEvent.WaitOne(1000);
 
-            SetDefaults();
-
             if (_ipcChannel != null)
             {
                 ChannelServices.UnregisterChannel(_ipcChannel);
                 _ipcChannel.StopListening(null);
                 _ipcChannel = null;
             }
+
+            Thread.Sleep(100);
+
+            SetDefaults();
 
             return true;
         }
