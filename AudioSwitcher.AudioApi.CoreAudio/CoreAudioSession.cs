@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Threading;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Observables;
@@ -31,8 +30,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly AsyncBroadcaster<SessionMuteChangedArgs> _muteChanged;
         private readonly AsyncBroadcaster<PeakValueChangedArgs> _peakValueChanged;
         private bool _isMuted;
-        private Timer _timer;
         private bool _isDisposed;
+        private IDisposable _timerSubscription;
 
         public IObservable<SessionVolumeChangedArgs> VolumeChanged
         {
@@ -49,7 +48,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public IObservable<SessionMuteChangedArgs> MuteChanged
         {
-            get { return _muteChanged.AsObservable(); }
+            get
+            {
+                return _muteChanged.AsObservable();
+            }
         }
 
         public IObservable<SessionStateChangedArgs> StateChanged
@@ -178,7 +180,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (_meterInformation != null)
             {
                 //start a timer to poll for peak value changes
-                _timer = new Timer(Timer_UpdatePeakValue, null, 0, 20);
+                //_timer = new Timer(Timer_UpdatePeakValue, null, 0, 20);
+                _timerSubscription = PeakValueTimer.PeakValueTick.Subscribe(Timer_UpdatePeakValue);
             }
 
             _stateChanged = new AsyncBroadcaster<SessionStateChangedArgs>();
@@ -193,17 +196,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             RefreshVolume();
         }
 
-        private void Timer_UpdatePeakValue(object state)
+        private void Timer_UpdatePeakValue(long ticks)
         {
             float peakValue = 0;
 
             ComThread.Invoke(() =>
             {
                 if (_isDisposed)
-                {
-                    _timer.Dispose();
                     return;
-                }
 
                 try
                 {
@@ -363,8 +363,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             _isDisposed = true;
 
-            if (_timer != null)
-                _timer.Dispose();
+            if (_timerSubscription != null)
+                _timerSubscription.Dispose();
 
             _stateChanged.Dispose();
             _disconnected.Dispose();
