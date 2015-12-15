@@ -22,21 +22,6 @@ namespace AudioSwitcher.AudioApi.Observables
             _onCompleted = onCompleted;
         }
 
-        public DelegateObserver(Action<T> onNext, Action<Exception> onError)
-            :this(onNext, onError, ObservableExtensions.Nop)
-        {
-        }
-
-        public DelegateObserver(Action<T> onNext, Action onCompleted)
-            :this(onNext, ObservableExtensions.Throw, onCompleted)
-        {
-        }
-
-        public DelegateObserver(Action<T> onNext)
-            : this(onNext, ObservableExtensions.Throw, ObservableExtensions.Nop)
-        {
-        }
-
         public void OnNext(T value)
         {
             if (_isStopped == 0)
@@ -67,10 +52,5 @@ namespace AudioSwitcher.AudioApi.Observables
                 _isStopped = 1;
             }
         }
-
-        //internal DelegateObserverSafe<T> MakeSafe(IDisposable disposable)
-        //{
-        //    return new DelegateObserverSafe<T>(_onNext, _onError, _onCompleted, disposable);
-        //}
     }
 }

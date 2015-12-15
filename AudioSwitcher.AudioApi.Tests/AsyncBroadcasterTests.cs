@@ -1,24 +1,25 @@
 ﻿using System;
+using System.Threading;
 using AudioSwitcher.AudioApi.Observables;
 using Xunit;
 
 namespace AudioSwitcher.AudioApi.Tests
 {
-    public class BroadcasterTests
+    public class AsyncBroadcasterTests
     {
         [Fact]
-        public void Broadcaster_Empty()
+        public void AsyncBroadcaster_Empty()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
 
             Assert.False(b.IsDisposed);
             Assert.False(b.HasObservers);
         }
 
         [Fact]
-        public void Broadcaster_Dispose()
+        public void AsyncBroadcaster_Dispose()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
             b.Dispose();
             Assert.True(b.IsDisposed);
         }
@@ -26,7 +27,7 @@ namespace AudioSwitcher.AudioApi.Tests
         [Fact]
         public void Broacaster_Disposed_HasObservers()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
 
             var sub = b.Subscribe(x => { });
 
@@ -40,7 +41,7 @@ namespace AudioSwitcher.AudioApi.Tests
         [Fact]
         public void Broacaster_SubscriptionDisposed_HasObservers()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
 
             var sub = b.Subscribe(x => { });
 
@@ -54,7 +55,7 @@ namespace AudioSwitcher.AudioApi.Tests
         [Fact]
         public void Broacaster_Subscribe()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
 
             var sub = b.Subscribe(x => { });
 
@@ -64,7 +65,7 @@ namespace AudioSwitcher.AudioApi.Tests
         [Fact]
         public void Broacaster_Subscribe_HasObservers()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
 
             var sub = b.Subscribe(x => { });
 
@@ -76,15 +77,21 @@ namespace AudioSwitcher.AudioApi.Tests
         [Fact]
         public void Broacaster_OnNext()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
+            var resetEvent = new ManualResetEvent(false);
 
             int result = -1;
 
-            var sub = b.Subscribe(x => { result = x; });
+            var sub = b.Subscribe(x =>
+            {
+                result = x;
+                resetEvent.Set();
+            });
 
             Assert.NotNull(sub);
 
             b.OnNext(2);
+            resetEvent.WaitOne();
 
             Assert.NotEqual(-1, result);
             Assert.Equal(2, result);
@@ -93,7 +100,7 @@ namespace AudioSwitcher.AudioApi.Tests
         [Fact]
         public void Broacaster_Subscribe_SubscriptionDispose()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
 
             var sub = b.Subscribe(x => { });
 
@@ -109,7 +116,7 @@ namespace AudioSwitcher.AudioApi.Tests
         [Fact]
         public void Broacaster_DisposedSubscription_OnNext()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
 
             int result = -1;
 
@@ -127,7 +134,7 @@ namespace AudioSwitcher.AudioApi.Tests
         [Fact]
         public void Broacaster_Disposed_OnNext()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
 
             int result = -1;
 
@@ -147,7 +154,7 @@ namespace AudioSwitcher.AudioApi.Tests
         [Fact]
         public void Broacaster_Disposed_Does_Not_Fire_OnNext()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
 
             int result = -1;
 
@@ -165,15 +172,21 @@ namespace AudioSwitcher.AudioApi.Tests
         [Fact]
         public void Broacaster_OnCompleted()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
+            var resetEvent = new ManualResetEvent(false);
 
             bool complete = false;
 
-            var sub = b.Subscribe(x => { }, () => { complete = true; });
+            var sub = b.Subscribe(x => { }, () =>
+            {
+                complete = true;
+                resetEvent.Set();
+            });
 
             Assert.NotNull(sub);
 
             b.OnCompleted();
+            resetEvent.WaitOne();
 
             Assert.True(complete);
         }
@@ -181,19 +194,27 @@ namespace AudioSwitcher.AudioApi.Tests
         [Fact]
         public void Broacaster_Dispose_Does_Not_Fire_OnCompleted()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
+            var resetEvent = new ManualResetEvent(false);
 
             int count = 0;
 
-            var sub = b.Subscribe(x => { }, () => { count++; });
+            var sub = b.Subscribe(x => { }, () =>
+            {
+                count++;
+                resetEvent.Set();
+            });
 
             Assert.NotNull(sub);
 
             //Dispose will call complete once
             b.Dispose();
+            resetEvent.WaitOne();
 
             //ensure it's not called again
+            resetEvent.Reset();
             b.OnCompleted();
+            resetEvent.WaitOne(200);
 
             Assert.Equal(1, count);
         }
@@ -201,15 +222,21 @@ namespace AudioSwitcher.AudioApi.Tests
         [Fact]
         public void Broacaster_Disposed_OnCompleted()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
+            var resetEvent = new ManualResetEvent(false);
 
             bool complete = false;
 
-            var sub = b.Subscribe(x => { }, () => { complete = true; });
+            var sub = b.Subscribe(x => { }, () =>
+            {
+                complete = true;
+                resetEvent.Set();
+            });
 
             Assert.NotNull(sub);
 
             b.Dispose();
+            resetEvent.WaitOne();
 
             Assert.True(complete);
         }
@@ -217,15 +244,21 @@ namespace AudioSwitcher.AudioApi.Tests
         [Fact]
         public void Broacaster_DisposedSubscription_OnCompleted()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
+            var resetEvent = new ManualResetEvent(false);
 
             bool complete = false;
 
-            var sub = b.Subscribe(x => { }, () => { complete = true; });
+            var sub = b.Subscribe(x => { }, () =>
+            {
+                complete = true;
+                resetEvent.Set();
+            });
 
             Assert.NotNull(sub);
 
             sub.Dispose();
+            resetEvent.WaitOne(200);
 
             //disposing sub should not fire on completed
             Assert.False(complete);
@@ -234,16 +267,22 @@ namespace AudioSwitcher.AudioApi.Tests
         [Fact]
         public void Broacaster_OnError_FromOnNext()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
+            var resetEvent = new ManualResetEvent(false);
 
             var exception = new Exception("HAI");
             Exception result = null;
 
-            var sub = b.Subscribe(x => { throw exception; }, x => result = x);
+            var sub = b.Subscribe(x => { throw exception; }, x =>
+            {
+                result = x;
+                resetEvent.Set();
+            });
 
             Assert.NotNull(sub);
 
             b.OnNext(1);
+            resetEvent.WaitOne();
 
             Assert.NotNull(result);
 
@@ -253,16 +292,22 @@ namespace AudioSwitcher.AudioApi.Tests
         [Fact]
         public void Broacaster_OnError_FromOnError()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
+            var resetEvent = new ManualResetEvent(false);
 
             var exception = new Exception("HAI");
             Exception result = null;
 
-            var sub = b.Subscribe(x => { }, x => result = x);
+            var sub = b.Subscribe(x => { }, x =>
+            {
+                result = x;
+                resetEvent.Set();
+            });
 
             Assert.NotNull(sub);
 
             b.OnError(exception);
+            resetEvent.WaitOne();
 
             Assert.NotNull(result);
 
@@ -272,20 +317,28 @@ namespace AudioSwitcher.AudioApi.Tests
         [Fact]
         public void Broacaster_Disposed_Does_Not_Fire_OnError()
         {
-            var b = new Broadcaster<int>();
+            var b = new AsyncBroadcaster<int>();
+            var resetEvent = new ManualResetEvent(false);
 
             var exception = new Exception("HAI");
             Exception result = null;
 
-            var sub = b.Subscribe(x => { }, x => result = x);
+            var sub = b.Subscribe(x => { }, x =>
+            {
+                result = x;
+            });
 
             Assert.NotNull(sub);
 
             b.Dispose();
+            resetEvent.WaitOne(200);
+
             b.OnError(exception);
+            resetEvent.WaitOne(200);
 
             Assert.Null(result);
         }
+
 
         [Fact]
         public void DelegateDisposable_Create()

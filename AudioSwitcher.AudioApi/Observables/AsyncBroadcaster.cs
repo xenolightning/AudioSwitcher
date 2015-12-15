@@ -68,15 +68,15 @@ namespace AudioSwitcher.AudioApi.Observables
 
         private void RaiseAllObserversAsync(Action<IObserver<T>> observerAction)
         {
+            List<IObserver<T>> lObservers;
+            lock (_observerLock)
+            {
+                lObservers = _observers.ToList();
+            }
+
             Task.Factory.StartNew(() =>
             {
-                IEnumerable<IObserver<T>> coll;
-                lock (_observerLock)
-                {
-                    coll = _observers.ToList();
-                }
-
-                Parallel.ForEach(coll, observerAction);
+                Parallel.ForEach(lObservers, observerAction);
             });
         }
 
