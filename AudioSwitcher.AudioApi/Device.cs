@@ -13,8 +13,9 @@ namespace AudioSwitcher.AudioApi
     {
         private readonly AsyncBroadcaster<DeviceVolumeChangedArgs> _volumeChanged;
         private readonly AsyncBroadcaster<DeviceMuteChangedArgs> _muteChanged;
-        private AsyncBroadcaster<DevicePropertyChangedArgs> _propertyChanged;
-        private AsyncBroadcaster<DefaultDeviceChangedArgs> _defaultChanged;
+        private readonly AsyncBroadcaster<DevicePropertyChangedArgs> _propertyChanged;
+        private readonly AsyncBroadcaster<DefaultDeviceChangedArgs> _defaultChanged;
+        private readonly AsyncBroadcaster<DeviceStateChangedArgs> _stateChanged;
 
         protected Device(IAudioController controller)
         {
@@ -23,6 +24,7 @@ namespace AudioSwitcher.AudioApi
             _muteChanged = new AsyncBroadcaster<DeviceMuteChangedArgs>();
             _propertyChanged = new AsyncBroadcaster<DevicePropertyChangedArgs>();
             _defaultChanged = new AsyncBroadcaster<DefaultDeviceChangedArgs>();
+            _stateChanged = new AsyncBroadcaster<DeviceStateChangedArgs>();
         }
 
         public IAudioController Controller { get; private set; }
@@ -147,6 +149,11 @@ namespace AudioSwitcher.AudioApi
             get { return _defaultChanged.AsObservable(); }
         }
 
+        public IObservable<DeviceStateChangedArgs> StateChanged
+        {
+            get { return _stateChanged.AsObservable(); }
+        }
+
         protected virtual void OnMuteChanged(bool isMuted)
         {
             _muteChanged.OnNext(new DeviceMuteChangedArgs(this, isMuted));
@@ -170,6 +177,11 @@ namespace AudioSwitcher.AudioApi
         protected virtual void OnDefaultChanged()
         {
             _defaultChanged.OnNext(new DefaultDeviceChangedArgs(this));
+        }
+
+        protected virtual void OnStateChanged(DeviceState state)
+        {
+            _stateChanged.OnNext(new DeviceStateChangedArgs(this, state));
         }
 
         public void Dispose()

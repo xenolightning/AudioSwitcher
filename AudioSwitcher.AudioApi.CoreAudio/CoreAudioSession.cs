@@ -33,6 +33,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private bool _isDisposed;
         private IDisposable _timerSubscription;
 
+        public IDevice Device { get; private set; }
+
         public IObservable<SessionVolumeChangedArgs> VolumeChanged
         {
             get { return _volumeChanged.AsObservable(); }
@@ -42,7 +44,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return _peakValueChanged;
+                return _peakValueChanged.AsObservable();
             }
         }
 
@@ -161,9 +163,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public CoreAudioSession(IAudioSessionControl control)
+        public CoreAudioSession(CoreAudioDevice device, IAudioSessionControl control)
         {
             ComThread.Assert();
+
+            Device = device;
 
             // ReSharper disable once SuspiciousTypeConversion.Global
             _audioSessionControl = control as IAudioSessionControl2;

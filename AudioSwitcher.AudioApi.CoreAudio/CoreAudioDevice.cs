@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
@@ -35,7 +34,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ReloadAudioEndpointVolume(device);
             ReloadAudioSessionController(device);
 
-            _changeSubscription = controller.AudioDeviceChanged.Subscribe(EnumeratorOnAudioDeviceChanged);
+            _changeSubscription = controller.AudioDeviceChanged
+                                                .When(x => x.Device != null && x.Device.Id == Id)
+                                                .Subscribe(EnumeratorOnAudioDeviceChanged);
         }
 
         private void LoadProperties(IMultimediaDevice device)
@@ -242,9 +243,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void EnumeratorOnAudioDeviceChanged(DeviceChangedArgs deviceChangedArgs)
         {
-            if (deviceChangedArgs.Device == null || deviceChangedArgs.Device.Id != Id)
-                return;
-
             var propertyChangedEvent = deviceChangedArgs as DevicePropertyChangedArgs;
             var stateChangedEvent = deviceChangedArgs as DeviceStateChangedArgs;
             var defaultChangedEvent = deviceChangedArgs as DefaultDeviceChangedArgs;
@@ -256,7 +254,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 HandleStateChanged(stateChangedEvent);
 
             if (defaultChangedEvent != null)
-                HandleDefaultChanged(defaultChangedEvent);
+                HandleDefaultChanged();
         }
 
         private void HandlePropertyChanged(DevicePropertyChangedArgs propertyChanged)
@@ -279,7 +277,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ReloadAudioMeterInformation(_device);
             ReloadAudioSessionController(_device);
 
-            OnPropertyChanged("State");
+            OnStateChanged(stateChanged.State);
         }
 
         private void ReloadAudioMeterInformation(IMultimediaDevice device)
@@ -309,12 +307,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             });
         }
 
-        private void HandleDefaultChanged(DefaultDeviceChangedArgs defaultChanged)
+        private void HandleDefaultChanged()
         {
-            if (defaultChanged.IsDefault)
-                OnPropertyChanged("IsDefaultDevice");
-            else if (defaultChanged.IsDefaultCommunications)
-                OnPropertyChanged("IsDefaultCommunicationsDevice");
+            OnDefaultChanged();
         }
 
         private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)

@@ -9,6 +9,8 @@
         DeviceAdded,
         DeviceRemoved,
         PropertyChanged,
-        StateChanged
+        StateChanged,
+        MuteChanged,
+        VolumeChanged
     }
 }

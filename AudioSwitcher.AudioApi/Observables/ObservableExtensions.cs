@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 namespace AudioSwitcher.AudioApi.Observables
 {
@@ -25,6 +26,11 @@ namespace AudioSwitcher.AudioApi.Observables
         public static IDisposable Subscribe<T>(this IObservable<T> observable, Action<T> onNext, Action<Exception> onError, Action onCompleted)
         {
             return observable.Subscribe(new DelegateObserver<T>(onNext, onError, onCompleted));
+        }
+
+        public static IObservable<T> When<T>(this IObservable<T> observable, Func<T, bool> predicate)
+        {
+            return new FilteredBroadcaster<T>(observable, predicate);
         }
 
         public static IObservable<T> AsObservable<T>(this IObservable<T> observable)

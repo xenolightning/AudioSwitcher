@@ -54,8 +54,8 @@
     <Compile Include="AudioController.cs" />
     <Compile Include="AudioController.Generic.cs" />
     <Compile Include="DeviceChangedType.cs" />
-    <Compile Include="DefaultDeviceChangedArgs.cs" />
     <Compile Include="DeviceMuteChangedArgs.cs" />
+    <Compile Include="Observables\DefaultDisposable.cs" />
     <Compile Include="Observables\DelegateDisposable.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="DeviceAddedArgs.cs" />
@@ -75,6 +75,8 @@
     <Compile Include="Observables\AsyncBroadcaster.cs" />
     <Compile Include="Observables\Broadcaster.cs" />
     <Compile Include="Observables\BroadcasterBase.cs" />
+    <Compile Include="Observables\Disposable.cs" />
+    <Compile Include="Observables\FilteredBroadcaster.cs" />
     <Compile Include="Observables\IBroadcaster.cs" />
     <Compile Include="Observables\ObservableExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -91,6 +93,7 @@
     <Compile Include="Session\PeakValueChangedArgs.cs" />
     <Compile Include="Session\SessionVolumeChangedArgs.cs" />
     <Compile Include="SpeakerConfiguration.cs" />
+    <Compile Include="DefaultDeviceChangedArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="api.pfx" />

@@ -45,7 +45,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 var audioSessionManager = result as IAudioSessionManager2;
 
                 if (audioSessionManager != null)
-                    _sessionController = new CoreAudioSessionController(audioSessionManager);
+                    _sessionController = new CoreAudioSessionController(this, audioSessionManager);
 
             }
             catch (Exception)

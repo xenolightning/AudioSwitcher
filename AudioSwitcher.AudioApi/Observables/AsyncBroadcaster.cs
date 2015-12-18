@@ -10,6 +10,7 @@ namespace AudioSwitcher.AudioApi.Observables
         private readonly HashSet<IObserver<T>> _observers;
         private readonly object _observerLock = new object();
         private bool _isDisposed;
+        private bool _isComplete;
 
         public AsyncBroadcaster()
         {
@@ -32,9 +33,17 @@ namespace AudioSwitcher.AudioApi.Observables
             }
         }
 
+        public override bool IsComplete
+        {
+            get
+            {
+                return _isComplete;
+            }
+        }
+
         public override void OnNext(T value)
         {
-            if (IsDisposed)
+            if (IsDisposed || IsComplete)
                 return;
 
             RaiseAllObserversAsync(x =>
@@ -60,10 +69,13 @@ namespace AudioSwitcher.AudioApi.Observables
 
         public override void OnCompleted()
         {
-            if (IsDisposed)
+            if (IsDisposed || IsComplete)
                 return;
 
             RaiseAllObserversAsync(x => x.OnCompleted());
+
+            //Too bad if something dodgy happens, we consider ourselves complete now
+            _isComplete = true;
         }
 
         private void RaiseAllObserversAsync(Action<IObserver<T>> observerAction)
@@ -82,6 +94,9 @@ namespace AudioSwitcher.AudioApi.Observables
 
         public override IDisposable Subscribe(IObserver<T> observer)
         {
+            if (IsDisposed)
+                throw new ObjectDisposedException("Observable is disposed");
+
             lock (_observerLock)
             {
                 _observers.Add(observer);

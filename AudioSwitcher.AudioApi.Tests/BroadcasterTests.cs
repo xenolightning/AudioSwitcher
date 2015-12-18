@@ -145,24 +145,6 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Disposed_Does_Not_Fire_OnNext()
-        {
-            var b = new Broadcaster<int>();
-
-            int result = -1;
-
-            var sub = b.Subscribe(x => { result = x; });
-
-            Assert.NotNull(sub);
-
-            b.Dispose();
-            b.OnNext(2);
-
-            Assert.NotEqual(2, result);
-            Assert.Equal(-1, result);
-        }
-
-        [Fact]
         public void Broacaster_OnCompleted()
         {
             var b = new Broadcaster<int>();
@@ -176,26 +158,6 @@ namespace AudioSwitcher.AudioApi.Tests
             b.OnCompleted();
 
             Assert.True(complete);
-        }
-
-        [Fact]
-        public void Broacaster_Dispose_Does_Not_Fire_OnCompleted()
-        {
-            var b = new Broadcaster<int>();
-
-            int count = 0;
-
-            var sub = b.Subscribe(x => { }, () => { count++; });
-
-            Assert.NotNull(sub);
-
-            //Dispose will call complete once
-            b.Dispose();
-
-            //ensure it's not called again
-            b.OnCompleted();
-
-            Assert.Equal(1, count);
         }
 
         [Fact]
@@ -286,6 +248,83 @@ namespace AudioSwitcher.AudioApi.Tests
 
             Assert.Null(result);
         }
+
+        [Fact]
+        public void Broacaster_Disposed_Does_Not_Fire_OnNext()
+        {
+            var b = new Broadcaster<int>();
+
+            int result = -1;
+
+            var sub = b.Subscribe(x => { result = x; });
+
+            Assert.NotNull(sub);
+
+            b.Dispose();
+            b.OnNext(2);
+
+            Assert.NotEqual(2, result);
+            Assert.Equal(-1, result);
+        }
+
+        [Fact]
+        public void Broacaster_Disposed_Does_Not_Fire_OnCompleted()
+        {
+            var b = new Broadcaster<int>();
+
+            int count = 0;
+
+            var sub = b.Subscribe(x => { }, () => { count++; });
+
+            Assert.NotNull(sub);
+
+            //Dispose will call complete once
+            b.Dispose();
+
+            //ensure it's not called again
+            b.OnCompleted();
+
+            Assert.Equal(1, count);
+        }
+
+        [Fact]
+        public void Broacaster_Completed_Does_Not_Fire_OnNext()
+        {
+            var b = new Broadcaster<int>();
+
+            int result = -1;
+
+            var sub = b.Subscribe(x => { result = x; });
+
+            Assert.NotNull(sub);
+
+            b.OnCompleted();
+            b.OnNext(2);
+
+            Assert.NotEqual(2, result);
+            Assert.Equal(-1, result);
+        }
+
+        [Fact]
+        public void Broacaster_Completed_Does_Not_Fire_OnCompleted()
+        {
+            var b = new Broadcaster<int>();
+
+            int count = 0;
+
+            var sub = b.Subscribe(x => { }, () => { count++; });
+
+            Assert.NotNull(sub);
+
+            //Dispose will call complete once
+            b.OnCompleted();
+
+            //ensure it's not called again
+            b.OnCompleted();
+
+            Assert.Equal(1, count);
+        }
+
 
         [Fact]
         public void DelegateDisposable_Create()

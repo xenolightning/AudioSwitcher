@@ -34,12 +34,6 @@ namespace AudioSwitcher.Tests.Common
             }
         }
 
-        public IAudioController AudioController
-        {
-            get;
-            set;
-        }
-
         public override TestDevice GetDevice(Guid id)
         {
             return GetDevice(id, DeviceState.All);
@@ -82,12 +76,14 @@ namespace AudioSwitcher.Tests.Common
             if (dev.IsPlaybackDevice)
             {
                 _defaultPlaybackDeviceId = dev.Id;
+                OnAudioDeviceChanged(new DefaultDeviceChangedArgs(dev));
                 return true;
             }
 
             if (dev.IsCaptureDevice)
             {
                 _defaultCaptureDeviceId = dev.Id;
+                OnAudioDeviceChanged(new DefaultDeviceChangedArgs(dev));
                 return true;
             }
 
@@ -99,12 +95,14 @@ namespace AudioSwitcher.Tests.Common
             if (dev.IsPlaybackDevice)
             {
                 _defaultPlaybackCommDeviceId = dev.Id;
+                OnAudioDeviceChanged(new DefaultDeviceChangedArgs(dev));
                 return true;
             }
 
             if (dev.IsCaptureDevice)
             {
                 _defaultCaptureCommDeviceId = dev.Id;
+                OnAudioDeviceChanged(new DefaultDeviceChangedArgs(dev));
                 return true;
             }
 

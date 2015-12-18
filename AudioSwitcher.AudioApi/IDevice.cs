@@ -43,6 +43,8 @@ namespace AudioSwitcher.AudioApi
 
         IObservable<DefaultDeviceChangedArgs> DefaultChanged { get; }
 
+        IObservable<DeviceStateChangedArgs> StateChanged { get; }
+
         bool SetAsDefault();
 
         Task<bool> SetAsDefaultAsync();

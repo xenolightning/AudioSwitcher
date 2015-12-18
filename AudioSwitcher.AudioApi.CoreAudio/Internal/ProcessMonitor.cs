@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using AudioSwitcher.AudioApi.Observables;
 
@@ -20,7 +19,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private static Timer _processExitTimer;
         private static IEnumerable<int> _lastProcesses = new List<int>();
-        private static AsyncBroadcaster<int> _processTerminated;
+        private static readonly AsyncBroadcaster<int> _processTerminated;
 
         static ProcessMonitor()
         {

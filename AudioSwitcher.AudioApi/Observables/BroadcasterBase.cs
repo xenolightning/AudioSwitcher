@@ -8,6 +8,8 @@ namespace AudioSwitcher.AudioApi.Observables
 
         public abstract bool IsDisposed { get; }
 
+        public abstract bool IsComplete { get; }
+
         public abstract void OnNext(T value);
 
         public abstract void OnError(Exception error);

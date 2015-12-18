@@ -42,15 +42,8 @@ namespace AudioSwitcher.AudioApi.Observables
 
         public void Dispose()
         {
-            Dispose(true);
+            Interlocked.Exchange(ref _isStopped, 1);
         }
 
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _isStopped = 1;
-            }
-        }
     }
 }

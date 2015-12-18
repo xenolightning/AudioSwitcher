@@ -4,11 +4,12 @@ using System.Linq;
 
 namespace AudioSwitcher.AudioApi.Observables
 {
-    public sealed class Broadcaster<T> : BroadcasterBase<T>
+    public class Broadcaster<T> : BroadcasterBase<T>
     {
         private readonly HashSet<IObserver<T>> _observers;
         private readonly object _observerLock = new object();
         private bool _isDisposed;
+        private bool _isComplete;
 
         public Broadcaster()
         {
@@ -31,9 +32,17 @@ namespace AudioSwitcher.AudioApi.Observables
             }
         }
 
+        public override bool IsComplete
+        {
+            get
+            {
+                return _isComplete;
+            }
+        }
+
         public override void OnNext(T value)
         {
-            if (IsDisposed)
+            if (IsDisposed || IsComplete)
                 return;
 
             IEnumerable<IObserver<T>> coll;
@@ -74,7 +83,7 @@ namespace AudioSwitcher.AudioApi.Observables
 
         public override void OnCompleted()
         {
-            if (IsDisposed)
+            if (IsDisposed || IsComplete)
                 return;
 
             IEnumerable<IObserver<T>> coll;
@@ -87,10 +96,21 @@ namespace AudioSwitcher.AudioApi.Observables
             {
                 observer.OnCompleted();
             }
+
+            _isComplete = true;
         }
 
         public override IDisposable Subscribe(IObserver<T> observer)
         {
+            if(IsDisposed)
+                throw new ObjectDisposedException("Observable is disposed");
+
+            if (IsComplete)
+            {
+                observer.OnCompleted();
+                return Disposable.Empty;
+            }
+
             lock (_observerLock)
             {
                 _observers.Add(observer);
@@ -98,22 +118,28 @@ namespace AudioSwitcher.AudioApi.Observables
 
             return new DelegateDisposable(() =>
             {
-                lock (_observerLock)
-                {
-                    _observers.Remove(observer);
-                }
+                ObserverDisposal(observer);
             });
+        }
+
+        protected virtual void ObserverDisposal(IObserver<T> observer)
+        {
+            lock (_observerLock)
+            {
+                _observers.Remove(observer);
+            }
         }
 
         public override void Dispose()
         {
             OnCompleted();
-            _isDisposed = true;
 
             lock (_observerLock)
             {
                 _observers.Clear();
             }
+
+            _isDisposed = true;
         }
     }
 }

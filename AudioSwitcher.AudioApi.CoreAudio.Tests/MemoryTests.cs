@@ -75,6 +75,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         {
             var count = 0;
             var ev = new TaskCompletionSource<bool>();
+            var complete = new TaskCompletionSource<bool>();
+
             using (var outerController = new CoreAudioController())
             {
                 using (var controller = new CoreAudioController())
@@ -87,15 +89,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
                         count++;
                         ev.TrySetResult(true);
+                    }, () =>
+                    {
+                        complete.TrySetResult(true);
                     });
 
                     controller.DefaultPlaybackDevice.SetAsDefault();
+
+                    await ev.Task;
                 }
 
                 outerController.DefaultPlaybackDevice.SetAsDefault();
             }
 
-            await ev.Task;
+            await complete.Task;
 
             //The event should only fire once because the inner controller is disposed before the second fire
             Assert.Equal(1, count);

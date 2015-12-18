@@ -17,6 +17,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
 
+        private readonly CoreAudioDevice _device;
         private readonly IAudioSessionManager2 _audioSessionManager;
 
         private List<CoreAudioSession> _sessionCache;
@@ -25,13 +26,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly AsyncBroadcaster<string> _sessionDisconnected;
         private readonly IDisposable _processTerminatedSubscription;
 
-        public CoreAudioSessionController(IAudioSessionManager2 audioSessionManager)
+        public CoreAudioSessionController(CoreAudioDevice device, IAudioSessionManager2 audioSessionManager)
         {
             if (audioSessionManager == null)
                 throw new ArgumentNullException("audioSessionManager");
 
             ComThread.Assert();
 
+            _device = device;
             _audioSessionManager = audioSessionManager;
             _audioSessionManager.RegisterSessionNotification(this);
 
@@ -185,7 +187,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private CoreAudioSession CacheSessionWrapper(IAudioSessionControl session)
         {
-            var managedSession = new CoreAudioSession(session);
+            var managedSession = new CoreAudioSession(_device, session);
 
             //There's some dumb crap in the Api that causes the sessions to still appear
             //even after the process has been terminated
