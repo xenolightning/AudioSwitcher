@@ -5,8 +5,7 @@
     /// </summary>
     public enum DeviceChangedType
     {
-        DefaultDevice,
-        DefaultCommunicationsDevice,
+        DefaultChanged,
         DeviceAdded,
         DeviceRemoved,
         PropertyChanged,

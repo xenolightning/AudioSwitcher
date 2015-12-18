@@ -82,7 +82,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
                     controller.AudioDeviceChanged.Subscribe(args =>
                     {
-                        if (args.ChangedType != DeviceChangedType.DefaultDevice)
+                        if (args.ChangedType != DeviceChangedType.DefaultChanged)
                             return;
 
                         count++;

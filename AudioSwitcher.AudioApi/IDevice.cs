@@ -35,6 +35,14 @@ namespace AudioSwitcher.AudioApi
 
         int Volume { get; set; }
 
+        IObservable<DeviceVolumeChangedArgs> VolumeChanged { get; }
+
+        IObservable<DeviceMuteChangedArgs> MuteChanged { get; }
+
+        IObservable<DevicePropertyChangedArgs> PropertyChanged { get; }
+
+        IObservable<DefaultDeviceChangedArgs> DefaultChanged { get; }
+
         bool SetAsDefault();
 
         Task<bool> SetAsDefaultAsync();
@@ -50,11 +58,6 @@ namespace AudioSwitcher.AudioApi
         bool ToggleMute();
 
         Task<bool> ToggleMuteAsync();
-
-        IObservable<DeviceVolumeChangedArgs> VolumeChanged
-        {
-            get;
-        }
 
     }
 }

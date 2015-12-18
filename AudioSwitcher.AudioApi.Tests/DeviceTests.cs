@@ -43,31 +43,71 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void DefaultDeviceChangedArgs_Sets_Device_And_Type_And_Default()
+        public void DefaultDeviceChangedArgs_Sets_Device_And_Type_No_Default()
         {
-            const bool communicationsDevice = false;
             var device = new Mock<IDevice>();
-            var args = new DefaultDeviceChangedArgs(device.Object, communicationsDevice);
+
+            device.Setup(x => x.IsDefaultDevice).Returns(false);
+            device.Setup(x => x.IsDefaultCommunicationsDevice).Returns(false);
+
+            var args = new DefaultDeviceChangedArgs(device.Object);
 
             Assert.NotNull(args);
             Assert.NotNull(args.Device);
-            Assert.Equal(DeviceChangedType.DefaultDevice, args.ChangedType);
-            Assert.True(args.IsDefaultEvent);
-            Assert.False(args.IsDefaultCommunicationsEvent);
+            Assert.Equal(DeviceChangedType.DefaultChanged, args.ChangedType);
+            Assert.False(args.IsDefault);
+            Assert.False(args.IsDefaultCommunications);
         }
 
         [Fact]
-        public void DefaultDeviceChangedArgs_Sets_Device_And_Type_And_DefaultCommunications()
+        public void DefaultDeviceChangedArgs_Sets_Device_And_Type_Default_Only()
         {
-            const bool communicationsDevice = true;
             var device = new Mock<IDevice>();
-            var args = new DefaultDeviceChangedArgs(device.Object, communicationsDevice);
+
+            device.Setup(x => x.IsDefaultDevice).Returns(true);
+            device.Setup(x => x.IsDefaultCommunicationsDevice).Returns(false);
+
+            var args = new DefaultDeviceChangedArgs(device.Object);
 
             Assert.NotNull(args);
             Assert.NotNull(args.Device);
-            Assert.Equal(DeviceChangedType.DefaultCommunicationsDevice, args.ChangedType);
-            Assert.True(args.IsDefaultCommunicationsEvent);
-            Assert.False(args.IsDefaultEvent);
+            Assert.Equal(DeviceChangedType.DefaultChanged, args.ChangedType);
+            Assert.True(args.IsDefault);
+            Assert.False(args.IsDefaultCommunications);
+        }
+
+        [Fact]
+        public void DefaultDeviceChangedArgs_Sets_Device_And_Type_DefaultComm_Only()
+        {
+            var device = new Mock<IDevice>();
+
+            device.Setup(x => x.IsDefaultDevice).Returns(false);
+            device.Setup(x => x.IsDefaultCommunicationsDevice).Returns(true);
+
+            var args = new DefaultDeviceChangedArgs(device.Object);
+
+            Assert.NotNull(args);
+            Assert.NotNull(args.Device);
+            Assert.Equal(DeviceChangedType.DefaultChanged, args.ChangedType);
+            Assert.False(args.IsDefault);
+            Assert.True(args.IsDefaultCommunications);
+        }
+
+        [Fact]
+        public void DefaultDeviceChangedArgs_Sets_Device_And_Type_Both_Default()
+        {
+            var device = new Mock<IDevice>();
+
+            device.Setup(x => x.IsDefaultDevice).Returns(true);
+            device.Setup(x => x.IsDefaultCommunicationsDevice).Returns(true);
+
+            var args = new DefaultDeviceChangedArgs(device.Object);
+
+            Assert.NotNull(args);
+            Assert.NotNull(args.Device);
+            Assert.Equal(DeviceChangedType.DefaultChanged, args.ChangedType);
+            Assert.True(args.IsDefault);
+            Assert.True(args.IsDefaultCommunications);
         }
 
         [Fact]

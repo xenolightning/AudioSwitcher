@@ -55,6 +55,7 @@
     <Compile Include="AudioController.Generic.cs" />
     <Compile Include="DeviceChangedType.cs" />
     <Compile Include="DefaultDeviceChangedArgs.cs" />
+    <Compile Include="DeviceMuteChangedArgs.cs" />
     <Compile Include="Observables\DelegateDisposable.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="DeviceAddedArgs.cs" />

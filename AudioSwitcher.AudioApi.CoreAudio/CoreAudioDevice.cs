@@ -8,13 +8,14 @@ using AudioSwitcher.AudioApi.Observables;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    public sealed partial class CoreAudioDevice : Device, INotifyPropertyChanged
+    public sealed partial class CoreAudioDevice : Device
     {
         private IMultimediaDevice _device;
         private Guid? _id;
         private CachedPropertyDictionary _properties;
         private EDeviceState _state;
         private string _realId;
+        private bool _isMuted;
         private EDataFlow _dataFlow;
         private readonly IDisposable _changeSubscription;
 
@@ -203,10 +204,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (AudioEndpointVolume == null)
-                    return false;
-
-                return AudioEndpointVolume.Mute;
+                return _isMuted;
             }
         }
 
@@ -313,9 +311,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void HandleDefaultChanged(DefaultDeviceChangedArgs defaultChanged)
         {
-            if (defaultChanged.IsDefaultEvent)
+            if (defaultChanged.IsDefault)
                 OnPropertyChanged("IsDefaultDevice");
-            else if (defaultChanged.IsDefaultCommunicationsEvent)
+            else if (defaultChanged.IsDefaultCommunications)
                 OnPropertyChanged("IsDefaultCommunicationsDevice");
         }
 
@@ -323,8 +321,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             OnVolumeChanged(Volume);
 
-            //Fire the muted changed here too
-            OnPropertyChanged("IsMuted");
+            if (data.Muted != _isMuted)
+            {
+                _isMuted = data.Muted;
+                OnMuteChanged(_isMuted);
+            }
+
         }
 
         public override bool Mute(bool mute)
@@ -332,8 +334,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (AudioEndpointVolume == null)
                 return false;
 
-            AudioEndpointVolume.Mute = mute;
-            return AudioEndpointVolume.Mute;
+            return AudioEndpointVolume.Mute = mute;
         }
 
         /// <summary>
@@ -345,15 +346,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             return systemDeviceId.ExtractGuids().First();
         }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-                handler(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
     }
 }

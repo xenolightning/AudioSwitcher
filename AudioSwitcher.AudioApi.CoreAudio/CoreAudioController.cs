@@ -246,7 +246,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 //Raise the default changed event on the old device
                 if (oldDefault != null && !oldDefault.IsDefaultCommunicationsDevice)
-                    OnAudioDeviceChanged(new DefaultDeviceChangedArgs(oldDefault, true));
+                    OnAudioDeviceChanged(new DefaultDeviceChangedArgs(oldDefault));
             }
         }
 
@@ -329,7 +329,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (dev == null)
                 return;
 
-            OnAudioDeviceChanged(new DefaultDeviceChangedArgs(dev, role == ERole.Communications));
+            OnAudioDeviceChanged(new DefaultDeviceChangedArgs(dev));
         }
 
         private static readonly Dictionary<PropertyKey, Expression<Func<IDevice, object>>> PropertykeyToLambdaMap = new Dictionary

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.Observables;
 
@@ -11,11 +12,17 @@ namespace AudioSwitcher.AudioApi
     public abstract class Device : IDevice, IDisposable
     {
         private readonly AsyncBroadcaster<DeviceVolumeChangedArgs> _volumeChanged;
+        private readonly AsyncBroadcaster<DeviceMuteChangedArgs> _muteChanged;
+        private AsyncBroadcaster<DevicePropertyChangedArgs> _propertyChanged;
+        private AsyncBroadcaster<DefaultDeviceChangedArgs> _defaultChanged;
 
         protected Device(IAudioController controller)
         {
             Controller = controller;
             _volumeChanged = new AsyncBroadcaster<DeviceVolumeChangedArgs>();
+            _muteChanged = new AsyncBroadcaster<DeviceMuteChangedArgs>();
+            _propertyChanged = new AsyncBroadcaster<DevicePropertyChangedArgs>();
+            _defaultChanged = new AsyncBroadcaster<DefaultDeviceChangedArgs>();
         }
 
         public IAudioController Controller { get; private set; }
@@ -126,9 +133,43 @@ namespace AudioSwitcher.AudioApi
             get { return _volumeChanged.AsObservable(); }
         }
 
+        public IObservable<DeviceMuteChangedArgs> MuteChanged
+        {
+            get { return _muteChanged.AsObservable(); }
+        }
+
+        public IObservable<DevicePropertyChangedArgs> PropertyChanged
+        {
+            get { return _propertyChanged.AsObservable(); }
+        }
+        public IObservable<DefaultDeviceChangedArgs> DefaultChanged
+        {
+            get { return _defaultChanged.AsObservable(); }
+        }
+
+        protected virtual void OnMuteChanged(bool isMuted)
+        {
+            _muteChanged.OnNext(new DeviceMuteChangedArgs(this, isMuted));
+        }
+
         protected virtual void OnVolumeChanged(int volume)
         {
             _volumeChanged.OnNext(new DeviceVolumeChangedArgs(this, volume));
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            _propertyChanged.OnNext(new DevicePropertyChangedArgs(this, propertyName));
+        }
+
+        protected virtual void OnPropertyChanged<T>(Expression<Func<IDevice, object>> expression)
+        {
+            _propertyChanged.OnNext(DevicePropertyChangedArgs.FromExpression(this, expression));
+        }
+
+        protected virtual void OnDefaultChanged()
+        {
+            _defaultChanged.OnNext(new DefaultDeviceChangedArgs(this));
         }
 
         public void Dispose()
@@ -139,6 +180,9 @@ namespace AudioSwitcher.AudioApi
         protected virtual void Dispose(bool disposing)
         {
             _volumeChanged.Dispose();
+            _muteChanged.Dispose();
+            _propertyChanged.Dispose();
+            _defaultChanged.Dispose();
         }
     }
 }
