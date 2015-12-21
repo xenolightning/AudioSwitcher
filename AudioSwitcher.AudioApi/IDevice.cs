@@ -33,7 +33,7 @@ namespace AudioSwitcher.AudioApi
 
         bool IsMuted { get; }
 
-        int Volume { get; set; }
+        double Volume { get; set; }
 
         IObservable<DeviceVolumeChangedArgs> VolumeChanged { get; }
 
@@ -44,6 +44,8 @@ namespace AudioSwitcher.AudioApi
         IObservable<DefaultDeviceChangedArgs> DefaultChanged { get; }
 
         IObservable<DeviceStateChangedArgs> StateChanged { get; }
+
+        IObservable<DevicePeakVolumeChangedArgs> PeakValueChanged { get; }
 
         bool SetAsDefault();
 

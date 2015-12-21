@@ -113,7 +113,7 @@ namespace AudioSwitcher.AudioApi.Tests
             var mockAudioSession = new Mock<IAudioSession>();
             const double volume = 57;
 
-            var args = new PeakValueChangedArgs(mockAudioSession.Object, volume);
+            var args = new SessionPeakValueChangedArgs(mockAudioSession.Object, volume);
 
             Assert.NotNull(args);
             Assert.NotNull(args.Session);

@@ -1,15 +1,15 @@
 ﻿namespace AudioSwitcher.AudioApi
 {
-    public sealed class DeviceVolumeChangedArgs : DeviceChangedArgs
+    public class DeviceVolumeChangedArgs : DeviceChangedArgs
     {
 
-        public int Volume
+        public double Volume
         {
             get;
             private set;
         }
 
-        public DeviceVolumeChangedArgs(IDevice device, int volume) 
+        public DeviceVolumeChangedArgs(IDevice device, double volume) 
             : base(device, DeviceChangedType.VolumeChanged)
         {
             Volume = volume;

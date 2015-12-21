@@ -17,62 +17,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private bool _isMuted;
         private EDataFlow _dataFlow;
         private readonly IDisposable _changeSubscription;
+        private readonly IDisposable _peakValueTimerSubscription;
+        private bool _isDisposed;
 
-        internal CoreAudioDevice(IMultimediaDevice device, IAudioController<CoreAudioDevice> controller)
-            : base(controller)
+        private IMultimediaDevice Device
         {
-            ComThread.Assert();
+            get
+            {
+                if (_isDisposed)
+                    throw new ObjectDisposedException("");
 
-            _device = device;
-
-            if (device == null)
-                throw new ArgumentNullException("device");
-
-            LoadProperties(device);
-
-            ReloadAudioMeterInformation(device);
-            ReloadAudioEndpointVolume(device);
-            ReloadAudioSessionController(device);
-
-            _changeSubscription = controller.AudioDeviceChanged
-                                                .When(x => x.Device != null && x.Device.Id == Id)
-                                                .Subscribe(EnumeratorOnAudioDeviceChanged);
-        }
-
-        private void LoadProperties(IMultimediaDevice device)
-        {
-            ComThread.Assert();
-
-            //Load values
-            Marshal.ThrowExceptionForHR(device.GetId(out _realId));
-            Marshal.ThrowExceptionForHR(device.GetState(out _state));
-
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            var ep = device as IMultimediaEndpoint;
-            if (ep != null)
-                ep.GetDataFlow(out _dataFlow);
-
-            GetPropertyInformation(device);
-        }
-
-        ~CoreAudioDevice()
-        {
-            Dispose(false);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            _changeSubscription.Dispose();
-
-            ClearAudioEndpointVolume();
-            ClearAudioMeterInformation();
-            ClearAudioSession();
-
-            _device = null;
-
-            base.Dispose(disposing);
-
-            GC.SuppressFinalize(this);
+                return _device;
+            }
         }
 
         /// <summary>
@@ -212,7 +168,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         ///     The volume level on a scale between 0-100. Returns -1 if end point does not have volume
         /// </summary>
-        public override int Volume
+        public override double Volume
         {
             get
             {
@@ -241,6 +197,77 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
+        internal CoreAudioDevice(IMultimediaDevice device, IAudioController<CoreAudioDevice> controller)
+            : base(controller)
+        {
+            ComThread.Assert();
+
+            _device = device;
+
+            if (device == null)
+                throw new ArgumentNullException("device");
+
+            LoadProperties(device);
+
+            ReloadAudioMeterInformation(device);
+            ReloadAudioEndpointVolume(device);
+            ReloadAudioSessionController(device);
+
+            _changeSubscription = controller.AudioDeviceChanged
+                                                .When(x => x.Device != null && x.Device.Id == Id)
+                                                .Subscribe(EnumeratorOnAudioDeviceChanged);
+
+            _peakValueTimerSubscription = PeakValueTimer.PeakValueTick.Subscribe(Timer_UpdatePeakValue);
+        }
+
+        ~CoreAudioDevice()
+        {
+            Dispose(false);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                _changeSubscription.Dispose();
+                _peakValueTimerSubscription.Dispose();
+
+                ClearAudioEndpointVolume();
+                ClearAudioMeterInformation();
+                ClearAudioSession();
+
+                _device = null;
+
+                _isDisposed = true;
+            }
+
+            base.Dispose(disposing);
+        }
+
+
+        public override bool Mute(bool mute)
+        {
+            if (AudioEndpointVolume == null)
+                return false;
+
+            return AudioEndpointVolume.Mute = mute;
+        }
+        private void LoadProperties(IMultimediaDevice device)
+        {
+            ComThread.Assert();
+
+            //Load values
+            Marshal.ThrowExceptionForHR(device.GetId(out _realId));
+            Marshal.ThrowExceptionForHR(device.GetState(out _state));
+
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            var ep = device as IMultimediaEndpoint;
+            if (ep != null)
+                ep.GetDataFlow(out _dataFlow);
+
+            GetPropertyInformation(device);
+        }
+
         private void EnumeratorOnAudioDeviceChanged(DeviceChangedArgs deviceChangedArgs)
         {
             var propertyChangedEvent = deviceChangedArgs as DevicePropertyChangedArgs;
@@ -261,7 +288,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             ComThread.BeginInvoke(() =>
             {
-                LoadProperties(_device);
+                LoadProperties(Device);
             })
             .ContinueWith(x =>
             {
@@ -273,9 +300,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             _state = stateChanged.State.AsEDeviceState();
 
-            ReloadAudioEndpointVolume(_device);
-            ReloadAudioMeterInformation(_device);
-            ReloadAudioSessionController(_device);
+            ReloadAudioEndpointVolume(Device);
+            ReloadAudioMeterInformation(Device);
+            ReloadAudioSessionController(Device);
 
             OnStateChanged(stateChanged.State);
         }
@@ -323,13 +350,26 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
 
         }
-
-        public override bool Mute(bool mute)
+        private void Timer_UpdatePeakValue(long ticks)
         {
-            if (AudioEndpointVolume == null)
-                return false;
+            float peakValue = 0;
 
-            return AudioEndpointVolume.Mute = mute;
+            ComThread.Invoke(() =>
+            {
+                if (_isDisposed)
+                    return;
+
+                try
+                {
+                    AudioMeterInformation.GetPeakValue(out peakValue);
+                }
+                catch
+                {
+                    //ignored - usually means the com object has been released, but the timer is still ticking
+                }
+            });
+
+            OnPeakValueChanged(peakValue * 100);
         }
 
         /// <summary>
@@ -337,7 +377,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         /// <param name="systemDeviceId"></param>
         /// <returns></returns>
-        public static Guid SystemIdToGuid(string systemDeviceId)
+        private static Guid SystemIdToGuid(string systemDeviceId)
         {
             return systemDeviceId.ExtractGuids().First();
         }

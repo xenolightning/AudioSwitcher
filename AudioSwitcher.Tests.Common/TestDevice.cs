@@ -64,7 +64,7 @@ namespace AudioSwitcher.Tests.Common
             get { return _muted; }
         }
 
-        public override int Volume
+        public override double Volume
         {
             get;
             set;

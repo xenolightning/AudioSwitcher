@@ -1,6 +1,6 @@
 ﻿namespace AudioSwitcher.AudioApi
 {
-    public sealed class DeviceMuteChangedArgs : DeviceChangedArgs
+    public class DeviceMuteChangedArgs : DeviceChangedArgs
     {
 
         public bool IsMuted

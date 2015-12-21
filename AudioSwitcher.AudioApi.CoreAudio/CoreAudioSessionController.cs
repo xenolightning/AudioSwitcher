@@ -13,7 +13,7 @@ using AudioSwitcher.AudioApi.Session;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    internal sealed class CoreAudioSessionController : IAudioSessionController, IAudioSessionNotification
+    internal sealed class CoreAudioSessionController : IAudioSessionController, IAudioSessionNotification, IDisposable
     {
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
 
@@ -95,7 +95,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return Task.Factory.StartNew(() => All());
         }
 
-        public IEnumerable<IAudioSession> GetActiveSessions()
+        public IEnumerable<IAudioSession> ActiveSessions()
         {
             var acquiredLock = _lock.AcquireReadLockNonReEntrant();
 
@@ -110,12 +110,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public Task<IEnumerable<IAudioSession>> GetActiveSessionsAsync()
+        public Task<IEnumerable<IAudioSession>> ActiveSessionsAsync()
         {
-            return Task.Factory.StartNew(() => GetActiveSessions());
+            return Task.Factory.StartNew(() => ActiveSessions());
         }
 
-        public IEnumerable<IAudioSession> GetInactiveSessions()
+        public IEnumerable<IAudioSession> InactiveSessions()
         {
             var acquiredLock = _lock.AcquireReadLockNonReEntrant();
 
@@ -130,12 +130,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public Task<IEnumerable<IAudioSession>> GetInactiveSessionsAsync()
+        public Task<IEnumerable<IAudioSession>> InactiveSessionsAsync()
         {
-            return Task.Factory.StartNew(() => GetInactiveSessions());
+            return Task.Factory.StartNew(() => InactiveSessions());
         }
 
-        public IEnumerable<IAudioSession> GetExpiredSessions()
+        public IEnumerable<IAudioSession> ExpiredSessions()
         {
             var acquiredLock = _lock.AcquireReadLockNonReEntrant();
 
@@ -150,9 +150,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public Task<IEnumerable<IAudioSession>> GetExpiredSessionsAsync()
+        public Task<IEnumerable<IAudioSession>> ExpiredSessionsAsync()
         {
-            return Task.Factory.StartNew(() => GetExpiredSessions());
+            return Task.Factory.StartNew(() => ExpiredSessions());
         }
 
         public int OnSessionCreated(IAudioSessionControl sessionControl)

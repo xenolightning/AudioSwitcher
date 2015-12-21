@@ -11,6 +11,7 @@
         PropertyChanged,
         StateChanged,
         MuteChanged,
-        VolumeChanged
+        VolumeChanged,
+        PeakVolumeChanged
     }
 }

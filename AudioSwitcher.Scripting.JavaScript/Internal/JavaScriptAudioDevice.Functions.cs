@@ -5,14 +5,14 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
     internal sealed partial class JavaScriptAudioDevice
     {
         [JSFunction(Name = "volume")]
-        public int Volume(int level)
+        public double Volume(double level)
         {
             Device.Volume = level;
             return Device.Volume;
         }
 
         [JSFunction(Name = "volume")]
-        public int Volume()
+        public double Volume()
         {
             return Device.Volume;
         }

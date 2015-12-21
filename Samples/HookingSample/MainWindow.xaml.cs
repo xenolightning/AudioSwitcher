@@ -91,6 +91,11 @@ namespace HookingSample
 
             Controller.DefaultPlaybackDevice.SessionController.All();
 
+            Controller.DefaultPlaybackDevice.PeakValueChanged.Subscribe(x =>
+            {
+                Console.WriteLine(x.Volume);
+            });
+
             Thread.Sleep(100);
 
             foreach (var audioSession in Controller.DefaultPlaybackDevice.SessionController.All())

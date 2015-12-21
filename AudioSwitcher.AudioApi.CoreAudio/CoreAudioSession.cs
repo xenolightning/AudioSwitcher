@@ -8,7 +8,7 @@ using AudioSwitcher.AudioApi.Session;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    internal sealed class CoreAudioSession : IAudioSession, IAudioSessionEvents
+    internal sealed class CoreAudioSession : IAudioSession, IAudioSessionEvents, IDisposable
     {
 
         private readonly IAudioSessionControl2 _audioSessionControl;
@@ -28,7 +28,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly AsyncBroadcaster<SessionDisconnectedArgs> _disconnected;
         private readonly AsyncBroadcaster<SessionVolumeChangedArgs> _volumeChanged;
         private readonly AsyncBroadcaster<SessionMuteChangedArgs> _muteChanged;
-        private readonly AsyncBroadcaster<PeakValueChangedArgs> _peakValueChanged;
+        private readonly AsyncBroadcaster<SessionPeakValueChangedArgs> _peakValueChanged;
         private bool _isMuted;
         private bool _isDisposed;
         private IDisposable _timerSubscription;
@@ -40,7 +40,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get { return _volumeChanged.AsObservable(); }
         }
 
-        public IObservable<PeakValueChangedArgs> PeakValueChanged
+        public IObservable<SessionPeakValueChangedArgs> PeakValueChanged
         {
             get
             {
@@ -192,7 +192,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _disconnected = new AsyncBroadcaster<SessionDisconnectedArgs>();
             _volumeChanged = new AsyncBroadcaster<SessionVolumeChangedArgs>();
             _muteChanged = new AsyncBroadcaster<SessionMuteChangedArgs>();
-            _peakValueChanged = new AsyncBroadcaster<PeakValueChangedArgs>();
+            _peakValueChanged = new AsyncBroadcaster<SessionPeakValueChangedArgs>();
 
             _audioSessionControl.RegisterAudioSessionNotification(this);
 
@@ -360,7 +360,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void OnPeakValueChanged(double peakValue)
         {
-            _peakValueChanged.OnNext(new PeakValueChangedArgs(this, peakValue));
+            _peakValueChanged.OnNext(new SessionPeakValueChangedArgs(this, peakValue));
         }
 
         public void Dispose()

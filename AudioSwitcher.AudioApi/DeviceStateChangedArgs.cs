@@ -1,6 +1,6 @@
 ﻿namespace AudioSwitcher.AudioApi
 {
-    public sealed class DeviceStateChangedArgs : DeviceChangedArgs
+    public class DeviceStateChangedArgs : DeviceChangedArgs
     {
         public DeviceStateChangedArgs(IDevice dev, DeviceState state)
             : base(dev, DeviceChangedType.StateChanged)

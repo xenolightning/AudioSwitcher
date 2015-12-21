@@ -18,22 +18,22 @@ namespace AudioSwitcher.AudioApi.Session
         /// All active audio sessions
         /// </summary>
         /// <returns></returns>
-        IEnumerable<IAudioSession> GetActiveSessions();
-        Task<IEnumerable<IAudioSession>> GetActiveSessionsAsync();
+        IEnumerable<IAudioSession> ActiveSessions();
+        Task<IEnumerable<IAudioSession>> ActiveSessionsAsync();
 
         /// <summary>
         /// All inactive audio sessions
         /// </summary>
         /// <returns></returns>
-        IEnumerable<IAudioSession> GetInactiveSessions();
-        Task<IEnumerable<IAudioSession>> GetInactiveSessionsAsync();
+        IEnumerable<IAudioSession> InactiveSessions();
+        Task<IEnumerable<IAudioSession>> InactiveSessionsAsync();
 
         /// <summary>
         /// All expired audio sessions
         /// </summary>
         /// <returns></returns>
-        IEnumerable<IAudioSession> GetExpiredSessions();
-        Task<IEnumerable<IAudioSession>> GetExpiredSessionsAsync();
+        IEnumerable<IAudioSession> ExpiredSessions();
+        Task<IEnumerable<IAudioSession>> ExpiredSessionsAsync();
 
         IObservable<IAudioSession> SessionCreated { get; }
 

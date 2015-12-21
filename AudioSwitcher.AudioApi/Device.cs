@@ -9,22 +9,29 @@ namespace AudioSwitcher.AudioApi
     ///     Provides a basic implementation of IDevice so that developers need not implement very common functionality.
     ///     Should be used in place of IDevice where possible
     /// </summary>
-    public abstract class Device : IDevice, IDisposable
+    public abstract class Device : IDevice
     {
-        private readonly AsyncBroadcaster<DeviceVolumeChangedArgs> _volumeChanged;
         private readonly AsyncBroadcaster<DeviceMuteChangedArgs> _muteChanged;
-        private readonly AsyncBroadcaster<DevicePropertyChangedArgs> _propertyChanged;
-        private readonly AsyncBroadcaster<DefaultDeviceChangedArgs> _defaultChanged;
         private readonly AsyncBroadcaster<DeviceStateChangedArgs> _stateChanged;
+        private readonly AsyncBroadcaster<DeviceVolumeChangedArgs> _volumeChanged;
+        private readonly AsyncBroadcaster<DefaultDeviceChangedArgs> _defaultChanged;
+        private readonly AsyncBroadcaster<DevicePropertyChangedArgs> _propertyChanged;
+        private readonly AsyncBroadcaster<DevicePeakVolumeChangedArgs> _peakValueChanged;
 
         protected Device(IAudioController controller)
         {
             Controller = controller;
-            _volumeChanged = new AsyncBroadcaster<DeviceVolumeChangedArgs>();
             _muteChanged = new AsyncBroadcaster<DeviceMuteChangedArgs>();
-            _propertyChanged = new AsyncBroadcaster<DevicePropertyChangedArgs>();
-            _defaultChanged = new AsyncBroadcaster<DefaultDeviceChangedArgs>();
             _stateChanged = new AsyncBroadcaster<DeviceStateChangedArgs>();
+            _volumeChanged = new AsyncBroadcaster<DeviceVolumeChangedArgs>();
+            _defaultChanged = new AsyncBroadcaster<DefaultDeviceChangedArgs>();
+            _propertyChanged = new AsyncBroadcaster<DevicePropertyChangedArgs>();
+            _peakValueChanged = new AsyncBroadcaster<DevicePeakVolumeChangedArgs>();
+        }
+
+        ~Device()
+        {
+            Dispose(false);
         }
 
         public IAudioController Controller { get; private set; }
@@ -53,11 +60,8 @@ namespace AudioSwitcher.AudioApi
         {
             get
             {
-                return (Controller.DefaultPlaybackCommunicationsDevice != null &&
-                        Controller.DefaultPlaybackCommunicationsDevice.Id == Id)
-                       ||
-                       (Controller.DefaultCaptureCommunicationsDevice != null &&
-                        Controller.DefaultCaptureCommunicationsDevice.Id == Id);
+                return (Controller.DefaultPlaybackCommunicationsDevice != null && Controller.DefaultPlaybackCommunicationsDevice.Id == Id)
+                       || (Controller.DefaultCaptureCommunicationsDevice != null && Controller.DefaultCaptureCommunicationsDevice.Id == Id);
             }
         }
 
@@ -83,7 +87,36 @@ namespace AudioSwitcher.AudioApi
 
         public abstract bool IsMuted { get; }
 
-        public abstract int Volume { get; set; }
+        public abstract double Volume { get; set; }
+
+        public IObservable<DeviceVolumeChangedArgs> VolumeChanged
+        {
+            get { return _volumeChanged.AsObservable(); }
+        }
+
+        public IObservable<DeviceMuteChangedArgs> MuteChanged
+        {
+            get { return _muteChanged.AsObservable(); }
+        }
+
+        public IObservable<DevicePropertyChangedArgs> PropertyChanged
+        {
+            get { return _propertyChanged.AsObservable(); }
+        }
+        public IObservable<DefaultDeviceChangedArgs> DefaultChanged
+        {
+            get { return _defaultChanged.AsObservable(); }
+        }
+
+        public IObservable<DeviceStateChangedArgs> StateChanged
+        {
+            get { return _stateChanged.AsObservable(); }
+        }
+
+        public IObservable<DevicePeakVolumeChangedArgs> PeakValueChanged
+        {
+            get { return _peakValueChanged.AsObservable(); }
+        }
 
         /// <summary>
         ///     Set this device as the the default device
@@ -130,36 +163,12 @@ namespace AudioSwitcher.AudioApi
             return Task.Factory.StartNew(() => ToggleMute());
         }
 
-        public IObservable<DeviceVolumeChangedArgs> VolumeChanged
-        {
-            get { return _volumeChanged.AsObservable(); }
-        }
-
-        public IObservable<DeviceMuteChangedArgs> MuteChanged
-        {
-            get { return _muteChanged.AsObservable(); }
-        }
-
-        public IObservable<DevicePropertyChangedArgs> PropertyChanged
-        {
-            get { return _propertyChanged.AsObservable(); }
-        }
-        public IObservable<DefaultDeviceChangedArgs> DefaultChanged
-        {
-            get { return _defaultChanged.AsObservable(); }
-        }
-
-        public IObservable<DeviceStateChangedArgs> StateChanged
-        {
-            get { return _stateChanged.AsObservable(); }
-        }
-
         protected virtual void OnMuteChanged(bool isMuted)
         {
             _muteChanged.OnNext(new DeviceMuteChangedArgs(this, isMuted));
         }
 
-        protected virtual void OnVolumeChanged(int volume)
+        protected virtual void OnVolumeChanged(double volume)
         {
             _volumeChanged.OnNext(new DeviceVolumeChangedArgs(this, volume));
         }
@@ -184,17 +193,25 @@ namespace AudioSwitcher.AudioApi
             _stateChanged.OnNext(new DeviceStateChangedArgs(this, state));
         }
 
+        protected virtual void OnPeakValueChanged(double peakValue)
+        {
+            _peakValueChanged.OnNext(new DevicePeakVolumeChangedArgs(this, peakValue));
+        }
+
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            _volumeChanged.Dispose();
             _muteChanged.Dispose();
-            _propertyChanged.Dispose();
+            _stateChanged.Dispose();
+            _volumeChanged.Dispose();
             _defaultChanged.Dispose();
+            _propertyChanged.Dispose();
+            _peakValueChanged.Dispose();
         }
     }
 }

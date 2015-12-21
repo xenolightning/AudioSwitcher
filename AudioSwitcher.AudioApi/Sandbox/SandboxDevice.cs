@@ -94,7 +94,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
             }
         }
 
-        public override int Volume { get; set; }
+        public override double Volume { get; set; }
 
         public override bool Mute(bool mute)
         {

@@ -8,13 +8,16 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public sealed partial class CoreAudioDevice
     {
-        private AudioMeterInformation _audioMeterInformation;
+        private IAudioMeterInformation _audioMeterInformation;
         private AudioEndpointVolume _audioEndpointVolume;
 
         private IPropertyDictionary Properties
         {
             get
             {
+                if(_isDisposed)
+                    throw new ObjectDisposedException("");
+
                 return _properties;
             }
         }
@@ -22,10 +25,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         /// Audio Meter Information - Future support
         /// </summary>
-        private AudioMeterInformation AudioMeterInformation
+        private IAudioMeterInformation AudioMeterInformation
         {
             get
             {
+                if (_isDisposed)
+                    throw new ObjectDisposedException("");
+
                 return _audioMeterInformation;
             }
         }
@@ -61,14 +67,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //weird lookups on the result COM object not on an STA Thread
             ComThread.Assert();
 
-            object result = null;
             Exception ex;
             //Need to catch here, as there is a chance that unauthorized is thrown.
             //It's not an HR exception, but bubbles up through the .net call stack
             try
             {
                 var clsGuid = new Guid(ComIIds.AUDIO_METER_INFORMATION_IID);
+                object result;
                 ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
+                _audioMeterInformation = result as IAudioMeterInformation;
             }
             catch (Exception e)
             {
@@ -76,12 +83,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
 
             if (ex != null)
-            {
                 ClearAudioMeterInformation();
-                return;
-            }
-
-            _audioMeterInformation = new AudioMeterInformation(result as IAudioMeterInformation);
         }
 
         private void LoadAudioEndpointVolume(IMultimediaDevice device)
@@ -134,7 +136,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             if (_audioMeterInformation != null)
             {
-                _audioMeterInformation.Dispose();
+                Marshal.FinalReleaseComObject(_audioMeterInformation);
                 _audioMeterInformation = null;
             }
         }

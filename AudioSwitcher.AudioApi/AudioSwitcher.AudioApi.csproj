@@ -55,6 +55,7 @@
     <Compile Include="AudioController.Generic.cs" />
     <Compile Include="DeviceChangedType.cs" />
     <Compile Include="DeviceMuteChangedArgs.cs" />
+    <Compile Include="DevicePeakVolumeChangedArgs.cs" />
     <Compile Include="Observables\DefaultDisposable.cs" />
     <Compile Include="Observables\DelegateDisposable.cs" />
     <Compile Include="Device.cs" />
@@ -90,7 +91,7 @@
     <Compile Include="Session\IAudioSession.cs" />
     <Compile Include="Session\IAudioSessionController.cs" />
     <Compile Include="Session\IAudioSessionEndpoint.cs" />
-    <Compile Include="Session\PeakValueChangedArgs.cs" />
+    <Compile Include="Session\SessionPeakValueChangedArgs.cs" />
     <Compile Include="Session\SessionVolumeChangedArgs.cs" />
     <Compile Include="SpeakerConfiguration.cs" />
     <Compile Include="DefaultDeviceChangedArgs.cs" />

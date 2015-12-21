@@ -108,5 +108,16 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             Assert.Equal(1, count);
         }
 
+        [Fact]
+        public void Controller_Disposes_Devices()
+        {
+            IDevice device;
+
+            var controller = new CoreAudioController();
+
+
+
+        }
+
     }
 }
