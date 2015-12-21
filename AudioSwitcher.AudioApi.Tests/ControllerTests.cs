@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.Tests.Common;
 using Xunit;
 

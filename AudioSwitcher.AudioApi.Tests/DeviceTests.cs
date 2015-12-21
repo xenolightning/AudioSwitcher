@@ -188,5 +188,46 @@ namespace AudioSwitcher.AudioApi.Tests
             var device = new Mock<IDevice>();
             Assert.ThrowsAny<Exception>(() => DevicePropertyChangedArgs.FromExpression(device.Object, x => x.SetAsDefault()));
         }
+
+        [Fact]
+        public void DeviceMuteChangedArgs_Sets_Device_And_Type_False()
+        {
+            const bool isMuted = false;
+            var device = new Mock<IDevice>();
+            var args = new DeviceMuteChangedArgs(device.Object, isMuted);
+
+            Assert.NotNull(args);
+            Assert.NotNull(args.Device);
+            Assert.Equal(DeviceChangedType.MuteChanged, args.ChangedType);
+            Assert.Equal(isMuted, args.IsMuted);
+        }
+
+        [Fact]
+        public void DeviceMuteChangedArgs_Sets_Device_And_Type_True()
+        {
+            const bool isMuted = true;
+            var device = new Mock<IDevice>();
+            var args = new DeviceMuteChangedArgs(device.Object, isMuted);
+
+            Assert.NotNull(args);
+            Assert.NotNull(args.Device);
+            Assert.Equal(DeviceChangedType.MuteChanged, args.ChangedType);
+            Assert.Equal(isMuted, args.IsMuted);
+        }
+
+
+        [Fact]
+        public void DevicePeakVolumeChangedArgs_Sets_Device_And_Type()
+        {
+            const double peakValue = 24;
+            var device = new Mock<IDevice>();
+            var args = new DevicePeakValueChangedArgs(device.Object, peakValue);
+
+            Assert.NotNull(args);
+            Assert.NotNull(args.Device);
+            Assert.Equal(DeviceChangedType.PeakValueChanged, args.ChangedType);
+            Assert.Equal(peakValue, args.PeakValue);
+        }
+
     }
 }

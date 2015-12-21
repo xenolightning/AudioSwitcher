@@ -16,7 +16,7 @@ namespace AudioSwitcher.AudioApi
         private readonly AsyncBroadcaster<DeviceVolumeChangedArgs> _volumeChanged;
         private readonly AsyncBroadcaster<DefaultDeviceChangedArgs> _defaultChanged;
         private readonly AsyncBroadcaster<DevicePropertyChangedArgs> _propertyChanged;
-        private readonly AsyncBroadcaster<DevicePeakVolumeChangedArgs> _peakValueChanged;
+        private readonly AsyncBroadcaster<DevicePeakValueChangedArgs> _peakValueChanged;
 
         protected Device(IAudioController controller)
         {
@@ -26,7 +26,7 @@ namespace AudioSwitcher.AudioApi
             _volumeChanged = new AsyncBroadcaster<DeviceVolumeChangedArgs>();
             _defaultChanged = new AsyncBroadcaster<DefaultDeviceChangedArgs>();
             _propertyChanged = new AsyncBroadcaster<DevicePropertyChangedArgs>();
-            _peakValueChanged = new AsyncBroadcaster<DevicePeakVolumeChangedArgs>();
+            _peakValueChanged = new AsyncBroadcaster<DevicePeakValueChangedArgs>();
         }
 
         ~Device()
@@ -113,7 +113,7 @@ namespace AudioSwitcher.AudioApi
             get { return _stateChanged.AsObservable(); }
         }
 
-        public IObservable<DevicePeakVolumeChangedArgs> PeakValueChanged
+        public IObservable<DevicePeakValueChangedArgs> PeakValueChanged
         {
             get { return _peakValueChanged.AsObservable(); }
         }
@@ -195,7 +195,7 @@ namespace AudioSwitcher.AudioApi
 
         protected virtual void OnPeakValueChanged(double peakValue)
         {
-            _peakValueChanged.OnNext(new DevicePeakVolumeChangedArgs(this, peakValue));
+            _peakValueChanged.OnNext(new DevicePeakValueChangedArgs(this, peakValue));
         }
 
         public void Dispose()

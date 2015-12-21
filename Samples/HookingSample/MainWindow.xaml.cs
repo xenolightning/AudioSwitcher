@@ -93,7 +93,7 @@ namespace HookingSample
 
             Controller.DefaultPlaybackDevice.PeakValueChanged.Subscribe(x =>
             {
-                Console.WriteLine(x.Volume);
+                Console.WriteLine(x.PeakValue);
             });
 
             Thread.Sleep(100);
@@ -107,7 +107,7 @@ namespace HookingSample
             //{
             //    audioSession.VolumeChanged.Subscribe(v =>
             //    {
-            //        Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.Volume);
+            //        Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.PeakValue);
             //    });
 
             //    audioSession.PeakValueChanged.Throttle(TimeSpan.FromMilliseconds(10)).Subscribe(v =>
@@ -125,7 +125,7 @@ namespace HookingSample
             //{
             //    x.VolumeChanged.Subscribe(v =>
             //    {
-            //        Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.Volume);
+            //        Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.PeakValue);
             //    });
             //});
 
@@ -135,7 +135,7 @@ namespace HookingSample
 
             //    foreach (var session in Controller.DefaultPlaybackDevice.SessionController)
             //    {
-            //        Console.WriteLine("{0} - {1}", session.DisplayName, session.Volume);
+            //        Console.WriteLine("{0} - {1}", session.DisplayName, session.PeakValue);
             //    }
 
             //});

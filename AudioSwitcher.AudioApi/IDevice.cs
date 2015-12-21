@@ -45,7 +45,7 @@ namespace AudioSwitcher.AudioApi
 
         IObservable<DeviceStateChangedArgs> StateChanged { get; }
 
-        IObservable<DevicePeakVolumeChangedArgs> PeakValueChanged { get; }
+        IObservable<DevicePeakValueChangedArgs> PeakValueChanged { get; }
 
         bool SetAsDefault();
 

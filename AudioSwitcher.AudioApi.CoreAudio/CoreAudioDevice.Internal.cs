@@ -183,7 +183,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             try
             {
-                var imageKey = iconStr.Substring(iconStr.IndexOf(",") + 1).Replace("-", "");
+                var imageKey = iconStr.Substring(iconStr.IndexOf(",", StringComparison.InvariantCultureIgnoreCase) + 1).Replace("-", "");
                 return ICON_MAP[imageKey];
             }
             catch

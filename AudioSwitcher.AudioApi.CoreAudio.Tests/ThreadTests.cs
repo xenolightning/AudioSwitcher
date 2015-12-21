@@ -26,7 +26,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             {
                 controller.AudioDeviceChanged.Subscribe(args =>
                 {
-                    controller.GetDevices(DeviceState.Active).ToList();
+                    var eval = controller.GetDevices(DeviceState.Active).ToList();
                 });
 
                 controller.DefaultPlaybackDevice.SetAsDefault();
@@ -57,7 +57,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             {
                 controller.AudioDeviceChanged.Subscribe(args =>
                 {
-                    controller.GetDevices(DeviceState.Active).ToList();
+                    var eval = controller.GetDevices(DeviceState.Active).ToList();
                 });
 
                 tasks.Add(controller.DefaultPlaybackDevice.SetAsDefaultAsync());

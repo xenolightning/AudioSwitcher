@@ -55,12 +55,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         short ChannelsFromMask(int channelMask)
         {
             short count = 0;
-            while (channelMask > 0)
-            {           // until all bits are zero
-                if ((channelMask & 1) == 1)     // check lower bit
+
+            // until all bits are zero
+            while (channelMask > 0) 
+            {
+                // check lower bit
+                if ((channelMask & 1) == 1)     
                     count++;
-                channelMask >>= 1;              // shift bits, removing lower bit
+
+                // shift bits, removing lower bit
+                channelMask >>= 1;              
             }
+
             return count;
         }
 

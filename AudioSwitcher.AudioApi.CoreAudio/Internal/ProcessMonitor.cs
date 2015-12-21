@@ -13,7 +13,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return _processTerminated;
+                return _processTerminated.AsObservable();
             }
         }
 

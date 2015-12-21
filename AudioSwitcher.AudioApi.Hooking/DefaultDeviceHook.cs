@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -97,6 +98,7 @@ namespace AudioSwitcher.AudioApi.Hooking
             }
             catch (Exception ex)
             {
+                Debug.Write(ex);
                 Status = EHookStatus.Inactive;
             }
 
@@ -114,7 +116,6 @@ namespace AudioSwitcher.AudioApi.Hooking
         {
             try
             {
-
                 IMultimediaDevice device;
                 string devId;
                 IntPtr devptr;
@@ -123,14 +124,21 @@ namespace AudioSwitcher.AudioApi.Hooking
 
                 deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Communications, out devptr);
                 device = Marshal.GetObjectForIUnknown(devptr) as IMultimediaDevice;
-                device.GetId(out devId);
-                policyConfig.SetDefaultEndpoint(devId, Role.Communications);
+
+                if (device != null)
+                {
+                    device.GetId(out devId);
+                    policyConfig.SetDefaultEndpoint(devId, Role.Communications);
+                }
 
                 deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console, out devptr);
                 device = Marshal.GetObjectForIUnknown(devptr) as IMultimediaDevice;
-                device.GetId(out devId);
-                policyConfig.SetDefaultEndpoint(devId, Role.Console);
 
+                if (device != null)
+                {
+                    device.GetId(out devId);
+                    policyConfig.SetDefaultEndpoint(devId, Role.Console);
+                }
             }
             catch(Exception)
             {

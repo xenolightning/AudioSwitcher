@@ -10,7 +10,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     internal class CachedPropertyDictionary : IPropertyDictionary
     {
         private Dictionary<PropertyKey, object> _properties;
-        private IPropertyStore _propertyStoreInteface = null;
+        private IPropertyStore _propertyStoreInteface;
 
         public CachedPropertyDictionary()
         {

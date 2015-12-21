@@ -55,7 +55,7 @@
     <Compile Include="AudioController.Generic.cs" />
     <Compile Include="DeviceChangedType.cs" />
     <Compile Include="DeviceMuteChangedArgs.cs" />
-    <Compile Include="DevicePeakVolumeChangedArgs.cs" />
+    <Compile Include="DevicePeakValueChangedArgs.cs" />
     <Compile Include="Observables\DefaultDisposable.cs" />
     <Compile Include="Observables\DelegateDisposable.cs" />
     <Compile Include="Device.cs" />
@@ -71,7 +71,6 @@
     <Compile Include="IAudioController.cs" />
     <Compile Include="IAudioController.Generic.cs" />
     <Compile Include="IDevice.cs" />
-    <Compile Include="Observables\DelegateObserverSafe.cs" />
     <Compile Include="Observables\DelegateObserver.cs" />
     <Compile Include="Observables\AsyncBroadcaster.cs" />
     <Compile Include="Observables\Broadcaster.cs" />

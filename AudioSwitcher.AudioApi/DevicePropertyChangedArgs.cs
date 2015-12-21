@@ -13,21 +13,23 @@ namespace AudioSwitcher.AudioApi
 
         public string PropertyName { get; private set; }
 
-        private static string GetName(Expression<Func<IDevice, object>> exp)
+        private static string GetName(Expression<Func<IDevice, object>> propertyExpression)
         {
-            var body = exp.Body as MemberExpression;
-
-            if (body == null)
+            if (propertyExpression == null)
             {
-                var ubody = (UnaryExpression) exp.Body;
-                body = ubody.Operand as MemberExpression;
+                throw new ArgumentNullException("propertyExpression");
             }
 
-            return body.Member.Name;
+            var memberExpression = propertyExpression.Body as MemberExpression;
+            if (memberExpression == null)
+            {
+                throw new ArgumentException("Invalid Expression", "propertyExpression");
+            }
+            return memberExpression.Member.Name;
         }
 
-        public static DevicePropertyChangedArgs FromExpression(IDevice dev,
-            Expression<Func<IDevice, object>> propertyNameExpression)
+
+        public static DevicePropertyChangedArgs FromExpression(IDevice dev, Expression<Func<IDevice, object>> propertyNameExpression)
         {
             return new DevicePropertyChangedArgs(dev, GetName(propertyNameExpression));
         }

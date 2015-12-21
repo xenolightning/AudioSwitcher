@@ -27,7 +27,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
         public static ArrayInstance EnumerableToArray<T>(this ScriptEngine engine, IEnumerable<T> collection)
             where T : class
         {
-            return engine.Array.New(collection.ToArray());
+            return engine.Array.New(collection.Cast<object>().ToArray());
         }
 
     }
