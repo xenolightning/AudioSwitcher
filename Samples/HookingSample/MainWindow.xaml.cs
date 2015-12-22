@@ -89,6 +89,8 @@ namespace HookingSample
 
             DataContext = this;
 
+            Controller.DefaultPlaybackDevice.SetAsDefault();
+
             Controller.DefaultPlaybackDevice.SessionController.All();
 
             Controller.DefaultPlaybackDevice.PeakValueChanged.Subscribe(x =>

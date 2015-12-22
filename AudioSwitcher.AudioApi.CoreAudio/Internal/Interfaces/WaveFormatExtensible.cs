@@ -6,9 +6,33 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 2)]
     public class WaveFormatExtensible : WaveFormat
     {
-        private short wValidBitsPerSample;
-        private int dwChannelMask;
-        private Guid subFormat;
+        private readonly short wValidBitsPerSample;
+        private readonly int dwChannelMask;
+        private readonly Guid subFormat;
+
+        public short ValidBitsPerSample
+        {
+            get
+            {
+                return wValidBitsPerSample;
+            }
+        }
+
+        public SpeakerConfiguration ChannelMask
+        {
+            get
+            {
+                return (SpeakerConfiguration)dwChannelMask;
+            }
+        }
+
+        public Guid SubFormat
+        {
+            get
+            {
+                return subFormat;
+            }
+        }
 
         /// <summary>
         /// Parameterless constructor for marshalling
@@ -18,31 +42,24 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         }
 
         /// <summary>
-        /// Creates a new WaveFormatExtensible for PCM or IEEE
+        /// Creates a new WaveFormatExtensible for PCM
+        /// KSDATAFORMAT_SUBTYPE_PCM
         /// </summary>
-        public WaveFormatExtensible(int rate, int bits, int channelMask)
-            : base(rate, bits, channelMask)
+        public WaveFormatExtensible(SampleRate rate, BitDepth bits, SpeakerConfiguration channelMask)
+            : this(rate, bits, channelMask, new Guid("00000001-0000-0010-8000-00AA00389B71"))
         {
-            waveFormatTag = WaveFormatEncoding.Extensible;
-            extraSize = 22;
             wValidBitsPerSample = (short)bits;
-            dwChannelMask = channelMask;
-
-            //TODO, probably should handle non PCM?
-            //if (bits == 32)
-            //{
-            //    // KSDATAFORMAT_SUBTYPE_IEEE_FLOAT
-            //    subFormat = new Guid("00000003-0000-0010-8000-00aa00389b71");
-            //}
-            //else
-            //{
-                // KSDATAFORMAT_SUBTYPE_PCM
-                subFormat = new Guid("00000001-0000-0010-8000-00aa00389b71");
-            //}
-
+            dwChannelMask = (int)channelMask;
         }
 
-        public Guid SubFormat { get { return subFormat; } }
+        public WaveFormatExtensible(SampleRate rate, BitDepth bits, SpeakerConfiguration channelMask, Guid subFormat)
+            : base(rate, bits, channelMask, WaveFormatEncoding.Extensible, Marshal.SizeOf(typeof(WaveFormatExtensible)))
+        {
+            wValidBitsPerSample = (short)bits;
+            dwChannelMask = (int)channelMask;
+
+            this.subFormat = subFormat;
+        }
 
         public override string ToString()
         {
@@ -51,7 +68,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
                 wValidBitsPerSample,
                 dwChannelMask,
                 subFormat,
-                extraSize);
+                ExtraSize);
         }
     }
 }

@@ -3,90 +3,20 @@ using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi, Pack=2)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 2)]
     public class WaveFormat
     {
-        protected WaveFormatEncoding waveFormatTag;
-        protected short channels;
-        protected int sampleRate;
-        protected int averageBytesPerSecond;
-        protected short blockAlign;
-        protected short bitsPerSample;
-        protected short extraSize;
-
-        /// <summary>
-        /// Creates a new PCM 44.1Khz stereo 16 bit format
-        /// </summary>
-        public WaveFormat() : this(44100,16,3)
-        {
-
-        }
-        
-        /// <summary>
-        /// Creates a new 16 bit wave format with the specified sample
-        /// rate and channel count
-        /// </summary>
-        /// <param name="sampleRate">Sample Rate</param>
-        /// <param name="channels">Number of channels</param>
-        public WaveFormat(int sampleRate, int channelMask)
-            : this(sampleRate, 16, channelMask)
-        {
-        }
-
-        public WaveFormat(int rate, int bits, int channelMask)
-        {
-            channels = ChannelsFromMask(channelMask);
-
-            if (channels < 1)
-            {
-                throw new ArgumentOutOfRangeException("channelMask", "Channels must be 1 or greater");
-            }
-            // minimum 16 bytes, sometimes 18 for PCM
-            waveFormatTag = WaveFormatEncoding.Pcm;
-
-            sampleRate = rate;
-            bitsPerSample = (short)bits;
-            extraSize = 0;
-                   
-            blockAlign = (short)(channels * (bits / 8));
-            averageBytesPerSecond = sampleRate * blockAlign;
-        }
-
-        short ChannelsFromMask(int channelMask)
-        {
-            short count = 0;
-
-            // until all bits are zero
-            while (channelMask > 0) 
-            {
-                // check lower bit
-                if ((channelMask & 1) == 1)     
-                    count++;
-
-                // shift bits, removing lower bit
-                channelMask >>= 1;              
-            }
-
-            return count;
-        }
-
-        public override string ToString()
-        {
-            switch (waveFormatTag)
-            {
-                case WaveFormatEncoding.Pcm:
-                case WaveFormatEncoding.Extensible:
-                    // extensible just has some extra bits after the PCM header
-                    return String.Format("{0} bit PCM: {1}kHz {2} channels",
-                        bitsPerSample, sampleRate / 1000, channels);
-                default:
-                    return waveFormatTag.ToString();
-            }
-        }
+        private readonly WaveFormatEncoding waveFormatTag;
+        private readonly short channels;
+        private int sampleRate;
+        private readonly int averageBytesPerSecond;
+        private readonly short blockAlign;
+        private readonly short bitsPerSample;
+        private readonly short extraSize;
 
         public WaveFormatEncoding Encoding
         {
-            get	
+            get
             {
                 return waveFormatTag;
             }
@@ -106,7 +36,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
             {
                 return sampleRate;
             }
-            set { sampleRate = value; }
         }
 
         public int AverageBytesPerSecond
@@ -140,6 +69,73 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
                 return extraSize;
             }
         }
+
+        protected WaveFormat()
+        {
+            
+        }
+
+        public WaveFormat(SampleRate rate, BitDepth bits, SpeakerConfiguration channelMask)
+            :this(rate, bits, channelMask, WaveFormatEncoding.Pcm, Marshal.SizeOf(typeof(WaveFormat)))
+        {
+            
+        }
+
+        protected WaveFormat(SampleRate rate, BitDepth bits, SpeakerConfiguration channelMask, WaveFormatEncoding formatTag, int totalSize)
+        {
+            channels = ChannelsFromMask((int)channelMask);
+
+            if (channels < 1)
+            {
+                throw new ArgumentOutOfRangeException("channelMask", "Channels must be 1 or greater");
+            }
+            // minimum 16 bytes, sometimes 18 for PCM
+            waveFormatTag = WaveFormatEncoding.Pcm;
+
+            sampleRate = (int)rate;
+            bitsPerSample = (short)bits;
+            extraSize = 0;
+
+            blockAlign = (short)(channels * (bitsPerSample / 8));
+            averageBytesPerSecond = sampleRate * blockAlign;
+
+            waveFormatTag = formatTag;
+            extraSize = (short)(totalSize - Marshal.SizeOf(typeof(WaveFormat)));
+        }
+
+        private short ChannelsFromMask(int channelMask)
+        {
+            short count = 0;
+
+            // until all bits are zero
+            while (channelMask > 0)
+            {
+                // check lower bit
+                if ((channelMask & 1) == 1)
+                    count++;
+
+                // shift bits, removing lower bit
+                channelMask >>= 1;
+            }
+
+            return count;
+        }
+
+        public override string ToString()
+        {
+            switch (waveFormatTag)
+            {
+                case WaveFormatEncoding.Pcm:
+                case WaveFormatEncoding.Extensible:
+                    // formatTag just has some extra bits after the PCM header
+                    return String.Format("{0} bit PCM: {1}kHz {2} channels",
+                        bitsPerSample, sampleRate / 1000, channels);
+                default:
+                    return waveFormatTag.ToString();
+            }
+        }
+
+        
 
     }
 }

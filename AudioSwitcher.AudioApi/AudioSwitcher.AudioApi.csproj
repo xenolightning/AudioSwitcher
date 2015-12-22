@@ -53,6 +53,7 @@
     </Compile>
     <Compile Include="AudioController.cs" />
     <Compile Include="AudioController.Generic.cs" />
+    <Compile Include="BitDepth.cs" />
     <Compile Include="DeviceChangedType.cs" />
     <Compile Include="DeviceMuteChangedArgs.cs" />
     <Compile Include="DevicePeakValueChangedArgs.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Observables\ObservableExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Role.cs" />
+    <Compile Include="SampleRate.cs" />
     <Compile Include="Sandbox\SandboxAudioController.cs" />
     <Compile Include="Sandbox\SandboxDevice.cs" />
     <Compile Include="Session\SessionDisconnectedArgs.cs" />
