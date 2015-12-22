@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.Hooking.ComObjects;
 
 namespace AudioSwitcher.AudioApi.Hooking
@@ -63,17 +64,21 @@ namespace AudioSwitcher.AudioApi.Hooking
         public void HookUninstalled(int processId)
         {
             Interlocked.Increment(ref _messageCount);
-
-            if (_hookUninstalled != null)
-                _hookUninstalled(processId);
+            Task.Factory.StartNew(() =>
+            {
+                if (_hookUninstalled != null)
+                    _hookUninstalled(processId);
+            });
         }
 
         public void ReportError(int processId, Exception e)
         {
             Interlocked.Increment(ref _messageCount);
-
-            if (_errorHandler != null)
-                _errorHandler(processId, e);
+            Task.Factory.StartNew(() =>
+            {
+                if (_errorHandler != null)
+                    _errorHandler(processId, e);
+            });
         }
 
         public string GetDefaultDevice(DataFlow dataFlow, Role role)

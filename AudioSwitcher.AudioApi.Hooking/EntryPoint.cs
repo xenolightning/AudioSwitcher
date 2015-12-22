@@ -28,10 +28,12 @@ namespace AudioSwitcher.AudioApi.Hooking
                 var cci = new COMClassInfo(Type.GetTypeFromCLSID(new Guid(ComIIds.DEVICE_ENUMERATOR_CID)), typeof(IMultimediaDeviceEnumerator), "GetDefaultAudioEndpoint");
                 cci.Query();
 
-                hook = LocalHook.Create(cci.MethodPointers[0], new DGetDefaultAudioEndpoint(GetDefaultAudioEndpoint),
-                    this);
+                hook = LocalHook.Create(cci.MethodPointers[0], new DGetDefaultAudioEndpoint(GetDefaultAudioEndpoint), this);
 
                 hook.ThreadACL.SetExclusiveACL(new[] { 0 });
+
+                //Sleep here so the hook takes effect
+                Thread.Sleep(50);
 
                 //Signal the hook installed, and get the response from the server
                 if (!Interface.HookInstalled())
@@ -57,7 +59,7 @@ namespace AudioSwitcher.AudioApi.Hooking
                 ReportError(Interface, e);
             }
 
-            if(hook != null)
+            if (hook != null)
                 hook.Dispose();
         }
 

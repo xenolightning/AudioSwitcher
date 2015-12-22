@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -92,13 +91,10 @@ namespace AudioSwitcher.AudioApi.Hooking
 
                 _completeSignalled = false;
 
-                SetDefaults();
-
                 return true;
             }
             catch (Exception ex)
             {
-                Debug.Write(ex);
                 Status = EHookStatus.Inactive;
             }
 
@@ -124,23 +120,22 @@ namespace AudioSwitcher.AudioApi.Hooking
 
                 deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Communications, out devptr);
                 device = Marshal.GetObjectForIUnknown(devptr) as IMultimediaDevice;
-
                 if (device != null)
                 {
                     device.GetId(out devId);
                     policyConfig.SetDefaultEndpoint(devId, Role.Communications);
+
                 }
 
                 deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console, out devptr);
                 device = Marshal.GetObjectForIUnknown(devptr) as IMultimediaDevice;
-
                 if (device != null)
                 {
                     device.GetId(out devId);
                     policyConfig.SetDefaultEndpoint(devId, Role.Console);
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 // not worth failing for
             }
@@ -208,6 +203,7 @@ namespace AudioSwitcher.AudioApi.Hooking
 
             _completeSignalled = true;
             _unhookWaitEvent.Set();
+
             UnHook();
 
             var handler = Complete;
