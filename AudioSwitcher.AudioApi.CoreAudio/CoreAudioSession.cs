@@ -31,7 +31,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly AsyncBroadcaster<SessionPeakValueChangedArgs> _peakValueChanged;
         private bool _isMuted;
         private bool _isDisposed;
-        private IDisposable _timerSubscription;
+        private readonly IDisposable _timerSubscription;
+        private readonly IDisposable _deviceMutedSubscription;
 
         public IDevice Device { get; private set; }
 
@@ -42,82 +43,52 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public IObservable<SessionPeakValueChangedArgs> PeakValueChanged
         {
-            get
-            {
-                return _peakValueChanged.AsObservable();
-            }
+            get { return _peakValueChanged.AsObservable(); }
         }
 
         public IObservable<SessionMuteChangedArgs> MuteChanged
         {
-            get
-            {
-                return _muteChanged.AsObservable();
-            }
+            get { return _muteChanged.AsObservable(); }
         }
 
         public IObservable<SessionStateChangedArgs> StateChanged
         {
-            get
-            {
-                return _stateChanged.AsObservable();
-            }
+            get { return _stateChanged.AsObservable(); }
         }
 
         public IObservable<SessionDisconnectedArgs> Disconnected
         {
-            get
-            {
-                return _disconnected.AsObservable();
-            }
+            get { return _disconnected.AsObservable(); }
         }
 
         public string Id
         {
-            get
-            {
-                return _id;
-            }
+            get { return _id; }
         }
 
         public int ProcessId
         {
-            get
-            {
-                return _processId;
-            }
+            get { return _processId; }
         }
 
         public string DisplayName
         {
-            get
-            {
-                return String.IsNullOrWhiteSpace(_displayName) ? _fileDescription : _displayName;
-            }
+            get { return String.IsNullOrWhiteSpace(_displayName) ? _fileDescription : _displayName; }
         }
 
         public string IconPath
         {
-            get
-            {
-                return _iconPath;
-            }
+            get { return _iconPath; }
         }
 
         public string ExecutablePath
         {
-            get
-            {
-                return _executablePath;
-            }
+            get { return _executablePath; }
         }
 
         public bool IsSystemSession
         {
-            get
-            {
-                return _isSystemSession;
-            }
+            get { return _isSystemSession; }
         }
 
         public double Volume
@@ -141,7 +112,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return _isMuted;
+                return _isMuted || Device.IsMuted;
             }
             set
             {
@@ -151,16 +122,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 ComThread.Invoke(() => _simpleAudioVolume.SetMute(value, Guid.Empty));
 
                 _isMuted = value;
-                OnMuteChanged(_isMuted);
+                OnMuteChanged(IsMuted);
             }
         }
 
         public AudioSessionState SessionState
         {
-            get
-            {
-                return _state;
-            }
+            get { return _state; }
         }
 
         public CoreAudioSession(CoreAudioDevice device, IAudioSessionControl control)
@@ -168,6 +136,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ComThread.Assert();
 
             Device = device;
+
+            _deviceMutedSubscription = Device.MuteChanged.Subscribe(x =>
+            {
+                OnMuteChanged(_isMuted);
+            });
 
             // ReSharper disable once SuspiciousTypeConversion.Global
             _audioSessionControl = control as IAudioSessionControl2;
@@ -184,7 +157,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (_meterInformation != null)
             {
                 //start a timer to poll for peak value changes
-                //_timer = new Timer(Timer_UpdatePeakValue, null, 0, 20);
                 _timerSubscription = PeakValueTimer.PeakValueTick.Subscribe(Timer_UpdatePeakValue);
             }
 
@@ -365,7 +337,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public void Dispose()
         {
-            _isDisposed = true;
+            if (_isDisposed)
+                return;
+
+            _deviceMutedSubscription.Dispose();
 
             if (_timerSubscription != null)
                 _timerSubscription.Dispose();
@@ -373,6 +348,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _stateChanged.Dispose();
             _disconnected.Dispose();
             _volumeChanged.Dispose();
+            _peakValueChanged.Dispose();
+            _muteChanged.Dispose();
 
             //Run this on the com thread to ensure it's diposed correctly
             ComThread.BeginInvoke(() =>
@@ -383,6 +360,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             });
 
             GC.SuppressFinalize(this);
+
+            _isDisposed = true;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Observables;
@@ -18,6 +19,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private EDataFlow _dataFlow;
         private readonly IDisposable _changeSubscription;
         private readonly IDisposable _peakValueTimerSubscription;
+        private readonly ManualResetEvent _muteChangedResetEvent = new ManualResetEvent(false);
         private bool _isDisposed;
 
         private IMultimediaDevice Device
@@ -250,7 +252,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (AudioEndpointVolume == null)
                 return false;
 
-            return AudioEndpointVolume.Mute = mute;
+            if (AudioEndpointVolume.Mute == mute)
+                return mute;
+
+            AudioEndpointVolume.Mute = mute;
+
+            _muteChangedResetEvent.Reset();
+
+            //1s is a resonable response time for muting a device
+            //any longer and we can assume that something went wrong
+            _muteChangedResetEvent.WaitOne(1000); 
+
+            return _isMuted;
         }
         private void LoadProperties(IMultimediaDevice device)
         {
@@ -342,6 +355,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
         {
             OnVolumeChanged(Volume);
+
+            _muteChangedResetEvent.Set();
 
             if (data.Muted != _isMuted)
             {
