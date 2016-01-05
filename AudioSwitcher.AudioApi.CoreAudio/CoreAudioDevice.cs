@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -10,6 +11,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public sealed partial class CoreAudioDevice : Device
     {
+
+        private float _peakValue = -1;
         private IMultimediaDevice _device;
         private Guid? _id;
         private CachedPropertyDictionary _properties;
@@ -234,11 +237,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 _changeSubscription.Dispose();
                 _peakValueTimerSubscription.Dispose();
 
-                ClearAudioEndpointVolume();
-                ClearAudioMeterInformation();
-                ClearAudioSession();
+                ComThread.BeginInvoke(() =>
+                {
+                    ClearAudioEndpointVolume();
+                    ClearAudioMeterInformation();
+                    ClearAudioSession();
 
-                _device = null;
+                    _device = null;
+                });
+
 
                 _isDisposed = true;
             }
@@ -367,7 +374,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
         private void Timer_UpdatePeakValue(long ticks)
         {
-            float peakValue = 0;
+            float peakValue = _peakValue;
 
             ComThread.Invoke(() =>
             {
@@ -384,7 +391,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 }
             });
 
-            OnPeakValueChanged(peakValue * 100);
+
+            if (Math.Abs(_peakValue - peakValue) > 0.001)
+            {
+                OnPeakValueChanged(peakValue*100);
+                _peakValue = peakValue;
+            }
         }
 
         /// <summary>

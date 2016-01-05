@@ -93,9 +93,14 @@ namespace HookingSample
 
             Controller.DefaultPlaybackDevice.SessionController.All();
 
-            Controller.DefaultPlaybackDevice.PeakValueChanged.Subscribe(x =>
+            Controller.DefaultCaptureDevice.PeakValueChanged.Subscribe(x =>
             {
                 Console.WriteLine(x.PeakValue);
+            });
+
+            Controller.DefaultPlaybackDevice.PeakValueChanged.Subscribe(x =>
+            {
+                //Console.WriteLine(x.PeakValue);
             });
 
             Thread.Sleep(100);

@@ -15,6 +15,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly ISimpleAudioVolume _simpleAudioVolume;
         private readonly IAudioMeterInformation _meterInformation;
 
+        private float _peakValue = -1;
         private string _fileDescription;
         private double _volume;
         private string _id;
@@ -174,7 +175,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void Timer_UpdatePeakValue(long ticks)
         {
-            float peakValue = 0;
+            float peakValue = _peakValue;
 
             ComThread.Invoke(() =>
             {
@@ -194,7 +195,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 }
             });
 
-            OnPeakValueChanged(peakValue * 100);
+
+            if (Math.Abs(_peakValue - peakValue) > 0.001)
+            {
+                OnPeakValueChanged(peakValue * 100);
+                _peakValue = peakValue;
+            }
         }
 
         ~CoreAudioSession()
