@@ -234,8 +234,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             if (!_isDisposed)
             {
-                _changeSubscription.Dispose();
-                _peakValueTimerSubscription.Dispose();
+                if (_changeSubscription != null)
+                    _changeSubscription.Dispose();
+
+                if (_peakValueTimerSubscription != null)
+                    _peakValueTimerSubscription.Dispose();
 
                 ComThread.BeginInvoke(() =>
                 {
