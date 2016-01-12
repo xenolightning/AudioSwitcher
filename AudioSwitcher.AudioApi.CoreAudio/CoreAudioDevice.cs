@@ -268,7 +268,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             //1s is a resonable response time for muting a device
             //any longer and we can assume that something went wrong
-            _muteChangedResetEvent.WaitOne(1000); 
+            _muteChangedResetEvent.WaitOne(1000);
 
             return _isMuted;
         }
@@ -376,7 +376,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             float peakValue = _peakValue;
 
-            ComThread.Invoke(() =>
+            ComThread.BeginInvoke(() =>
             {
                 if (_isDisposed)
                     return;
@@ -389,14 +389,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     //ignored - usually means the com object has been released, but the timer is still ticking
                 }
-            });
-
-
-            if (Math.Abs(_peakValue - peakValue) > 0.001)
+            })
+            .ContinueWith(x =>
             {
-                OnPeakValueChanged(peakValue*100);
-                _peakValue = peakValue;
-            }
+                if (Math.Abs(_peakValue - peakValue) > 0.001)
+                {
+                    _peakValue = peakValue;
+                    OnPeakValueChanged(peakValue * 100);
+                }
+            });
         }
 
         /// <summary>
