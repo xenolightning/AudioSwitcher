@@ -42,6 +42,13 @@ namespace AudioSwitcher.Tests.Common
             get { return DeviceIcon.Unknown; }
         }
 
+        public override string IconPath {
+            get
+            {
+                return "";
+            }
+        }
+
         public override DeviceState State
         {
             get { return DeviceState.Active; }
@@ -57,7 +64,7 @@ namespace AudioSwitcher.Tests.Common
             get { return _muted; }
         }
 
-        public override int Volume
+        public override double Volume
         {
             get;
             set;
@@ -68,6 +75,5 @@ namespace AudioSwitcher.Tests.Common
             return _muted = mute;
         }
 
-        public override event EventHandler<DeviceChangedEventArgs> VolumeChanged;
     }
 }

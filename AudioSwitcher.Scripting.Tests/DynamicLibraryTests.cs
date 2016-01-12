@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AudioSwitcher.AudioApi;
+﻿using AudioSwitcher.AudioApi;
 using AudioSwitcher.Tests.Common;
 using Xunit;
 
@@ -24,7 +19,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
             {
                 engine.AddLibrary("Dynamic", new TestLibrary());
 
-                engine.Execute("Dynamic = lib('Dynamic');");
+                engine.Execute("Dynamic = require('Dynamic');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
             }
         }
@@ -37,7 +32,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
 
-                engine.Execute("Dynamic = lib('Dynamic');");
+                engine.Execute("Dynamic = require('Dynamic');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
                 Assert.Equal(testLib.Property, engine.Evaluate<int>("Dyanmic.Property").Value);
             }
@@ -53,7 +48,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
 
                 engine.Execute("import('Dyanmic');");
 
-                engine.Execute("Dynamic = lib('Dynamic');");
+                engine.Execute("Dynamic = require('Dynamic');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
 
                 var result = engine.Evaluate<int>("Dynamic.Delegate()");
@@ -70,7 +65,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
 
-                engine.Execute("Dynamic = lib('Dynamic');");
+                engine.Execute("Dynamic = require('Dynamic');");
                 Assert.True(engine.InternalEngine.HasGlobalValue("Dynamic"));
 
                 var result = engine.Evaluate<string>("Dynamic.DelegateWithArguments('Hello')");
@@ -88,7 +83,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
 
-                engine.Execute("Dynamic = lib('Dynamic');");
+                engine.Execute("Dynamic = require('Dynamic');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
 
                 var result = engine.Evaluate<string>("Dynamic.Method()");
@@ -105,7 +100,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
 
-                engine.Execute("Dynamic = lib('Dynamic');");
+                engine.Execute("Dynamic = require('Dynamic');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
 
                 var result = engine.Evaluate<int>("Dynamic.MethodReturnClr().Field");
@@ -122,7 +117,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
 
-                engine.Execute("Dynamic = lib('Dynamic');");
+                engine.Execute("Dynamic = require('Dynamic');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
 
                 var result = engine.Evaluate<int>("Dynamic.MethodReturnClrArray().Length");
@@ -139,7 +134,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
 
-                engine.Execute("Dynamic = lib('Dynamic');");
+                engine.Execute("Dynamic = require('Dynamic');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
 
                 var result = engine.Evaluate<string>("Dynamic.MethodWithArg('Hello')");
@@ -156,7 +151,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
 
-                engine.Execute("Dynamic = lib('Dynamic');");
+                engine.Execute("Dynamic = require('Dynamic');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
 
                 var result = engine.Evaluate<string>("Dynamic.MethodWithArgs('One', 'Two')");
@@ -173,10 +168,10 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
 
-                engine.Execute("Dynamic = lib('Dynamic');");
+                engine.Execute("Dynamic = require('Dynamic');");
                 Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Dynamic"));
 
-                var result = engine.Evaluate<string>("Dynamic.MethodFunc()");
+                var result = engine.Evaluate<string>("(Dynamic.MethodFunc())()");
 
                 Assert.NotNull(result.ExecutionException);
                 //Assert.Equal(testLib.MethodFunc()(), result.Value);

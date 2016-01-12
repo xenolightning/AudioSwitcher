@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 using System.Management.Automation;
-using System.Threading.Tasks;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
 

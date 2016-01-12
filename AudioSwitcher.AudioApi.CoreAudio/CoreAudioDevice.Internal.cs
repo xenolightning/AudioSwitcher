@@ -8,13 +8,16 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public sealed partial class CoreAudioDevice
     {
-        private AudioMeterInformation _audioMeterInformation;
+        private IAudioMeterInformation _audioMeterInformation;
         private AudioEndpointVolume _audioEndpointVolume;
 
         private IPropertyDictionary Properties
         {
             get
             {
+                if(_isDisposed)
+                    throw new ObjectDisposedException("");
+
                 return _properties;
             }
         }
@@ -22,15 +25,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         /// Audio Meter Information - Future support
         /// </summary>
-        private AudioMeterInformation AudioMeterInformation
+        private IAudioMeterInformation AudioMeterInformation
         {
             get
             {
+                if (_isDisposed)
+                    throw new ObjectDisposedException("");
+
                 return _audioMeterInformation;
             }
         }
+
         /// <summary>
-        /// Audio Endpoint Volume
+        /// Audio Endpoint VolumeChanged
         /// </summary>
         private AudioEndpointVolume AudioEndpointVolume
         {
@@ -40,7 +47,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        private void GetPropertyInformation(IMMDevice device)
+        private void GetPropertyInformation(IMultimediaDevice device)
         {
             ComThread.Assert();
 
@@ -50,24 +57,25 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //Don't try to load properties for a device that doesn't exist
             if (State == DeviceState.NotPresent)
                 return;
-            
+
             _properties.TryLoadFrom(device);
         }
 
-        private void LoadAudioMeterInformation(IMMDevice device)
+        private void LoadAudioMeterInformation(IMultimediaDevice device)
         {
             //This should be all on the COM thread to avoid any
             //weird lookups on the result COM object not on an STA Thread
             ComThread.Assert();
 
-            object result = null;
             Exception ex;
             //Need to catch here, as there is a chance that unauthorized is thrown.
             //It's not an HR exception, but bubbles up through the .net call stack
             try
             {
                 var clsGuid = new Guid(ComIIds.AUDIO_METER_INFORMATION_IID);
+                object result;
                 ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
+                _audioMeterInformation = result as IAudioMeterInformation;
             }
             catch (Exception e)
             {
@@ -75,15 +83,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
 
             if (ex != null)
-            {
                 ClearAudioMeterInformation();
-                return;
-            }
-
-            _audioMeterInformation = new AudioMeterInformation(result as IAudioMeterInformation);
         }
 
-        private void LoadAudioEndpointVolume(IMMDevice device)
+        private void LoadAudioEndpointVolume(IMultimediaDevice device)
         {
             //Don't even bother looking up volume for disconnected devices
             if (!State.HasFlag(DeviceState.Active))
@@ -117,6 +120,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
 
             _audioEndpointVolume = new AudioEndpointVolume(result as IAudioEndpointVolume);
+            _isMuted = _audioEndpointVolume.Mute;
         }
 
         private void ClearAudioEndpointVolume()
@@ -133,7 +137,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             if (_audioMeterInformation != null)
             {
-                _audioMeterInformation.Dispose();
+                Marshal.FinalReleaseComObject(_audioMeterInformation);
                 _audioMeterInformation = null;
             }
         }
@@ -173,14 +177,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {"3030", DeviceIcon.Speakers},
             {"3031", DeviceIcon.Headphones},
             {"3050", DeviceIcon.Speakers},
-            {"3051", DeviceIcon.Headphones},
+            {"3051", DeviceIcon.Headphones}
         };
 
         private static DeviceIcon IconStringToDeviceIcon(string iconStr)
         {
             try
             {
-                string imageKey = iconStr.Substring(iconStr.IndexOf(",") + 1).Replace("-", "");
+                var imageKey = iconStr.Substring(iconStr.IndexOf(",", StringComparison.InvariantCultureIgnoreCase) + 1).Replace("-", "");
                 return ICON_MAP[imageKey];
             }
             catch

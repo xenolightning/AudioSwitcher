@@ -27,7 +27,7 @@ using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
-    ///     Audio Endpoint Volume Channel
+    ///     Audio Endpoint VolumeChanged Channel
     /// </summary>
     internal class AudioEndpointVolumeChannel
     {
@@ -41,7 +41,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
 
         /// <summary>
-        ///     Volume Level
+        ///     VolumeChanged Level
         /// </summary>
         public float VolumeLevel
         {
@@ -58,7 +58,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
 
         /// <summary>
-        ///     Volume Level Scalar
+        ///     VolumeChanged Level Scalar
         /// </summary>
         public float VolumeLevelScalar
         {

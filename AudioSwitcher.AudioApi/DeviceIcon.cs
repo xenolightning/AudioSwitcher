@@ -3,7 +3,7 @@
     public enum DeviceIcon
     {
         DesktopMicrophone,
-        Digital, 
+        Digital,
         Headphones,
         Headset,
         Kinect,

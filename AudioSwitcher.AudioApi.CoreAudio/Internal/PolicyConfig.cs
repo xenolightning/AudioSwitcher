@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
+
 // ReSharper disable SuspiciousTypeConversion.Global
 
 namespace AudioSwitcher.AudioApi.CoreAudio
@@ -9,26 +10,26 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         public static void SetDefaultEndpoint(string devId, ERole eRole)
         {
-            _PolicyConfigClient policyConfig = null;
+            object policyConfig = null;
             try
             {
-                policyConfig = new _PolicyConfigClient();
+                policyConfig = ComObjectFactory.GetPolicyConfig();
 
                 var policyConfigX = policyConfig as IPolicyConfigX;
                 var policyConfig7 = policyConfig as IPolicyConfig;
                 var policyConfigVista = policyConfig as IPolicyConfigVista;
 
-                if (policyConfigX != null)
+                if (policyConfig7 != null)
                 {
-                    Marshal.ThrowExceptionForHR(policyConfigX.SetDefaultEndpoint(devId, eRole));
-                }
-                else if (policyConfig7 != null)
-                {
-                    Marshal.ThrowExceptionForHR(policyConfig7.SetDefaultEndpoint(devId, eRole));
+                    policyConfig7.SetDefaultEndpoint(devId, eRole);
                 }
                 else if (policyConfigVista != null)
                 {
-                    Marshal.ThrowExceptionForHR(policyConfigVista.SetDefaultEndpoint(devId, eRole));
+                    policyConfigVista.SetDefaultEndpoint(devId, eRole);
+                }
+                else if(policyConfigX != null)
+                {
+                    policyConfigX.SetDefaultEndpoint(devId, eRole);
                 }
             }
             finally
@@ -40,9 +41,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        [ComImport, Guid("870AF99C-171D-4F9E-AF0D-E63DF40C2BC9")]
-        private class _PolicyConfigClient
-        {
-        }
     }
 }

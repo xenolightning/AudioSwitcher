@@ -3,20 +3,20 @@ using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid(ComIIds.POLICY_CONFIG_X_IID)]
+    [Guid(ComIIds.UNKNOWN_IID)]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IPolicyConfigX
     {
         [PreserveSig]
         int GetMixFormat(
             [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
-            [In] IntPtr ppFormat);
+            [Out] out WaveFormatExtensible ppFormat);
 
         [PreserveSig]
         int GetDeviceFormat(
             [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
             [In] [MarshalAs(UnmanagedType.Bool)] bool bDefault,
-            [In] IntPtr ppFormat);
+            [Out] out WaveFormatExtensible ppFormat);
 
         [PreserveSig]
         int ResetDeviceFormat([In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName);
@@ -24,8 +24,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         [PreserveSig]
         int SetDeviceFormat(
             [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
-            [In] IntPtr pEndpointFormat,
-            [In] IntPtr mixFormat);
+            [In] WaveFormatExtensible pEndpointFormat,
+            [In] WaveFormatExtensible mixFormat);
 
         [PreserveSig]
         int GetProcessingPeriod(
@@ -42,12 +42,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         [PreserveSig]
         int GetShareMode(
             [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
-            [In] IntPtr pMode);
+            [Out] out DeviceShareMode pMode);
 
         [PreserveSig]
         int SetShareMode(
             [In] [MarshalAs(UnmanagedType.LPWStr)] string pszDeviceName,
-            [In] IntPtr mode);
+            [In] DeviceShareMode mode);
 
         [PreserveSig]
         int GetPropertyValue(

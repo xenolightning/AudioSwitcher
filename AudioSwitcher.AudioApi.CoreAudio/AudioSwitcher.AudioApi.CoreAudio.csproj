@@ -11,7 +11,8 @@
     <AssemblyName>AudioSwitcher.AudioApi.CoreAudio</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +22,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -40,14 +43,21 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="CoreAudioSession.cs" />
+    <Compile Include="CoreAudioSessionController.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Internal\ComObjectFactory.cs" />
+    <Compile Include="Internal\EAudioSessionDisconnectReason.cs" />
     <Compile Include="Internal\AudioEndpointVolume.cs" />
     <Compile Include="Internal\AudioEndpointVolumeCallback.cs" />
     <Compile Include="Internal\AudioEndpointVolumeChannel.cs" />
     <Compile Include="Internal\AudioEndpointVolumeChannels.cs" />
-    <Compile Include="Internal\AudioEndpointVolumeNotificationDelegate.cs" />
     <Compile Include="Internal\AudioEndpointVolumeStepInformation.cs" />
     <Compile Include="Internal\AudioEndpointVolumeVolumeRange.cs" />
     <Compile Include="Internal\AudioMeterInformation.cs" />
@@ -55,9 +65,20 @@
     <Compile Include="Internal\AudioVolumeNotificationData.cs" />
     <Compile Include="Internal\CachedPropertyDictionary.cs" />
     <Compile Include="Internal\EDataFlow.cs" />
+    <Compile Include="Internal\EAudioSessionState.cs" />
     <Compile Include="Internal\EDeviceState.cs" />
     <Compile Include="Internal\EndpointHardwareSupport.cs" />
-    <Compile Include="Internal\Platform.cs" />
+    <Compile Include="Internal\Interfaces\DeviceShareMode.cs" />
+    <Compile Include="Internal\Interfaces\IAudioClient.cs" />
+    <Compile Include="Internal\Interfaces\IAudioSessionControl.cs" />
+    <Compile Include="Internal\Interfaces\IAudioSessionControl2.cs" />
+    <Compile Include="Internal\Interfaces\IAudioSessionEnumerator.cs" />
+    <Compile Include="Internal\Interfaces\IAudioSessionEvents.cs" />
+    <Compile Include="Internal\Interfaces\IAudioSessionManager.cs" />
+    <Compile Include="Internal\Interfaces\IAudioSessionManager2.cs" />
+    <Compile Include="Internal\Interfaces\IAudioSessionNotification.cs" />
+    <Compile Include="Internal\Interfaces\IAudioVolumeDuckNotification.cs" />
+    <Compile Include="Internal\Interfaces\ISimpleAudioVolume.cs" />
     <Compile Include="Internal\Interfaces\AudioVolumeNotificationDataStruct.cs" />
     <Compile Include="Internal\Interfaces\Blob.cs" />
     <Compile Include="Internal\Interfaces\ClsCtx.cs" />
@@ -66,30 +87,33 @@
     <Compile Include="Internal\Interfaces\IAudioEndpointVolumeCallback.cs" />
     <Compile Include="Internal\Interfaces\IAudioEndpointVolumeEx.cs" />
     <Compile Include="Internal\Interfaces\IAudioMeterInformation.cs" />
-    <Compile Include="Internal\Interfaces\IMMDevice.cs" />
-    <Compile Include="Internal\Interfaces\IMMDeviceCollection.cs" />
-    <Compile Include="Internal\Interfaces\IMMDeviceEnumerator.cs" />
-    <Compile Include="Internal\Interfaces\IMMEndpoint.cs" />
-    <Compile Include="Internal\Interfaces\IMMNotificationClient.cs" />
+    <Compile Include="Internal\Interfaces\IMultimediaDevice.cs" />
+    <Compile Include="Internal\Interfaces\IMultimediaDeviceCollection.cs" />
+    <Compile Include="Internal\Interfaces\IMultimediaDeviceEnumerator.cs" />
+    <Compile Include="Internal\Interfaces\IMultimediaEndpoint.cs" />
+    <Compile Include="Internal\Interfaces\IMultimediaNotificationClient.cs" />
     <Compile Include="Internal\Interfaces\IPolicyConfigX.cs" />
     <Compile Include="Internal\Interfaces\IPolicyConfig.cs" />
     <Compile Include="Internal\Interfaces\IPolicyConfigVista.cs" />
     <Compile Include="Internal\Interfaces\IPropertyStore.cs" />
-    <Compile Include="Internal\Interfaces\MMDeviceEnumeratorComObject.cs" />
     <Compile Include="Internal\Interfaces\StorageAccessMode.cs" />
+    <Compile Include="Internal\Interfaces\WaveFormat.cs" />
+    <Compile Include="Internal\Interfaces\WaveFormatEncoding.cs" />
+    <Compile Include="Internal\Interfaces\WaveFormatExtensible.cs" />
     <Compile Include="Internal\IPropertyDictionary.cs" />
     <Compile Include="Internal\ISystemAudioEventClient.cs" />
     <Compile Include="Internal\LockExtensions.cs" />
-    <Compile Include="Internal\MMDeviceCollection.cs" />
-    <Compile Include="Internal\MMNotificationClient.cs" />
+    <Compile Include="Internal\MultimediaDeviceCollection.cs" />
+    <Compile Include="Internal\MultimediaNotificationClient.cs" />
     <Compile Include="Internal\NativeMethods.cs" />
     <Compile Include="Internal\PolicyConfig.cs" />
+    <Compile Include="Internal\PeakValueTimer.cs" />
+    <Compile Include="Internal\ProcessMonitor.cs" />
     <Compile Include="Internal\PropertyKey.cs" />
     <Compile Include="Internal\PropertyKeys.cs" />
     <Compile Include="Internal\PropVariant.cs" />
     <Compile Include="Internal\ERole.cs" />
     <Compile Include="Internal\Threading\InvalidThreadException.cs" />
-    <Compile Include="Internal\WeakEventHandler.cs" />
     <Compile Include="Internal\Threading\ComThread.cs" />
     <Compile Include="CoreAudioDevice.cs" />
     <Compile Include="CoreAudioController.cs" />
@@ -99,10 +123,11 @@
   <ItemGroup>
     <None Include="api.pfx" />
     <Compile Include="CoreAudioDevice.Internal.cs" />
+    <Compile Include="CoreAudioDevice.AudioSession.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj">
-      <Project>{7a4e260c-007e-4615-a92b-e849e7b641ab}</Project>
+      <Project>{8fc5a778-2a85-4cc8-a445-b9f2019a945b}</Project>
       <Name>AudioSwitcher.AudioApi</Name>
     </ProjectReference>
   </ItemGroup>

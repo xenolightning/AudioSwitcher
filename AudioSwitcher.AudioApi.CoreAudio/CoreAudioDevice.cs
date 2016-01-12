@@ -1,76 +1,39 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
+using AudioSwitcher.AudioApi.Observables;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    public sealed partial class CoreAudioDevice : Device, INotifyPropertyChanged, IDisposable
+    public sealed partial class CoreAudioDevice : Device
     {
-        private IMMDevice _device;
+
+        private float _peakValue = -1;
+        private IMultimediaDevice _device;
         private Guid? _id;
         private CachedPropertyDictionary _properties;
         private EDeviceState _state;
         private string _realId;
+        private bool _isMuted;
         private EDataFlow _dataFlow;
+        private readonly IDisposable _changeSubscription;
+        private readonly IDisposable _peakValueTimerSubscription;
+        private readonly ManualResetEvent _muteChangedResetEvent = new ManualResetEvent(false);
+        private bool _isDisposed;
 
-        internal CoreAudioDevice(IMMDevice device, IAudioController<CoreAudioDevice> controller)
-            : base(controller)
+        private IMultimediaDevice Device
         {
-            ComThread.Assert();
+            get
+            {
+                if (_isDisposed)
+                    throw new ObjectDisposedException("");
 
-            _device = device;
-
-            if (device == null)
-                throw new ArgumentNullException("device");
-
-            LoadProperties(device);
-
-            ReloadAudioMeterInformation(device);
-            ReloadAudioEndpointVolume(device);
-
-            controller.AudioDeviceChanged +=
-                new EventHandler<DeviceChangedEventArgs>(EnumeratorOnAudioDeviceChanged)
-                    .MakeWeak(x =>
-                    {
-                        controller.AudioDeviceChanged -= x;
-                    });
-        }
-
-        private void LoadProperties(IMMDevice device)
-        {
-            ComThread.Assert();
-
-            //Load values
-            Marshal.ThrowExceptionForHR(device.GetId(out _realId));
-            Marshal.ThrowExceptionForHR(device.GetState(out _state));
-
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            var ep = device as IMMEndpoint;
-            if (ep != null)
-                ep.GetDataFlow(out _dataFlow);
-
-            GetPropertyInformation(device);
-        }
-
-        ~CoreAudioDevice()
-        {
-            Dispose(false);
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            ClearAudioEndpointVolume();
-            ClearAudioMeterInformation();
-
-            _device = null;
+                return _device;
+            }
         }
 
         /// <summary>
@@ -138,10 +101,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_ICON))
-                    return IconStringToDeviceIcon(Properties[PropertyKeys.PKEY_DEVICE_ICON] as string);
+                return IconStringToDeviceIcon(IconPath);
+            }
+        }
 
-                return DeviceIcon.Unknown;
+        public override string IconPath
+        {
+            get
+            {
+                if (Properties != null && Properties.Contains(PropertyKeys.PKEY_DEVICE_ICON))
+                    return Properties[PropertyKeys.PKEY_DEVICE_ICON] as string;
+
+                return "Unknown";
             }
         }
 
@@ -177,29 +148,32 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public override DeviceState State
         {
-            get { return _state.AsDeviceState(); }
+            get
+            {
+                return _state.AsDeviceState();
+            }
         }
 
         public override DeviceType DeviceType
         {
-            get { return _dataFlow.AsDeviceType(); }
+            get
+            {
+                return _dataFlow.AsDeviceType();
+            }
         }
 
         public override bool IsMuted
         {
             get
             {
-                if (AudioEndpointVolume == null)
-                    return false;
-
-                return AudioEndpointVolume.Mute;
+                return _isMuted;
             }
         }
 
         /// <summary>
         ///     The volume level on a scale between 0-100. Returns -1 if end point does not have volume
         /// </summary>
-        public override int Volume
+        public override double Volume
         {
             get
             {
@@ -215,7 +189,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 else if (value > 100)
                     value = 100;
 
-                float val = (float)value / 100;
+                var val = (float)value / 100;
 
                 if (AudioEndpointVolume == null)
                     return;
@@ -228,16 +202,100 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void EnumeratorOnAudioDeviceChanged(object sender, DeviceChangedEventArgs deviceChangedEventArgs)
+        internal CoreAudioDevice(IMultimediaDevice device, IAudioController<CoreAudioDevice> controller)
+            : base(controller)
         {
-            if (deviceChangedEventArgs.Device == null || deviceChangedEventArgs.Device.Id != Id)
-                return;
+            ComThread.Assert();
 
-            var propertyChangedEvent = deviceChangedEventArgs as DevicePropertyChangedEventArgs;
-            var stateChangedEvent = deviceChangedEventArgs as DeviceStateChangedEventArgs;
-            var defaultChangedEvent = deviceChangedEventArgs as DefaultDeviceChangedEventArgs;
+            _device = device;
+
+            if (device == null)
+                throw new ArgumentNullException("device");
+
+            LoadProperties(device);
+
+            ReloadAudioMeterInformation(device);
+            ReloadAudioEndpointVolume(device);
+            ReloadAudioSessionController(device);
+
+            _changeSubscription = controller.AudioDeviceChanged
+                                                .When(x => x.Device != null && x.Device.Id == Id)
+                                                .Subscribe(EnumeratorOnAudioDeviceChanged);
+
+            _peakValueTimerSubscription = PeakValueTimer.PeakValueTick.Subscribe(Timer_UpdatePeakValue);
+        }
+
+        ~CoreAudioDevice()
+        {
+            Dispose(false);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (_changeSubscription != null)
+                    _changeSubscription.Dispose();
+
+                if (_peakValueTimerSubscription != null)
+                    _peakValueTimerSubscription.Dispose();
+
+                ComThread.BeginInvoke(() =>
+                {
+                    ClearAudioEndpointVolume();
+                    ClearAudioMeterInformation();
+                    ClearAudioSession();
+
+                    _device = null;
+                });
+
+
+                _isDisposed = true;
+            }
+
+            base.Dispose(disposing);
+        }
+
+
+        public override bool Mute(bool mute)
+        {
+            if (AudioEndpointVolume == null)
+                return false;
+
+            if (AudioEndpointVolume.Mute == mute)
+                return mute;
+
+            AudioEndpointVolume.Mute = mute;
+
+            _muteChangedResetEvent.Reset();
+
+            //1s is a resonable response time for muting a device
+            //any longer and we can assume that something went wrong
+            _muteChangedResetEvent.WaitOne(1000);
+
+            return _isMuted;
+        }
+        private void LoadProperties(IMultimediaDevice device)
+        {
+            ComThread.Assert();
+
+            //Load values
+            Marshal.ThrowExceptionForHR(device.GetId(out _realId));
+            Marshal.ThrowExceptionForHR(device.GetState(out _state));
+
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            var ep = device as IMultimediaEndpoint;
+            if (ep != null)
+                ep.GetDataFlow(out _dataFlow);
+
+            GetPropertyInformation(device);
+        }
+
+        private void EnumeratorOnAudioDeviceChanged(DeviceChangedArgs deviceChangedArgs)
+        {
+            var propertyChangedEvent = deviceChangedArgs as DevicePropertyChangedArgs;
+            var stateChangedEvent = deviceChangedArgs as DeviceStateChangedArgs;
+            var defaultChangedEvent = deviceChangedArgs as DefaultDeviceChangedArgs;
 
             if (propertyChangedEvent != null)
                 HandlePropertyChanged(propertyChangedEvent);
@@ -246,42 +304,51 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 HandleStateChanged(stateChangedEvent);
 
             if (defaultChangedEvent != null)
-                HandleDefaultChanged(defaultChangedEvent);
+                HandleDefaultChanged();
         }
 
-        private void HandlePropertyChanged(DevicePropertyChangedEventArgs propertyChangedEvent)
+        private void HandlePropertyChanged(DevicePropertyChangedArgs propertyChanged)
         {
             ComThread.BeginInvoke(() =>
             {
-                LoadProperties(_device);
+                LoadProperties(Device);
             })
             .ContinueWith(x =>
             {
-                OnPropertyChanged(propertyChangedEvent.PropertyName);
+                OnPropertyChanged(propertyChanged.PropertyName);
             });
         }
 
-        private void HandleStateChanged(DeviceStateChangedEventArgs stateChangedEvent)
+        private void HandleStateChanged(DeviceStateChangedArgs stateChanged)
         {
-            _state = stateChangedEvent.State.AsEDeviceState();
+            _state = stateChanged.State.AsEDeviceState();
 
-            ReloadAudioEndpointVolume(_device);
-            ReloadAudioMeterInformation(_device);
+            ReloadAudioEndpointVolume(Device);
+            ReloadAudioMeterInformation(Device);
+            ReloadAudioSessionController(Device);
 
-            OnPropertyChanged("State");
+            OnStateChanged(stateChanged.State);
         }
 
-        private void ReloadAudioMeterInformation(IMMDevice device)
+        private void ReloadAudioMeterInformation(IMultimediaDevice device)
         {
-            ComThread.BeginInvoke(() =>
+            ComThread.Invoke(() =>
             {
                 LoadAudioMeterInformation(device);
             });
         }
 
-        private void ReloadAudioEndpointVolume(IMMDevice device)
+        private void ReloadAudioSessionController(IMultimediaDevice device)
         {
-            ComThread.BeginInvoke(() =>
+            ComThread.Invoke(() =>
+            {
+                LoadAudioSessionController(device);
+            });
+        }
+
+        private void ReloadAudioEndpointVolume(IMultimediaDevice device)
+        {
+            ComThread.Invoke(() =>
             {
                 LoadAudioEndpointVolume(device);
 
@@ -290,57 +357,60 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             });
         }
 
-        private void HandleDefaultChanged(DefaultDeviceChangedEventArgs defaultChangedEvent)
+        private void HandleDefaultChanged()
         {
-            if (defaultChangedEvent.IsDefaultEvent)
-                OnPropertyChanged("IsDefaultDevice");
-            else if (defaultChangedEvent.IsDefaultCommunicationsEvent)
-                OnPropertyChanged("IsDefaultCommunicationsDevice");
+            OnDefaultChanged();
         }
 
         private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
         {
-            RaiseVolumeChanged(Volume);
+            OnVolumeChanged(Volume);
 
-            //Fire the muted changed here too
-            OnPropertyChanged("IsMuted");
+            _muteChangedResetEvent.Set();
+
+            if (data.Muted != _isMuted)
+            {
+                _isMuted = data.Muted;
+                OnMuteChanged(_isMuted);
+            }
+
         }
-
-        private void RaiseVolumeChanged(int newVolume)
+        private void Timer_UpdatePeakValue(long ticks)
         {
-            var handler = VolumeChanged;
+            float peakValue = _peakValue;
 
-            if (handler != null)
-                handler(this, new DeviceVolumeChangedEventArgs(this, newVolume));
+            ComThread.BeginInvoke(() =>
+            {
+                if (_isDisposed)
+                    return;
 
-            OnPropertyChanged("Volume");
+                try
+                {
+                    AudioMeterInformation.GetPeakValue(out peakValue);
+                }
+                catch
+                {
+                    //ignored - usually means the com object has been released, but the timer is still ticking
+                }
+            })
+            .ContinueWith(x =>
+            {
+                if (Math.Abs(_peakValue - peakValue) > 0.001)
+                {
+                    _peakValue = peakValue;
+                    OnPeakValueChanged(peakValue * 100);
+                }
+            });
         }
-
-        public override bool Mute(bool mute)
-        {
-            if (AudioEndpointVolume == null)
-                return false;
-
-            AudioEndpointVolume.Mute = mute;
-            return AudioEndpointVolume.Mute;
-        }
-
-        public override event EventHandler<DeviceChangedEventArgs> VolumeChanged;
 
         /// <summary>
         ///     Extracts the unique GUID Identifier for a Windows System _device
         /// </summary>
         /// <param name="systemDeviceId"></param>
         /// <returns></returns>
-        public static Guid SystemIdToGuid(string systemDeviceId)
+        private static Guid SystemIdToGuid(string systemDeviceId)
         {
             return systemDeviceId.ExtractGuids().First();
-        }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
 
     }

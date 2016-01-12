@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using AudioSwitcher.AudioApi.Observables;
 
 namespace AudioSwitcher.AudioApi
 {
@@ -9,9 +11,27 @@ namespace AudioSwitcher.AudioApi
     /// </summary>
     public abstract class Device : IDevice
     {
+        private readonly AsyncBroadcaster<DeviceMuteChangedArgs> _muteChanged;
+        private readonly AsyncBroadcaster<DeviceStateChangedArgs> _stateChanged;
+        private readonly AsyncBroadcaster<DeviceVolumeChangedArgs> _volumeChanged;
+        private readonly AsyncBroadcaster<DefaultDeviceChangedArgs> _defaultChanged;
+        private readonly AsyncBroadcaster<DevicePropertyChangedArgs> _propertyChanged;
+        private readonly AsyncBroadcaster<DevicePeakValueChangedArgs> _peakValueChanged;
+
         protected Device(IAudioController controller)
         {
             Controller = controller;
+            _muteChanged = new AsyncBroadcaster<DeviceMuteChangedArgs>();
+            _stateChanged = new AsyncBroadcaster<DeviceStateChangedArgs>();
+            _volumeChanged = new AsyncBroadcaster<DeviceVolumeChangedArgs>();
+            _defaultChanged = new AsyncBroadcaster<DefaultDeviceChangedArgs>();
+            _propertyChanged = new AsyncBroadcaster<DevicePropertyChangedArgs>();
+            _peakValueChanged = new AsyncBroadcaster<DevicePeakValueChangedArgs>();
+        }
+
+        ~Device()
+        {
+            Dispose(false);
         }
 
         public IAudioController Controller { get; private set; }
@@ -25,6 +45,7 @@ namespace AudioSwitcher.AudioApi
         public abstract string FullName { get; }
 
         public abstract DeviceIcon Icon { get; }
+        public abstract string IconPath { get; }
 
         public virtual bool IsDefaultDevice
         {
@@ -39,11 +60,8 @@ namespace AudioSwitcher.AudioApi
         {
             get
             {
-                return (Controller.DefaultPlaybackCommunicationsDevice != null &&
-                        Controller.DefaultPlaybackCommunicationsDevice.Id == Id)
-                       ||
-                       (Controller.DefaultCaptureCommunicationsDevice != null &&
-                        Controller.DefaultCaptureCommunicationsDevice.Id == Id);
+                return (Controller.DefaultPlaybackCommunicationsDevice != null && Controller.DefaultPlaybackCommunicationsDevice.Id == Id)
+                       || (Controller.DefaultCaptureCommunicationsDevice != null && Controller.DefaultCaptureCommunicationsDevice.Id == Id);
             }
         }
 
@@ -53,17 +71,52 @@ namespace AudioSwitcher.AudioApi
 
         public virtual bool IsPlaybackDevice
         {
-            get { return DeviceType == DeviceType.Playback || DeviceType == DeviceType.All; }
+            get
+            {
+                return DeviceType == DeviceType.Playback || DeviceType == DeviceType.All;
+            }
         }
 
         public virtual bool IsCaptureDevice
         {
-            get { return DeviceType == DeviceType.Capture || DeviceType == DeviceType.All; }
+            get
+            {
+                return DeviceType == DeviceType.Capture || DeviceType == DeviceType.All;
+            }
         }
 
         public abstract bool IsMuted { get; }
 
-        public abstract int Volume { get; set; }
+        public abstract double Volume { get; set; }
+
+        public IObservable<DeviceVolumeChangedArgs> VolumeChanged
+        {
+            get { return _volumeChanged.AsObservable(); }
+        }
+
+        public IObservable<DeviceMuteChangedArgs> MuteChanged
+        {
+            get { return _muteChanged.AsObservable(); }
+        }
+
+        public IObservable<DevicePropertyChangedArgs> PropertyChanged
+        {
+            get { return _propertyChanged.AsObservable(); }
+        }
+        public IObservable<DefaultDeviceChangedArgs> DefaultChanged
+        {
+            get { return _defaultChanged.AsObservable(); }
+        }
+
+        public IObservable<DeviceStateChangedArgs> StateChanged
+        {
+            get { return _stateChanged.AsObservable(); }
+        }
+
+        public IObservable<DevicePeakValueChangedArgs> PeakValueChanged
+        {
+            get { return _peakValueChanged.AsObservable(); }
+        }
 
         /// <summary>
         ///     Set this device as the the default device
@@ -98,30 +151,6 @@ namespace AudioSwitcher.AudioApi
             return Task.Factory.StartNew(() => Mute(mute));
         }
 
-        [Obsolete("Use Mute(true) instead")]
-        public virtual bool Mute()
-        {
-            return Mute(true);
-        }
-
-        [Obsolete("Use MuteAsync(true) instead")]
-        public virtual Task<bool> MuteAsync()
-        {
-            return Task.Factory.StartNew(() => Mute(true));
-        }
-
-        [Obsolete("Use Mute(false) instead")]
-        public virtual bool UnMute()
-        {
-            return Mute(false);
-        }
-
-        [Obsolete("Use MuteAsync(false) instead")]
-        public virtual Task<bool> UnMuteAsync()
-        {
-            return Task.Factory.StartNew(() => Mute(false));
-        }
-
         public virtual bool ToggleMute()
         {
             Mute(!IsMuted);
@@ -134,6 +163,55 @@ namespace AudioSwitcher.AudioApi
             return Task.Factory.StartNew(() => ToggleMute());
         }
 
-        public abstract event EventHandler<DeviceChangedEventArgs> VolumeChanged;
+        protected virtual void OnMuteChanged(bool isMuted)
+        {
+            _muteChanged.OnNext(new DeviceMuteChangedArgs(this, isMuted));
+        }
+
+        protected virtual void OnVolumeChanged(double volume)
+        {
+            _volumeChanged.OnNext(new DeviceVolumeChangedArgs(this, volume));
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            _propertyChanged.OnNext(new DevicePropertyChangedArgs(this, propertyName));
+        }
+
+        protected virtual void OnPropertyChanged<T>(Expression<Func<IDevice, object>> expression)
+        {
+            _propertyChanged.OnNext(DevicePropertyChangedArgs.FromExpression(this, expression));
+        }
+
+        protected virtual void OnDefaultChanged()
+        {
+            _defaultChanged.OnNext(new DefaultDeviceChangedArgs(this));
+        }
+
+        protected virtual void OnStateChanged(DeviceState state)
+        {
+            _stateChanged.OnNext(new DeviceStateChangedArgs(this, state));
+        }
+
+        protected virtual void OnPeakValueChanged(double peakValue)
+        {
+            _peakValueChanged.OnNext(new DevicePeakValueChangedArgs(this, peakValue));
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            _muteChanged.Dispose();
+            _stateChanged.Dispose();
+            _volumeChanged.Dispose();
+            _defaultChanged.Dispose();
+            _propertyChanged.Dispose();
+            _peakValueChanged.Dispose();
+        }
     }
 }

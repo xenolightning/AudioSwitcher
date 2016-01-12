@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using AudioSwitcher.Scripting.JavaScript.Internal;
 using Jurassic;
 using Jurassic.Library;
-using AudioSwitcher.Scripting.JavaScript.Internal;
 
 namespace AudioSwitcher.Scripting.JavaScript
 {
@@ -41,10 +41,12 @@ namespace AudioSwitcher.Scripting.JavaScript
         {
             _libraryDictionary = new Dictionary<string, IScriptLibrary>();
 
-            InternalEngine = new ScriptEngine();
-            InternalEngine.EnableExposedClrTypes = true;
+            InternalEngine = new ScriptEngine
+            {
+                EnableExposedClrTypes = true
+            };
 
-            InternalEngine.SetGlobalFunction("lib", new Func<string, ObjectInstance>(ImportLibrary));
+            InternalEngine.SetGlobalFunction("require", new Func<string, ObjectInstance>(ImportLibrary));
             SetOutput(new NullScriptOutput());
         }
 
@@ -63,8 +65,11 @@ namespace AudioSwitcher.Scripting.JavaScript
 
         public override void SetOutput(IScriptOutput output)
         {
-            var console = new FirebugConsole(InternalEngine);
-            console.Output = new ScriptOutputProxy(output);
+            var console = new FirebugConsole(InternalEngine)
+            {
+                Output = new ScriptOutputProxy(output)
+            };
+
             InternalEngine.SetGlobalValue("console", console);
         }
 

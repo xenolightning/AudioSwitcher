@@ -16,10 +16,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         public TestLibrary()
         {
             Delegate = () => Property;
-            DelegateWithArguments = x =>
-            {
-                return x;
-            };
+            DelegateWithArguments = x => x;
         }
 
         public int Property { get; set; }

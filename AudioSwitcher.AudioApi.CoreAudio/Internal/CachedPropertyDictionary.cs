@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
@@ -9,7 +10,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     internal class CachedPropertyDictionary : IPropertyDictionary
     {
         private Dictionary<PropertyKey, object> _properties;
-        IPropertyStore _propertyStoreInteface = null;
+        private IPropertyStore _propertyStoreInteface;
 
         public CachedPropertyDictionary()
         {
@@ -23,7 +24,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// an invalid state it will continue to use it's current internal property cache
         /// </summary>
         /// <param name="device"></param>
-        public void TryLoadFrom(IMMDevice device)
+        public void TryLoadFrom(IMultimediaDevice device)
         {
             var properties = GetProperties(device);
 
@@ -31,14 +32,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 _properties = properties;
         }
 
-        private Dictionary<PropertyKey, object> GetProperties(IMMDevice device)
+        private Dictionary<PropertyKey, object> GetProperties(IMultimediaDevice device)
         {
             var properties = new Dictionary<PropertyKey, object>();
             //Opening in write mode, can cause exceptions to be thrown when not run as admin.
             //This tries to open in write mode if available
             try
             {
-                Marshal.ThrowExceptionForHR(device.OpenPropertyStore(StorageAccessMode.ReadWrite, out _propertyStoreInteface));
+                device.OpenPropertyStore(StorageAccessMode.ReadWrite, out _propertyStoreInteface);
                 Mode = AccessMode.ReadWrite;
             }
             catch
@@ -67,7 +68,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                         properties.Add(key, variant.Value);
                 }
             }
-            catch
+            catch(Exception)
             {
                 Debug.WriteLine("Cannot get property values");
                 return new Dictionary<PropertyKey, object>();
@@ -76,15 +77,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return properties;
         }
 
-        public AccessMode Mode
-        {
-            get;
-            private set;
-        }
+        public AccessMode Mode { get; private set; }
 
         public int Count
         {
-            get { return _properties == null ? 0 : _properties.Count; }
+            get
+            {
+                return _properties == null ? 0 : _properties.Count;
+            }
         }
 
         public object this[PropertyKey key]
@@ -131,10 +131,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         public void Dispose()
         {
             _properties = null;
-            ComThread.BeginInvoke(() =>
-            {
-                _propertyStoreInteface = null;
-            });
+            ComThread.BeginInvoke(() => { _propertyStoreInteface = null; });
         }
     }
 }

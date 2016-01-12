@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+    <metadata>
+        <id>AudioSwitcher.Scripting.JavaScript</id>
+        <version>1.0.0-beta1</version>
+        <title>Audio Switcher JavaScript</title>
+        <authors>Sean Chapman</authors>
+        <owners>Sean Chapman</owners>
+        <licenseUrl>https://github.com/xenolightning/AudioSwitcher/blob/master/README.md</licenseUrl>
+        <projectUrl>https://github.com/xenolightning/AudioSwitcher</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>JavaScript extension that enables parsing and running of JavaScript files to perform functions of Audio Switcher.</description>
+        <summary>JavaScript extension that enables parsing and running of JavaScript files to perform functions of Audio Switcher.</summary>
+        <releaseNotes>- Initial Version</releaseNotes>
+        <copyright />
+        <language>en-US</language>
+        <tags>audio default device switch audioswitcher</tags>
+        <dependencies>
+            <dependency id="AudioSwitcher.AudioApi" version="3.0.0-beta1" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="..\..\bin\Release\AudioSwitcher.Scripting.dll" target="lib\portable-net4+wp7+win8\AudioSwitcher.Scripting.dll" />
+        <file src="..\..\bin\Release\AudioSwitcher.Scripting.JavaScript.dll" target="lib\portable-net4+wp7+win8\AudioSwitcher.Scripting.JavaScript.dll" />
+        <file src="..\..\bin\Release\Jurassic.dll" target="lib\portable-net4+wp7+win8\Jurassic.dll" />
+    </files>
+</package>

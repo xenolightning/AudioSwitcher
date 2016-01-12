@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -43,13 +42,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 
         public int ThreadId
         {
-            get { return _thread == null ? -1 : _thread.ManagedThreadId; }
+            get
+            {
+                return _thread == null ? -1 : _thread.ManagedThreadId;
+            }
         }
 
         /// <summary>Gets the maximum concurrency level supported by this scheduler.</summary>
         public override int MaximumConcurrencyLevel
         {
-            get { return 1; }
+            get
+            {
+                return 1;
+            }
         }
 
         /// <summary>

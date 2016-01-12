@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
@@ -18,6 +19,7 @@ namespace HookingSample
         private DefaultDeviceHook _hook;
         private Process _selectedProcess;
         private CoreAudioDevice _selectedAudioDevice;
+        private Timer _hookCheckTimer;
 
         public ObservableCollection<Process> Processes
         {
@@ -86,7 +88,66 @@ namespace HookingSample
             Controller = new CoreAudioController();
 
             DataContext = this;
+
+            Controller.DefaultPlaybackDevice.SetAsDefault();
+
+            Controller.DefaultPlaybackDevice.SessionController.All();
+
+            Controller.DefaultCaptureDevice.PeakValueChanged.Subscribe(x =>
+            {
+                Console.WriteLine(x.PeakValue);
+            });
+
+            Controller.DefaultPlaybackDevice.PeakValueChanged.Subscribe(x =>
+            {
+                //Console.WriteLine(x.PeakValue);
+            });
+
+            Thread.Sleep(100);
+
+            foreach (var audioSession in Controller.DefaultPlaybackDevice.SessionController.All())
+            {
+                Console.WriteLine(audioSession.Id);
+            }
+
+            //foreach (var audioSession in Controller.DefaultPlaybackDevice.SessionController.All())
+            //{
+            //    audioSession.VolumeChanged.Subscribe(v =>
+            //    {
+            //        Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.PeakValue);
+            //    });
+
+            //    audioSession.PeakValueChanged.Throttle(TimeSpan.FromMilliseconds(10)).Subscribe(v =>
+            //    {
+            //        Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.PeakValue);
+            //    });
+
+            //    audioSession.MuteChanged.Subscribe(m =>
+            //    {
+            //        Console.WriteLine("{0} - {1}", m.Session.DisplayName, m.IsMuted);
+            //    });
+            //}
+
+            //Controller.DefaultPlaybackDevice.SessionController.SessionCreated.Subscribe(x =>
+            //{
+            //    x.VolumeChanged.Subscribe(v =>
+            //    {
+            //        Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.PeakValue);
+            //    });
+            //});
+
+            //Controller.DefaultPlaybackDevice.SessionController.SessionDisconnected.Subscribe(x =>
+            //{
+            //    Console.WriteLine(x);
+
+            //    foreach (var session in Controller.DefaultPlaybackDevice.SessionController)
+            //    {
+            //        Console.WriteLine("{0} - {1}", session.DisplayName, session.PeakValue);
+            //    }
+
+            //});
         }
+
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
@@ -100,7 +161,7 @@ namespace HookingSample
         {
             Dispatcher.BeginInvoke((Action)(() =>
             {
-                Process[] processlist = Process.GetProcesses();
+                var processlist = Process.GetProcesses();
                 Processes.Clear();
                 foreach (var p in processlist.OrderBy(x => x.ProcessName))
                 {
@@ -122,12 +183,20 @@ namespace HookingSample
 
             var sId = SelectedAudioDevice.RealId;
 
-            Hook = new DefaultDeviceHook(SelectedProcess.Id, (dataFlow, role) =>
+            Hook = new DefaultDeviceHook((dataFlow, role) => sId);
+
+            if (Hook.Hook(SelectedProcess.Id))
             {
-                return sId;
-            });
-            Hook.Hook();
-            Controller.SetDefaultDevice(Controller.DefaultPlaybackDevice);
+                Hook.Complete += pid =>
+                {
+                    UnHook();
+                };
+            }
+            else
+            {
+                Hook = null;
+                MessageBox.Show(this, "Could not hook process");
+            }
         }
 
         private void UnHook()
@@ -136,7 +205,6 @@ namespace HookingSample
             {
                 Hook.Dispose();
                 Hook = null;
-                Controller.SetDefaultDevice(Controller.DefaultPlaybackDevice);
             }
         }
 
@@ -157,8 +225,9 @@ namespace HookingSample
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

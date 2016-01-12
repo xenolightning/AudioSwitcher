@@ -27,7 +27,7 @@ using AudioSwitcher.AudioApi.CoreAudio.Threading;
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
-    ///     Audio Endpoint Volume Channels
+    ///     Audio Endpoint VolumeChanged Channels
     /// </summary>
     internal class AudioEndpointVolumeChannels
     {
@@ -39,9 +39,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ComThread.Assert();
             _audioEndPointVolume = parent;
 
-            int channelCount = Count;
+            var channelCount = Count;
             _channels = new AudioEndpointVolumeChannel[channelCount];
-            for (int i = 0; i < channelCount; i++)
+            for (var i = 0; i < channelCount; i++)
             {
                 _channels[i] = new AudioEndpointVolumeChannel(_audioEndPointVolume, i);
             }
@@ -70,10 +70,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return ComThread.Invoke(() =>
-                {
-                    return _channels[index];
-                });
+                return ComThread.Invoke(() => _channels[index]);
             }
         }
     }

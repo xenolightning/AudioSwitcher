@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using AudioSwitcher.AudioApi.Session;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public static class Extensions
     {
-        public const string GUID_REGEX = @"([a-fA-F0-9]{8}[-][a-fA-F0-9]{4}[-][a-fA-F0-9]{4}[-][a-fA-F0-9]{4}[-][a-fA-F0-9]{12})";
+        private const string GUID_REGEX =
+            @"([a-fA-F0-9]{8}[-][a-fA-F0-9]{4}[-][a-fA-F0-9]{4}[-][a-fA-F0-9]{4}[-][a-fA-F0-9]{12})";
 
         internal static EDataFlow AsEDataFlow(this DeviceType type)
         {
@@ -118,8 +122,43 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 yield return new Guid(match.ToString());
             }
-
         }
 
+        internal static EAudioSessionState AsEAudioSessionState(this AudioSessionState state)
+        {
+            switch (state)
+            {
+                case AudioSessionState.Inactive:
+                    return EAudioSessionState.AudioSessionStateInactive;
+                case AudioSessionState.Active:
+                    return EAudioSessionState.AudioSessionStateActive;
+                case AudioSessionState.Expired:
+                    return EAudioSessionState.AudioSessionStateExpired;
+                default:
+                    throw new ArgumentOutOfRangeException("state", state, null);
+            }
+        }
+
+        internal static AudioSessionState AsAudioSessionState(this EAudioSessionState state)
+        {
+            switch (state)
+            {
+                case EAudioSessionState.AudioSessionStateInactive:
+                    return AudioSessionState.Inactive;
+                case EAudioSessionState.AudioSessionStateActive:
+                    return AudioSessionState.Active;
+                case EAudioSessionState.AudioSessionStateExpired:
+                    return AudioSessionState.Expired;
+                default:
+                    throw new ArgumentOutOfRangeException("state", state, null);
+            }
+        }
+
+        internal static Task Delay(int milliseconds)
+        {
+            var tcs = new TaskCompletionSource<object>();
+            new Timer(_ => tcs.SetResult(null)).Change(milliseconds, -1);
+            return tcs.Task;
+        }
     }
 }

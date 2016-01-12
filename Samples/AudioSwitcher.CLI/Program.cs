@@ -2,6 +2,7 @@
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
 using AudioSwitcher.AudioApi.Sandbox;
+using AudioSwitcher.Scripting;
 using AudioSwitcher.Scripting.JavaScript;
 using AudioSwitcher.Scripting.JavaScript.Internal;
 
@@ -28,7 +29,7 @@ namespace AudioSwitcher.CLI
             }
 
             //Process file name
-            string fName = args[args.Length - 1];
+            var fName = args[args.Length - 1];
             if (!fName.EndsWith(".js"))
             {
                 Console.WriteLine("Invalid input file");
@@ -57,7 +58,7 @@ namespace AudioSwitcher.CLI
                 try
                 {
                     Console.WriteLine("Executing {0}...", fName);
-                    var result = engine.Execute(new Scripting.FileScriptSource(fName));
+                    var result = engine.Execute(new FileScriptSource(fName));
                     if (!result.Success)
                         throw result.ExecutionException;
                 }

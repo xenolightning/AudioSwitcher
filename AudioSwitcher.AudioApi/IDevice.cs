@@ -17,6 +17,8 @@ namespace AudioSwitcher.AudioApi
 
         DeviceIcon Icon { get; }
 
+        string IconPath { get; }
+
         bool IsDefaultDevice { get; }
 
         bool IsDefaultCommunicationsDevice { get; }
@@ -31,7 +33,19 @@ namespace AudioSwitcher.AudioApi
 
         bool IsMuted { get; }
 
-        int Volume { get; set; }
+        double Volume { get; set; }
+
+        IObservable<DeviceVolumeChangedArgs> VolumeChanged { get; }
+
+        IObservable<DeviceMuteChangedArgs> MuteChanged { get; }
+
+        IObservable<DevicePropertyChangedArgs> PropertyChanged { get; }
+
+        IObservable<DefaultDeviceChangedArgs> DefaultChanged { get; }
+
+        IObservable<DeviceStateChangedArgs> StateChanged { get; }
+
+        IObservable<DevicePeakValueChangedArgs> PeakValueChanged { get; }
 
         bool SetAsDefault();
 
@@ -49,18 +63,5 @@ namespace AudioSwitcher.AudioApi
 
         Task<bool> ToggleMuteAsync();
 
-        event EventHandler<DeviceChangedEventArgs> VolumeChanged;
-
-        [Obsolete("Use Mute(true) instead")]
-        bool Mute();
-
-        [Obsolete("Use MuteAsync(true) instead")]
-        Task<bool> MuteAsync();
-
-        [Obsolete("Use Mute(false) instead")]
-        bool UnMute();
-
-        [Obsolete("Use MuteAsync(false) instead")]
-        Task<bool> UnMuteAsync();
     }
 }

@@ -6,7 +6,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
     ///     is defined in WTypes.h
     /// </summary>
     [Flags]
-    internal enum ClsCtx: uint
+    internal enum ClsCtx : uint
     {
         InprocServer = 0x1,
         InprocHandler = 0x2,

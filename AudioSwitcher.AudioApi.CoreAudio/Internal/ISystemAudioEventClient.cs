@@ -8,12 +8,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         void OnDeviceStateChanged(string deviceId, EDeviceState newState);
 
         /// <summary>
-        ///     Device Added
+        ///     Device DeviceAdded
         /// </summary>
         void OnDeviceAdded(string pwstrDeviceId);
 
         /// <summary>
-        ///     Device Removed
+        ///     Device DeviceRemoved
         /// </summary>
         void OnDeviceRemoved(string deviceId);
 
@@ -28,6 +28,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <param name="pwstrDeviceId"></param>
         /// <param name="key"></param>
         void OnPropertyValueChanged(string pwstrDeviceId, PropertyKey key);
-
     }
 }

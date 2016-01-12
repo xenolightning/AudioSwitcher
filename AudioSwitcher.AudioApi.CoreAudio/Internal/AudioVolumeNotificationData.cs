@@ -25,7 +25,7 @@ using System;
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
     /// <summary>
-    ///     Audio Volume Notification Data
+    ///     Audio VolumeChanged Notification Data
     /// </summary>
     internal class AudioVolumeNotificationData
     {
@@ -36,7 +36,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly bool _muted;
 
         /// <summary>
-        ///     Audio Volume Notification Data
+        ///     Audio VolumeChanged Notification Data
         /// </summary>
         /// <param name="eventContext"></param>
         /// <param name="muted"></param>
@@ -56,7 +56,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public Guid EventContext
         {
-            get { return _eventContext; }
+            get
+            {
+                return _eventContext;
+            }
         }
 
         /// <summary>
@@ -64,15 +67,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public bool Muted
         {
-            get { return _muted; }
+            get
+            {
+                return _muted;
+            }
         }
 
         /// <summary>
-        ///     Master Volume
+        ///     Master VolumeChanged
         /// </summary>
         public float MasterVolume
         {
-            get { return _masterVolume; }
+            get
+            {
+                return _masterVolume;
+            }
         }
 
         /// <summary>
@@ -80,15 +89,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// </summary>
         public int Channels
         {
-            get { return _channels; }
+            get
+            {
+                return _channels;
+            }
         }
 
         /// <summary>
-        ///     Channel Volume
+        ///     Channel VolumeChanged
         /// </summary>
         public float[] ChannelVolume
         {
-            get { return _channelVolume; }
+            get
+            {
+                return _channelVolume;
+            }
         }
     }
 }

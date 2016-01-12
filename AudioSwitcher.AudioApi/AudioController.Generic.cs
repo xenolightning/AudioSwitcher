@@ -2,25 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AudioSwitcher.AudioApi.Observables;
 
 namespace AudioSwitcher.AudioApi
 {
     public abstract class AudioController<T> : IAudioController<T>
         where T : class, IDevice
     {
+        private readonly AsyncBroadcaster<DeviceChangedArgs> _audioDeviceChanged;
+
+        protected AudioController()
+        {
+            _audioDeviceChanged = new AsyncBroadcaster<DeviceChangedArgs>();
+        }
+
         protected const DeviceState DEFAULT_DEVICE_STATE_FILTER =
             DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled;
-
-        public event EventHandler<DeviceChangedEventArgs> AudioDeviceChanged;
-
-        protected virtual void OnAudioDeviceChanged(object sender, DeviceChangedEventArgs e)
-        {
-            var handler = AudioDeviceChanged;
-
-            //Bubble the event
-            if (handler != null)
-                handler(sender, e);
-        }
 
         public T DefaultPlaybackDevice
         {
@@ -70,6 +67,11 @@ namespace AudioSwitcher.AudioApi
             }
         }
 
+        public IObservable<DeviceChangedArgs> AudioDeviceChanged
+        {
+            get { return _audioDeviceChanged.AsObservable(); }
+        }
+
         public virtual T GetDevice(Guid id)
         {
             return GetDevice(id, DEFAULT_DEVICE_STATE_FILTER);
@@ -81,12 +83,14 @@ namespace AudioSwitcher.AudioApi
         }
 
         public abstract T GetDevice(Guid id, DeviceState state);
+
         public virtual Task<T> GetDeviceAsync(Guid id, DeviceState state)
         {
             return Task.Factory.StartNew(() => GetDevice(id, state));
         }
 
         public abstract T GetDefaultDevice(DeviceType deviceType, Role role);
+
         public virtual Task<T> GetDefaultDeviceAsync(DeviceType deviceType, Role role)
         {
             return Task.Factory.StartNew(() => GetDefaultDevice(deviceType, role));
@@ -201,26 +205,50 @@ namespace AudioSwitcher.AudioApi
 
         IDevice IAudioController.DefaultPlaybackDevice
         {
-            get { return DefaultPlaybackDevice; }
-            set { SetDefaultDevice(value); }
+            get
+            {
+                return DefaultPlaybackDevice;
+            }
+            set
+            {
+                SetDefaultDevice(value);
+            }
         }
 
         IDevice IAudioController.DefaultPlaybackCommunicationsDevice
         {
-            get { return DefaultPlaybackCommunicationsDevice; }
-            set { SetDefaultCommunicationsDevice(value); }
+            get
+            {
+                return DefaultPlaybackCommunicationsDevice;
+            }
+            set
+            {
+                SetDefaultCommunicationsDevice(value);
+            }
         }
 
         IDevice IAudioController.DefaultCaptureDevice
         {
-            get { return DefaultCaptureDevice; }
-            set { SetDefaultDevice(value); }
+            get
+            {
+                return DefaultCaptureDevice;
+            }
+            set
+            {
+                SetDefaultDevice(value);
+            }
         }
 
         IDevice IAudioController.DefaultCaptureCommunicationsDevice
         {
-            get { return DefaultCaptureCommunicationsDevice; }
-            set { SetDefaultCommunicationsDevice(value); }
+            get
+            {
+                return DefaultCaptureCommunicationsDevice;
+            }
+            set
+            {
+                SetDefaultCommunicationsDevice(value);
+            }
         }
 
 
@@ -359,7 +387,14 @@ namespace AudioSwitcher.AudioApi
             Dispose(true);
         }
 
-        protected virtual void Dispose(bool disposing) { }
+        protected virtual void OnAudioDeviceChanged(DeviceChangedArgs e)
+        {
+            _audioDeviceChanged.OnNext(e);
+        }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            _audioDeviceChanged.Dispose();
+        }
     }
 }

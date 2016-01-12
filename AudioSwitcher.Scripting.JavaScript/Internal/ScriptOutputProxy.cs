@@ -22,10 +22,10 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
         {
             // Convert the objects to a string.
             var message = new StringBuilder();
-            for (int i = 0; i < objects.Length; i++)
+            foreach (var t in objects)
             {
                 message.Append(' ');
-                message.Append(TypeConverter.ToString(objects[i]));
+                message.Append(TypeConverter.ToString(t));
             }
 
             switch (style)
