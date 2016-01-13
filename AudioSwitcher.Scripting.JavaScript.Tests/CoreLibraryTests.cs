@@ -1,6 +1,7 @@
 ﻿using AudioSwitcher.AudioApi;
 using AudioSwitcher.Scripting.JavaScript.Internal;
 using AudioSwitcher.Tests.Common;
+using Jint.Native;
 using Xunit;
 
 namespace AudioSwitcher.Scripting.JavaScript.Tests
@@ -19,7 +20,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
             {
                 engine.AddCoreLibrary();
                 engine.Execute("Core = require('AudioSwitcher');");
-                Assert.Equal(true, engine.InternalEngine.HasGlobalValue("Core"));
+                Assert.NotEqual(JsValue.Undefined, engine.InternalEngine.GetValue("Core"));
             }
         }
 

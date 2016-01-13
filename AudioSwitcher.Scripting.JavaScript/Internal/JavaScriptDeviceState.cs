@@ -1,34 +1,24 @@
 ﻿using System;
 using AudioSwitcher.AudioApi;
-using Jurassic;
-using Jurassic.Library;
 
 namespace AudioSwitcher.Scripting.JavaScript.Internal
 {
-    public sealed class JavaScriptDeviceState : ObjectInstance
+    public sealed class JavaScriptDeviceState
     {
 
-        [JSField]
         public const string ACTIVE = "ACTIVE";
 
-        [JSField]
         public const string DISABLED = "DISABLED";
 
-        [JSField]
         public const string NOTPRESENT = "NOTPRESENT";
 
-        [JSField]
         public const string UNPLUGGED = "UNPLUGGED";
 
-        [JSField]
         public const string ALL = "ALL";
 
 
-        internal JavaScriptDeviceState(ScriptEngine engine)
-            : base(engine)
+        internal JavaScriptDeviceState()
         {
-            PopulateFields();
-            PopulateFunctions();
         }
 
         internal static string GetJavascriptDeviceState(DeviceState state)

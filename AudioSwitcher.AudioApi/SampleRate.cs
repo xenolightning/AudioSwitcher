@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace AudioSwitcher.AudioApi
+﻿namespace AudioSwitcher.AudioApi
 {
     /// <summary>
     /// Common sample rates. Defining an enum so it's easier to control valid values

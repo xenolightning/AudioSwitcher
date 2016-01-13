@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{A1D8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.CLI", "Samples\AudioSwitcher.CLI\AudioSwitcher.CLI.csproj", "{479A75E0-AFD7-4FDD-BB2C-1F64A7A0C4B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.JavaScript.Tests", "AudioSwitcher.Scripting.Tests\AudioSwitcher.Scripting.JavaScript.Tests.csproj", "{7395D2F2-2FCA-4F16-8903-3C9E565CF976}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.JavaScript.Tests", "AudioSwitcher.JavaScript.Scripting.Tests\AudioSwitcher.Scripting.JavaScript.Tests.csproj", "{7395D2F2-2FCA-4F16-8903-3C9E565CF976}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4F8309BD-D3FD-4903-8054-0B1EED7D385E}"
 EndProject

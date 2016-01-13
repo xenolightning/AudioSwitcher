@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using AudioSwitcher.AudioApi.Observables;
-using Moq;
+﻿using System.Linq;
 using Xunit;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Tests

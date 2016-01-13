@@ -2,22 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using AudioSwitcher.AudioApi;
-using Jurassic.Library;
 
 namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
 {
     internal sealed partial class AudioSwitcherLibrary
     {
-        [JSProperty(Name = "DeviceType")]
         public JavaScriptDeviceType DeviceType
         {
             get { return _deviceType; }
         }
 
-        [JSProperty(Name = "DeviceState")]
         public JavaScriptDeviceState DeviceState
         {
             get { return _deviceState; }
+        }
+
+        public JavaScriptAudioDevice[] GetAudioDevices()
+        {
+            return GetAudioDevices(JavaScriptDeviceType.ALL);
         }
 
         /// <summary>
@@ -25,8 +27,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        [JSFunction(Name = "getAudioDevices")]
-        public ArrayInstance GetAudioDevices([DefaultParameterValue(JavaScriptDeviceType.ALL)] string type = JavaScriptDeviceType.ALL)
+        public JavaScriptAudioDevice[] GetAudioDevices(string type)
         {
             var devices = new List<IDevice>();
 
@@ -46,34 +47,32 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
 
             //if empty then return empty array
             if (devices.Count == 0)
-                return Engine.Array.New();
+                return new JavaScriptAudioDevice[] {};
 
-            return Engine.EnumerableToArray(devices.Select(CreateJavaScriptAudioDevice));
+            return devices.Select(CreateJavaScriptAudioDevice).ToArray();
         }
 
         /// <summary>
         ///     Macro function used to list all the devices
         /// </summary>
         /// <returns></returns>
-        [JSFunction(Name = "getPlaybackDevices")]
-        public ArrayInstance GetPlaybackDevices()
+        public JavaScriptAudioDevice[] GetPlaybackDevices()
         {
             var devices = new List<IDevice>();
             devices.AddRange(AudioController.GetPlaybackDevices());
 
             //if empty then return empty array
             if (devices.Count == 0)
-                return Engine.Array.New();
+                return new JavaScriptAudioDevice[] { };
 
-            return Engine.EnumerableToArray(devices.Select(CreateJavaScriptAudioDevice));
+            return devices.Select(CreateJavaScriptAudioDevice).ToArray();
         }
 
         /// <summary>
         ///     Macro function used to list all the devices
         /// </summary>
         /// <returns></returns>
-        [JSFunction(Name = "getCaptureDevices")]
-        public ArrayInstance GetCaptureDevices()
+        public JavaScriptAudioDevice[] GetCaptureDevices()
         {
             var devices = new List<IDevice>();
 
@@ -81,9 +80,14 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
 
             //if empty then return empty array
             if (devices.Count == 0)
-                return Engine.Array.New();
+                return new JavaScriptAudioDevice[] { };
 
-            return Engine.EnumerableToArray(devices.Select(CreateJavaScriptAudioDevice));
+            return devices.Select(CreateJavaScriptAudioDevice).ToArray();
+        }
+
+        public JavaScriptAudioDevice GetAudioDevice(string name)
+        {
+            return GetAudioDevice(name, JavaScriptDeviceType.ALL);
         }
 
         /// <summary>
@@ -92,8 +96,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
         /// <param name="name"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        [JSFunction(Name = "getAudioDevice")]
-        public JavaScriptAudioDevice GetAudioDevice(string name, [DefaultParameterValue(JavaScriptDeviceType.ALL)] string type = JavaScriptDeviceType.ALL)
+        public JavaScriptAudioDevice GetAudioDevice(string name, string type)
         {
             IDevice device = null;
 
@@ -127,7 +130,6 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
         /// </summary>
         /// <param name="type">PLAYBACK, CAPTURE</param>
         /// <returns></returns>
-        [JSFunction(Name = "getDefaultDevice")]
         public JavaScriptAudioDevice GetDefaultDevice(string type)
         {
             switch (type)
@@ -146,7 +148,6 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
         /// </summary>
         /// <param name="type">PLAYBACK, CAPTURE</param>
         /// <returns></returns>
-        [JSFunction(Name = "getDefaultCommunicationDevice")]
         public JavaScriptAudioDevice GetDefaultCommunicationDevice(string type)
         {
             switch (type)

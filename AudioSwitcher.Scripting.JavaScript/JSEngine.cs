@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using AudioSwitcher.Scripting.JavaScript.Internal;
-using Jurassic;
-using Jurassic.Library;
+using Jint;
+using Jint.Runtime;
 
 namespace AudioSwitcher.Scripting.JavaScript
 {
@@ -13,7 +13,7 @@ namespace AudioSwitcher.Scripting.JavaScript
         private readonly Dictionary<string, IScriptLibrary> _libraryDictionary;
         private bool _isDebug;
 
-        public ScriptEngine InternalEngine
+        public Engine InternalEngine
         {
             get;
             private set;
@@ -33,7 +33,7 @@ namespace AudioSwitcher.Scripting.JavaScript
             set
             {
                 _isDebug = value;
-                InternalEngine.SetGlobalValue("isDebug", value);
+                InternalEngine.SetValue("isDebug", value);
             }
         }
 
@@ -41,36 +41,31 @@ namespace AudioSwitcher.Scripting.JavaScript
         {
             _libraryDictionary = new Dictionary<string, IScriptLibrary>();
 
-            InternalEngine = new ScriptEngine
+            InternalEngine = new Engine(cfg =>
             {
-                EnableExposedClrTypes = true
-            };
+                cfg.AllowClr();
+            });
 
-            InternalEngine.SetGlobalFunction("require", new Func<string, ObjectInstance>(ImportLibrary));
+            InternalEngine.SetValue("require", new Func<string, object>(ImportLibrary));
             SetOutput(new NullScriptOutput());
         }
 
-        private ObjectInstance ImportLibrary(string libraryName)
+        private object ImportLibrary(string libraryName)
         {
             if (!_libraryDictionary.ContainsKey(libraryName))
                 return null;
 
-            var library = _libraryDictionary[libraryName];
-
-            if (library is ObjectInstance)
-                return library as ObjectInstance;
-
-            return new ClrInstanceWrapper(InternalEngine, library);
+            return _libraryDictionary[libraryName];
         }
 
         public override void SetOutput(IScriptOutput output)
         {
-            var console = new FirebugConsole(InternalEngine)
-            {
-                Output = new ScriptOutputProxy(output)
-            };
+            //var console = new FirebugConsole(InternalEngine)
+            //{
+            //    Output = new ScriptOutputProxy(output)
+            //};
 
-            InternalEngine.SetGlobalValue("console", console);
+            InternalEngine.SetValue("console", new ScriptOutputProxy(output));
         }
 
         public override void AddLibrary(string name, IScriptLibrary libraryInstance)
@@ -91,9 +86,13 @@ namespace AudioSwitcher.Scripting.JavaScript
             try
             {
                 if (args != null)
-                    InternalEngine.SetGlobalValue("args", InternalEngine.EnumerableToArray(args));
+                    InternalEngine.SetValue("args", args.ToArray());
 
-                InternalEngine.Execute(new ScriptSourceProxy(scriptSource));
+                using (var reader = scriptSource.GetReader())
+                {
+                    InternalEngine.Execute(reader.ReadToEnd());
+                }
+
                 return new ExecutionResult
                 {
                     Success = true
@@ -126,15 +125,16 @@ namespace AudioSwitcher.Scripting.JavaScript
             try
             {
                 if (args != null)
-                    InternalEngine.SetGlobalValue("args", InternalEngine.EnumerableToArray(args));
+                    InternalEngine.SetValue("args", args.ToArray());
 
                 TReturn val;
+
                 if (typeof(TReturn).IsArray)
                     val = EvaluateArray<TReturn>(scriptSource);
                 else if (typeof(IEnumerable).IsAssignableFrom(typeof(TReturn)) && typeof(TReturn) != typeof(string))
                     val = EvaluateEnumerable<TReturn>(scriptSource);
                 else
-                    val = InternalEngine.Evaluate<TReturn>(scriptSource.GetReader().ReadToEnd());
+                    val = (TReturn)Convert.ChangeType(InternalEngine.Execute(scriptSource.GetReader().ReadToEnd()).GetCompletionValue().ToObject(), typeof(TReturn));
 
                 return new ExecutionResult<TReturn>
                 {
@@ -172,10 +172,11 @@ namespace AudioSwitcher.Scripting.JavaScript
             var toArrayMethod = typeof(Enumerable).GetMethod("ToArray");
 
             var returnType = typeof(TReturn);
-            var obj = InternalEngine.Evaluate<ArrayInstance>(scriptSource.GetReader().ReadToEnd()).ElementValues.ToArray();
+            var obj = InternalEngine.Execute(scriptSource.GetReader().ReadToEnd()).GetCompletionValue().ToObject();
+
 
             var targetType = returnType.GetElementType();
-            var cast = castMethod.MakeGenericMethod(targetType).Invoke(null, new object[] { obj });
+            var cast = castMethod.MakeGenericMethod(targetType).Invoke(null, new[] { obj });
             return (TReturn)toArrayMethod.MakeGenericMethod(targetType).Invoke(null, new[] { cast });
         }
 
@@ -188,10 +189,10 @@ namespace AudioSwitcher.Scripting.JavaScript
             var toListMethod = typeof(Enumerable).GetMethod("ToList");
 
             var returnType = typeof(TReturn);
-            var obj = InternalEngine.Evaluate<ArrayInstance>(scriptSource.GetReader().ReadToEnd()).ElementValues.ToArray();
+            var obj = InternalEngine.Execute(scriptSource.GetReader().ReadToEnd()).GetCompletionValue().ToObject();
 
             var targetType = returnType.GetGenericArguments()[0];
-            var cast = castMethod.MakeGenericMethod(targetType).Invoke(null, new object[] { obj });
+            var cast = castMethod.MakeGenericMethod(targetType).Invoke(null, new[] { obj });
             return (TReturn)toListMethod.MakeGenericMethod(targetType).Invoke(null, new[] { cast });
         }
 

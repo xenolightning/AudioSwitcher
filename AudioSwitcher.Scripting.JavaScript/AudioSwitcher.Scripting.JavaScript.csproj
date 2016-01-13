@@ -32,8 +32,9 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Jurassic">
-      <HintPath>..\lib\Jurassic\NET40\Jurassic.dll</HintPath>
+    <Reference Include="Jint, Version=2.6.0.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Jint.2.7.1\lib\portable-net40+sl50+win+WindowsPhoneApp81+wp80\Jint.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -46,23 +47,24 @@
     <Compile Include="Internal\Libraries\AudioSwitcherLibrary.cs" />
     <Compile Include="Internal\Libraries\AudioSwitcherLibrary.Functions.cs" />
     <Compile Include="Internal\Libraries\CoreLibrary.cs" />
-    <Compile Include="Internal\Libraries\CoreLibrary.Functions.cs" />
     <Compile Include="Internal\ScriptEngineExtensions.cs" />
     <Compile Include="Internal\ScriptOutputProxy.cs" />
-    <Compile Include="Internal\ScriptSourceProxy.cs" />
     <Compile Include="JsEngine.cs" />
     <Compile Include="JsInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj">
-      <Project>{8fc5a778-2a85-4cc8-a445-b9f2019a945b}</Project>
+      <Project>{7a4e260c-007e-4615-a92b-e849e7b641ab}</Project>
       <Name>AudioSwitcher.AudioApi</Name>
     </ProjectReference>
     <ProjectReference Include="..\AudioSwitcher.Scripting\AudioSwitcher.Scripting.csproj">
       <Project>{99F4CE07-B44F-45C2-AE1D-3732D695D61D}</Project>
       <Name>AudioSwitcher.Scripting</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

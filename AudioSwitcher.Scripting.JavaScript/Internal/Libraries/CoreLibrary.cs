@@ -1,16 +1,16 @@
-﻿using Jurassic;
-using Jurassic.Library;
+﻿
+using System.Threading;
 
 namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
 {
-    internal sealed partial class CoreLibrary : ObjectInstance, IScriptLibrary
+    internal sealed partial class CoreLibrary : IScriptLibrary
     {
-        public CoreLibrary(ScriptEngine engine)
-            : base(engine)
+        public CoreLibrary()
         {
-            PopulateFields();
-            PopulateFunctions();
         }
-
+        public void Sleep(int s)
+        {
+            Thread.Sleep(s);
+        }
     }
 }

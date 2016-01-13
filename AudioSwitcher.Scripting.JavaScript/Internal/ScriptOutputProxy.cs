@@ -1,7 +1,5 @@
-﻿using System;
-using System.Text;
-using Jurassic;
-using Jurassic.Library;
+﻿using System.Text;
+using Jint.Native;
 
 namespace AudioSwitcher.Scripting.JavaScript.Internal
 {
@@ -9,7 +7,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
     /// <summary>
     /// Represents an implementation of the Firebug API using the standard console.
     /// </summary>
-    internal class ScriptOutputProxy : IFirebugConsoleOutput
+    internal class ScriptOutputProxy
     {
         private readonly IScriptOutput _output;
 
@@ -18,29 +16,35 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             _output = output;
         }
 
-        public void Log(FirebugConsoleMessageStyle style, object[] objects)
+        public void Log(JsValue[] objects)
         {
             // Convert the objects to a string.
             var message = new StringBuilder();
             foreach (var t in objects)
             {
                 message.Append(' ');
-                message.Append(TypeConverter.ToString(t));
+                message.Append(t.AsString());
             }
 
-            switch (style)
+            _output.Log(message.ToString());
+        }
+
+        public void Error(JsValue[] objects)
+        {
+            // Convert the objects to a string.
+            var message = new StringBuilder();
+            foreach (var t in objects)
             {
-                case FirebugConsoleMessageStyle.Regular:
-                case FirebugConsoleMessageStyle.Information:
-                case FirebugConsoleMessageStyle.Warning:
-                    _output.Log(message.ToString());
-                    break;
-                case FirebugConsoleMessageStyle.Error:
-                    _output.Error(message.ToString());
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("style");
+                message.Append(' ');
+                message.Append(t.AsString());
             }
+
+            _output.Error(message.ToString());
+        }
+
+        public void Warn(JsValue[] objects)
+        {
+            Log(objects);
         }
 
         public void Clear()

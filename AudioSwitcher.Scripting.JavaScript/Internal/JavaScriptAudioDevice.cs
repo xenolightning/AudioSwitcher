@@ -1,14 +1,11 @@
 ﻿using System;
 using AudioSwitcher.AudioApi;
-using Jurassic;
-using Jurassic.Library;
 
 namespace AudioSwitcher.Scripting.JavaScript.Internal
 {
-    internal sealed partial class JavaScriptAudioDevice : ObjectInstance
+    internal sealed partial class JavaScriptAudioDevice
     {
-        internal JavaScriptAudioDevice(ScriptEngine engine, IAudioController controller, IDevice device)
-            : base(engine)
+        internal JavaScriptAudioDevice(IAudioController controller, IDevice device)
         {
             Controller = controller;
             Id = device.Id.ToString();
@@ -21,82 +18,68 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             State = JavaScriptDeviceState.GetJavascriptDeviceState(device.State);
             IsDefault = device.IsDefaultDevice;
             IsDefaultComm = device.IsDefaultCommunicationsDevice;
-
-            PopulateFields();
-            PopulateFunctions();
         }
 
-        [JSProperty(Name = "id")]
         public string Id
         {
             get;
             internal set;
         }
 
-        [JSProperty(Name = "name")]
         public string Name
         {
             get;
             internal set;
         }
 
-        [JSProperty(Name = "interface")]
         public string Interface
         {
             get;
             internal set;
         }
 
-        [JSProperty(Name = "fullName")]
         public string FullName
         {
             get;
             internal set;
         }
 
-        [JSProperty(Name = "type")]
         public string Type
         {
             get;
             internal set;
         }
 
-        [JSProperty(Name = "isPlayback")]
         public bool IsPlayback
         {
             get;
             internal set;
         }
 
-        [JSProperty(Name = "isCapture")]
         public bool IsCapture
         {
             get;
             internal set;
         }
 
-        [JSProperty(Name = "state")]
         public string State
         {
             get;
             internal set;
         }
 
-        [JSProperty(Name = "isDefault")]
         public bool IsDefault
         {
             get;
             internal set;
         }
 
-        [JSProperty(Name = "isDefaultComm")]
         public bool IsDefaultComm
         {
             get;
             internal set;
         }
 
-        [JSProperty(Name = "isMuted")]
         public bool IsMuted
         {
             get { return Device.IsMuted; }

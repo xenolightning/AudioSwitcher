@@ -1,24 +1,17 @@
 ﻿using AudioSwitcher.AudioApi;
-using Jurassic;
-using Jurassic.Library;
 
 namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
 {
-    internal sealed partial class AudioSwitcherLibrary : ObjectInstance, IScriptLibrary
+    internal sealed partial class AudioSwitcherLibrary : IScriptLibrary
     {
         private readonly JavaScriptDeviceType _deviceType;
         private readonly JavaScriptDeviceState _deviceState;
 
-        public AudioSwitcherLibrary(ScriptEngine engine, IAudioController controller)
-            : base(engine)
+        public AudioSwitcherLibrary(IAudioController controller)
         {
             AudioController = controller;
-            _deviceType = new JavaScriptDeviceType(engine);
-            _deviceState = new JavaScriptDeviceState(engine);
-
-            PopulateFields();
-            PopulateFunctions();
-
+            _deviceType = new JavaScriptDeviceType();
+            _deviceState = new JavaScriptDeviceState();
         }
 
         private IAudioController AudioController
@@ -32,7 +25,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
             if (audioDevice == null)
                 return null;
 
-            return new JavaScriptAudioDevice(Engine, AudioController, audioDevice);
+            return new JavaScriptAudioDevice(AudioController, audioDevice);
         }
     }
 }

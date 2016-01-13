@@ -1,5 +1,4 @@
-﻿using Jurassic;
-using Xunit;
+﻿using Xunit;
 
 namespace AudioSwitcher.Scripting.JavaScript.Tests
 {
@@ -8,7 +7,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Create()
         {
-            var engine = new ScriptEngine();
+            var engine = new JsEngine();
             Assert.NotNull(engine);
         }
 

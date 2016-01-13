@@ -1,43 +1,36 @@
-﻿using Jurassic.Library;
-
+﻿
 namespace AudioSwitcher.Scripting.JavaScript.Internal
 {
     internal sealed partial class JavaScriptAudioDevice
     {
-        [JSFunction(Name = "volume")]
         public double Volume(double level)
         {
-            Device.Volume = level;
+            Device.Volume = (int)level;
             return Device.Volume;
         }
 
-        [JSFunction(Name = "volume")]
         public double Volume()
         {
             return Device.Volume;
         }
 
-        [JSFunction(Name = "mute")]
         public bool Mute(bool mute)
         {
             Device.Mute(mute);
             return Device.IsMuted;
         }
 
-        [JSFunction(Name = "setAsDefault")]
         public bool SetAsDefault()
         {
             return Device.SetAsDefault();
         }
 
-        [JSFunction(Name = "setAsDefaultComm")]
         public bool SetAsDefaultComm()
         {
             Device.SetAsDefaultCommunications();
             return true;
         }
 
-        [JSFunction(Name = "toggleMute")]
         public bool ToggleMute()
         {
             Device.ToggleMute();
