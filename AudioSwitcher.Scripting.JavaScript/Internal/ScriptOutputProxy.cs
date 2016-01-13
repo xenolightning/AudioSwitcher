@@ -1,5 +1,7 @@
 ﻿using System.Text;
+using Jint;
 using Jint.Native;
+using Jint.Native.Json;
 
 namespace AudioSwitcher.Scripting.JavaScript.Internal
 {
@@ -16,20 +18,20 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             _output = output;
         }
 
-        public void Log(JsValue[] objects)
+        public void Log(params JsValue[] objects)
         {
             // Convert the objects to a string.
             var message = new StringBuilder();
             foreach (var t in objects)
             {
                 message.Append(' ');
-                message.Append(t.AsString());
+                message.Append(t);
             }
 
             _output.Log(message.ToString());
         }
 
-        public void Error(JsValue[] objects)
+        public void Error(params JsValue[] objects)
         {
             // Convert the objects to a string.
             var message = new StringBuilder();
@@ -42,7 +44,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             _output.Error(message.ToString());
         }
 
-        public void Warn(JsValue[] objects)
+        public void Warn(params JsValue[] objects)
         {
             Log(objects);
         }
@@ -52,12 +54,5 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             _output.Clear();
         }
 
-        public void StartGroup(string title, bool initiallyCollapsed)
-        {
-        }
-
-        public void EndGroup()
-        {
-        }
     }
 }

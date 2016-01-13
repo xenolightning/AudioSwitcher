@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AudioSwitcherLibraryTests.cs" />
+    <Compile Include="ConsoleTests.cs" />
     <Compile Include="CoreLibraryTests.cs" />
     <Compile Include="EngineTests.cs" />
     <Compile Include="DynamicLibraryTests.cs" />
