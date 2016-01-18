@@ -3,7 +3,6 @@ using System.Linq;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.Scripting.JavaScript.Internal;
 using AudioSwitcher.Tests.Common;
-using Jint.Native;
 using Xunit;
 
 namespace AudioSwitcher.Scripting.JavaScript.Tests

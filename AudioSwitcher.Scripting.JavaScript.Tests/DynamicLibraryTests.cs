@@ -1,6 +1,5 @@
 ﻿using AudioSwitcher.AudioApi;
 using AudioSwitcher.Tests.Common;
-using Jint.Native;
 using Xunit;
 
 namespace AudioSwitcher.Scripting.JavaScript.Tests

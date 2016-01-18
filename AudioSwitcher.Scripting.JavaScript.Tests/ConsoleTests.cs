@@ -1,5 +1,4 @@
-﻿using Jint.Native;
-using Xunit;
+﻿using Xunit;
 
 namespace AudioSwitcher.Scripting.JavaScript.Tests
 {

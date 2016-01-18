@@ -1,45 +1,23 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using AudioSwitcher.Scripting.JavaScript.Internal;
-using Jint;
-using Jint.Runtime;
 
 namespace AudioSwitcher.Scripting.JavaScript
 {
-    public sealed class JsEngine : IScriptEngine
+    public sealed class JsEngine : ScriptEngineBase
     {
 
-        public string FriendlyName
+        public override IExecutionContext CreateExecutionContext(bool isDebug, IEnumerable<string> args, CancellationToken cancellationToken)
         {
-            get { return "JavaScript Engine"; }
-        }
+            var ctx = new JsExecutionContext(isDebug, args, cancellationToken);
+            foreach (var lib in ScriptLibraries)
+            {
+                ctx.AddLibrary(lib.Key, lib.Value);
+            }
 
-        public IExecutionContext CreateExecutionContext()
-        {
-            return CreateExecutionContext(false);
-        }
+            ContextCreationAction(ctx);
 
-        public IExecutionContext CreateExecutionContext(IEnumerable<string> args)
-        {
-            return CreateExecutionContext(false, args);
-        }
-
-        public IExecutionContext CreateExecutionContext(bool isDebug)
-        {
-            return CreateExecutionContext(isDebug, null);
-        }
-
-        public IExecutionContext CreateExecutionContext(bool isDebug, IEnumerable<string> args)
-        {
-            return CreateExecutionContext(isDebug, args, CancellationToken.None);
-        }
-
-        public IExecutionContext CreateExecutionContext(bool isDebug, IEnumerable<string> args, CancellationToken cancellationToken)
-        {
-            return new JsExecutionContext(isDebug, args, cancellationToken);
+            return ctx;
         }
 
     }

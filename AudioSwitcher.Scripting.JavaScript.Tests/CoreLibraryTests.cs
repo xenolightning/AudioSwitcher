@@ -1,7 +1,7 @@
-﻿using AudioSwitcher.AudioApi;
+﻿using System;
+using AudioSwitcher.AudioApi;
 using AudioSwitcher.Scripting.JavaScript.Internal;
 using AudioSwitcher.Tests.Common;
-using Jint.Native;
 using Xunit;
 
 namespace AudioSwitcher.Scripting.JavaScript.Tests
@@ -34,6 +34,18 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 engine.AddCoreLibrary();
                 engine.Execute("Core = require('Core');");
                 engine.Execute("Core.sleep(100)");
+            }
+        }
+
+        [Fact]
+        public void Core_Create_Guid()
+        {
+            var eng = new JsEngine();
+            using (var engine = eng.CreateExecutionContext())
+            {
+                engine.AddCoreLibrary();
+                engine.Execute("Core = require('Core');");
+                Assert.NotNull(engine.Evaluate<Guid>("Core.createGuid()"));
             }
         }
 

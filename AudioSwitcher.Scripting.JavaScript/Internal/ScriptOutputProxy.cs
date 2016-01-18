@@ -1,7 +1,5 @@
 ﻿using System.Text;
-using Jint;
 using Jint.Native;
-using Jint.Native.Json;
 
 namespace AudioSwitcher.Scripting.JavaScript.Internal
 {
