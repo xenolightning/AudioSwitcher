@@ -16,25 +16,27 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_AddLibrary_Dynamic()
         {
-            using (var engine = new JsEngine())
+            var eng = new JsEngine();
+            using (var engine = eng.CreateExecutionContext())
             {
                 engine.AddLibrary("Dynamic", new TestLibrary());
 
                 engine.Execute("Dynamic = require('Dynamic');");
-                Assert.NotEqual(JsValue.Undefined, engine.InternalEngine.GetValue("Dynamic"));
+                Assert.NotNull(engine.Resolve("Dynamic"));
             }
         }
 
         [Fact]
         public void Engine_Dynamic_Value_Exists()
         {
-            using (var engine = new JsEngine())
+            var eng = new JsEngine();
+            using (var engine = eng.CreateExecutionContext())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
 
                 engine.Execute("Dynamic = require('Dynamic');");
-                Assert.NotEqual(JsValue.Undefined, engine.InternalEngine.GetValue("Dynamic"));
+                Assert.NotNull(engine.Resolve("Dynamic"));
                 Assert.Equal(testLib.Property, engine.Evaluate<int>("Dyanmic.Property").Value);
             }
         }
@@ -42,7 +44,8 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Delegate_Returns()
         {
-            using (var engine = new JsEngine())
+            var eng = new JsEngine();
+            using (var engine = eng.CreateExecutionContext())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
@@ -50,7 +53,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 engine.Execute("import('Dyanmic');");
 
                 engine.Execute("Dynamic = require('Dynamic');");
-                Assert.NotEqual(JsValue.Undefined, engine.InternalEngine.GetValue("Dynamic"));
+                Assert.NotNull(engine.Resolve("Dynamic"));
 
                 var result = engine.Evaluate<int>("Dynamic.Delegate()");
 
@@ -61,13 +64,14 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Delegate_Func_Fail()
         {
-            using (var engine = new JsEngine())
+            var eng = new JsEngine();
+            using (var engine = eng.CreateExecutionContext())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
 
                 engine.Execute("Dynamic = require('Dynamic');");
-                Assert.NotEqual(JsValue.Undefined, engine.InternalEngine.GetValue("Dynamic"));
+                Assert.NotNull(engine.Resolve("Dynamic"));
 
                 var result = engine.Evaluate<string>("Dynamic.DelegateWithArguments('Hello')");
 
@@ -79,13 +83,14 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Method_Returns()
         {
-            using (var engine = new JsEngine())
+            var eng = new JsEngine();
+            using (var engine = eng.CreateExecutionContext())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
 
                 engine.Execute("Dynamic = require('Dynamic');");
-                Assert.NotEqual(JsValue.Undefined, engine.InternalEngine.GetValue("Dynamic"));
+                Assert.NotNull(engine.Resolve("Dynamic"));
 
                 var result = engine.Evaluate<string>("Dynamic.Method()");
                 
@@ -96,13 +101,14 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Method_Returns_Clr()
         {
-            using (var engine = new JsEngine())
+            var eng = new JsEngine();
+            using (var engine = eng.CreateExecutionContext())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
 
                 engine.Execute("Dynamic = require('Dynamic');");
-                Assert.NotEqual(JsValue.Undefined, engine.InternalEngine.GetValue("Dynamic"));
+                Assert.NotNull(engine.Resolve("Dynamic"));
 
                 var result = engine.Evaluate<int>("Dynamic.MethodReturnClr().Field");
 
@@ -113,13 +119,14 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Method_Returns_ClrArray()
         {
-            using (var engine = new JsEngine())
+            var eng = new JsEngine();
+            using (var engine = eng.CreateExecutionContext())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
 
                 engine.Execute("Dynamic = require('Dynamic');");
-                Assert.NotEqual(JsValue.Undefined, engine.InternalEngine.GetValue("Dynamic"));
+                Assert.NotNull(engine.Resolve("Dynamic"));
 
                 var result = engine.Evaluate<int>("Dynamic.MethodReturnClrArray().length");
 
@@ -130,13 +137,14 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Method_WithArg_Returns()
         {
-            using (var engine = new JsEngine())
+            var eng = new JsEngine();
+            using (var engine = eng.CreateExecutionContext())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
 
                 engine.Execute("Dynamic = require('Dynamic');");
-                Assert.NotEqual(JsValue.Undefined, engine.InternalEngine.GetValue("Dynamic"));
+                Assert.NotNull(engine.Resolve("Dynamic"));
 
                 var result = engine.Evaluate<string>("Dynamic.MethodWithArg('Hello')");
 
@@ -147,13 +155,14 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Method_WithArgs_Returns()
         {
-            using (var engine = new JsEngine())
+            var eng = new JsEngine();
+            using (var engine = eng.CreateExecutionContext())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
 
                 engine.Execute("Dynamic = require('Dynamic');");
-                Assert.NotEqual(JsValue.Undefined, engine.InternalEngine.GetValue("Dynamic"));
+                Assert.NotNull(engine.Resolve("Dynamic"));
 
                 var result = engine.Evaluate<string>("Dynamic.MethodWithArgs('One', 'Two')");
 
@@ -164,13 +173,14 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Dynamic_Method_Func_Returns()
         {
-            using (var engine = new JsEngine())
+            var eng = new JsEngine();
+            using (var engine = eng.CreateExecutionContext())
             {
                 var testLib = new TestLibrary();
                 engine.AddLibrary("Dynamic", testLib);
 
                 engine.Execute("Dynamic = require('Dynamic');");
-                Assert.NotEqual(JsValue.Undefined, engine.InternalEngine.GetValue("Dynamic"));
+                Assert.NotNull(engine.Resolve("Dynamic"));
 
                 var result = engine.Evaluate<int>("(Dynamic.MethodFunc())()");
 

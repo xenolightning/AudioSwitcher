@@ -4,24 +4,24 @@ using System.Threading.Tasks;
 
 namespace AudioSwitcher.Scripting
 {
-    public abstract class ScriptEngineBase : IScriptEngine
+    public abstract class DefaultExecutionContext : IExecutionContext
     {
 
-        public abstract string FriendlyName
-        {
-            get;
-        }
+        public abstract bool IsDebug { get; }
 
-        public abstract bool IsDebug { get; set; }
+        public abstract IDictionary<string, object> Libraries { get; }
 
         public abstract void SetOutput(IScriptOutput output);
 
         public abstract void AddLibrary(string name, IScriptLibrary libraryInstance);
-        public abstract void AddLibrary(string name, Func<IScriptEngine, IScriptLibrary> libraryInstance);
+
+        public abstract void AddLibrary(string name, Func<IExecutionContext, IScriptLibrary> libraryInstance);
+
+        public abstract object Resolve(string name);
 
         public ExecutionResult Execute(string script, IEnumerable<string> args = null)
         {
-            return Execute(new StringScriptSource(script));
+            return Execute(new StringScriptSource(script), args);
         }
 
         public Task<ExecutionResult> ExecuteAsync(string script, IEnumerable<string> args = null)
@@ -62,6 +62,5 @@ namespace AudioSwitcher.Scripting
         {
             
         }
-
     }
 }

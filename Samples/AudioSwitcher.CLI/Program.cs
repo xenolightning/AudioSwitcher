@@ -44,7 +44,8 @@ namespace AudioSwitcher.CLI
             else
                 controller = new CoreAudioController();
 
-            using (var engine = new JsEngine())
+            var eng = new JsEngine();
+            using (var engine = eng.CreateExecutionContext())
             {
 
                 engine.AddCoreLibrary();

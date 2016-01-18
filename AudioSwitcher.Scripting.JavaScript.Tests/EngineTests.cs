@@ -22,8 +22,10 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
             };
 
             var engine = new JsEngine();
-
-            Assert.NotNull(engine.Evaluate<string[]>("args", test));
+            using (var context = engine.CreateExecutionContext(test))
+            {
+                Assert.NotNull(context.Evaluate<string[]>("args", test));
+            }
         }
     }
 }

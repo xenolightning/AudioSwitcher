@@ -16,18 +16,20 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_AddLibrary_Core()
         {
-            using (var engine = new JsEngine())
+            var eng = new JsEngine();
+            using (var engine = eng.CreateExecutionContext())
             {
                 engine.AddCoreLibrary();
-                engine.Execute("Core = require('AudioSwitcher');");
-                Assert.NotEqual(JsValue.Undefined, engine.InternalEngine.GetValue("Core"));
+                engine.Execute("Core = require('Core');");
+                Assert.NotNull(engine.Resolve("Core"));
             }
         }
 
         [Fact]
         public void Core_sleep_Exists()
         {
-            using (var engine = new JsEngine())
+            var eng = new JsEngine();
+            using (var engine = eng.CreateExecutionContext())
             {
                 engine.AddCoreLibrary();
                 engine.Execute("Core = require('Core');");

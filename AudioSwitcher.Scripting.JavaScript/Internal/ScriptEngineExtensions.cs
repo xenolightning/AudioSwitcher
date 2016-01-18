@@ -6,25 +6,17 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
     public static class ScriptEngineExtensions
     {
 
-        public static void AddAudioSwitcherLibrary(this JsEngine engine, IAudioController controller)
+        public static void AddAudioSwitcherLibrary(this IExecutionContext context, IAudioController controller)
         {
-            engine.AddLibrary("AudioSwitcher", new AudioSwitcherLibrary(controller));
-        }
-        public static void AddCoreLibrary(this JsEngine engine)
-        {
-            engine.AddLibrary("Core", new CoreLibrary());
+            if (context is JsExecutionContext)
+                context.AddLibrary("AudioSwitcher", new AudioSwitcherLibrary(controller));
         }
 
-        //public static ArrayInstance EnumerableToArray(this ScriptEngine engine, IEnumerable<object> collection)
-        //{
-        //    return engine.Array.New(collection.ToArray());
-        //}
-
-        //public static ArrayInstance EnumerableToArray<T>(this ScriptEngine engine, IEnumerable<T> collection)
-        //    where T : class
-        //{
-        //    return engine.Array.New(collection.Cast<object>().ToArray());
-        //}
+        public static void AddCoreLibrary(this IExecutionContext context)
+        {
+            if (context is JsExecutionContext)
+                context.AddLibrary("Core", new CoreLibrary());
+        }
 
     }
 }

@@ -1,38 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AudioSwitcher.Scripting
 {
-    public interface IScriptEngine : IDisposable
+    public interface IScriptEngine
     {
         string FriendlyName
         {
             get;
         }
 
-        bool IsDebug { get; set; }
+        IExecutionContext CreateExecutionContext();
 
-        void SetOutput(IScriptOutput output);
+        IExecutionContext CreateExecutionContext(IEnumerable<string> args);
 
-        void AddLibrary(string name, IScriptLibrary libraryInstance);
-        void AddLibrary(string name, Func<IScriptEngine, IScriptLibrary> libraryInstance);
+        IExecutionContext CreateExecutionContext(bool isDebug);
 
-        ExecutionResult Execute(string script, IEnumerable<string> args = null);
+        IExecutionContext CreateExecutionContext(bool isDebug, IEnumerable<string> args);
 
-        Task<ExecutionResult> ExecuteAsync(string script, IEnumerable<string> args = null);
-
-        ExecutionResult Execute(IScriptSource scriptSource, IEnumerable<string> args = null);
-
-        Task<ExecutionResult> ExecuteAsync(IScriptSource scriptSource, IEnumerable<string> args = null);
-
-        ExecutionResult<TReturn> Evaluate<TReturn>(string script, IEnumerable<string> args = null);
-
-        Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(string script, IEnumerable<string> args = null);
-
-        ExecutionResult<TReturn> Evaluate<TReturn>(IScriptSource scriptSource, IEnumerable<string> args = null);
-
-        Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(IScriptSource scriptSource, IEnumerable<string> args = null);
+        IExecutionContext CreateExecutionContext(bool isDebug, IEnumerable<string> args, CancellationToken cancellationToken);
 
     }
 }

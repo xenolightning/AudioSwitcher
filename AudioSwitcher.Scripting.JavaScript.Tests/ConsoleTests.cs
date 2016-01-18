@@ -9,15 +9,17 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Console_Exists()
         {
-            using (var engine = new JsEngine())
+            var eng = new JsEngine();
+            using (var engine = eng.CreateExecutionContext())
             {
-                Assert.NotEqual(JsValue.Undefined, engine.InternalEngine.GetValue("console"));
+                Assert.NotNull(engine.Resolve("console"));
             }
         }
         [Fact]
         public void Engine_Console_Logs_Strings()
         {
-            using (var engine = new JsEngine())
+            var eng = new JsEngine();
+            using (var engine = eng.CreateExecutionContext())
             {
                 engine.SetOutput(new ConsoleScriptOutput());
                 var result = engine.Execute("console.log('hi', 'hi');");
@@ -29,7 +31,8 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         [Fact]
         public void Engine_Console_Logs_Objects()
         {
-            using (var engine = new JsEngine())
+            var eng = new JsEngine();
+            using (var engine = eng.CreateExecutionContext())
             {
                 engine.SetOutput(new ConsoleScriptOutput());
                 var result = engine.Execute("console.log('hi', { hi: 'hi' });");
