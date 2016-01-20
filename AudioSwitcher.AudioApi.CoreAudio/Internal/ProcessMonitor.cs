@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
+using System.Timers;
 using AudioSwitcher.AudioApi.Observables;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
@@ -24,10 +24,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         static ProcessMonitor()
         {
             _processTerminated = new AsyncBroadcaster<int>();
-            _processExitTimer = new Timer(ProcessTerminatedCheck, null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+            _processExitTimer = new Timer
+            {
+                Interval = 1000,
+                AutoReset = false
+            };
+
+            _processExitTimer.Elapsed += TimerTick;
+            _processExitTimer.Start();
         }
 
-        private static void ProcessTerminatedCheck(object state)
+        private static void TimerTick(object sender, ElapsedEventArgs e)
         {
             var currentProcesses = Process.GetProcesses().Select(x => x.Id).ToList();
             var removed = _lastProcesses.Except(currentProcesses).ToList();
@@ -38,6 +45,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
 
             _lastProcesses = currentProcesses;
+
+            if (_processExitTimer != null)
+                _processExitTimer.Start();
         }
     }
 }

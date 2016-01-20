@@ -128,24 +128,24 @@ namespace HookingSample
             //    });
             //}
 
-            //Controller.DefaultPlaybackDevice.SessionController.SessionCreated.Subscribe(x =>
-            //{
-            //    x.VolumeChanged.Subscribe(v =>
-            //    {
-            //        Console.WriteLine("{0} - {1}", v.Session.DisplayName, v.PeakValue);
-            //    });
-            //});
+            Controller.DefaultPlaybackDevice.SessionController.SessionCreated.Subscribe(x =>
+            {
+                    Console.WriteLine("{0} - {1}", x.DisplayName, x.Volume);
+                //x.VolumeChanged.Subscribe(v =>
+                //{
+                //});
+            });
 
-            //Controller.DefaultPlaybackDevice.SessionController.SessionDisconnected.Subscribe(x =>
-            //{
-            //    Console.WriteLine(x);
+            Controller.DefaultPlaybackDevice.SessionController.SessionDisconnected.Subscribe(x =>
+            {
+                Console.WriteLine(x);
 
-            //    foreach (var session in Controller.DefaultPlaybackDevice.SessionController)
-            //    {
-            //        Console.WriteLine("{0} - {1}", session.DisplayName, session.PeakValue);
-            //    }
+                foreach (var session in Controller.DefaultPlaybackDevice.SessionController)
+                {
+                    Console.WriteLine("{0} - {1}", session.DisplayName, session.Volume);
+                }
 
-            //});
+            });
         }
 
 
