@@ -86,10 +86,7 @@ namespace AudioSwitcher.AudioApi.Observables
                 lObservers = _observers.ToList();
             }
 
-            Task.Factory.StartNew(() =>
-            {
-                Parallel.ForEach(lObservers, observerAction);
-            });
+            Parallel.ForEach(lObservers, observerAction);
         }
 
         public override IDisposable Subscribe(IObserver<T> observer)
@@ -114,12 +111,13 @@ namespace AudioSwitcher.AudioApi.Observables
         public override void Dispose()
         {
             OnCompleted();
-            _isDisposed = true;
 
             lock (_observerLock)
             {
                 _observers.Clear();
             }
+
+            _isDisposed = true;
         }
     }
 }
