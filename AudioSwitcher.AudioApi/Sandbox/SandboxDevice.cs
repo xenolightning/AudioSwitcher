@@ -6,18 +6,13 @@ namespace AudioSwitcher.AudioApi.Sandbox
     {
         public string fullName;
         public DeviceIcon icon;
+        public string iconPath;
         public Guid id;
         public string interfaceName;
         public bool isMuted;
         public string name;
         public DeviceState state;
         public DeviceType type;
-        public string iconPath;
-
-        public SandboxDevice(IAudioController controller)
-            : base(controller)
-        {
-        }
 
         public override Guid Id
         {
@@ -96,10 +91,14 @@ namespace AudioSwitcher.AudioApi.Sandbox
 
         public override double Volume { get; set; }
 
+        public SandboxDevice(IAudioController controller)
+            : base(controller)
+        {
+        }
+
         public override bool Mute(bool mute)
         {
             return isMuted = mute;
         }
-
     }
 }

@@ -34,19 +34,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly IAudioEndpointVolume _audioEndPointVolume;
         private readonly AudioEndpointVolumeChannel[] _channels;
 
-        internal AudioEndpointVolumeChannels(IAudioEndpointVolume parent)
-        {
-            ComThread.Assert();
-            _audioEndPointVolume = parent;
-
-            var channelCount = Count;
-            _channels = new AudioEndpointVolumeChannel[channelCount];
-            for (var i = 0; i < channelCount; i++)
-            {
-                _channels[i] = new AudioEndpointVolumeChannel(_audioEndPointVolume, i);
-            }
-        }
-
         /// <summary>
         ///     Channel Count
         /// </summary>
@@ -71,6 +58,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get
             {
                 return ComThread.Invoke(() => _channels[index]);
+            }
+        }
+
+        internal AudioEndpointVolumeChannels(IAudioEndpointVolume parent)
+        {
+            ComThread.Assert();
+            _audioEndPointVolume = parent;
+
+            var channelCount = Count;
+            _channels = new AudioEndpointVolumeChannel[channelCount];
+            for (var i = 0; i < channelCount; i++)
+            {
+                _channels[i] = new AudioEndpointVolumeChannel(_audioEndPointVolume, i);
             }
         }
     }

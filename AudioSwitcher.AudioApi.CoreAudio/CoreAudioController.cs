@@ -14,10 +14,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     /// </summary>
     public sealed class CoreAudioController : AudioController<CoreAudioDevice>, ISystemAudioEventClient
     {
+        private static readonly Dictionary<PropertyKey, Expression<Func<IDevice, object>>> PropertykeyToLambdaMap = new Dictionary
+            <PropertyKey, Expression<Func<IDevice, object>>>
+        {
+            {PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME, x => x.InterfaceName},
+            {PropertyKeys.PKEY_DEVICE_DESCRIPTION, x => x.Name},
+            {PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME, x => x.FullName},
+            {PropertyKeys.PKEY_DEVICE_ICON, x => x.Icon},
+        };
+
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+        private HashSet<CoreAudioDevice> _deviceCache = new HashSet<CoreAudioDevice>();
 
         private IMultimediaDeviceEnumerator _innerEnumerator;
-        private HashSet<CoreAudioDevice> _deviceCache = new HashSet<CoreAudioDevice>();
+
+        private MultimediaNotificationClient _notificationClient;
 
         public CoreAudioController()
         {
@@ -34,6 +45,58 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             });
 
             RefreshSystemDevices();
+        }
+
+        void ISystemAudioEventClient.OnDeviceStateChanged(string deviceId, EDeviceState newState)
+        {
+            var dev = GetOrAddDeviceFromRealId(deviceId);
+
+            if (dev != null)
+                OnAudioDeviceChanged(new DeviceStateChangedArgs(dev, newState.AsDeviceState()));
+        }
+
+        void ISystemAudioEventClient.OnDeviceAdded(string deviceId)
+        {
+            var dev = GetOrAddDeviceFromRealId(deviceId);
+
+            if (dev != null)
+                OnAudioDeviceChanged(new DeviceAddedArgs(dev));
+        }
+
+        void ISystemAudioEventClient.OnDeviceRemoved(string deviceId)
+        {
+            var devicesRemoved = RemoveFromRealId(deviceId);
+
+            foreach (var dev in devicesRemoved)
+                OnAudioDeviceChanged(new DeviceRemovedArgs(dev));
+        }
+
+        void ISystemAudioEventClient.OnDefaultDeviceChanged(EDataFlow flow, ERole role, string deviceId)
+        {
+            //Ignore multimedia, it seems to fire a console event anyway
+            if (role == ERole.Multimedia)
+                return;
+
+            var dev = GetOrAddDeviceFromRealId(deviceId);
+
+            if (dev == null)
+                return;
+
+            OnAudioDeviceChanged(new DefaultDeviceChangedArgs(dev));
+        }
+
+        void ISystemAudioEventClient.OnPropertyValueChanged(string deviceId, PropertyKey key)
+        {
+            var dev = GetOrAddDeviceFromRealId(deviceId);
+
+            if (dev == null)
+                return;
+
+            //Ignore the properties we don't care about
+            if (!PropertykeyToLambdaMap.ContainsKey(key))
+                return;
+
+            OnAudioDeviceChanged(DevicePropertyChangedArgs.FromExpression(dev, PropertykeyToLambdaMap[key]));
         }
 
         ~CoreAudioController()
@@ -290,69 +353,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (acquiredLock)
                     _lock.ExitReadLock();
             }
-        }
-
-        private MultimediaNotificationClient _notificationClient;
-
-        void ISystemAudioEventClient.OnDeviceStateChanged(string deviceId, EDeviceState newState)
-        {
-            var dev = GetOrAddDeviceFromRealId(deviceId);
-
-            if (dev != null)
-                OnAudioDeviceChanged(new DeviceStateChangedArgs(dev, newState.AsDeviceState()));
-        }
-
-        void ISystemAudioEventClient.OnDeviceAdded(string deviceId)
-        {
-            var dev = GetOrAddDeviceFromRealId(deviceId);
-
-            if (dev != null)
-                OnAudioDeviceChanged(new DeviceAddedArgs(dev));
-        }
-
-        void ISystemAudioEventClient.OnDeviceRemoved(string deviceId)
-        {
-            var devicesRemoved = RemoveFromRealId(deviceId);
-
-            foreach (var dev in devicesRemoved)
-                OnAudioDeviceChanged(new DeviceRemovedArgs(dev));
-        }
-
-        void ISystemAudioEventClient.OnDefaultDeviceChanged(EDataFlow flow, ERole role, string deviceId)
-        {
-            //Ignore multimedia, it seems to fire a console event anyway
-            if (role == ERole.Multimedia)
-                return;
-
-            var dev = GetOrAddDeviceFromRealId(deviceId);
-
-            if (dev == null)
-                return;
-
-            OnAudioDeviceChanged(new DefaultDeviceChangedArgs(dev));
-        }
-
-        private static readonly Dictionary<PropertyKey, Expression<Func<IDevice, object>>> PropertykeyToLambdaMap = new Dictionary
-            <PropertyKey, Expression<Func<IDevice, object>>>
-        {
-            {PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME, x => x.InterfaceName},
-            {PropertyKeys.PKEY_DEVICE_DESCRIPTION, x => x.Name},
-            {PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME, x => x.FullName},
-            {PropertyKeys.PKEY_DEVICE_ICON, x => x.Icon},
-        };
-
-        void ISystemAudioEventClient.OnPropertyValueChanged(string deviceId, PropertyKey key)
-        {
-            var dev = GetOrAddDeviceFromRealId(deviceId);
-
-            if (dev == null)
-                return;
-
-            //Ignore the properties we don't care about
-            if (!PropertykeyToLambdaMap.ContainsKey(key))
-                return;
-
-            OnAudioDeviceChanged(DevicePropertyChangedArgs.FromExpression(dev, PropertykeyToLambdaMap[key]));
         }
     }
 }

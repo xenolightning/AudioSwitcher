@@ -32,32 +32,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
     internal class AudioEndpointVolume : IDisposable
     {
-        private IAudioEndpointVolume _audioEndPointVolume;
         private readonly AudioEndpointVolumeChannels _channels;
         private readonly EndpointHardwareSupport _hardwareSupport;
         private readonly AudioEndpointVolumeStepInformation _stepInformation;
         private readonly AudioEndpointVolumeVolumeRange _volumeRange;
+        private IAudioEndpointVolume _audioEndPointVolume;
         private AudioEndpointVolumeCallback _callBack;
-
-        /// <summary>
-        ///     Creates a new Audio endpoint volume
-        /// </summary>
-        /// <param name="realEndpointVolume">IAudioEndpointVolume COM interface</param>
-        internal AudioEndpointVolume(IAudioEndpointVolume realEndpointVolume)
-        {
-            ComThread.Assert();
-            uint hardwareSupp;
-
-            _audioEndPointVolume = realEndpointVolume;
-            _channels = new AudioEndpointVolumeChannels(_audioEndPointVolume);
-            _stepInformation = new AudioEndpointVolumeStepInformation(_audioEndPointVolume);
-            Marshal.ThrowExceptionForHR(_audioEndPointVolume.QueryHardwareSupport(out hardwareSupp));
-            _hardwareSupport = (EndpointHardwareSupport)hardwareSupp;
-            _volumeRange = new AudioEndpointVolumeVolumeRange(_audioEndPointVolume);
-
-            _callBack = new AudioEndpointVolumeCallback(this);
-            Marshal.ThrowExceptionForHR(_audioEndPointVolume.RegisterControlChangeNotify(_callBack));
-        }
 
         /// <summary>
         ///     VolumeChanged Range
@@ -167,6 +147,46 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
 
         /// <summary>
+        ///     Creates a new Audio endpoint volume
+        /// </summary>
+        /// <param name="realEndpointVolume">IAudioEndpointVolume COM interface</param>
+        internal AudioEndpointVolume(IAudioEndpointVolume realEndpointVolume)
+        {
+            ComThread.Assert();
+            uint hardwareSupp;
+
+            _audioEndPointVolume = realEndpointVolume;
+            _channels = new AudioEndpointVolumeChannels(_audioEndPointVolume);
+            _stepInformation = new AudioEndpointVolumeStepInformation(_audioEndPointVolume);
+            Marshal.ThrowExceptionForHR(_audioEndPointVolume.QueryHardwareSupport(out hardwareSupp));
+            _hardwareSupport = (EndpointHardwareSupport)hardwareSupp;
+            _volumeRange = new AudioEndpointVolumeVolumeRange(_audioEndPointVolume);
+
+            _callBack = new AudioEndpointVolumeCallback(this);
+            Marshal.ThrowExceptionForHR(_audioEndPointVolume.RegisterControlChangeNotify(_callBack));
+        }
+
+        /// <summary>
+        ///     Dispose
+        /// </summary>
+        public void Dispose()
+        {
+            if (_callBack != null)
+            {
+                ComThread.BeginInvoke(() =>
+                {
+                    if (_audioEndPointVolume != null)
+                        _audioEndPointVolume.UnregisterControlChangeNotify(_callBack);
+
+                    _callBack = null;
+                    _audioEndPointVolume = null;
+                });
+            }
+
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
         ///     On VolumeChanged Notification
         /// </summary>
         public event AudioEndpointVolumeNotificationDelegate OnVolumeNotification;
@@ -194,26 +214,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 del(notificationData);
             }
-        }
-
-        /// <summary>
-        ///     Dispose
-        /// </summary>
-        public void Dispose()
-        {
-            if (_callBack != null)
-            {
-                ComThread.BeginInvoke(() =>
-                {
-                    if (_audioEndPointVolume != null)
-                        _audioEndPointVolume.UnregisterControlChangeNotify(_callBack);
-
-                    _callBack = null;
-                    _audioEndPointVolume = null;
-                });
-            }
-
-            GC.SuppressFinalize(this);
         }
 
         /// <summary>

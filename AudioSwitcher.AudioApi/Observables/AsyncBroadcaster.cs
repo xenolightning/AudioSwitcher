@@ -7,15 +7,10 @@ namespace AudioSwitcher.AudioApi.Observables
 {
     public sealed class AsyncBroadcaster<T> : BroadcasterBase<T>
     {
-        private readonly HashSet<IObserver<T>> _observers;
         private readonly object _observerLock = new object();
-        private bool _isDisposed;
+        private readonly HashSet<IObserver<T>> _observers;
         private bool _isComplete;
-
-        public AsyncBroadcaster()
-        {
-            _observers = new HashSet<IObserver<T>>();
-        }
+        private bool _isDisposed;
 
         public override bool HasObservers
         {
@@ -39,6 +34,11 @@ namespace AudioSwitcher.AudioApi.Observables
             {
                 return _isComplete;
             }
+        }
+
+        public AsyncBroadcaster()
+        {
+            _observers = new HashSet<IObserver<T>>();
         }
 
         public override void OnNext(T value)

@@ -9,6 +9,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public static class ProcessMonitor
     {
+        private static Timer _processExitTimer;
+        private static IEnumerable<int> _lastProcesses = new List<int>();
+        private static readonly AsyncBroadcaster<int> _processTerminated;
+
         public static IObservable<int> ProcessTerminated
         {
             get
@@ -16,10 +20,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return _processTerminated.AsObservable();
             }
         }
-
-        private static Timer _processExitTimer;
-        private static IEnumerable<int> _lastProcesses = new List<int>();
-        private static readonly AsyncBroadcaster<int> _processTerminated;
 
         static ProcessMonitor()
         {

@@ -19,6 +19,45 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _properties = new Dictionary<PropertyKey, object>();
         }
 
+        public AccessMode Mode { get; private set; }
+
+        public int Count
+        {
+            get
+            {
+                return _properties == null ? 0 : _properties.Count;
+            }
+        }
+
+        public object this[PropertyKey key]
+        {
+            get
+            {
+                if (_properties.ContainsKey(key))
+                    return _properties[key];
+
+                return null;
+            }
+            set
+            {
+                if (Mode == AccessMode.Read)
+                    return;
+
+                SetValue(key, value);
+            }
+        }
+
+        public bool Contains(PropertyKey key)
+        {
+            return _properties.ContainsKey(key);
+        }
+
+        public void Dispose()
+        {
+            _properties = null;
+            ComThread.BeginInvoke(() => { _propertyStoreInteface = null; });
+        }
+
         /// <summary>
         /// Will attempt to load the properties from the MMDevice. If it can't open, or the device is in 
         /// an invalid state it will continue to use it's current internal property cache
@@ -77,34 +116,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return properties;
         }
 
-        public AccessMode Mode { get; private set; }
-
-        public int Count
-        {
-            get
-            {
-                return _properties == null ? 0 : _properties.Count;
-            }
-        }
-
-        public object this[PropertyKey key]
-        {
-            get
-            {
-                if (_properties.ContainsKey(key))
-                    return _properties[key];
-
-                return null;
-            }
-            set
-            {
-                if (Mode == AccessMode.Read)
-                    return;
-
-                SetValue(key, value);
-            }
-        }
-
         /// <summary>
         ///     Sets property value of the property
         /// </summary>
@@ -121,17 +132,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             Marshal.ThrowExceptionForHR(_propertyStoreInteface.SetValue(ref key, ref value));
             _propertyStoreInteface.Commit();
-        }
-
-        public bool Contains(PropertyKey key)
-        {
-            return _properties.ContainsKey(key);
-        }
-
-        public void Dispose()
-        {
-            _properties = null;
-            ComThread.BeginInvoke(() => { _propertyStoreInteface = null; });
         }
     }
 }

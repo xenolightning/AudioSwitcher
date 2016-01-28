@@ -6,9 +6,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 2)]
     public class WaveFormatExtensible : WaveFormat
     {
-        private readonly short wValidBitsPerSample;
         private readonly int dwChannelMask;
         private readonly Guid subFormat;
+        private readonly short wValidBitsPerSample;
 
         public short ValidBitsPerSample
         {

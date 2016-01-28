@@ -12,6 +12,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _innerClient = new WeakReference(innerClient);
         }
 
+
+        public void Dispose()
+        {
+        }
+
         public void OnDeviceStateChanged(string deviceId, EDeviceState newState)
         {
             var inner = GetInner();
@@ -53,11 +58,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return _innerClient.Target as ISystemAudioEventClient;
 
             return null;
-        }
-
-
-        public void Dispose()
-        {
         }
     }
 }

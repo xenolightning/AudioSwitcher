@@ -4,8 +4,8 @@ namespace AudioSwitcher.AudioApi.Observables
 {
     public sealed class FilteredBroadcaster<T> : Broadcaster<T>
     {
-        private readonly Func<T, bool> _predicate;
         private readonly IDisposable _observerSubscription;
+        private readonly Func<T, bool> _predicate;
 
         internal FilteredBroadcaster(IObservable<T> observable, Func<T, bool> predicate)
         {

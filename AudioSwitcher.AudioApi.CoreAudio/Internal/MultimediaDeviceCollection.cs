@@ -11,26 +11,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         private IMultimediaDeviceCollection _multimediaDeviceCollection;
 
-        internal MultimediaDeviceCollection(IMultimediaDeviceCollection parent)
-        {
-            ComThread.Assert();
-
-            _multimediaDeviceCollection = parent;
-        }
-
-        public IEnumerator<IMultimediaDevice> GetEnumerator()
-        {
-            for (var index = 0; index < Count; index++)
-            {
-                yield return this[index];
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
         /// <summary>
         ///     Device count
         /// </summary>
@@ -65,6 +45,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
+        internal MultimediaDeviceCollection(IMultimediaDeviceCollection parent)
+        {
+            ComThread.Assert();
+
+            _multimediaDeviceCollection = parent;
+        }
+
         public void Dispose()
         {
             if (_multimediaDeviceCollection != null)
@@ -72,6 +59,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 Marshal.FinalReleaseComObject(_multimediaDeviceCollection);
                 _multimediaDeviceCollection = null;
             }
+        }
+
+        public IEnumerator<IMultimediaDevice> GetEnumerator()
+        {
+            for (var index = 0; index < Count; index++)
+            {
+                yield return this[index];
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

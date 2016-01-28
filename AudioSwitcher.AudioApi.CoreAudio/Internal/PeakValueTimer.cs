@@ -6,6 +6,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public static class PeakValueTimer
     {
+        private static readonly Timer _peakValueTimer;
+        private static readonly AsyncBroadcaster<long> _peakValueTick;
+
         public static IObservable<long> PeakValueTick
         {
             get
@@ -13,9 +16,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return _peakValueTick;
             }
         }
-
-        private static readonly Timer _peakValueTimer;
-        private static readonly AsyncBroadcaster<long> _peakValueTick;
 
         static PeakValueTimer()
         {
@@ -35,6 +35,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _peakValueTick.OnNext(Environment.TickCount);
             _peakValueTimer.Start();
         }
-
     }
 }

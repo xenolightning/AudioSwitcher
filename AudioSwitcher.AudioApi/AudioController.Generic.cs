@@ -9,15 +9,15 @@ namespace AudioSwitcher.AudioApi
     public abstract class AudioController<T> : IAudioController<T>
         where T : class, IDevice
     {
+        protected const DeviceState DEFAULT_DEVICE_STATE_FILTER =
+            DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled;
+
         private readonly AsyncBroadcaster<DeviceChangedArgs> _audioDeviceChanged;
 
         protected AudioController()
         {
             _audioDeviceChanged = new AsyncBroadcaster<DeviceChangedArgs>();
         }
-
-        protected const DeviceState DEFAULT_DEVICE_STATE_FILTER =
-            DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled;
 
         public T DefaultPlaybackDevice
         {

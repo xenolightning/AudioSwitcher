@@ -2,7 +2,6 @@
 {
     public class DeviceVolumeChangedArgs : DeviceChangedArgs
     {
-
         public double Volume
         {
             get;

@@ -10,19 +10,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public sealed partial class CoreAudioDevice : Device
     {
-
-        private float _peakValue = -1;
+        private readonly IDisposable _changeSubscription;
+        private readonly ManualResetEvent _muteChangedResetEvent = new ManualResetEvent(false);
+        private readonly IDisposable _peakValueTimerSubscription;
+        private EDataFlow _dataFlow;
         private IMultimediaDevice _device;
         private Guid? _id;
-        private CachedPropertyDictionary _properties;
-        private EDeviceState _state;
-        private string _realId;
-        private bool _isMuted;
-        private EDataFlow _dataFlow;
-        private readonly IDisposable _changeSubscription;
-        private readonly IDisposable _peakValueTimerSubscription;
-        private readonly ManualResetEvent _muteChangedResetEvent = new ManualResetEvent(false);
         private bool _isDisposed;
+        private bool _isMuted;
+
+        private float _peakValue = -1;
+        private CachedPropertyDictionary _properties;
+        private string _realId;
+        private EDeviceState _state;
 
         private IMultimediaDevice Device
         {
@@ -274,6 +274,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             return _isMuted;
         }
+
         private void LoadProperties(IMultimediaDevice device)
         {
             ComThread.Assert();
@@ -374,6 +375,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
 
         }
+
         private void Timer_UpdatePeakValue(long ticks)
         {
             float peakValue = _peakValue;
@@ -411,6 +413,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             return systemDeviceId.ExtractGuids().First();
         }
-
     }
 }

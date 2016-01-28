@@ -40,6 +40,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 GC.Collect();
             }
         }
-
     }
 }

@@ -33,6 +33,5 @@ namespace AudioSwitcher.AudioApi.Session
         IObservable<SessionStateChangedArgs> StateChanged { get; }
 
         IObservable<SessionDisconnectedArgs> Disconnected { get; }
-
     }
 }

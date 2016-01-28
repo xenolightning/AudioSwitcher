@@ -2,7 +2,6 @@
 {
     public class DeviceMuteChangedArgs : DeviceChangedArgs
     {
-
         public bool IsMuted
         {
             get;
