@@ -10,7 +10,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     internal sealed class CoreAudioSession : IAudioSession, IAudioSessionEvents, IDisposable
     {
-        private readonly IAudioSessionControl2 _audioSessionControl;
         private readonly IDisposable _deviceMutedSubscription;
         private readonly AsyncBroadcaster<SessionDisconnectedArgs> _disconnected;
         private readonly IAudioMeterInformation _meterInformation;
@@ -20,6 +19,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly AsyncBroadcaster<SessionStateChangedArgs> _stateChanged;
         private readonly IDisposable _timerSubscription;
         private readonly AsyncBroadcaster<SessionVolumeChangedArgs> _volumeChanged;
+        private IAudioSessionControl2 _audioSessionControl;
         private string _displayName;
         private string _executablePath;
         private string _fileDescription;
@@ -44,6 +44,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 OnMuteChanged(_isMuted);
             });
+
 
             // ReSharper disable once SuspiciousTypeConversion.Global
             _audioSessionControl = control as IAudioSessionControl2;
@@ -229,23 +230,23 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (_isDisposed)
                 return;
 
-            _deviceMutedSubscription.Dispose();
-
             if (_timerSubscription != null)
                 _timerSubscription.Dispose();
 
+            _deviceMutedSubscription.Dispose();
+            _muteChanged.Dispose();
             _stateChanged.Dispose();
             _disconnected.Dispose();
             _volumeChanged.Dispose();
             _peakValueChanged.Dispose();
-            _muteChanged.Dispose();
 
             //Run this on the com thread to ensure it's diposed correctly
             ComThread.BeginInvoke(() =>
             {
                 _audioSessionControl.UnregisterAudioSessionNotification(this);
-
-                Marshal.FinalReleaseComObject(_audioSessionControl);
+            }).ContinueWith(x =>
+            {
+                _audioSessionControl = null;
             });
 
             GC.SuppressFinalize(this);

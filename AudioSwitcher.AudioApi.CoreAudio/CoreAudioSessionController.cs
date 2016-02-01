@@ -36,6 +36,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _device = device;
             _audioSessionManager = audioSessionManager;
             _audioSessionManager.RegisterSessionNotification(this);
+            _sessionCache = new List<CoreAudioSession>(0);
 
             _sessionCreated = new AsyncBroadcaster<IAudioSession>();
             _sessionDisconnected = new AsyncBroadcaster<string>();
@@ -157,7 +158,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public int OnSessionCreated(IAudioSessionControl sessionControl)
         {
-            ComThread.BeginInvoke(() => CacheSessionWrapper(sessionControl))
+            ComThread.BeginInvoke(() =>
+            {
+                return CacheSessionWrapper(sessionControl);
+            })
             .ContinueWith(x =>
             {
                 if (x.Result != null)
@@ -181,6 +185,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             IAudioSessionEnumerator enumerator;
             _audioSessionManager.GetSessionEnumerator(out enumerator);
+
+            if (enumerator == null)
+                return;
+
             int count;
             enumerator.GetCount(out count);
 
