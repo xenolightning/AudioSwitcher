@@ -2,13 +2,6 @@
 {
     public sealed class DefaultDeviceChangedArgs : DeviceChangedArgs
     {
-        public DefaultDeviceChangedArgs(IDevice dev)
-            : base(dev, DeviceChangedType.DefaultChanged)
-        {
-            IsDefault = dev.IsDefaultDevice;
-            IsDefaultCommunications = dev.IsDefaultCommunicationsDevice;
-        }
-
         public bool IsDefault
         {
             get;
@@ -19,6 +12,13 @@
         {
             get;
             private set;
+        }
+
+        public DefaultDeviceChangedArgs(IDevice dev)
+            : base(dev, DeviceChangedType.DefaultChanged)
+        {
+            IsDefault = dev.IsDefaultDevice;
+            IsDefaultCommunications = dev.IsDefaultCommunicationsDevice;
         }
     }
 }

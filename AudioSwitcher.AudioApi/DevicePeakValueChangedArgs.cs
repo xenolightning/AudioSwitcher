@@ -2,7 +2,6 @@
 {
     public class DevicePeakValueChangedArgs : DeviceChangedArgs
     {
-
         public double PeakValue
         {
             get;

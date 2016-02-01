@@ -11,12 +11,12 @@ namespace AudioSwitcher.AudioApi
     /// </summary>
     public abstract class Device : IDevice
     {
+        private readonly AsyncBroadcaster<DefaultDeviceChangedArgs> _defaultChanged;
         private readonly AsyncBroadcaster<DeviceMuteChangedArgs> _muteChanged;
+        private readonly AsyncBroadcaster<DevicePeakValueChangedArgs> _peakValueChanged;
+        private readonly AsyncBroadcaster<DevicePropertyChangedArgs> _propertyChanged;
         private readonly AsyncBroadcaster<DeviceStateChangedArgs> _stateChanged;
         private readonly AsyncBroadcaster<DeviceVolumeChangedArgs> _volumeChanged;
-        private readonly AsyncBroadcaster<DefaultDeviceChangedArgs> _defaultChanged;
-        private readonly AsyncBroadcaster<DevicePropertyChangedArgs> _propertyChanged;
-        private readonly AsyncBroadcaster<DevicePeakValueChangedArgs> _peakValueChanged;
 
         protected Device(IAudioController controller)
         {
@@ -27,11 +27,6 @@ namespace AudioSwitcher.AudioApi
             _defaultChanged = new AsyncBroadcaster<DefaultDeviceChangedArgs>();
             _propertyChanged = new AsyncBroadcaster<DevicePropertyChangedArgs>();
             _peakValueChanged = new AsyncBroadcaster<DevicePeakValueChangedArgs>();
-        }
-
-        ~Device()
-        {
-            Dispose(false);
         }
 
         public IAudioController Controller { get; private set; }
@@ -103,6 +98,7 @@ namespace AudioSwitcher.AudioApi
         {
             get { return _propertyChanged.AsObservable(); }
         }
+
         public IObservable<DefaultDeviceChangedArgs> DefaultChanged
         {
             get { return _defaultChanged.AsObservable(); }
@@ -161,6 +157,11 @@ namespace AudioSwitcher.AudioApi
         public virtual Task<bool> ToggleMuteAsync()
         {
             return Task.Factory.StartNew(() => ToggleMute());
+        }
+
+        ~Device()
+        {
+            Dispose(false);
         }
 
         protected virtual void OnMuteChanged(bool isMuted)

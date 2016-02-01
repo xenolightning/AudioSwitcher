@@ -32,25 +32,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     /// </summary>
     internal class AudioMeterInformation : IDisposable
     {
+        private readonly EndpointHardwareSupport _hardwareSupport;
         private IAudioMeterInformation _audioMeterInformation;
         private AudioMeterInformationChannels _channels;
-        private readonly EndpointHardwareSupport _hardwareSupport;
-
-        internal AudioMeterInformation(IAudioMeterInformation realInterface)
-        {
-            ComThread.Assert();
-            uint hardwareSupp;
-
-            _audioMeterInformation = realInterface;
-            Marshal.ThrowExceptionForHR(_audioMeterInformation.QueryHardwareSupport(out hardwareSupp));
-            _hardwareSupport = (EndpointHardwareSupport) hardwareSupp;
-            _channels = new AudioMeterInformationChannels(_audioMeterInformation);
-        }
-
-        ~AudioMeterInformation()
-        {
-            Dispose(false);
-        }
 
         /// <summary>
         ///     Peak Values
@@ -90,9 +74,25 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
+        internal AudioMeterInformation(IAudioMeterInformation realInterface)
+        {
+            ComThread.Assert();
+            uint hardwareSupp;
+
+            _audioMeterInformation = realInterface;
+            Marshal.ThrowExceptionForHR(_audioMeterInformation.QueryHardwareSupport(out hardwareSupp));
+            _hardwareSupport = (EndpointHardwareSupport) hardwareSupp;
+            _channels = new AudioMeterInformationChannels(_audioMeterInformation);
+        }
+
         public void Dispose()
         {
             Dispose(true);
+        }
+
+        ~AudioMeterInformation()
+        {
+            Dispose(false);
         }
 
         private void Dispose(bool disposing)

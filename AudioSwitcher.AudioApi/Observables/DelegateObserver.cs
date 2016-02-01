@@ -5,9 +5,9 @@ namespace AudioSwitcher.AudioApi.Observables
 {
     internal sealed class DelegateObserver<T> : IObserver<T>, IDisposable
     {
-        private readonly Action<T> _onNext;
-        private readonly Action<Exception> _onError;
         private readonly Action _onCompleted;
+        private readonly Action<Exception> _onError;
+        private readonly Action<T> _onNext;
 
         private int _isStopped;
 
@@ -20,6 +20,11 @@ namespace AudioSwitcher.AudioApi.Observables
             _onNext = onNext;
             _onError = onError;
             _onCompleted = onCompleted;
+        }
+
+        public void Dispose()
+        {
+            Interlocked.Exchange(ref _isStopped, 1);
         }
 
         public void OnNext(T value)
@@ -39,11 +44,5 @@ namespace AudioSwitcher.AudioApi.Observables
             if (Interlocked.Exchange(ref _isStopped, 1) == 0)
                 _onCompleted();
         }
-
-        public void Dispose()
-        {
-            Interlocked.Exchange(ref _isStopped, 1);
-        }
-
     }
 }

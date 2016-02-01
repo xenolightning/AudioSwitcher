@@ -34,12 +34,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly IAudioEndpointVolume _audioEndpointVolume;
         private readonly uint _channel;
 
-        internal AudioEndpointVolumeChannel(IAudioEndpointVolume parent, int channel)
-        {
-            _channel = (uint) channel;
-            _audioEndpointVolume = parent;
-        }
-
         /// <summary>
         ///     VolumeChanged Level
         /// </summary>
@@ -72,6 +66,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 Marshal.ThrowExceptionForHR(_audioEndpointVolume.SetChannelVolumeLevelScalar(_channel, value, Guid.Empty));
             }
+        }
+
+        internal AudioEndpointVolumeChannel(IAudioEndpointVolume parent, int channel)
+        {
+            _channel = (uint) channel;
+            _audioEndpointVolume = parent;
         }
     }
 }

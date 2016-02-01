@@ -15,16 +15,16 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     internal sealed class CoreAudioSessionController : IAudioSessionController, IAudioSessionNotification, IDisposable
     {
-        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
-
-        private readonly CoreAudioDevice _device;
         private readonly IAudioSessionManager2 _audioSessionManager;
 
-        private List<CoreAudioSession> _sessionCache;
+        private readonly CoreAudioDevice _device;
+        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+        private readonly IDisposable _processTerminatedSubscription;
 
         private readonly AsyncBroadcaster<IAudioSession> _sessionCreated;
         private readonly AsyncBroadcaster<string> _sessionDisconnected;
-        private readonly IDisposable _processTerminatedSubscription;
+
+        private List<CoreAudioSession> _sessionCache;
 
         public CoreAudioSessionController(CoreAudioDevice device, IAudioSessionManager2 audioSessionManager)
         {
@@ -47,16 +47,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 RemoveSessions(_sessionCache.Where(x => x.ProcessId == processId));
             });
 
-        }
-
-        public void Dispose()
-        {
-            _processTerminatedSubscription.Dispose();
-
-            _sessionCreated.Dispose();
-            _sessionDisconnected.Dispose();
-
-            Marshal.FinalReleaseComObject(_audioSessionManager);
         }
 
         public IObservable<IAudioSession> SessionCreated
@@ -155,6 +145,16 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return Task.Factory.StartNew(() => ExpiredSessions());
         }
 
+        public IEnumerator<IAudioSession> GetEnumerator()
+        {
+            return All().GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
         public int OnSessionCreated(IAudioSessionControl sessionControl)
         {
             ComThread.BeginInvoke(() => CacheSessionWrapper(sessionControl))
@@ -165,6 +165,16 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             });
 
             return 0;
+        }
+
+        public void Dispose()
+        {
+            _processTerminatedSubscription.Dispose();
+
+            _sessionCreated.Dispose();
+            _sessionDisconnected.Dispose();
+
+            Marshal.FinalReleaseComObject(_audioSessionManager);
         }
 
         private void RefreshSessions()
@@ -273,16 +283,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private void OnSessionDisconnected(IAudioSession session)
         {
             _sessionDisconnected.OnNext(session.Id);
-        }
-
-        public IEnumerator<IAudioSession> GetEnumerator()
-        {
-            return All().GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
     }
 }

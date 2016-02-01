@@ -63,7 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MemoryTests.cs" />
+    <Compile Include="ControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SessionTests.cs" />
     <Compile Include="StructureTests.cs" />

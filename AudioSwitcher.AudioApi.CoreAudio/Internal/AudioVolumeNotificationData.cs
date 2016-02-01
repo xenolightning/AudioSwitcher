@@ -29,27 +29,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     /// </summary>
     internal class AudioVolumeNotificationData
     {
-        private readonly float[] _channelVolume;
         private readonly int _channels;
+        private readonly float[] _channelVolume;
         private readonly Guid _eventContext;
         private readonly float _masterVolume;
         private readonly bool _muted;
-
-        /// <summary>
-        ///     Audio VolumeChanged Notification Data
-        /// </summary>
-        /// <param name="eventContext"></param>
-        /// <param name="muted"></param>
-        /// <param name="masterVolume"></param>
-        /// <param name="channelVolume"></param>
-        public AudioVolumeNotificationData(Guid eventContext, bool muted, float masterVolume, float[] channelVolume)
-        {
-            _eventContext = eventContext;
-            _muted = muted;
-            _masterVolume = masterVolume;
-            _channels = channelVolume.Length;
-            _channelVolume = channelVolume;
-        }
 
         /// <summary>
         ///     Event Context
@@ -104,6 +88,22 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 return _channelVolume;
             }
+        }
+
+        /// <summary>
+        ///     Audio VolumeChanged Notification Data
+        /// </summary>
+        /// <param name="eventContext"></param>
+        /// <param name="muted"></param>
+        /// <param name="masterVolume"></param>
+        /// <param name="channelVolume"></param>
+        public AudioVolumeNotificationData(Guid eventContext, bool muted, float masterVolume, float[] channelVolume)
+        {
+            _eventContext = eventContext;
+            _muted = muted;
+            _masterVolume = masterVolume;
+            _channels = channelVolume.Length;
+            _channelVolume = channelVolume;
         }
     }
 }

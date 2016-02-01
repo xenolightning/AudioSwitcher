@@ -6,12 +6,16 @@ namespace AudioSwitcher.AudioApi.Session
 {
     public interface IAudioSessionController : IEnumerable<IAudioSession>
     {
+        IObservable<IAudioSession> SessionCreated { get; }
+
+        IObservable<string> SessionDisconnected { get; }
 
         /// <summary>
         /// All audio sessions
         /// </summary>
         /// <returns></returns>
         IEnumerable<IAudioSession> All();
+
         Task<IEnumerable<IAudioSession>> AllAsync();
 
         /// <summary>
@@ -19,6 +23,7 @@ namespace AudioSwitcher.AudioApi.Session
         /// </summary>
         /// <returns></returns>
         IEnumerable<IAudioSession> ActiveSessions();
+
         Task<IEnumerable<IAudioSession>> ActiveSessionsAsync();
 
         /// <summary>
@@ -26,6 +31,7 @@ namespace AudioSwitcher.AudioApi.Session
         /// </summary>
         /// <returns></returns>
         IEnumerable<IAudioSession> InactiveSessions();
+
         Task<IEnumerable<IAudioSession>> InactiveSessionsAsync();
 
         /// <summary>
@@ -33,10 +39,7 @@ namespace AudioSwitcher.AudioApi.Session
         /// </summary>
         /// <returns></returns>
         IEnumerable<IAudioSession> ExpiredSessions();
+
         Task<IEnumerable<IAudioSession>> ExpiredSessionsAsync();
-
-        IObservable<IAudioSession> SessionCreated { get; }
-
-        IObservable<string> SessionDisconnected { get; }
     }
 }

@@ -6,13 +6,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 2)]
     public class WaveFormat
     {
-        private readonly WaveFormatEncoding waveFormatTag;
-        private readonly short channels;
-        private int sampleRate;
         private readonly int averageBytesPerSecond;
-        private readonly short blockAlign;
         private readonly short bitsPerSample;
+        private readonly short blockAlign;
+        private readonly short channels;
         private readonly short extraSize;
+        private readonly WaveFormatEncoding waveFormatTag;
+        private int sampleRate;
 
         public WaveFormatEncoding Encoding
         {
@@ -134,8 +134,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
                     return waveFormatTag.ToString();
             }
         }
-
-        
-
     }
 }

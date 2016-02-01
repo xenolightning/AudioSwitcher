@@ -14,6 +14,23 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
         /// <summary>Stores the queued tasks to be executed by our pool of STA threads.</summary>
         private BlockingCollection<Task> _tasks;
 
+        public int ThreadId
+        {
+            get
+            {
+                return _thread == null ? -1 : _thread.ManagedThreadId;
+            }
+        }
+
+        /// <summary>Gets the maximum concurrency level supported by this scheduler.</summary>
+        public override int MaximumConcurrencyLevel
+        {
+            get
+            {
+                return 1;
+            }
+        }
+
         /// <summary>Initializes a new instance of the StaTaskScheduler class with the specified concurrency level.</summary>
         public ComTaskScheduler()
         {
@@ -38,23 +55,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 
             // Start all of the threads
             _thread.Start();
-        }
-
-        public int ThreadId
-        {
-            get
-            {
-                return _thread == null ? -1 : _thread.ManagedThreadId;
-            }
-        }
-
-        /// <summary>Gets the maximum concurrency level supported by this scheduler.</summary>
-        public override int MaximumConcurrencyLevel
-        {
-            get
-            {
-                return 1;
-            }
         }
 
         /// <summary>

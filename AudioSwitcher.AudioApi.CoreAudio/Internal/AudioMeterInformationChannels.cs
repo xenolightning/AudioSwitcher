@@ -34,11 +34,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         private readonly IAudioMeterInformation _audioMeterInformation;
 
-        internal AudioMeterInformationChannels(IAudioMeterInformation parent)
-        {
-            _audioMeterInformation = parent;
-        }
-
         /// <summary>
         ///     Metering Channel Count
         /// </summary>
@@ -72,6 +67,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     return peakValues[index];
                 });
             }
+        }
+
+        internal AudioMeterInformationChannels(IAudioMeterInformation parent)
+        {
+            _audioMeterInformation = parent;
         }
     }
 }
