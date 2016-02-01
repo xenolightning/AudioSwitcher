@@ -3,6 +3,7 @@ using Xunit;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 {
+    [Collection("CoreAudio_Structure")]
     public class StructureTests
     {
 

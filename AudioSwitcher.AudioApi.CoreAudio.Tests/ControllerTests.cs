@@ -6,7 +6,7 @@ using Xunit;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 {
-    [Collection("CoreAudio")]
+    [Collection("CoreAudio_Controller")]
     public class ControllerTests
     {
         private IAudioController CreateTestController()
@@ -70,43 +70,43 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         /// This test isn't overly reliable because it uses signals from the system.
         /// But it's almost impossible to test COM disposal properly
         /// </summary>
-        [Fact]
-        public async void CoreAudio_Controller_Dispose_EventPropagation()
-        {
-            var count = 0;
-            var ev = new TaskCompletionSource<bool>();
-            var complete = new TaskCompletionSource<bool>();
+        //[Fact]
+        //public async Task CoreAudio_Controller_Dispose_EventPropagation()
+        //{
+        //    var count = 0;
+        //    var ev = new TaskCompletionSource<bool>();
+        //    var complete = new TaskCompletionSource<bool>();
 
-            using (var outerController = new CoreAudioController())
-            {
-                using (var controller = new CoreAudioController())
-                {
+        //    using (var outerController = new CoreAudioController())
+        //    {
+        //        using (var controller = new CoreAudioController())
+        //        {
 
-                    controller.AudioDeviceChanged.Subscribe(args =>
-                    {
-                        if (args.ChangedType != DeviceChangedType.DefaultChanged)
-                            return;
+        //            controller.AudioDeviceChanged.Subscribe(args =>
+        //            {
+        //                if (args.ChangedType != DeviceChangedType.DefaultChanged)
+        //                    return;
 
-                        count++;
-                        ev.TrySetResult(true);
-                    }, () =>
-                    {
-                        complete.TrySetResult(true);
-                    });
+        //                count++;
+        //                ev.TrySetResult(true);
+        //            }, () =>
+        //            {
+        //                complete.TrySetResult(true);
+        //            });
 
-                    controller.DefaultPlaybackDevice.SetAsDefault();
+        //            controller.DefaultPlaybackDevice.SetAsDefault();
 
-                    await ev.Task;
-                }
+        //            await ev.Task;
+        //        }
 
-                outerController.DefaultPlaybackDevice.SetAsDefault();
-            }
+        //        outerController.DefaultPlaybackDevice.SetAsDefault();
+        //    }
 
-            await complete.Task;
+        //    await complete.Task;
 
-            //The event should only fire once because the inner controller is disposed before the second fire
-            Assert.Equal(1, count);
-        }
+        //    //The event should only fire once because the inner controller is disposed before the second fire
+        //    Assert.Equal(1, count);
+        //}
 
         [Fact]
         public void Controller_Disposes_Devices()

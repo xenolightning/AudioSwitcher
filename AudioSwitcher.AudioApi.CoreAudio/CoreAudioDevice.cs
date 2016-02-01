@@ -366,14 +366,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             OnVolumeChanged(Volume);
 
-            _muteChangedResetEvent.Set();
-
             if (data.Muted != _isMuted)
             {
                 _isMuted = data.Muted;
                 OnMuteChanged(_isMuted);
             }
 
+            _muteChangedResetEvent.Set();
         }
 
         private void Timer_UpdatePeakValue(long ticks)
