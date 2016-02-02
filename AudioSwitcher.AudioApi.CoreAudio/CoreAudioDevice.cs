@@ -201,7 +201,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        internal CoreAudioDevice(IMultimediaDevice device, IAudioController<CoreAudioDevice> controller)
+        internal CoreAudioDevice(IMultimediaDevice device, CoreAudioController controller)
             : base(controller)
         {
             ComThread.Assert();

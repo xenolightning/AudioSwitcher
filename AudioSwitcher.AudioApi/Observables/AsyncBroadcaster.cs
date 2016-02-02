@@ -16,7 +16,10 @@ namespace AudioSwitcher.AudioApi.Observables
         {
             get
             {
-                return _observers.Count > 0;
+                lock (_observerLock)
+                {
+                    return _observers.Count > 0;
+                }
             }
         }
 
