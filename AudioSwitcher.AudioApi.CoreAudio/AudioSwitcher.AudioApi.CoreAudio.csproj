@@ -103,7 +103,7 @@
     <Compile Include="Internal\Interfaces\WaveFormatEncoding.cs" />
     <Compile Include="Internal\Interfaces\WaveFormatExtensible.cs" />
     <Compile Include="Internal\IPropertyDictionary.cs" />
-    <Compile Include="Internal\LockExtensions.cs" />
+    <Compile Include="LockExtensions.cs" />
     <Compile Include="Internal\MultimediaDeviceCollection.cs" />
     <Compile Include="Internal\NativeMethods.cs" />
     <Compile Include="Internal\PolicyConfig.cs" />

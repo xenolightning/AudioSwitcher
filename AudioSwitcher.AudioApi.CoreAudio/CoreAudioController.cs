@@ -193,18 +193,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (device != null)
                 return device;
 
+            device = new CoreAudioDevice(mDevice, this);
+
+            device.StateChanged.Subscribe(OnAudioDeviceChanged);
+            device.DefaultChanged.Subscribe(OnAudioDeviceChanged);
+            device.PropertyChanged.Subscribe(OnAudioDeviceChanged);
+
             var lockAcquired = _lock.AcquireWriteLockNonReEntrant();
 
             try
             {
-                device = new CoreAudioDevice(mDevice, this);
-
-                device.StateChanged.Subscribe(OnAudioDeviceChanged);
-                device.DefaultChanged.Subscribe(OnAudioDeviceChanged);
-                device.PropertyChanged.Subscribe(OnAudioDeviceChanged);
-
                 _deviceCache.Add(device);
-
                 return device;
             }
             finally
@@ -267,7 +266,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             try
             {
                 PolicyConfig.SetDefaultEndpoint(dev.RealId, ERole.Communications);
-
                 return dev.IsDefaultCommunicationsDevice;
             }
             catch
@@ -284,20 +282,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public override CoreAudioDevice GetDefaultDevice(DeviceType deviceType, Role role)
         {
+            IMultimediaDevice dev;
+            _innerEnumerator.GetDefaultAudioEndpoint(deviceType.AsEDataFlow(), role.AsERole(), out dev);
+            if (dev == null)
+                return null;
+
+            string devId;
+            dev.GetId(out devId);
+            if (string.IsNullOrEmpty(devId))
+                return null;
+
             var acquiredLock = _lock.AcquireReadLockNonReEntrant();
 
             try
             {
-                IMultimediaDevice dev;
-                _innerEnumerator.GetDefaultAudioEndpoint(deviceType.AsEDataFlow(), role.AsERole(), out dev);
-                if (dev == null)
-                    return null;
-
-                string devId;
-                dev.GetId(out devId);
-                if (string.IsNullOrEmpty(devId))
-                    return null;
-
                 return _deviceCache.FirstOrDefault(x => x.RealId == devId);
             }
             finally
