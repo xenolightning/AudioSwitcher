@@ -12,7 +12,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         private readonly short channels;
         private readonly short extraSize;
         private readonly WaveFormatEncoding waveFormatTag;
-        private int sampleRate;
+        private readonly int sampleRate;
 
         public WaveFormatEncoding Encoding
         {

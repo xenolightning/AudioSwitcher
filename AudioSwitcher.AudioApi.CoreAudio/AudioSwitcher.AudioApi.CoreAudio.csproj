@@ -103,10 +103,8 @@
     <Compile Include="Internal\Interfaces\WaveFormatEncoding.cs" />
     <Compile Include="Internal\Interfaces\WaveFormatExtensible.cs" />
     <Compile Include="Internal\IPropertyDictionary.cs" />
-    <Compile Include="Internal\ISystemAudioEventClient.cs" />
     <Compile Include="Internal\LockExtensions.cs" />
     <Compile Include="Internal\MultimediaDeviceCollection.cs" />
-    <Compile Include="Internal\MultimediaNotificationClient.cs" />
     <Compile Include="Internal\NativeMethods.cs" />
     <Compile Include="Internal\PolicyConfig.cs" />
     <Compile Include="Internal\PeakValueTimer.cs" />
@@ -116,12 +114,12 @@
     <Compile Include="Internal\PropVariant.cs" />
     <Compile Include="Internal\ERole.cs" />
     <Compile Include="Internal\SystemEventNotifcationClient.cs" />
-    <Compile Include="Internal\Threading\InvalidThreadException.cs" />
-    <Compile Include="Internal\Threading\ComThread.cs" />
+    <Compile Include="Threading\InvalidThreadException.cs" />
+    <Compile Include="Threading\ComThread.cs" />
     <Compile Include="CoreAudioDevice.cs" />
     <Compile Include="CoreAudioController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Internal\Threading\ComTaskScheduler.cs" />
+    <Compile Include="Threading\ComTaskScheduler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="api.pfx" />
