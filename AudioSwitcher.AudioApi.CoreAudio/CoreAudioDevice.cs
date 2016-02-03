@@ -232,7 +232,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                                     .Subscribe(x => OnStateChanged(x.State));
 
             controller.SystemEvents.DefaultDeviceChanged
-                                    .When(x => String.Equals(x.DeviceId, RealId, StringComparison.OrdinalIgnoreCase))
+                                    .When(x => String.Equals(x.DeviceId, RealId, StringComparison.OrdinalIgnoreCase) && x.DeviceRole != ERole.Multimedia)
                                     .Subscribe(x => OnDefaultChanged());
 
             controller.SystemEvents.PropertyChanged
@@ -305,23 +305,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             GetPropertyInformation(device);
         }
-
-        //private void EnumeratorOnAudioDeviceChanged(DeviceChangedArgs deviceChangedArgs)
-        //{
-        //    var propertyChangedEvent = deviceChangedArgs as DevicePropertyChangedArgs;
-        //    var stateChangedEvent = deviceChangedArgs as DeviceStateChangedArgs;
-        //    var defaultChangedEvent = deviceChangedArgs as DefaultDeviceChangedArgs;
-
-        //    if (propertyChangedEvent != null)
-        //        HandlePropertyChanged(propertyChangedEvent);
-
-        //    if (stateChangedEvent != null)
-        //        HandleStateChanged(stateChangedEvent);
-
-        //    if (defaultChangedEvent != null)
-        //        HandleDefaultChanged();
-        //}
-
 
 
         private void OnPropertyChanged(PropertyKey propertyKey)
