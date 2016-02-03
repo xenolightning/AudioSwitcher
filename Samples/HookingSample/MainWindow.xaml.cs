@@ -89,6 +89,11 @@ namespace HookingSample
 
             DataContext = this;
 
+            Controller.AudioDeviceChanged.Subscribe(x =>
+            {
+                Console.WriteLine("{0} - {1}", x.Device.Id, x.ChangedType.ToString());
+            });
+
             Controller.DefaultPlaybackDevice.SetAsDefault();
 
             Controller.DefaultPlaybackDevice.SessionController.All();
@@ -130,7 +135,7 @@ namespace HookingSample
 
             Controller.DefaultPlaybackDevice.SessionController.SessionCreated.Subscribe(x =>
             {
-                    Console.WriteLine("{0} - {1}", x.DisplayName, x.Volume);
+                Console.WriteLine("{0} - {1}", x.DisplayName, x.Volume);
                 //x.VolumeChanged.Subscribe(v =>
                 //{
                 //});

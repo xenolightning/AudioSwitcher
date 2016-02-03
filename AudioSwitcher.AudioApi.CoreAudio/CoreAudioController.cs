@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
+using AudioSwitcher.AudioApi.Observables;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
@@ -12,23 +13,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     ///     Enumerates Windows System Devices.
     ///     Stores the current devices in memory to avoid calling the COM library when not required
     /// </summary>
-    public sealed class CoreAudioController : AudioController<CoreAudioDevice>, ISystemAudioEventClient
+    public sealed class CoreAudioController : AudioController<CoreAudioDevice>
     {
-        private static readonly Dictionary<PropertyKey, Expression<Func<IDevice, object>>> PropertykeyToLambdaMap = new Dictionary
-            <PropertyKey, Expression<Func<IDevice, object>>>
-        {
-            {PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME, x => x.InterfaceName},
-            {PropertyKeys.PKEY_DEVICE_DESCRIPTION, x => x.Name},
-            {PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME, x => x.FullName},
-            {PropertyKeys.PKEY_DEVICE_ICON, x => x.Icon},
-        };
-
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
         private HashSet<CoreAudioDevice> _deviceCache = new HashSet<CoreAudioDevice>();
-
         private IMultimediaDeviceEnumerator _innerEnumerator;
-
-        private MultimediaNotificationClient _notificationClient;
+        private SystemEventNotifcationClient _systemEvents;
 
         public CoreAudioController()
         {
@@ -40,22 +30,24 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (_innerEnumerator == null)
                     return;
 
-                _notificationClient = new MultimediaNotificationClient(this);
-                _innerEnumerator.RegisterEndpointNotificationCallback(_notificationClient);
+                _systemEvents = new SystemEventNotifcationClient(_innerEnumerator);
+
+                _systemEvents.DeviceAdded.Subscribe(x => OnDeviceAdded(x.DeviceId));
+                _systemEvents.DeviceRemoved.Subscribe(x => OnDeviceRemoved(x.DeviceId));
             });
 
             RefreshSystemDevices();
         }
 
-        void ISystemAudioEventClient.OnDeviceStateChanged(string deviceId, EDeviceState newState)
+        internal SystemEventNotifcationClient SystemEvents
         {
-            var dev = GetOrAddDeviceFromRealId(deviceId);
-
-            if (dev != null)
-                OnAudioDeviceChanged(new DeviceStateChangedArgs(dev, newState.AsDeviceState()));
+            get
+            {
+                return _systemEvents;
+            }
         }
 
-        void ISystemAudioEventClient.OnDeviceAdded(string deviceId)
+        void OnDeviceAdded(string deviceId)
         {
             var dev = GetOrAddDeviceFromRealId(deviceId);
 
@@ -63,40 +55,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 OnAudioDeviceChanged(new DeviceAddedArgs(dev));
         }
 
-        void ISystemAudioEventClient.OnDeviceRemoved(string deviceId)
+        void OnDeviceRemoved(string deviceId)
         {
             var devicesRemoved = RemoveFromRealId(deviceId);
 
             foreach (var dev in devicesRemoved)
                 OnAudioDeviceChanged(new DeviceRemovedArgs(dev));
-        }
-
-        void ISystemAudioEventClient.OnDefaultDeviceChanged(EDataFlow flow, ERole role, string deviceId)
-        {
-            //Ignore multimedia, it seems to fire a console event anyway
-            if (role == ERole.Multimedia)
-                return;
-
-            var dev = GetOrAddDeviceFromRealId(deviceId);
-
-            if (dev == null)
-                return;
-
-            OnAudioDeviceChanged(new DefaultDeviceChangedArgs(dev));
-        }
-
-        void ISystemAudioEventClient.OnPropertyValueChanged(string deviceId, PropertyKey key)
-        {
-            var dev = GetOrAddDeviceFromRealId(deviceId);
-
-            if (dev == null)
-                return;
-
-            //Ignore the properties we don't care about
-            if (!PropertykeyToLambdaMap.ContainsKey(key))
-                return;
-
-            OnAudioDeviceChanged(DevicePropertyChangedArgs.FromExpression(dev, PropertykeyToLambdaMap[key]));
         }
 
         ~CoreAudioController()
@@ -108,12 +72,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             ComThread.BeginInvoke(() =>
             {
-                if (_innerEnumerator != null)
+                if (_systemEvents != null)
                 {
-                    _innerEnumerator.UnregisterEndpointNotificationCallback(_notificationClient);
-                    _notificationClient = null;
-                    _innerEnumerator = null;
+                    _systemEvents.Dispose();
+                    _systemEvents = null;
                 }
+
+                _innerEnumerator = null;
             })
             .ContinueWith(x =>
             {
@@ -234,6 +199,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             try
             {
                 device = new CoreAudioDevice(mDevice, this);
+
+                device.StateChanged.Subscribe(OnAudioDeviceChanged);
+                device.DefaultChanged.Subscribe(OnAudioDeviceChanged);
+                device.PropertyChanged.Subscribe(OnAudioDeviceChanged);
+
                 _deviceCache.Add(device);
 
                 return device;

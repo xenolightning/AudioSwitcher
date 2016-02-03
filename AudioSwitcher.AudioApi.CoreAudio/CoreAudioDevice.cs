@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Threading;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
@@ -10,7 +12,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public sealed partial class CoreAudioDevice : Device
     {
-        private readonly IDisposable _changeSubscription;
+        private static readonly Dictionary<PropertyKey, Expression<Func<IDevice, object>>> PropertykeyToLambdaMap = new Dictionary
+            <PropertyKey, Expression<Func<IDevice, object>>>
+        {
+            {PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME, x => x.InterfaceName},
+            {PropertyKeys.PKEY_DEVICE_DESCRIPTION, x => x.Name},
+            {PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME, x => x.FullName},
+            {PropertyKeys.PKEY_DEVICE_ICON, x => x.Icon},
+        };
+
         private readonly ManualResetEvent _muteChangedResetEvent = new ManualResetEvent(false);
         private readonly IDisposable _peakValueTimerSubscription;
         private EDataFlow _dataFlow;
@@ -217,9 +227,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ReloadAudioEndpointVolume(device);
             ReloadAudioSessionController(device);
 
-            _changeSubscription = controller.AudioDeviceChanged
-                                                .When(x => x.Device != null && x.Device.Id == Id)
-                                                .Subscribe(EnumeratorOnAudioDeviceChanged);
+            controller.SystemEvents.DeviceStateChanged
+                                    .When(x => String.Equals(x.DeviceId, RealId, StringComparison.OrdinalIgnoreCase))
+                                    .Subscribe(x => OnStateChanged(x.State));
+
+            controller.SystemEvents.DefaultDeviceChanged
+                                    .When(x => String.Equals(x.DeviceId, RealId, StringComparison.OrdinalIgnoreCase))
+                                    .Subscribe(x => OnDefaultChanged());
+
+            controller.SystemEvents.PropertyChanged
+                                    .When(x => String.Equals(x.DeviceId, RealId, StringComparison.OrdinalIgnoreCase))
+                                    .Subscribe(x => OnPropertyChanged(x.PropertyKey));
 
             _peakValueTimerSubscription = PeakValueTimer.PeakValueTick.Subscribe(Timer_UpdatePeakValue);
         }
@@ -233,9 +251,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             if (!_isDisposed)
             {
-                if (_changeSubscription != null)
-                    _changeSubscription.Dispose();
-
                 if (_peakValueTimerSubscription != null)
                     _peakValueTimerSubscription.Dispose();
 
@@ -291,23 +306,25 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             GetPropertyInformation(device);
         }
 
-        private void EnumeratorOnAudioDeviceChanged(DeviceChangedArgs deviceChangedArgs)
-        {
-            var propertyChangedEvent = deviceChangedArgs as DevicePropertyChangedArgs;
-            var stateChangedEvent = deviceChangedArgs as DeviceStateChangedArgs;
-            var defaultChangedEvent = deviceChangedArgs as DefaultDeviceChangedArgs;
+        //private void EnumeratorOnAudioDeviceChanged(DeviceChangedArgs deviceChangedArgs)
+        //{
+        //    var propertyChangedEvent = deviceChangedArgs as DevicePropertyChangedArgs;
+        //    var stateChangedEvent = deviceChangedArgs as DeviceStateChangedArgs;
+        //    var defaultChangedEvent = deviceChangedArgs as DefaultDeviceChangedArgs;
 
-            if (propertyChangedEvent != null)
-                HandlePropertyChanged(propertyChangedEvent);
+        //    if (propertyChangedEvent != null)
+        //        HandlePropertyChanged(propertyChangedEvent);
 
-            if (stateChangedEvent != null)
-                HandleStateChanged(stateChangedEvent);
+        //    if (stateChangedEvent != null)
+        //        HandleStateChanged(stateChangedEvent);
 
-            if (defaultChangedEvent != null)
-                HandleDefaultChanged();
-        }
+        //    if (defaultChangedEvent != null)
+        //        HandleDefaultChanged();
+        //}
 
-        private void HandlePropertyChanged(DevicePropertyChangedArgs propertyChanged)
+
+
+        private void OnPropertyChanged(PropertyKey propertyKey)
         {
             ComThread.BeginInvoke(() =>
             {
@@ -315,19 +332,25 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             })
             .ContinueWith(x =>
             {
-                OnPropertyChanged(propertyChanged.PropertyName);
+                //Ignore the properties we don't care about
+                if (!PropertykeyToLambdaMap.ContainsKey(propertyKey))
+                    return;
+
+                var propertyName =
+                    DevicePropertyChangedArgs.FromExpression(this, PropertykeyToLambdaMap[propertyKey]).PropertyName;
+                OnPropertyChanged(propertyName);
             });
         }
 
-        private void HandleStateChanged(DeviceStateChangedArgs stateChanged)
+        private void OnStateChanged(EDeviceState deviceState)
         {
-            _state = stateChanged.State.AsEDeviceState();
+            _state = deviceState;
 
             ReloadAudioEndpointVolume(Device);
             ReloadAudioMeterInformation(Device);
             ReloadAudioSessionController(Device);
 
-            OnStateChanged(stateChanged.State);
+            OnStateChanged(deviceState.AsDeviceState());
         }
 
         private void ReloadAudioMeterInformation(IMultimediaDevice device)
@@ -355,11 +378,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (AudioEndpointVolume != null)
                     AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
             });
-        }
-
-        private void HandleDefaultChanged()
-        {
-            OnDefaultChanged();
         }
 
         private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
