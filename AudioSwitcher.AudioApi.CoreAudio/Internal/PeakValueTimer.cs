@@ -35,11 +35,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private static void TimerTick(object sender, ElapsedEventArgs e)
         {
-            _peakValueTimer.Enabled = false;
-            //Console.WriteLine("{0} - START - {1}", Thread.CurrentThread.ManagedThreadId, e.SignalTime.ToString("HH:mm:ss:ffff"));
             _peakValueTick.OnNext(Environment.TickCount);
-            //Console.WriteLine("{0} - END - {1}", Thread.CurrentThread.ManagedThreadId, e.SignalTime.ToString("HH:mm:ss:ffff"));
-            _peakValueTimer.Enabled = true;
+            _peakValueTimer.Start();
         }
     }
 }
