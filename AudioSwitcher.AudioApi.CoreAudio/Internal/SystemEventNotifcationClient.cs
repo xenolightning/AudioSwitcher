@@ -37,11 +37,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             public PropertyKey PropertyKey { get; set; }
         }
 
-        private readonly AsyncBroadcaster<DeviceStateChangedArgs> _deviceStateChanged;
-        private readonly AsyncBroadcaster<DeviceAddedArgs> _deviceAdded;
-        private readonly AsyncBroadcaster<DeviceRemovedArgs> _deviceRemoved;
-        private readonly AsyncBroadcaster<DefaultChangedArgs> _defaultDeviceChanged;
-        private readonly AsyncBroadcaster<PropertyChangedArgs> _propertyChanged;
+        private readonly Broadcaster<DeviceStateChangedArgs> _deviceStateChanged;
+        private readonly Broadcaster<DeviceAddedArgs> _deviceAdded;
+        private readonly Broadcaster<DeviceRemovedArgs> _deviceRemoved;
+        private readonly Broadcaster<DefaultChangedArgs> _defaultDeviceChanged;
+        private readonly Broadcaster<PropertyChangedArgs> _propertyChanged;
         private bool _isDisposed;
 
         public IObservable<DeviceStateChangedArgs> DeviceStateChanged
@@ -88,11 +88,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             _enumerator = enumerator;
 
-            _deviceStateChanged = new AsyncBroadcaster<DeviceStateChangedArgs>();
-            _deviceAdded = new AsyncBroadcaster<DeviceAddedArgs>();
-            _deviceRemoved = new AsyncBroadcaster<DeviceRemovedArgs>();
-            _defaultDeviceChanged = new AsyncBroadcaster<DefaultChangedArgs>();
-            _propertyChanged = new AsyncBroadcaster<PropertyChangedArgs>();
+            _deviceStateChanged = new Broadcaster<DeviceStateChangedArgs>();
+            _deviceAdded = new Broadcaster<DeviceAddedArgs>();
+            _deviceRemoved = new Broadcaster<DeviceRemovedArgs>();
+            _defaultDeviceChanged = new Broadcaster<DefaultChangedArgs>();
+            _propertyChanged = new Broadcaster<PropertyChangedArgs>();
 
             enumerator.RegisterEndpointNotificationCallback(this);
         }

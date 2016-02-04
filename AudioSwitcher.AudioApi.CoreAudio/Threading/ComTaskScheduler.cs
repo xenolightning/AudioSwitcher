@@ -8,10 +8,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 {
     internal sealed class ComTaskScheduler : TaskScheduler, IDisposable
     {
-        /// <summary>The STA threads used by the scheduler.</summary>
         private readonly Thread _thread;
-
-        /// <summary>Stores the queued tasks to be executed by our pool of STA threads.</summary>
+        private readonly CancellationTokenSource _cancellationToken;
         private BlockingCollection<Task> _tasks;
 
         public int ThreadId
@@ -22,7 +20,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
             }
         }
 
-        /// <summary>Gets the maximum concurrency level supported by this scheduler.</summary>
         public override int MaximumConcurrencyLevel
         {
             get
@@ -31,74 +28,74 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
             }
         }
 
-        /// <summary>Initializes a new instance of the StaTaskScheduler class with the specified concurrency level.</summary>
         public ComTaskScheduler()
         {
-            // Initialize the tasks collection
             _tasks = new BlockingCollection<Task>();
+            _cancellationToken = new CancellationTokenSource();
 
-            _thread = new Thread(() =>
-            {
-                // Continually get the next task and try to execute it.
-                // This will continue until the scheduler is disposed and no more tasks remain.
-                foreach (var t in _tasks.GetConsumingEnumerable())
-                {
-                    TryExecuteTask(t);
-                }
-
-                //lightweight pump of the thread
-                Thread.CurrentThread.Join(1);
-            });
-
+            _thread = new Thread(ThreadStart);
             _thread.IsBackground = true;
-            _thread.SetApartmentState(ApartmentState.STA);
+            _thread.TrySetApartmentState(ApartmentState.STA);
 
-            // Start all of the threads
             _thread.Start();
         }
 
-        /// <summary>
-        ///     Cleans up the scheduler by indicating that no more tasks will be queued.
-        ///     This method blocks until all threads successfully shutdown.
-        /// </summary>
         public void Dispose()
         {
-            if (_tasks == null) return;
 
-            // Indicate that no new tasks will be coming in
+            if (_cancellationToken.IsCancellationRequested)
+                return;
+
             _tasks.CompleteAdding();
-
-            _thread.Join();
-
-            // Cleanup
-            _tasks.Dispose();
-            _tasks = null;
+            _cancellationToken.Cancel();
         }
 
-        /// <summary>Queues a Task to be executed by this scheduler.</summary>
-        /// <param name="task">The task to be executed.</param>
         protected override void QueueTask(Task task)
         {
-            // Push it into the blocking collection of tasks
-            _tasks.Add(task);
+            VerifyNotDisposed();
+
+            _tasks.Add(task, _cancellationToken.Token);
         }
 
-        /// <summary>Provides a list of the scheduled tasks for the debugger to consume.</summary>
-        /// <returns>An enumerable of all tasks currently scheduled.</returns>
         protected override IEnumerable<Task> GetScheduledTasks()
         {
-            // Serialize the contents of the blocking collection of tasks for the debugger
+            VerifyNotDisposed();
+
             return _tasks.ToArray();
         }
 
-        /// <summary>Determines whether a Task may be inlined.</summary>
-        /// <param name="task">The task to be executed.</param>
-        /// <param name="taskWasPreviouslyQueued">Whether the task was previously queued.</param>
-        /// <returns>true if the task was successfully inlined; otherwise, false.</returns>
         protected override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)
         {
-            //Never run inline, it HAS to be run on the COM thread
-            return false;
+            VerifyNotDisposed();
+
+            if (_thread != Thread.CurrentThread)
+                return false;
+
+            if (_cancellationToken.Token.IsCancellationRequested)
+                return false;
+
+            return TryExecuteTask(task);
+        }
+
+        private void ThreadStart()
+        {
+            try
+            {
+                var token = _cancellationToken.Token;
+
+                foreach (var task in _tasks.GetConsumingEnumerable(token))
+                    TryExecuteTask(task);
+            }
+            finally
+            {
+                _tasks.Dispose();
+            }
+        }
+
+        private void VerifyNotDisposed()
+        {
+            if (_cancellationToken.IsCancellationRequested)
+                throw new ObjectDisposedException(typeof(ComTaskScheduler).Name);
         }
     }
 }

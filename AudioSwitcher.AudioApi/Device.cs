@@ -11,22 +11,22 @@ namespace AudioSwitcher.AudioApi
     /// </summary>
     public abstract class Device : IDevice
     {
-        private readonly AsyncBroadcaster<DefaultDeviceChangedArgs> _defaultChanged;
-        private readonly AsyncBroadcaster<DeviceMuteChangedArgs> _muteChanged;
-        private readonly AsyncBroadcaster<DevicePeakValueChangedArgs> _peakValueChanged;
-        private readonly AsyncBroadcaster<DevicePropertyChangedArgs> _propertyChanged;
-        private readonly AsyncBroadcaster<DeviceStateChangedArgs> _stateChanged;
-        private readonly AsyncBroadcaster<DeviceVolumeChangedArgs> _volumeChanged;
+        private readonly Broadcaster<DefaultDeviceChangedArgs> _defaultChanged;
+        private readonly Broadcaster<DeviceMuteChangedArgs> _muteChanged;
+        private readonly Broadcaster<DevicePeakValueChangedArgs> _peakValueChanged;
+        private readonly Broadcaster<DevicePropertyChangedArgs> _propertyChanged;
+        private readonly Broadcaster<DeviceStateChangedArgs> _stateChanged;
+        private readonly Broadcaster<DeviceVolumeChangedArgs> _volumeChanged;
 
         protected Device(IAudioController controller)
         {
             Controller = controller;
-            _muteChanged = new AsyncBroadcaster<DeviceMuteChangedArgs>();
-            _stateChanged = new AsyncBroadcaster<DeviceStateChangedArgs>();
-            _volumeChanged = new AsyncBroadcaster<DeviceVolumeChangedArgs>();
-            _defaultChanged = new AsyncBroadcaster<DefaultDeviceChangedArgs>();
-            _propertyChanged = new AsyncBroadcaster<DevicePropertyChangedArgs>();
-            _peakValueChanged = new AsyncBroadcaster<DevicePeakValueChangedArgs>();
+            _muteChanged = new Broadcaster<DeviceMuteChangedArgs>();
+            _stateChanged = new Broadcaster<DeviceStateChangedArgs>();
+            _volumeChanged = new Broadcaster<DeviceVolumeChangedArgs>();
+            _defaultChanged = new Broadcaster<DefaultDeviceChangedArgs>();
+            _propertyChanged = new Broadcaster<DevicePropertyChangedArgs>();
+            _peakValueChanged = new Broadcaster<DevicePeakValueChangedArgs>();
         }
 
         public IAudioController Controller { get; private set; }

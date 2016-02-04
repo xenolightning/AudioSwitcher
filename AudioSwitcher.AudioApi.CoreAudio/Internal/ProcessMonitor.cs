@@ -11,7 +11,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         private static Timer _processExitTimer;
         private static IEnumerable<int> _lastProcesses = new List<int>();
-        private static readonly AsyncBroadcaster<int> _processTerminated;
+        private static readonly Broadcaster<int> _processTerminated;
 
         public static IObservable<int> ProcessTerminated
         {
@@ -23,7 +23,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         static ProcessMonitor()
         {
-            _processTerminated = new AsyncBroadcaster<int>();
+            _processTerminated = new Broadcaster<int>();
             _processExitTimer = new Timer
             {
                 Interval = 1000,

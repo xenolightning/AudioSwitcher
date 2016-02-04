@@ -11,14 +11,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     internal sealed class CoreAudioSession : IAudioSession, IAudioSessionEvents, IDisposable
     {
         private readonly IDisposable _deviceMutedSubscription;
-        private readonly AsyncBroadcaster<SessionDisconnectedArgs> _disconnected;
         private readonly IAudioMeterInformation _meterInformation;
-        private readonly AsyncBroadcaster<SessionMuteChangedArgs> _muteChanged;
-        private readonly AsyncBroadcaster<SessionPeakValueChangedArgs> _peakValueChanged;
         private readonly ISimpleAudioVolume _simpleAudioVolume;
-        private readonly AsyncBroadcaster<SessionStateChangedArgs> _stateChanged;
         private readonly IDisposable _timerSubscription;
-        private readonly AsyncBroadcaster<SessionVolumeChangedArgs> _volumeChanged;
+        private readonly Broadcaster<SessionDisconnectedArgs> _disconnected;
+        private readonly Broadcaster<SessionMuteChangedArgs> _muteChanged;
+        private readonly Broadcaster<SessionPeakValueChangedArgs> _peakValueChanged;
+        private readonly Broadcaster<SessionStateChangedArgs> _stateChanged;
+        private readonly Broadcaster<SessionVolumeChangedArgs> _volumeChanged;
         private IAudioSessionControl2 _audioSessionControl;
         private string _displayName;
         private string _executablePath;
@@ -33,6 +33,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private int _processId;
         private AudioSessionState _state;
         private double _volume;
+        private bool _isUpdatingPeakValue;
 
         public CoreAudioSession(CoreAudioDevice device, IAudioSessionControl control)
         {
@@ -64,11 +65,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 _timerSubscription = PeakValueTimer.PeakValueTick.Subscribe(Timer_UpdatePeakValue);
             }
 
-            _stateChanged = new AsyncBroadcaster<SessionStateChangedArgs>();
-            _disconnected = new AsyncBroadcaster<SessionDisconnectedArgs>();
-            _volumeChanged = new AsyncBroadcaster<SessionVolumeChangedArgs>();
-            _muteChanged = new AsyncBroadcaster<SessionMuteChangedArgs>();
-            _peakValueChanged = new AsyncBroadcaster<SessionPeakValueChangedArgs>();
+            _stateChanged = new Broadcaster<SessionStateChangedArgs>();
+            _disconnected = new Broadcaster<SessionDisconnectedArgs>();
+            _volumeChanged = new Broadcaster<SessionVolumeChangedArgs>();
+            _muteChanged = new Broadcaster<SessionMuteChangedArgs>();
+            _peakValueChanged = new Broadcaster<SessionPeakValueChangedArgs>();
 
             _audioSessionControl.RegisterAudioSessionNotification(this);
 
@@ -256,10 +257,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void Timer_UpdatePeakValue(long ticks)
         {
+            if (_isUpdatingPeakValue)
+                return;
+
+            _isUpdatingPeakValue = true;
+
             float peakValue = _peakValue;
 
-            ComThread.BeginInvoke(() =>
-            {
+            //ComThread.BeginInvoke(() =>
+            //{
                 if (_isDisposed)
                     return;
 
@@ -274,15 +280,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     //ignored - usually means the com object has been released, but the timer is still ticking
                 }
-            })
-            .ContinueWith(x =>
-            {
+            //})
+            //.ContinueWith(x =>
+            //{
                 if (Math.Abs(_peakValue - peakValue) > 0.001)
                 {
                     _peakValue = peakValue;
                     OnPeakValueChanged(peakValue * 100);
                 }
-            });
+
+                _isUpdatingPeakValue = false;
+            //});
         }
 
         ~CoreAudioSession()

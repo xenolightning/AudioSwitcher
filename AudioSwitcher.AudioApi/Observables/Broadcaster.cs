@@ -62,7 +62,14 @@ namespace AudioSwitcher.AudioApi.Observables
                 }
                 catch (Exception ex)
                 {
-                    observer.OnError(ex);
+                    try
+                    {
+                        observer.OnError(ex);
+                    }
+                    catch
+                    {
+                        //ignored, should not impact other observers
+                    }
                 }
             }
         }
@@ -80,7 +87,14 @@ namespace AudioSwitcher.AudioApi.Observables
 
             foreach (var observer in coll)
             {
-                observer.OnError(error);
+                try
+                {
+                    observer.OnError(error);
+                }
+                catch
+                {
+                    //ignored, should not impact other observers
+                }
             }
         }
 
@@ -97,7 +111,14 @@ namespace AudioSwitcher.AudioApi.Observables
 
             foreach (var observer in coll)
             {
-                observer.OnCompleted();
+                try
+                {
+                    observer.OnCompleted();
+                }
+                catch
+                {
+                    //ignored, should not impact other observers
+                }
             }
 
             _isComplete = true;
@@ -105,7 +126,7 @@ namespace AudioSwitcher.AudioApi.Observables
 
         public override IDisposable Subscribe(IObserver<T> observer)
         {
-            if(IsDisposed)
+            if (IsDisposed)
                 throw new ObjectDisposedException("Observable is disposed");
 
             if (IsComplete)

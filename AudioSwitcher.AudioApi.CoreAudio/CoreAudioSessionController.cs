@@ -21,8 +21,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
         private readonly IDisposable _processTerminatedSubscription;
 
-        private readonly AsyncBroadcaster<IAudioSession> _sessionCreated;
-        private readonly AsyncBroadcaster<string> _sessionDisconnected;
+        private readonly Broadcaster<IAudioSession> _sessionCreated;
+        private readonly Broadcaster<string> _sessionDisconnected;
 
         private List<CoreAudioSession> _sessionCache;
 
@@ -38,8 +38,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _audioSessionManager.RegisterSessionNotification(this);
             _sessionCache = new List<CoreAudioSession>(0);
 
-            _sessionCreated = new AsyncBroadcaster<IAudioSession>();
-            _sessionDisconnected = new AsyncBroadcaster<string>();
+            _sessionCreated = new Broadcaster<IAudioSession>();
+            _sessionDisconnected = new Broadcaster<string>();
 
             RefreshSessions();
 

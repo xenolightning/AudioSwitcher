@@ -33,6 +33,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private CachedPropertyDictionary _properties;
         private string _realId;
         private EDeviceState _state;
+        private bool _isUpdatingPeakValue;
 
         private IMultimediaDevice Device
         {
@@ -378,10 +379,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void Timer_UpdatePeakValue(long ticks)
         {
+            if (_isUpdatingPeakValue)
+                return;
+
+            _isUpdatingPeakValue = true;
+
             float peakValue = _peakValue;
 
-            ComThread.BeginInvoke(() =>
-            {
+            //ComThread.BeginInvoke(() =>
+            //{
                 if (_isDisposed)
                     return;
 
@@ -393,15 +399,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     //ignored - usually means the com object has been released, but the timer is still ticking
                 }
-            })
-            .ContinueWith(x =>
-            {
+            //})
+            //.ContinueWith(x =>
+            //{
                 if (Math.Abs(_peakValue - peakValue) > 0.001)
                 {
                     _peakValue = peakValue;
                     OnPeakValueChanged(peakValue * 100);
                 }
-            });
+
+                _isUpdatingPeakValue = false;
+            //});
         }
 
         /// <summary>
