@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AudioSwitcher.Scripting.JavaScript
+﻿namespace AudioSwitcher.Scripting.JavaScript
 {
     public class JsInfo : IScriptInfo
     {
@@ -11,6 +9,7 @@ namespace AudioSwitcher.Scripting.JavaScript
         private readonly string _officialName;
         private readonly string _syntaxHighlightingCode;
         private readonly string _fileExtension;
+        private readonly string _mediaType;
 
         private JsInfo()
         {
@@ -19,6 +18,7 @@ namespace AudioSwitcher.Scripting.JavaScript
             _versionString = "5.1";
             _syntaxHighlightingCode = "JavaScript";
             _fileExtension = "js";
+            _mediaType = "text/javascript";
         }
 
         public string CommonName
@@ -36,14 +36,14 @@ namespace AudioSwitcher.Scripting.JavaScript
             get { return _versionString; }
         }
 
+        public string MediaType
+        {
+            get { return _mediaType; }
+        }
+
         public string SyntaxHighlightingCode
         {
             get { return _syntaxHighlightingCode; }
-        }
-
-        public Type ScriptEngineType
-        {
-            get { return typeof(JsEngine); }
         }
 
         public string FileExtension

@@ -20,17 +20,17 @@ namespace AudioSwitcher.Scripting
             get;
         }
 
+        string MediaType
+        {
+            get;
+        }
+
         string SyntaxHighlightingCode
         {
             get;
         }
 
         string FileExtension
-        {
-            get;
-        }
-
-        Type ScriptEngineType
         {
             get;
         }

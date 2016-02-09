@@ -219,9 +219,5 @@ namespace AudioSwitcher.Scripting.JavaScript
             return _libraries[libraryName];
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-        }
     }
 }
