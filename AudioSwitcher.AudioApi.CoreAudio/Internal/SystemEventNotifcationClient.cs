@@ -124,7 +124,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         void IMultimediaNotificationClient.OnDefaultDeviceChanged(EDataFlow dataFlow, ERole deviceRole, string defaultDeviceId)
         {
-            _defaultDeviceChanged.OnNext(new DefaultChangedArgs()
+            _defaultDeviceChanged.OnNext(new DefaultChangedArgs
             {
                 DeviceId = defaultDeviceId,
                 DataFlow = dataFlow,

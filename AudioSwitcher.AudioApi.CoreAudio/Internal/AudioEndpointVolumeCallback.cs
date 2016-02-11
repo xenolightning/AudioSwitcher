@@ -79,8 +79,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             var p = _handler.Target as AudioEndpointVolume;
 
-            if (_handler.IsAlive && p != null)
-                p.FireNotification(notificationData);
+            if (_handler.IsAlive)
+                p?.FireNotification(notificationData);
 
             return 0;
         }

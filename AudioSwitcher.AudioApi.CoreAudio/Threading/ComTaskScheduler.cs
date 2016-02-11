@@ -42,16 +42,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 
         public void Dispose()
         {
-
             if (_cancellationToken.IsCancellationRequested)
                 return;
 
-            _tasks.CompleteAdding();
             _cancellationToken.Cancel();
+            _tasks.CompleteAdding();
         }
 
         protected override void QueueTask(Task task)
         {
+            if (_tasks.IsAddingCompleted)
+                return;
+
             VerifyNotDisposed();
 
             _tasks.Add(task, _cancellationToken.Token);
@@ -88,7 +90,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
             }
             finally
             {
-                //_tasks.Dispose();
+                _tasks.Dispose();
             }
         }
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AudioSwitcher.Scripting
+﻿namespace AudioSwitcher.Scripting
 {
     public interface IScriptInfo
     {

@@ -178,8 +178,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 ComThread.BeginInvoke(() =>
                 {
-                    if (_audioEndPointVolume != null)
-                        _audioEndPointVolume.UnregisterControlChangeNotify(_callBack);
+                    _audioEndPointVolume?.UnregisterControlChangeNotify(_callBack);
 
                     _callBack = null;
                     _audioEndPointVolume = null;
@@ -212,11 +211,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         internal void FireNotification(AudioVolumeNotificationData notificationData)
         {
-            var del = OnVolumeNotification;
-            if (del != null)
-            {
-                del(notificationData);
-            }
+            OnVolumeNotification?.Invoke(notificationData);
         }
 
         /// <summary>

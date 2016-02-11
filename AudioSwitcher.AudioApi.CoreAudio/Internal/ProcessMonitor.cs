@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Timers;
 using AudioSwitcher.AudioApi.Observables;
 
@@ -47,8 +46,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             _lastProcesses = processIds;
 
-            if (_processExitTimer != null)
-                _processExitTimer.Start();
+            _processExitTimer?.Start();
         }
     }
 }

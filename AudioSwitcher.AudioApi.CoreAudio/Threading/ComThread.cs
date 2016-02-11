@@ -31,8 +31,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
         public static void Assert()
         {
             if (InvokeRequired)
-                throw new InvalidThreadException(
-                    string.Format("This operation must be run on the ComThread ThreadId: {0}", Scheduler.ThreadId));
+                throw new InvalidThreadException($"This operation must be run on the ComThread ThreadId: {Scheduler.ThreadId}");
         }
 
         public static void Invoke(Action action)

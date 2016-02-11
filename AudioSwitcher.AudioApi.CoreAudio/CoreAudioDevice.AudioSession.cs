@@ -50,9 +50,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
             catch (Exception)
             {
-                if (_sessionController != null)
-                    _sessionController.Dispose();
-
+                _sessionController?.Dispose();
                 _sessionController = null;
             }
         }

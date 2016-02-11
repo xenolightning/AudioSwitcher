@@ -26,5 +26,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         ///     endpoint device, or from the audio endpoint device to the application.
         /// </summary>
         All
-    };
+    }
 }

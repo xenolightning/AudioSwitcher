@@ -35,7 +35,7 @@ namespace AudioSwitcher.AudioApi.Observables
         public static IObservable<T> AsObservable<T>(this IObservable<T> observable)
         {
             if (observable == null)
-                throw new ArgumentNullException("observable");
+                throw new ArgumentNullException(nameof(observable));
 
             return observable;
         }

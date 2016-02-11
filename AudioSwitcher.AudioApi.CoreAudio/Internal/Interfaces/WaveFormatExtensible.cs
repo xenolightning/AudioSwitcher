@@ -63,12 +63,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 
         public override string ToString()
         {
-            return String.Format("{0} wBitsPerSample:{1} dwChannelMask:{2} subFormat:{3} extraSize:{4}",
-                base.ToString(),
-                wValidBitsPerSample,
-                dwChannelMask,
-                subFormat,
-                ExtraSize);
+            return
+                $"{base.ToString()} wBitsPerSample:{wValidBitsPerSample} dwChannelMask:{dwChannelMask} subFormat:{subFormat} extraSize:{ExtraSize}";
         }
     }
 }

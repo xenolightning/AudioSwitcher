@@ -36,7 +36,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
                 case DeviceState.All:
                     return ALL;
             }
-            throw new ArgumentOutOfRangeException("state");
+            throw new ArgumentOutOfRangeException(nameof(state));
         }
     }
 }

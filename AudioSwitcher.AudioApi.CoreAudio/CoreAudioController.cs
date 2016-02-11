@@ -47,7 +47,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        void OnDeviceAdded(string deviceId)
+        private void OnDeviceAdded(string deviceId)
         {
             var dev = GetOrAddDeviceFromRealId(deviceId);
 
@@ -55,7 +55,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 OnAudioDeviceChanged(new DeviceAddedArgs(dev));
         }
 
-        void OnDeviceRemoved(string deviceId)
+        private void OnDeviceRemoved(string deviceId)
         {
             var devicesRemoved = RemoveFromRealId(deviceId);
 
@@ -82,11 +82,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             })
             .ContinueWith(x =>
             {
-                if (_deviceCache != null)
-                    _deviceCache.Clear();
-
-                if (_lock != null)
-                    _lock.Dispose();
+                _deviceCache?.Clear();
+                _lock?.Dispose();
             });
 
             base.Dispose(disposing);

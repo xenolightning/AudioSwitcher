@@ -19,7 +19,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME, x => x.InterfaceName},
             {PropertyKeys.PKEY_DEVICE_DESCRIPTION, x => x.Name},
             {PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME, x => x.FullName},
-            {PropertyKeys.PKEY_DEVICE_ICON, x => x.Icon},
+            {PropertyKeys.PKEY_DEVICE_ICON, x => x.Icon}
         };
 
         private readonly ManualResetEvent _muteChangedResetEvent = new ManualResetEvent(false);
@@ -201,7 +201,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _device = device;
 
             if (device == null)
-                throw new ArgumentNullException("device");
+                throw new ArgumentNullException(nameof(device));
 
             LoadProperties(device);
 
@@ -236,8 +236,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             if (!_isDisposed)
             {
-                if (_peakValueTimerSubscription != null)
-                    _peakValueTimerSubscription.Dispose();
+                _peakValueTimerSubscription?.Dispose();
 
                 ComThread.BeginInvoke(() =>
                 {
@@ -480,7 +479,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             _isUpdatingPeakValue = true;
 
-            float peakValue = _peakValue;
+            var peakValue = _peakValue;
 
             if (_isDisposed)
                 return;

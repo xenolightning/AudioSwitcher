@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Timers;
 using AudioSwitcher.AudioApi.Observables;
 using Timer = System.Timers.Timer;

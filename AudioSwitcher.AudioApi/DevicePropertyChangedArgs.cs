@@ -17,13 +17,13 @@ namespace AudioSwitcher.AudioApi
         {
             if (propertyExpression == null)
             {
-                throw new ArgumentNullException("propertyExpression");
+                throw new ArgumentNullException(nameof(propertyExpression));
             }
 
             var memberExpression = propertyExpression.Body as MemberExpression;
             if (memberExpression == null)
             {
-                throw new ArgumentException("Invalid Expression", "propertyExpression");
+                throw new ArgumentException("Invalid Expression", nameof(propertyExpression));
             }
             return memberExpression.Member.Name;
         }

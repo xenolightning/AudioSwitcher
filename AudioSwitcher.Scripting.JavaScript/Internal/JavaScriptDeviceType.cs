@@ -27,7 +27,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
                     return ALL;
             }
 
-            throw new ArgumentOutOfRangeException("type");
+            throw new ArgumentOutOfRangeException(nameof(type));
         }
     }
 }

@@ -30,8 +30,8 @@ namespace AudioSwitcher.AudioApi.Hooking
             Action<int, Exception> errorHandler
             )
         {
-            if (systemId == null) throw new ArgumentNullException("systemId");
-            if (canUnload == null) throw new ArgumentNullException("canUnload");
+            if (systemId == null) throw new ArgumentNullException(nameof(systemId));
+            if (canUnload == null) throw new ArgumentNullException(nameof(canUnload));
 
             _systemId = systemId;
             _canUnload = canUnload;

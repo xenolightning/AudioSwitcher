@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.Session;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
@@ -23,7 +21,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 case DeviceType.All:
                     return EDataFlow.All;
                 default:
-                    throw new ArgumentOutOfRangeException("type");
+                    throw new ArgumentOutOfRangeException(nameof(type));
             }
         }
 
@@ -38,7 +36,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 case EDataFlow.All:
                     return DeviceType.All;
                 default:
-                    throw new ArgumentOutOfRangeException("dataFlow");
+                    throw new ArgumentOutOfRangeException(nameof(dataFlow));
             }
         }
 
@@ -57,7 +55,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 case EDeviceState.All:
                     return DeviceState.All;
                 default:
-                    throw new ArgumentOutOfRangeException("deviceState");
+                    throw new ArgumentOutOfRangeException(nameof(deviceState));
             }
         }
 
@@ -76,7 +74,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 case DeviceState.All:
                     return EDeviceState.All;
                 default:
-                    throw new ArgumentOutOfRangeException("deviceState");
+                    throw new ArgumentOutOfRangeException(nameof(deviceState));
             }
         }
 
@@ -91,7 +89,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 case Role.Communications:
                     return ERole.Communications;
                 default:
-                    throw new ArgumentOutOfRangeException("role");
+                    throw new ArgumentOutOfRangeException(nameof(role));
             }
         }
 
@@ -106,7 +104,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 case ERole.Communications:
                     return Role.Communications;
                 default:
-                    throw new ArgumentOutOfRangeException("role");
+                    throw new ArgumentOutOfRangeException(nameof(role));
             }
         }
 
@@ -135,7 +133,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 case AudioSessionState.Expired:
                     return EAudioSessionState.AudioSessionStateExpired;
                 default:
-                    throw new ArgumentOutOfRangeException("state", state, null);
+                    throw new ArgumentOutOfRangeException(nameof(state), state, null);
             }
         }
 
@@ -150,7 +148,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 case EAudioSessionState.AudioSessionStateExpired:
                     return AudioSessionState.Expired;
                 default:
-                    throw new ArgumentOutOfRangeException("state", state, null);
+                    throw new ArgumentOutOfRangeException(nameof(state), state, null);
             }
         }
     }

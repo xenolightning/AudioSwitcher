@@ -231,9 +231,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (_isDisposed)
                 return;
 
-            if (_timerSubscription != null)
-                _timerSubscription.Dispose();
-
+            _timerSubscription?.Dispose();
             _deviceMutedSubscription.Dispose();
             _muteChanged.Dispose();
             _stateChanged.Dispose();
@@ -262,35 +260,30 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             _isUpdatingPeakValue = true;
 
-            float peakValue = _peakValue;
+            var peakValue = _peakValue;
 
-            //ComThread.BeginInvoke(() =>
-            //{
-                if (_isDisposed)
+            if (_isDisposed)
+                return;
+
+            try
+            {
+                if (_meterInformation == null)
                     return;
 
-                try
-                {
-                    if (_meterInformation == null)
-                        return;
+                _meterInformation.GetPeakValue(out peakValue);
+            }
+            catch (InvalidComObjectException)
+            {
+                //ignored - usually means the com object has been released, but the timer is still ticking
+            }
 
-                    _meterInformation.GetPeakValue(out peakValue);
-                }
-                catch (InvalidComObjectException)
-                {
-                    //ignored - usually means the com object has been released, but the timer is still ticking
-                }
-            //})
-            //.ContinueWith(x =>
-            //{
-                if (Math.Abs(_peakValue - peakValue) > 0.001)
-                {
-                    _peakValue = peakValue;
-                    OnPeakValueChanged(peakValue * 100);
-                }
+            if (Math.Abs(_peakValue - peakValue) > 0.001)
+            {
+                _peakValue = peakValue;
+                OnPeakValueChanged(peakValue * 100);
+            }
 
-                _isUpdatingPeakValue = false;
-            //});
+            _isUpdatingPeakValue = false;
         }
 
         ~CoreAudioSession()

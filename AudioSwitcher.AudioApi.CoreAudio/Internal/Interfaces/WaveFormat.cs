@@ -87,7 +87,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 
             if (channels < 1)
             {
-                throw new ArgumentOutOfRangeException("channelMask", "Channels must be 1 or greater");
+                throw new ArgumentOutOfRangeException(nameof(channelMask), "Channels must be 1 or greater");
             }
             // minimum 16 bytes, sometimes 18 for PCM
             waveFormatTag = WaveFormatEncoding.Pcm;
@@ -128,8 +128,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
                 case WaveFormatEncoding.Pcm:
                 case WaveFormatEncoding.Extensible:
                     // formatTag just has some extra bits after the PCM header
-                    return String.Format("{0} bit PCM: {1}kHz {2} channels",
-                        bitsPerSample, sampleRate / 1000, channels);
+                    return $"{bitsPerSample} bit PCM: {sampleRate/1000}kHz {channels} channels";
                 default:
                     return waveFormatTag.ToString();
             }

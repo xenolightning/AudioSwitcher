@@ -29,7 +29,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         public CoreAudioSessionController(CoreAudioDevice device, IAudioSessionManager2 audioSessionManager)
         {
             if (audioSessionManager == null)
-                throw new ArgumentNullException("audioSessionManager");
+                throw new ArgumentNullException(nameof(audioSessionManager));
 
             ComThread.Assert();
 
