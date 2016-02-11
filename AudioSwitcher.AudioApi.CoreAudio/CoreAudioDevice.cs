@@ -303,7 +303,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 PolicyConfig.SetDefaultEndpoint(RealId, ERole.Console | ERole.Multimedia);
 
-                _defaultResetEvent.Wait();
+                var cts = new CancellationTokenSource();
+                cts.CancelAfter(200);
+
+                _defaultResetEvent.Wait(cts.Token);
 
                 return IsDefaultDevice;
             }
@@ -341,7 +344,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 PolicyConfig.SetDefaultEndpoint(RealId, ERole.Console | ERole.Multimedia);
 
-                _defaultResetEvent.Wait();
+                var cts = new CancellationTokenSource();
+                cts.CancelAfter(200);
+
+                _defaultResetEvent.Wait(cts.Token);
 
                 return IsDefaultDevice;
             }
