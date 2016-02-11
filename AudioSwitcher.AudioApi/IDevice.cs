@@ -62,5 +62,7 @@ namespace AudioSwitcher.AudioApi
         bool ToggleMute();
 
         Task<bool> ToggleMuteAsync();
+
+        Task<double> SetVolumeAsync(double volume);
     }
 }

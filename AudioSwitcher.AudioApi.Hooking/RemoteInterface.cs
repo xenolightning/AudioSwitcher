@@ -64,21 +64,21 @@ namespace AudioSwitcher.AudioApi.Hooking
         public void HookUninstalled(int processId)
         {
             Interlocked.Increment(ref _messageCount);
-            Task.Factory.StartNew(() =>
+            Task.Run(() =>
             {
                 if (_hookUninstalled != null)
                     _hookUninstalled(processId);
-            });
+            }).ConfigureAwait(false);
         }
 
         public void ReportError(int processId, Exception e)
         {
             Interlocked.Increment(ref _messageCount);
-            Task.Factory.StartNew(() =>
+            Task.Run(() =>
             {
                 if (_errorHandler != null)
                     _errorHandler(processId, e);
-            });
+            }).ConfigureAwait(false);
         }
 
         public string GetDefaultDevice(DataFlow dataFlow, Role role)

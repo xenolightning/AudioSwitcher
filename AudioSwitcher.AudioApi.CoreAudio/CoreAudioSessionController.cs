@@ -83,7 +83,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public Task<IEnumerable<IAudioSession>> AllAsync()
         {
-            return Task.Factory.StartNew(() => All());
+            return Task.Run(() => All());
         }
 
         public IEnumerable<IAudioSession> ActiveSessions()
@@ -103,7 +103,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public Task<IEnumerable<IAudioSession>> ActiveSessionsAsync()
         {
-            return Task.Factory.StartNew(() => ActiveSessions());
+            return Task.Run(() => ActiveSessions());
         }
 
         public IEnumerable<IAudioSession> InactiveSessions()
@@ -123,7 +123,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public Task<IEnumerable<IAudioSession>> InactiveSessionsAsync()
         {
-            return Task.Factory.StartNew(() => InactiveSessions());
+            return Task.Run(() => InactiveSessions());
         }
 
         public IEnumerable<IAudioSession> ExpiredSessions()
@@ -143,7 +143,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public Task<IEnumerable<IAudioSession>> ExpiredSessionsAsync()
         {
-            return Task.Factory.StartNew(() => ExpiredSessions());
+            return Task.Run(() => ExpiredSessions());
         }
 
         public IEnumerator<IAudioSession> GetEnumerator()

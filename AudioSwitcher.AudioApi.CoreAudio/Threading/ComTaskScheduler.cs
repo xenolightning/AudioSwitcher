@@ -88,7 +88,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
             }
             finally
             {
-                _tasks.Dispose();
+                //_tasks.Dispose();
             }
         }
 

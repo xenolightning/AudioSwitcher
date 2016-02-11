@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Observables;
@@ -235,23 +236,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (dev == null)
                 return false;
 
-            var oldDefault = dev.IsPlaybackDevice ? DefaultPlaybackDevice : DefaultCaptureDevice;
-
-            try
-            {
-                PolicyConfig.SetDefaultEndpoint(dev.RealId, ERole.Console | ERole.Multimedia);
-                return dev.IsDefaultDevice;
-            }
-            catch
-            {
-                return false;
-            }
-            finally
-            {
-                //Raise the default changed event on the old device
-                if (oldDefault != null && !oldDefault.IsDefaultDevice)
-                    OnAudioDeviceChanged(new DefaultDeviceChangedArgs(oldDefault));
-            }
+            return dev.SetAsDefault();
         }
 
         public override bool SetDefaultCommunicationsDevice(CoreAudioDevice dev)
@@ -259,25 +244,23 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (dev == null)
                 return false;
 
-            var oldDefault = dev.IsPlaybackDevice
-                ? DefaultPlaybackCommunicationsDevice
-                : DefaultCaptureCommunicationsDevice;
+            return dev.SetAsDefaultCommunications();
+        }
 
-            try
-            {
-                PolicyConfig.SetDefaultEndpoint(dev.RealId, ERole.Communications);
-                return dev.IsDefaultCommunicationsDevice;
-            }
-            catch
-            {
+        public override async Task<bool> SetDefaultDeviceAsync(CoreAudioDevice dev)
+        {
+            if (dev == null)
                 return false;
-            }
-            finally
-            {
-                //Raise the default changed event on the old device
-                if (oldDefault != null && !oldDefault.IsDefaultCommunicationsDevice)
-                    OnAudioDeviceChanged(new DefaultDeviceChangedArgs(oldDefault));
-            }
+
+            return await dev.SetAsDefaultAsync();
+        }
+
+        public override async Task<bool> SetDefaultCommunicationsDeviceAsync(CoreAudioDevice dev)
+        {
+            if (dev == null)
+                return false;
+
+            return await dev.SetAsDefaultCommunicationsAsync();
         }
 
         public override CoreAudioDevice GetDefaultDevice(DeviceType deviceType, Role role)

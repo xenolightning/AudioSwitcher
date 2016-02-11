@@ -162,12 +162,12 @@ namespace AudioSwitcher.AudioApi.Sandbox
 
         public override Task<bool> SetDefaultDeviceAsync(IDevice dev)
         {
-            return Task.Factory.StartNew(() => SetDefaultDevice(dev));
+            return Task.Run(() => SetDefaultDevice(dev));
         }
 
         public override Task<bool> SetDefaultCommunicationsDeviceAsync(IDevice dev)
         {
-            return Task.Factory.StartNew(() => SetDefaultCommunicationsDevice(dev));
+            return Task.Run(() => SetDefaultCommunicationsDevice(dev));
         }
 
         protected override void Dispose(bool disposing)

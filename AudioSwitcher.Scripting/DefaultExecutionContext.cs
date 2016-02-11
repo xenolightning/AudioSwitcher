@@ -26,14 +26,14 @@ namespace AudioSwitcher.Scripting
 
         public Task<ExecutionResult> ExecuteAsync(string script, IEnumerable<string> args = null)
         {
-            return Task.Factory.StartNew(() => Execute(script, args));
+            return Task.Run(() => Execute(script, args));
         }
 
         public abstract ExecutionResult Execute(IScriptSource scriptSource, IEnumerable<string> args = null);
 
         public Task<ExecutionResult> ExecuteAsync(IScriptSource scriptSource, IEnumerable<string> args = null)
         {
-            return Task.Factory.StartNew(() => Execute(scriptSource, args));
+            return Task.Run(() => Execute(scriptSource, args));
         }
 
         public ExecutionResult<TReturn> Evaluate<TReturn>(string script, IEnumerable<string> args = null)
@@ -43,14 +43,14 @@ namespace AudioSwitcher.Scripting
 
         public Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(string script, IEnumerable<string> args = null)
         {
-            return Task.Factory.StartNew(() => Evaluate<TReturn>(script, args));
+            return Task.Run(() => Evaluate<TReturn>(script, args));
         }
 
         public abstract ExecutionResult<TReturn> Evaluate<TReturn>(IScriptSource scriptSource, IEnumerable<string> args = null);
 
         public Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(IScriptSource scriptSource, IEnumerable<string> args = null)
         {
-            return Task.Factory.StartNew(() => Evaluate<TReturn>(scriptSource, args));
+            return Task.Run(() => Evaluate<TReturn>(scriptSource, args));
         }
 
         public void Dispose()

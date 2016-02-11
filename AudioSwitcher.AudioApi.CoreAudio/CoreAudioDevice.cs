@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Observables;
@@ -22,18 +23,23 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         };
 
         private readonly ManualResetEvent _muteChangedResetEvent = new ManualResetEvent(false);
+        private readonly AsyncManualResetEvent _volumeResetEvent = new AsyncManualResetEvent(false);
+        private readonly AsyncManualResetEvent _defaultResetEvent = new AsyncManualResetEvent(false);
         private readonly IDisposable _peakValueTimerSubscription;
         private EDataFlow _dataFlow;
         private IMultimediaDevice _device;
         private Guid? _id;
         private bool _isDisposed;
         private bool _isMuted;
+        private double _volume;
 
         private float _peakValue = -1;
         private CachedPropertyDictionary _properties;
         private string _realId;
         private EDeviceState _state;
         private bool _isUpdatingPeakValue;
+        private bool _isDefaultDevice;
+        private bool _isDefaultCommDevice;
 
         private IMultimediaDevice Device
         {
@@ -130,14 +136,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                IDevice defaultDevice = null;
-
-                if (IsPlaybackDevice)
-                    defaultDevice = Controller.DefaultPlaybackDevice;
-                else if (IsCaptureDevice)
-                    defaultDevice = Controller.DefaultCaptureDevice;
-
-                return defaultDevice != null && defaultDevice.Id == Id;
+                return _isDefaultDevice;
             }
         }
 
@@ -145,14 +144,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                IDevice defaultDevice = null;
-
-                if (IsPlaybackDevice)
-                    defaultDevice = Controller.DefaultPlaybackCommunicationsDevice;
-                else if (IsCaptureDevice)
-                    defaultDevice = Controller.DefaultCaptureCommunicationsDevice;
-
-                return defaultDevice != null && defaultDevice.Id == Id;
+                return _isDefaultCommDevice;
             }
         }
 
@@ -190,25 +182,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (AudioEndpointVolume == null)
                     return -1;
 
-                return (int)Math.Round(AudioEndpointVolume.MasterVolumeLevelScalar * 100, 0);
+                return _volume;
             }
             set
             {
-                if (value < 0)
-                    value = 0;
-                else if (value > 100)
-                    value = 100;
-
-                var val = (float)value / 100;
-
                 if (AudioEndpointVolume == null)
                     return;
 
-                AudioEndpointVolume.MasterVolumeLevelScalar = val;
-
-                //Something is up with the floating point numbers in Windows, so make sure the volume is correct
-                if (AudioEndpointVolume.MasterVolumeLevelScalar < val)
-                    AudioEndpointVolume.MasterVolumeLevelScalar += 0.0001F;
+                SetVolumeAsync(value).Wait();
             }
         }
 
@@ -233,7 +214,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                                     .Subscribe(x => OnStateChanged(x.State));
 
             controller.SystemEvents.DefaultDeviceChanged
-                                    .When(x => String.Equals(x.DeviceId, RealId, StringComparison.OrdinalIgnoreCase) && x.DeviceRole != ERole.Multimedia)
+                                    .When(x =>
+                                    {
+                                        return x.DeviceRole != ERole.Multimedia && (String.Equals(x.DeviceId, RealId, StringComparison.OrdinalIgnoreCase) || _isDefaultCommDevice || _isDefaultDevice);
+                                    })
                                     .Subscribe(x => OnDefaultChanged());
 
             controller.SystemEvents.PropertyChanged
@@ -274,21 +258,128 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public override bool Mute(bool mute)
         {
-            if (AudioEndpointVolume == null)
-                return false;
-
-            if (AudioEndpointVolume.Mute == mute)
+            if (_isMuted == mute)
                 return mute;
 
-            AudioEndpointVolume.Mute = mute;
+            if (AudioEndpointVolume == null)
+                return true;
 
-            _muteChangedResetEvent.Reset();
+            AudioEndpointVolume.Mute = mute;
 
             //1s is a resonable response time for muting a device
             //any longer and we can assume that something went wrong
             _muteChangedResetEvent.WaitOne(1000);
 
             return _isMuted;
+        }
+
+        public override async Task<double> SetVolumeAsync(double volume)
+        {
+            if (_volume == volume)
+                return _volume;
+
+            if (AudioEndpointVolume == null)
+                return -1;
+
+            if (volume <= 0)
+                volume = 0;
+            else if (volume >= 100)
+                volume = 100;
+            else
+                volume += 0.0001F;
+
+            AudioEndpointVolume.MasterVolumeLevelScalar = (float)(volume / 100);
+
+            await _volumeResetEvent.WaitAsync();
+
+            return _volume;
+        }
+
+        public override bool SetAsDefault()
+        {
+            if (State != DeviceState.Active)
+                return false;
+
+            try
+            {
+                PolicyConfig.SetDefaultEndpoint(RealId, ERole.Console | ERole.Multimedia);
+
+                _defaultResetEvent.Wait();
+
+                return IsDefaultDevice;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public override async Task<bool> SetAsDefaultAsync()
+        {
+            if (State != DeviceState.Active)
+                return false;
+
+            try
+            {
+                PolicyConfig.SetDefaultEndpoint(RealId, ERole.Console | ERole.Multimedia);
+
+                await _defaultResetEvent.WaitAsync();
+
+                return IsDefaultDevice;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public override bool SetAsDefaultCommunications()
+        {
+            if (State != DeviceState.Active)
+                return false;
+
+            try
+            {
+                PolicyConfig.SetDefaultEndpoint(RealId, ERole.Console | ERole.Multimedia);
+
+                _defaultResetEvent.Wait();
+
+                return IsDefaultDevice;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public override async Task<bool> SetAsDefaultCommunicationsAsync()
+        {
+            if (State != DeviceState.Active)
+                return false;
+
+            try
+            {
+                PolicyConfig.SetDefaultEndpoint(RealId, ERole.Communications);
+
+                await _defaultResetEvent.WaitAsync();
+                
+                return IsDefaultCommunicationsDevice;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        protected override void OnDefaultChanged()
+        {
+            _isDefaultCommDevice = Controller.GetDefaultDevice(DeviceType, Role.Communications)?.Id == Id;
+            _isDefaultDevice = Controller.GetDefaultDevice(DeviceType, Role.Multimedia | Role.Console)?.Id == Id;
+
+            _defaultResetEvent.Set();
+            _defaultResetEvent.Reset();
+
+            base.OnDefaultChanged();
         }
 
         private void LoadProperties(IMultimediaDevice device)
@@ -320,8 +411,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (!PropertykeyToLambdaMap.ContainsKey(propertyKey))
                     return;
 
-                var propertyName =
-                    DevicePropertyChangedArgs.FromExpression(this, PropertykeyToLambdaMap[propertyKey]).PropertyName;
+                var propertyName = DevicePropertyChangedArgs.FromExpression(this, PropertykeyToLambdaMap[propertyKey]).PropertyName;
+
                 OnPropertyChanged(propertyName);
             });
         }
@@ -366,15 +457,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
         {
-            OnVolumeChanged(Volume);
+            _volume = data.MasterVolume * 100;
+            _volumeResetEvent.Set();
+            _volumeResetEvent.Reset();
+
+            OnVolumeChanged(_volume);
 
             if (data.Muted != _isMuted)
             {
                 _isMuted = data.Muted;
+                _muteChangedResetEvent.Set();
+                _muteChangedResetEvent.Reset();
+
                 OnMuteChanged(_isMuted);
             }
-
-            _muteChangedResetEvent.Set();
         }
 
         private void Timer_UpdatePeakValue(long ticks)
@@ -386,30 +482,25 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             float peakValue = _peakValue;
 
-            //ComThread.BeginInvoke(() =>
-            //{
-                if (_isDisposed)
-                    return;
+            if (_isDisposed)
+                return;
 
-                try
-                {
-                    AudioMeterInformation.GetPeakValue(out peakValue);
-                }
-                catch
-                {
-                    //ignored - usually means the com object has been released, but the timer is still ticking
-                }
-            //})
-            //.ContinueWith(x =>
-            //{
-                if (Math.Abs(_peakValue - peakValue) > 0.001)
-                {
-                    _peakValue = peakValue;
-                    OnPeakValueChanged(peakValue * 100);
-                }
+            try
+            {
+                AudioMeterInformation.GetPeakValue(out peakValue);
+            }
+            catch
+            {
+                //ignored - usually means the com object has been released, but the timer is still ticking
+            }
 
-                _isUpdatingPeakValue = false;
-            //});
+            if (Math.Abs(_peakValue - peakValue) > 0.001)
+            {
+                _peakValue = peakValue;
+                OnPeakValueChanged(peakValue * 100);
+            }
+
+            _isUpdatingPeakValue = false;
         }
 
         /// <summary>

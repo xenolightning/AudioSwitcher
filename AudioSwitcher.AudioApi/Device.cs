@@ -28,6 +28,10 @@ namespace AudioSwitcher.AudioApi
             _propertyChanged = new Broadcaster<DevicePropertyChangedArgs>();
             _peakValueChanged = new Broadcaster<DevicePeakValueChangedArgs>();
         }
+        ~Device()
+        {
+            Dispose(false);
+        }
 
         public IAudioController Controller { get; private set; }
 
@@ -122,7 +126,7 @@ namespace AudioSwitcher.AudioApi
             return Controller.SetDefaultDevice(this);
         }
 
-        public Task<bool> SetAsDefaultAsync()
+        public virtual Task<bool> SetAsDefaultAsync()
         {
             return Controller.SetDefaultDeviceAsync(this);
         }
@@ -135,7 +139,7 @@ namespace AudioSwitcher.AudioApi
             return Controller.SetDefaultCommunicationsDevice(this);
         }
 
-        public Task<bool> SetAsDefaultCommunicationsAsync()
+        public virtual Task<bool> SetAsDefaultCommunicationsAsync()
         {
             return Controller.SetDefaultCommunicationsDeviceAsync(this);
         }
@@ -144,7 +148,7 @@ namespace AudioSwitcher.AudioApi
 
         public virtual Task<bool> MuteAsync(bool mute)
         {
-            return Task.Factory.StartNew(() => Mute(mute));
+            return Task.Run(() => Mute(mute));
         }
 
         public virtual bool ToggleMute()
@@ -156,13 +160,14 @@ namespace AudioSwitcher.AudioApi
 
         public virtual Task<bool> ToggleMuteAsync()
         {
-            return Task.Factory.StartNew(() => ToggleMute());
+            return Task.Run(() => ToggleMute());
         }
 
-        ~Device()
+        public virtual Task<double> SetVolumeAsync(double volume)
         {
-            Dispose(false);
+            return Task.Run(() => Volume = volume);
         }
+
 
         protected virtual void OnMuteChanged(bool isMuted)
         {

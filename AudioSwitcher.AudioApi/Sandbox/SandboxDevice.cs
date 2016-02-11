@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi.Sandbox
 {

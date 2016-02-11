@@ -159,6 +159,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             _audioEndpointVolume = new AudioEndpointVolume(result as IAudioEndpointVolume);
             _isMuted = _audioEndpointVolume.Mute;
+            _volume = _audioEndpointVolume.MasterVolumeLevelScalar*100;
         }
 
         private void ClearAudioEndpointVolume()
@@ -168,6 +169,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 _audioEndpointVolume.OnVolumeNotification -= AudioEndpointVolume_OnVolumeNotification;
                 _audioEndpointVolume.Dispose();
                 _audioEndpointVolume = null;
+                _volume = -1;
             }
         }
 
