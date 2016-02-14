@@ -304,7 +304,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 PolicyConfig.SetDefaultEndpoint(RealId, ERole.Console | ERole.Multimedia);
 
                 var cts = new CancellationTokenSource();
-                cts.CancelAfter(200);
+                cts.CancelAfter(500);
 
                 _defaultResetEvent.Wait(cts.Token);
 

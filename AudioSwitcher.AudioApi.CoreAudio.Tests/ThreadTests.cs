@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,9 +23,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             Debug.WriteLine("Handles Before: " + originalHandles);
             using (var controller = CreateTestController())
             {
+                controller.AudioDeviceChanged.Subscribe(x =>
+                {
+                    Console.WriteLine(x.ToString());
+                });
 
                 for (var i = 0; i < 50; i++)
                 {
+
                     controller.DefaultPlaybackDevice.SetAsDefault();
                 }
 
@@ -40,7 +46,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             }
         }
 
-        //This test is broken, something int he async code is failing
         [Fact]
         public async Task CoreAudio_Attempted_Thread_Deadlock_Async()
         {
@@ -50,12 +55,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             {
                 var tasks = new List<Task>();
 
+                controller.AudioDeviceChanged.Subscribe(x =>
+                {
+                    Console.WriteLine(x.ToString());
+                });
+
                 for (var i = 0; i < 50; i++)
                 {
-                    await controller.DefaultPlaybackDevice.SetAsDefaultAsync();
+
+                    tasks.Add(controller.DefaultPlaybackDevice.SetAsDefaultAsync());
                 }
 
-                //Task.WaitAll(tasks.ToArray());
+                await Task.WhenAll(tasks.ToArray());
 
                 var newHandles = Process.GetCurrentProcess().HandleCount;
                 Debug.WriteLine("Handles After: " + newHandles);

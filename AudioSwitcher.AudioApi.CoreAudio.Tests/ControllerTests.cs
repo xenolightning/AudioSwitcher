@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using AudioSwitcher.AudioApi.Observables;
 using Xunit;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Tests
@@ -24,7 +25,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             {
                 controller.GetDevices();
                 var isDefault = controller.DefaultPlaybackDevice.SetAsDefault();
-                Assert.True(isDefault);
                 controller.GetPlaybackDevices();
             }
 
@@ -33,7 +33,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
             //*15 for each device and the handles it requires
             //*3 because that should cater for at least 2 copies of each device
-            var maxHandles = controller.GetDevices().Count() * 20 * 3;
+            var maxHandles = controller.GetDevices().Count() * 15 * 3;
 
             //Ensure it doesn't blow out the handles
             Assert.True(newHandles - originalHandles < maxHandles);
@@ -44,78 +44,69 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         {
             var originalHandles = Process.GetCurrentProcess().HandleCount;
             Debug.WriteLine("Handles Before: " + originalHandles);
-            var controller = CreateTestController();
-
-            for (var i = 0; i < 50; i++)
+            using (var controller = CreateTestController())
             {
-                await controller.GetCaptureDevicesAsync();
-                var isDefault = await controller.DefaultPlaybackDevice.SetAsDefaultAsync();
-                Assert.True(isDefault);
-                await controller.GetPlaybackDevicesAsync();
+
+                for (var i = 0; i < 50; i++)
+                {
+                    await controller.GetCaptureDevicesAsync();
+
+                    var isDefault = await controller.DefaultPlaybackDevice.SetAsDefaultAsync();
+                    await controller.GetPlaybackDevicesAsync();
+                }
+
+                var newHandles = Process.GetCurrentProcess().HandleCount;
+                Debug.WriteLine("Handles After: " + newHandles);
+
+                //*15 for each device and the handles it requires
+                //*3 because that should cater for at least 2 copies of each device
+                var maxHandles = controller.GetDevices().Count() * 15 * 3;
+
+                //Ensure it doesn't blow out the handles
+                Assert.True(newHandles - originalHandles < maxHandles);
             }
-
-            var newHandles = Process.GetCurrentProcess().HandleCount;
-            Debug.WriteLine("Handles After: " + newHandles);
-
-            //*15 for each device and the handles it requires
-            //*3 because that should cater for at least 2 copies of each device
-            var maxHandles = controller.GetDevices().Count() * 20 * 3;
-
-            //Ensure it doesn't blow out the handles
-            Assert.True(newHandles - originalHandles < maxHandles);
         }
 
         /// <summary>
         /// This test isn't overly reliable because it uses signals from the system.
         /// But it's almost impossible to test COM disposal properly
         /// </summary>
-        //[Fact]
-        //public async Task CoreAudio_Controller_Dispose_EventPropagation()
-        //{
-        //    var count = 0;
-        //    var ev = new TaskCompletionSource<bool>();
-        //    var complete = new TaskCompletionSource<bool>();
-
-        //    using (var outerController = new CoreAudioController())
-        //    {
-        //        using (var controller = new CoreAudioController())
-        //        {
-
-        //            controller.AudioDeviceChanged.Subscribe(args =>
-        //            {
-        //                if (args.ChangedType != DeviceChangedType.DefaultChanged)
-        //                    return;
-
-        //                count++;
-        //                ev.TrySetResult(true);
-        //            }, () =>
-        //            {
-        //                complete.TrySetResult(true);
-        //            });
-
-        //            controller.DefaultPlaybackDevice.SetAsDefault();
-
-        //            await ev.Task;
-        //        }
-
-        //        outerController.DefaultPlaybackDevice.SetAsDefault();
-        //    }
-
-        //    await complete.Task;
-
-        //    //The event should only fire once because the inner controller is disposed before the second fire
-        //    Assert.Equal(1, count);
-        //}
-
         [Fact]
-        public void Controller_Disposes_Devices()
+        public async Task CoreAudio_Controller_Dispose_EventPropagation()
         {
-            IDevice device;
+            var count = 0;
+            var ev = new TaskCompletionSource<bool>();
+            var complete = new TaskCompletionSource<bool>();
 
-            var controller = new CoreAudioController();
+            using (var outerController = new CoreAudioController())
+            {
+                using (var controller = new CoreAudioController())
+                {
 
+                    controller.AudioDeviceChanged.Subscribe(args =>
+                    {
+                        if (args.ChangedType != DeviceChangedType.DefaultChanged)
+                            return;
 
+                        count++;
+                        ev.TrySetResult(true);
+                    }, () =>
+                    {
+                        complete.TrySetResult(true);
+                    });
 
+                    controller.DefaultPlaybackDevice.SetAsDefault();
+
+                    await ev.Task;
+                }
+
+                outerController.DefaultPlaybackDevice.SetAsDefault();
+            }
+
+            await complete.Task;
+
+            //The event should only fire once because the inner controller is disposed before the second fire
+            Assert.Equal(1, count);
         }
 
     }

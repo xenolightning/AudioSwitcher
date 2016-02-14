@@ -47,9 +47,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         {
             using (var controller = CreateTestController())
             {
-                controller.DefaultPlaybackDevice.SetAsDefault();
+                var device = controller.DefaultPlaybackDevice;
 
-                Assert.True(controller.DefaultPlaybackDevice.IsDefaultDevice);
+                var isDefault = device.SetAsDefault();
+
+                Assert.True(device.IsDefaultDevice);
+                Assert.Equal(isDefault, device.IsDefaultDevice);
             }
 
         }
@@ -59,9 +62,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         {
             using (var controller = CreateTestController())
             {
-                await controller.DefaultPlaybackDevice.SetAsDefaultAsync();
+                var device = controller.DefaultPlaybackDevice;
 
-                Assert.True(controller.DefaultPlaybackDevice.IsDefaultDevice);
+                var isDefault = await device.SetAsDefaultAsync();
+
+                Assert.True(device.IsDefaultDevice);
+                Assert.Equal(isDefault, device.IsDefaultDevice);
             }
 
         }
@@ -71,9 +77,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         {
             using (var controller = CreateTestController())
             {
-                controller.DefaultPlaybackDevice.SetAsDefaultCommunications();
+                var device = controller.DefaultPlaybackCommunicationsDevice;
 
-                Assert.True(controller.DefaultPlaybackDevice.IsDefaultDevice);
+                var isDefault = device.SetAsDefaultCommunications();
+
+                Assert.True(device.IsDefaultDevice);
+                Assert.Equal(isDefault, device.IsDefaultCommunicationsDevice);
             }
         }
 
@@ -82,9 +91,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         {
             using (var controller = CreateTestController())
             {
-                await controller.DefaultPlaybackDevice.SetAsDefaultCommunicationsAsync();
+                var device = controller.DefaultPlaybackCommunicationsDevice;
 
-                Assert.True(controller.DefaultPlaybackDevice.IsDefaultDevice);
+                var isDefault = await device.SetAsDefaultCommunicationsAsync();
+
+                Assert.True(device.IsDefaultDevice);
+                Assert.Equal(isDefault, device.IsDefaultCommunicationsDevice);
             }
         }
 
