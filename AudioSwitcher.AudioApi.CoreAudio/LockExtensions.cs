@@ -2,7 +2,7 @@
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    public static class LockExtensions
+    internal static class LockExtensions
     {
         public static bool AcquireWriteLockNonReEntrant(this ReaderWriterLockSlim @lock)
         {
