@@ -118,5 +118,9 @@ namespace AudioSwitcher.Tests.Common
             return _muted = mute;
         }
 
+        public override Task<bool> MuteAsync(bool mute)
+        {
+            return Task.FromResult(_muted = mute);
+        }
     }
 }

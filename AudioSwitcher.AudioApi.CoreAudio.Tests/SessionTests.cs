@@ -3,7 +3,7 @@ using Xunit;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 {
-    [Collection("CoreAudio_Session")]
+    [Collection("CoreAudio")]
     public class SessionTests
     {
 

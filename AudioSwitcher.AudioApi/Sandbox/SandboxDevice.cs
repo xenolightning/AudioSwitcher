@@ -143,5 +143,10 @@ namespace AudioSwitcher.AudioApi.Sandbox
         {
             return isMuted = mute;
         }
+
+        public override Task<bool> MuteAsync(bool mute)
+        {
+            return Task.FromResult(isMuted = mute);
+        }
     }
 }

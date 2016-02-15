@@ -4,6 +4,7 @@ using Xunit;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 {
+    [Collection("CoreAudio")]
     public class DeviceTests
     {
         private CoreAudioController CreateTestController()
@@ -85,14 +86,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
                 {
                     order.Enqueue(1);
                 });
+
+                await Task.Delay(5);
                 var t2 = device.SetAsDefaultAsync().ContinueWith(x =>
                 {
                     order.Enqueue(2);
                 });
+
+                await Task.Delay(5);
                 var t3 = device.SetAsDefaultAsync().ContinueWith(x =>
                 {
                     order.Enqueue(3);
                 });
+
+                await Task.Delay(5);
                 var t4 = device.SetAsDefaultAsync().ContinueWith(x =>
                 {
                     order.Enqueue(4);
@@ -157,14 +164,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
                 {
                     order.Enqueue(1);
                 });
+
+                await Task.Delay(5);
                 var t2 = device.SetAsDefaultCommunicationsAsync().ContinueWith(x =>
                 {
                     order.Enqueue(2);
                 });
+
+                await Task.Delay(5);
                 var t3 = device.SetAsDefaultCommunicationsAsync().ContinueWith(x =>
                 {
                     order.Enqueue(3);
                 });
+
+                await Task.Delay(5);
                 var t4 = device.SetAsDefaultCommunicationsAsync().ContinueWith(x =>
                 {
                     order.Enqueue(4);

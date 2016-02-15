@@ -123,38 +123,9 @@ namespace AudioSwitcher.AudioApi
         public abstract bool SetAsDefaultCommunications();
         public abstract Task<bool> SetAsDefaultCommunicationsAsync();
 
-        ///// <summary>
-        /////     Set this device as the the default device
-        ///// </summary>
-        //public virtual bool SetAsDefault()
-        //{
-        //    return Controller.SetDefaultDevice(this);
-        //}
-
-        //public virtual Task<bool> SetAsDefaultAsync()
-        //{
-        //    return Controller.SetDefaultDeviceAsync(this);
-        //}
-
-        ///// <summary>
-        /////     Set this device as the default communication device
-        ///// </summary>
-        //public virtual bool SetAsDefaultCommunications()
-        //{
-        //    return Controller.SetDefaultCommunicationsDevice(this);
-        //}
-
-        //public virtual Task<bool> SetAsDefaultCommunicationsAsync()
-        //{
-        //    return Controller.SetDefaultCommunicationsDeviceAsync(this);
-        //}
-
         public abstract bool Mute(bool mute);
 
-        public virtual Task<bool> MuteAsync(bool mute)
-        {
-            return Task.Run(() => Mute(mute));
-        }
+        public abstract Task<bool> MuteAsync(bool mute);
 
         public virtual bool ToggleMute()
         {

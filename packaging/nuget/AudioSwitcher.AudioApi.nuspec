@@ -22,5 +22,6 @@
     </metadata>
     <files>
         <file src="..\..\bin\Release\AudioSwitcher.AudioApi.dll" target="lib\net40\AudioSwitcher.AudioApi.dll" />
+        <file src="lib\net452\_._" target="lib\net452\_._" />
     </files>
 </package>

@@ -13,7 +13,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public sealed partial class CoreAudioDevice : Device
     {
-        private static readonly int DefaultComTimeout = 300;
+        private static readonly int DefaultComTimeout = 1000;
         private static readonly Dictionary<PropertyKey, Expression<Func<IDevice, object>>> PropertykeyToLambdaMap = new Dictionary
             <PropertyKey, Expression<Func<IDevice, object>>>
         {
@@ -375,8 +375,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         protected override void OnDefaultChanged()
         {
-            _isDefaultCommDevice = Controller.GetDefaultDevice(DeviceType, Role.Communications)?.Id == Id;
             _isDefaultDevice = Controller.GetDefaultDevice(DeviceType, Role.Multimedia | Role.Console)?.Id == Id;
+            _isDefaultCommDevice = Controller.GetDefaultDevice(DeviceType, Role.Communications)?.Id == Id;
 
             _defaultResetEvent.Set();
 
