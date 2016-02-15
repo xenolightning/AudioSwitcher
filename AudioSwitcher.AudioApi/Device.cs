@@ -153,14 +153,12 @@ namespace AudioSwitcher.AudioApi
 
         public virtual bool ToggleMute()
         {
-            Mute(!IsMuted);
-
-            return IsMuted;
+            return Mute(!IsMuted);
         }
 
         public virtual Task<bool> ToggleMuteAsync()
         {
-            return Task.Run(() => ToggleMute());
+            return MuteAsync(!IsMuted);
         }
 
         public virtual Task<double> SetVolumeAsync(double volume)

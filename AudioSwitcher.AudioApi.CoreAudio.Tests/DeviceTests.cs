@@ -189,5 +189,73 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
         }
 
+        [Fact]
+        public void Device_Toggle_Mute()
+        {
+            using (var controller = CreateTestController())
+            {
+                var isMuted = controller.DefaultPlaybackDevice.IsMuted;
+
+                var newMute = controller.DefaultPlaybackDevice.ToggleMute();
+
+                Assert.NotEqual(isMuted, newMute);
+
+                newMute = controller.DefaultPlaybackDevice.ToggleMute();
+
+                Assert.Equal(isMuted, newMute);
+            }
+        }
+
+        [Fact]
+        public async Task Device_Toggle_Mute_Async()
+        {
+            using (var controller = CreateTestController())
+            {
+                var isMuted = controller.DefaultPlaybackDevice.IsMuted;
+
+                var newMute = await controller.DefaultPlaybackDevice.ToggleMuteAsync();
+
+                Assert.NotEqual(isMuted, newMute);
+
+                newMute = await controller.DefaultPlaybackDevice.ToggleMuteAsync();
+
+                Assert.Equal(isMuted, newMute);
+            }
+        }
+
+        [Fact]
+        public void Device_Mute()
+        {
+            using (var controller = CreateTestController())
+            {
+                var isMuted = controller.DefaultPlaybackDevice.IsMuted;
+
+                var newMute = controller.DefaultPlaybackDevice.Mute(true);
+                Assert.True(newMute);
+
+                newMute = controller.DefaultPlaybackDevice.Mute(false);
+                Assert.False(newMute);
+
+                controller.DefaultPlaybackDevice.Mute(isMuted);
+            }
+        }
+
+        [Fact]
+        public async Task Device_Mute_Async()
+        {
+            using (var controller = CreateTestController())
+            {
+                var isMuted = controller.DefaultPlaybackDevice.IsMuted;
+
+                var newMute = await controller.DefaultPlaybackDevice.MuteAsync(true);
+                Assert.True(newMute);
+
+                newMute = await controller.DefaultPlaybackDevice.MuteAsync(false);
+                Assert.False(newMute);
+
+                await controller.DefaultPlaybackDevice.MuteAsync(isMuted);
+            }
+        }
+
     }
 }
