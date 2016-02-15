@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
@@ -13,7 +14,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public sealed partial class CoreAudioDevice : Device
     {
-        private static readonly int DefaultComTimeout = 1000;
+        private static readonly int DefaultComTimeout = 300;
         private static readonly Dictionary<PropertyKey, Expression<Func<IDevice, object>>> PropertykeyToLambdaMap = new Dictionary
             <PropertyKey, Expression<Func<IDevice, object>>>
         {
@@ -26,6 +27,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly AsyncAutoResetEvent _muteChangedResetEvent = new AsyncAutoResetEvent(false);
         private readonly AsyncAutoResetEvent _volumeResetEvent = new AsyncAutoResetEvent(false);
         private readonly AsyncAutoResetEvent _defaultResetEvent = new AsyncAutoResetEvent(false);
+        private readonly AsyncAutoResetEvent _defaultCommResetEvent = new AsyncAutoResetEvent(false);
         private readonly IDisposable _peakValueTimerSubscription;
         private EDataFlow _dataFlow;
         private IMultimediaDevice _device;
@@ -216,7 +218,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             controller.SystemEvents.DefaultDeviceChanged
                                     .When(x => x.DeviceRole != ERole.Multimedia && (String.Equals(x.DeviceId, RealId, StringComparison.OrdinalIgnoreCase) || _isDefaultCommDevice || _isDefaultDevice))
-                                    .Subscribe(x => OnDefaultChanged());
+                                    .Subscribe(x => OnDefaultChanged(x.DataFlow, x.DeviceRole));
 
             controller.SystemEvents.PropertyChanged
                                     .When(x => String.Equals(x.DeviceId, RealId, StringComparison.OrdinalIgnoreCase))
@@ -327,7 +329,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             try
             {
                 PolicyConfig.SetDefaultEndpoint(RealId, ERole.Console | ERole.Multimedia);
-                await _defaultResetEvent.WaitAsync(DefaultComTimeout);
+                await _defaultResetEvent.WaitAsync();
 
                 return IsDefaultDevice;
             }
@@ -345,9 +347,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             try
             {
                 PolicyConfig.SetDefaultEndpoint(RealId, ERole.Communications);
-                _defaultResetEvent.Wait(DefaultComTimeout);
+                _defaultCommResetEvent.Wait(DefaultComTimeout);
 
-                return IsDefaultDevice;
+                return IsDefaultCommunicationsDevice;
             }
             catch
             {
@@ -363,8 +365,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             try
             {
                 PolicyConfig.SetDefaultEndpoint(RealId, ERole.Communications);
-                await _defaultResetEvent.WaitAsync(DefaultComTimeout);
-                
+                await _defaultCommResetEvent.WaitAsync(DefaultComTimeout);
+
                 return IsDefaultCommunicationsDevice;
             }
             catch
@@ -372,15 +374,27 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return false;
             }
         }
-
-        protected override void OnDefaultChanged()
+        private void OnDefaultChanged(EDataFlow dataFlow, ERole deviceRole)
         {
-            _isDefaultDevice = Controller.GetDefaultDevice(DeviceType, Role.Multimedia | Role.Console)?.Id == Id;
-            _isDefaultCommDevice = Controller.GetDefaultDevice(DeviceType, Role.Communications)?.Id == Id;
+            if (deviceRole == ERole.Communications)
+            {
+                _isDefaultCommDevice = Controller.GetDefaultDevice(DeviceType, Role.Communications)?.Id == Id;
 
-            _defaultResetEvent.Set();
+                _defaultCommResetEvent.Set();
 
-            base.OnDefaultChanged();
+                if (_defaultCommResetEvent.IsSet)
+                    _defaultCommResetEvent.Wait(50); //quick wait to consume the set above, and don't deadlock
+            }
+            else
+            {
+                _isDefaultDevice = Controller.GetDefaultDevice(DeviceType, Role.Multimedia | Role.Console)?.Id == Id;
+
+                _defaultResetEvent.Set();
+                if (_defaultResetEvent.IsSet)
+                    _defaultResetEvent.Wait(50); //quick wait to consume the set above, and don't deadlock
+            }
+
+            OnDefaultChanged();
         }
 
         private void LoadProperties(IMultimediaDevice device)

@@ -133,7 +133,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
                 var isDefault = device.SetAsDefaultCommunications();
 
-                Assert.True(device.IsDefaultDevice);
+                Assert.True(device.IsDefaultCommunicationsDevice);
                 Assert.Equal(isDefault, device.IsDefaultCommunicationsDevice);
             }
         }
@@ -147,7 +147,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
                 var isDefault = await device.SetAsDefaultCommunicationsAsync();
 
-                Assert.True(device.IsDefaultDevice);
+                Assert.True(device.IsDefaultCommunicationsDevice);
                 Assert.Equal(isDefault, device.IsDefaultCommunicationsDevice);
             }
         }
