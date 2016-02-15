@@ -113,21 +113,22 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             {
                 var dev = controller.DefaultCaptureDevice;
                 var devices = await controller.GetCaptureDevicesAsync();
+                bool sucess;
 
                 foreach (var d in devices)
                 {
-                    var isDefault = await d.SetAsDefaultAsync();
-                    Assert.Equal(isDefault, d.IsDefaultDevice);
+                    sucess = await d.SetAsDefaultAsync();
+                    Assert.Equal(sucess, d.IsDefaultDevice);
 
-                    if (dev.Id != d.Id && isDefault)
+                    if (dev.Id != d.Id && sucess)
                     {
                         Debug.WriteLine("Asserting Default Update");
                         Assert.False(dev.IsDefaultDevice);
                     }
                 }
 
-                await dev.SetAsDefaultAsync();
-                Assert.True(dev.IsDefaultDevice);
+                sucess = await dev.SetAsDefaultAsync();
+                Assert.Equal(sucess, dev.IsDefaultDevice);
             }
         }
 

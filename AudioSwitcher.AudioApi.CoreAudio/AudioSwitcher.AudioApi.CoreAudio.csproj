@@ -54,7 +54,6 @@
     <Compile Include="CoreAudioSession.cs" />
     <Compile Include="CoreAudioSessionController.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="Internal\AsyncManualResetEvent.cs" />
     <Compile Include="Internal\ComObjectFactory.cs" />
     <Compile Include="Internal\EAudioSessionDisconnectReason.cs" />
     <Compile Include="Internal\AudioEndpointVolume.cs" />
@@ -115,6 +114,12 @@
     <Compile Include="Internal\PropVariant.cs" />
     <Compile Include="Internal\ERole.cs" />
     <Compile Include="Internal\SystemEventNotifcationClient.cs" />
+    <Compile Include="Tasks\AsyncAutoResetEvent.cs" />
+    <Compile Include="Tasks\AsyncManualResetEvent.cs" />
+    <Compile Include="Tasks\AsyncWaitQueue.cs" />
+    <Compile Include="Tasks\Deque.cs" />
+    <Compile Include="Tasks\TaskConstants.cs" />
+    <Compile Include="Tasks\TaskExtensions.cs" />
     <Compile Include="Threading\InvalidThreadException.cs" />
     <Compile Include="Threading\ComThread.cs" />
     <Compile Include="CoreAudioDevice.cs" />
@@ -133,6 +138,7 @@
       <Name>AudioSwitcher.AudioApi</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

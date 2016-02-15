@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Observables;
+using Nito.AsyncEx;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
@@ -23,8 +25,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         };
 
         private readonly ManualResetEvent _muteChangedResetEvent = new ManualResetEvent(false);
-        private readonly AsyncManualResetEvent _volumeResetEvent = new AsyncManualResetEvent(false);
-        private readonly AsyncManualResetEvent _defaultResetEvent = new AsyncManualResetEvent(false);
+        private readonly AsyncAutoResetEvent _volumeResetEvent = new AsyncAutoResetEvent(false);
+        private readonly AsyncAutoResetEvent _defaultResetEvent = new AsyncAutoResetEvent(false);
         private readonly IDisposable _peakValueTimerSubscription;
         private EDataFlow _dataFlow;
         private IMultimediaDevice _device;
@@ -214,10 +216,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                                     .Subscribe(x => OnStateChanged(x.State));
 
             controller.SystemEvents.DefaultDeviceChanged
-                                    .When(x =>
-                                    {
-                                        return x.DeviceRole != ERole.Multimedia && (String.Equals(x.DeviceId, RealId, StringComparison.OrdinalIgnoreCase) || _isDefaultCommDevice || _isDefaultDevice);
-                                    })
+                                    .When(x => x.DeviceRole != ERole.Multimedia && (String.Equals(x.DeviceId, RealId, StringComparison.OrdinalIgnoreCase) || _isDefaultCommDevice || _isDefaultDevice))
                                     .Subscribe(x => OnDefaultChanged());
 
             controller.SystemEvents.PropertyChanged
@@ -267,7 +266,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             //1s is a resonable response time for muting a device
             //any longer and we can assume that something went wrong
-            _muteChangedResetEvent.WaitOne(1000);
+            _muteChangedResetEvent.WaitOne(300);
 
             return _isMuted;
         }
@@ -289,7 +288,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             AudioEndpointVolume.MasterVolumeLevelScalar = (float)(volume / 100);
 
-            await _volumeResetEvent.WaitAsync();
+            await _volumeResetEvent.WaitAsync(300);
 
             return _volume;
         }
@@ -301,12 +300,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             try
             {
+                var sw = new Stopwatch();
+
+                sw.Start();
                 PolicyConfig.SetDefaultEndpoint(RealId, ERole.Console | ERole.Multimedia);
 
-                var cts = new CancellationTokenSource();
-                cts.CancelAfter(500);
+                _defaultResetEvent.Wait(300);
 
-                _defaultResetEvent.Wait(cts.Token);
+                sw.Stop();
+                var hi = sw.ElapsedMilliseconds;
 
                 return IsDefaultDevice;
             }
@@ -325,7 +327,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 PolicyConfig.SetDefaultEndpoint(RealId, ERole.Console | ERole.Multimedia);
 
-                await _defaultResetEvent.WaitAsync();
+                await _defaultResetEvent.WaitAsync(300);
 
                 return IsDefaultDevice;
             }
@@ -342,12 +344,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             try
             {
-                PolicyConfig.SetDefaultEndpoint(RealId, ERole.Console | ERole.Multimedia);
+                PolicyConfig.SetDefaultEndpoint(RealId, ERole.Communications);
 
-                var cts = new CancellationTokenSource();
-                cts.CancelAfter(200);
-
-                _defaultResetEvent.Wait(cts.Token);
+                _defaultResetEvent.Wait(300);
 
                 return IsDefaultDevice;
             }
@@ -366,7 +365,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 PolicyConfig.SetDefaultEndpoint(RealId, ERole.Communications);
 
-                await _defaultResetEvent.WaitAsync();
+                await _defaultResetEvent.WaitAsync(300);
                 
                 return IsDefaultCommunicationsDevice;
             }
@@ -382,7 +381,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _isDefaultDevice = Controller.GetDefaultDevice(DeviceType, Role.Multimedia | Role.Console)?.Id == Id;
 
             _defaultResetEvent.Set();
-            _defaultResetEvent.Reset();
 
             base.OnDefaultChanged();
         }
@@ -464,7 +462,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             _volume = data.MasterVolume * 100;
             _volumeResetEvent.Set();
-            _volumeResetEvent.Reset();
 
             OnVolumeChanged(_volume);
 

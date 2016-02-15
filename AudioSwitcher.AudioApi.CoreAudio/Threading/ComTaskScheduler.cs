@@ -51,9 +51,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 
         protected override void QueueTask(Task task)
         {
-            if (_tasks.IsAddingCompleted)
-                return;
-
             VerifyNotDisposed();
 
             _tasks.Add(task, _cancellationToken.Token);
@@ -81,22 +78,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 
         private void ThreadStart()
         {
-            try
-            {
-                var token = _cancellationToken.Token;
+            var token = _cancellationToken.Token;
 
-                foreach (var task in _tasks.GetConsumingEnumerable(token))
-                    TryExecuteTask(task);
-            }
-            finally
-            {
-                _tasks.Dispose();
-            }
+            foreach (var task in _tasks.GetConsumingEnumerable(token))
+                TryExecuteTask(task);
         }
 
         private void VerifyNotDisposed()
         {
-            if (_cancellationToken.IsCancellationRequested)
+            if (_cancellationToken.IsCancellationRequested || _tasks.IsAddingCompleted)
                 throw new ObjectDisposedException(typeof(ComTaskScheduler).Name);
         }
     }
