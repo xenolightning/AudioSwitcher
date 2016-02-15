@@ -46,23 +46,9 @@ namespace AudioSwitcher.AudioApi
         public abstract DeviceIcon Icon { get; }
         public abstract string IconPath { get; }
 
-        public virtual bool IsDefaultDevice
-        {
-            get
-            {
-                return (Controller.DefaultPlaybackDevice != null && Controller.DefaultPlaybackDevice.Id == Id)
-                       || (Controller.DefaultCaptureDevice != null && Controller.DefaultCaptureDevice.Id == Id);
-            }
-        }
+        public abstract bool IsDefaultDevice { get; }
 
-        public virtual bool IsDefaultCommunicationsDevice
-        {
-            get
-            {
-                return (Controller.DefaultPlaybackCommunicationsDevice != null && Controller.DefaultPlaybackCommunicationsDevice.Id == Id)
-                       || (Controller.DefaultCaptureCommunicationsDevice != null && Controller.DefaultCaptureCommunicationsDevice.Id == Id);
-            }
-        }
+        public abstract bool IsDefaultCommunicationsDevice { get; }
 
         public abstract DeviceState State { get; }
 

@@ -260,7 +260,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return await dev.SetAsDefaultCommunicationsAsync();
         }
 
-        public override CoreAudioDevice GetDefaultDevice(DeviceType deviceType, Role role)
+        internal string GetDefaultDeviceId(DeviceType deviceType, Role role)
         {
             IMultimediaDevice dev;
             _innerEnumerator.GetDefaultAudioEndpoint(deviceType.AsEDataFlow(), role.AsERole(), out dev);
@@ -269,8 +269,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             string devId;
             dev.GetId(out devId);
-            if (string.IsNullOrEmpty(devId))
-                return null;
+
+            return devId;
+        }
+
+        public override CoreAudioDevice GetDefaultDevice(DeviceType deviceType, Role role)
+        {
+            string devId = GetDefaultDeviceId(deviceType, role);
 
             var acquiredLock = _lock.AcquireReadLockNonReEntrant();
 

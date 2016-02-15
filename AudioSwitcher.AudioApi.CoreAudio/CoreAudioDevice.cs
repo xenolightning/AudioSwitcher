@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
@@ -31,6 +30,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly IDisposable _peakValueTimerSubscription;
         private EDataFlow _dataFlow;
         private IMultimediaDevice _device;
+        private readonly CoreAudioController _controller;
         private Guid? _id;
         private bool _isDisposed;
         private bool _isMuted;
@@ -202,6 +202,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ComThread.Assert();
 
             _device = device;
+            _controller = controller;
 
             if (device == null)
                 throw new ArgumentNullException(nameof(device));
@@ -411,6 +412,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 ep.GetDataFlow(out _dataFlow);
 
             GetPropertyInformation(device);
+
+            //load the initial default state. Have to query using device id because this device is not cached until after creation
+            _isDefaultCommDevice = _controller.GetDefaultDeviceId(DeviceType, Role.Communications) == RealId;
+            _isDefaultDevice = _controller.GetDefaultDeviceId(DeviceType, Role.Multimedia | Role.Console) == RealId;
         }
 
 

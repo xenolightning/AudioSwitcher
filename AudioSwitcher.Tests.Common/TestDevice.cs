@@ -52,6 +52,24 @@ namespace AudioSwitcher.Tests.Common
             }
         }
 
+        public override bool IsDefaultDevice
+        {
+            get
+            {
+                return (Controller.DefaultPlaybackDevice != null && Controller.DefaultPlaybackDevice.Id == Id)
+                       || (Controller.DefaultCaptureDevice != null && Controller.DefaultCaptureDevice.Id == Id);
+            }
+        }
+
+        public override bool IsDefaultCommunicationsDevice
+        {
+            get
+            {
+                return (Controller.DefaultPlaybackCommunicationsDevice != null && Controller.DefaultPlaybackCommunicationsDevice.Id == Id)
+                       || (Controller.DefaultCaptureCommunicationsDevice != null && Controller.DefaultCaptureCommunicationsDevice.Id == Id);
+            }
+        }
+
         public override DeviceState State
         {
             get { return DeviceState.Active; }
