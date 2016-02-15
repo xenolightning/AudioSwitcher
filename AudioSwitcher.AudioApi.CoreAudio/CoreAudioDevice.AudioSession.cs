@@ -17,13 +17,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void ClearAudioSession()
         {
-            if (_sessionController != null)
-            {
-                if (_sessionController?.IsValueCreated == true)
-                    _sessionController?.Value?.Dispose();
+            if (_sessionController?.IsValueCreated == true)
+                _sessionController?.Value?.Dispose();
 
-                _sessionController = null;
-            }
+            _sessionController = null;
         }
 
         private void LoadAudioSessionController(IMultimediaDevice device)
