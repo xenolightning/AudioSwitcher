@@ -209,10 +209,6 @@ namespace AudioSwitcher.AudioApi
             {
                 return DefaultPlaybackDevice;
             }
-            set
-            {
-                SetDefaultDevice(value);
-            }
         }
 
         IDevice IAudioController.DefaultPlaybackCommunicationsDevice
@@ -220,10 +216,6 @@ namespace AudioSwitcher.AudioApi
             get
             {
                 return DefaultPlaybackCommunicationsDevice;
-            }
-            set
-            {
-                SetDefaultCommunicationsDevice(value);
             }
         }
 
@@ -233,10 +225,6 @@ namespace AudioSwitcher.AudioApi
             {
                 return DefaultCaptureDevice;
             }
-            set
-            {
-                SetDefaultDevice(value);
-            }
         }
 
         IDevice IAudioController.DefaultCaptureCommunicationsDevice
@@ -244,10 +232,6 @@ namespace AudioSwitcher.AudioApi
             get
             {
                 return DefaultCaptureCommunicationsDevice;
-            }
-            set
-            {
-                SetDefaultCommunicationsDevice(value);
             }
         }
 

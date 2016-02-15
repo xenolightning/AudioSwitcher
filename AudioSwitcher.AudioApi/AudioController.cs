@@ -23,10 +23,6 @@ namespace AudioSwitcher.AudioApi
             {
                 return GetDefaultDevice(DeviceType.Playback, Role.Console | Role.Multimedia);
             }
-            set
-            {
-                SetDefaultDevice(value);
-            }
         }
 
         public virtual IDevice DefaultPlaybackCommunicationsDevice
@@ -34,10 +30,6 @@ namespace AudioSwitcher.AudioApi
             get
             {
                 return GetDefaultDevice(DeviceType.Playback, Role.Communications);
-            }
-            set
-            {
-                SetDefaultCommunicationsDevice(value);
             }
         }
 
@@ -47,10 +39,6 @@ namespace AudioSwitcher.AudioApi
             {
                 return GetDefaultDevice(DeviceType.Capture, Role.Console | Role.Multimedia);
             }
-            set
-            {
-                SetDefaultDevice(value);
-            }
         }
 
         public virtual IDevice DefaultCaptureCommunicationsDevice
@@ -58,10 +46,6 @@ namespace AudioSwitcher.AudioApi
             get
             {
                 return GetDefaultDevice(DeviceType.Capture, Role.Communications);
-            }
-            set
-            {
-                SetDefaultCommunicationsDevice(value);
             }
         }
 
@@ -156,19 +140,19 @@ namespace AudioSwitcher.AudioApi
             return Task.FromResult(GetCaptureDevices(deviceState));
         }
 
-        public abstract bool SetDefaultDevice(IDevice dev);
+        //public abstract bool SetDefaultDevice(IDevice dev);
 
-        public virtual Task<bool> SetDefaultDeviceAsync(IDevice dev)
-        {
-            return Task.FromResult(SetDefaultDevice(dev));
-        }
+        //public virtual Task<bool> SetDefaultDeviceAsync(IDevice dev)
+        //{
+        //    return Task.FromResult(SetDefaultDevice(dev));
+        //}
 
-        public abstract bool SetDefaultCommunicationsDevice(IDevice dev);
+        //public abstract bool SetDefaultCommunicationsDevice(IDevice dev);
 
-        public virtual Task<bool> SetDefaultCommunicationsDeviceAsync(IDevice dev)
-        {
-            return Task.FromResult(SetDefaultDevice(dev));
-        }
+        //public virtual Task<bool> SetDefaultCommunicationsDeviceAsync(IDevice dev)
+        //{
+        //    return Task.FromResult(SetDefaultDevice(dev));
+        //}
 
         public void Dispose()
         {

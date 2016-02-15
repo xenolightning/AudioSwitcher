@@ -115,23 +115,12 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Controller_Capture_SetDefault_2()
-        {
-            var controller = CreateTestController();
-            var device = controller.GetCaptureDevices().First(x => !x.IsDefaultDevice);
-
-            Assert.True(controller.SetDefaultDevice(device));
-            Assert.Same(controller.DefaultCaptureDevice, device);
-        }
-
-        [Fact]
         public void Controller_Capture_SetDefault_3()
         {
             var controller = CreateTestController();
             var device = controller.GetCaptureDevices().First(x => !x.IsDefaultDevice);
 
-            controller.DefaultCaptureDevice = device;
-
+            device.SetAsDefault();
             Assert.Same(controller.DefaultCaptureDevice, device);
         }
 
@@ -146,23 +135,12 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Controller_Playback_SetDefault_2()
-        {
-            var controller = CreateTestController();
-            var device = controller.GetPlaybackDevices().First(x => !x.IsDefaultDevice);
-
-            Assert.True(controller.SetDefaultDevice(device));
-            Assert.Same(controller.DefaultPlaybackDevice, device);
-        }
-
-        [Fact]
         public void Controller_Playback_SetDefault_3()
         {
             var controller = CreateTestController();
             var device = controller.GetPlaybackDevices().First(x => !x.IsDefaultDevice);
 
-            controller.DefaultPlaybackDevice = device;
-
+            device.SetAsDefault();
             Assert.Same(controller.DefaultPlaybackDevice, device);
         }
 
@@ -177,22 +155,12 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Controller_Capture_SetDefaultComm_2()
-        {
-            var controller = CreateTestController();
-            var device = controller.GetCaptureDevices().First(x => !x.IsDefaultDevice);
-
-            Assert.True(controller.SetDefaultCommunicationsDevice(device));
-            Assert.Same(controller.DefaultCaptureCommunicationsDevice, device);
-        }
-
-        [Fact]
         public void Controller_Capture_SetDefaultComm_3()
         {
             var controller = CreateTestController();
-            var device = controller.GetCaptureDevices().First(x => !x.IsDefaultDevice);
+            var device = controller.GetCaptureDevices().First(x => !x.IsDefaultCommunicationsDevice);
 
-            controller.DefaultCaptureCommunicationsDevice = device;
+            device.SetAsDefaultCommunications();
             Assert.Same(controller.DefaultCaptureCommunicationsDevice, device);
         }
 
@@ -207,23 +175,12 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Controller_Playback_SetDefaultComm_2()
-        {
-            var controller = CreateTestController();
-            var device = controller.GetPlaybackDevices().First(x => !x.IsDefaultDevice);
-
-            Assert.True(controller.SetDefaultCommunicationsDevice(device));
-            Assert.Same(controller.DefaultPlaybackCommunicationsDevice, device);
-        }
-
-        [Fact]
         public void Controller_Playback_SetDefaultComm_3()
         {
             var controller = CreateTestController();
             var device = controller.GetPlaybackDevices().First(x => !x.IsDefaultDevice);
 
-            controller.DefaultPlaybackCommunicationsDevice = device;
-
+            device.SetAsDefaultCommunications();
             Assert.Same(controller.DefaultPlaybackCommunicationsDevice, device);
         }
     }

@@ -118,31 +118,36 @@ namespace AudioSwitcher.AudioApi
             get { return _peakValueChanged.AsObservable(); }
         }
 
-        /// <summary>
-        ///     Set this device as the the default device
-        /// </summary>
-        public virtual bool SetAsDefault()
-        {
-            return Controller.SetDefaultDevice(this);
-        }
+        public abstract bool SetAsDefault();
+        public abstract Task<bool> SetAsDefaultAsync();
+        public abstract bool SetAsDefaultCommunications();
+        public abstract Task<bool> SetAsDefaultCommunicationsAsync();
 
-        public virtual Task<bool> SetAsDefaultAsync()
-        {
-            return Controller.SetDefaultDeviceAsync(this);
-        }
+        ///// <summary>
+        /////     Set this device as the the default device
+        ///// </summary>
+        //public virtual bool SetAsDefault()
+        //{
+        //    return Controller.SetDefaultDevice(this);
+        //}
 
-        /// <summary>
-        ///     Set this device as the default communication device
-        /// </summary>
-        public virtual bool SetAsDefaultCommunications()
-        {
-            return Controller.SetDefaultCommunicationsDevice(this);
-        }
+        //public virtual Task<bool> SetAsDefaultAsync()
+        //{
+        //    return Controller.SetDefaultDeviceAsync(this);
+        //}
 
-        public virtual Task<bool> SetAsDefaultCommunicationsAsync()
-        {
-            return Controller.SetDefaultCommunicationsDeviceAsync(this);
-        }
+        ///// <summary>
+        /////     Set this device as the default communication device
+        ///// </summary>
+        //public virtual bool SetAsDefaultCommunications()
+        //{
+        //    return Controller.SetDefaultCommunicationsDevice(this);
+        //}
+
+        //public virtual Task<bool> SetAsDefaultCommunicationsAsync()
+        //{
+        //    return Controller.SetDefaultCommunicationsDeviceAsync(this);
+        //}
 
         public abstract bool Mute(bool mute);
 

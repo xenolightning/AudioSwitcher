@@ -7,13 +7,13 @@ namespace AudioSwitcher.AudioApi
     public interface IAudioController<T> : IAudioController
         where T : IDevice
     {
-        new T DefaultPlaybackDevice { get; set; }
+        new T DefaultPlaybackDevice { get; }
 
-        new T DefaultPlaybackCommunicationsDevice { get; set; }
+        new T DefaultPlaybackCommunicationsDevice { get; }
 
         new T DefaultCaptureDevice { get; }
 
-        new T DefaultCaptureCommunicationsDevice { get; set; }
+        new T DefaultCaptureCommunicationsDevice { get; }
 
         new T GetDevice(Guid id);
 
