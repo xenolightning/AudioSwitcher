@@ -218,7 +218,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                                     .Subscribe(x => OnStateChanged(x.State));
 
             controller.SystemEvents.DefaultDeviceChanged
-                                    .When(x => x.DeviceRole != ERole.Multimedia && (String.Equals(x.DeviceId, RealId, StringComparison.OrdinalIgnoreCase) || _isDefaultCommDevice || _isDefaultDevice))
+                                    .When(x =>
+                                    {
+                                        //Ignore duplicate mm event
+                                        if (x.DeviceRole == ERole.Multimedia)
+                                            return false;
+
+                                        if (String.Equals(x.DeviceId, RealId, StringComparison.OrdinalIgnoreCase))
+                                            return true;
+
+                                        //Ignore events for other device types
+                                        if (!x.DataFlow.HasFlag(_dataFlow))
+                                            return false;
+
+                                        return  _isDefaultCommDevice || _isDefaultDevice;
+                                    })
                                     .Subscribe(x => OnDefaultChanged(x.DataFlow, x.DeviceRole));
 
             controller.SystemEvents.PropertyChanged
@@ -330,7 +344,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             try
             {
                 PolicyConfig.SetDefaultEndpoint(RealId, ERole.Console | ERole.Multimedia);
-                await _defaultResetEvent.WaitAsync();
+                await _defaultResetEvent.WaitAsync(DefaultComTimeout);
 
                 return IsDefaultDevice;
             }

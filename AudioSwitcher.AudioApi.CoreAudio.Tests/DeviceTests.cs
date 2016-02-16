@@ -4,7 +4,7 @@ using Xunit;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 {
-    [Collection("CoreAudio")]
+    [Collection("CoreAudio_Device")]
     public class DeviceTests
     {
         private CoreAudioController CreateTestController()
