@@ -93,7 +93,7 @@ namespace AudioSwitcher.AudioApi.Hooking
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Status = EHookStatus.Inactive;
             }

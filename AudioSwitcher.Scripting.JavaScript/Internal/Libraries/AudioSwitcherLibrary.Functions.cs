@@ -7,15 +7,9 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
 {
     internal sealed partial class AudioSwitcherLibrary
     {
-        public JavaScriptDeviceType DeviceType
-        {
-            get { return _deviceType; }
-        }
+        public JavaScriptDeviceType DeviceType => _deviceType;
 
-        public JavaScriptDeviceState DeviceState
-        {
-            get { return _deviceState; }
-        }
+        public JavaScriptDeviceState DeviceState => _deviceState;
 
         public JavaScriptAudioDevice[] GetAudioDevices()
         {

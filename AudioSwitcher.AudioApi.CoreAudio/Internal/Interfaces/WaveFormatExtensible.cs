@@ -10,29 +10,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         private readonly Guid subFormat;
         private readonly short wValidBitsPerSample;
 
-        public short ValidBitsPerSample
-        {
-            get
-            {
-                return wValidBitsPerSample;
-            }
-        }
+        public short ValidBitsPerSample => wValidBitsPerSample;
 
-        public SpeakerConfiguration ChannelMask
-        {
-            get
-            {
-                return (SpeakerConfiguration)dwChannelMask;
-            }
-        }
+        public SpeakerConfiguration ChannelMask => (SpeakerConfiguration)dwChannelMask;
 
-        public Guid SubFormat
-        {
-            get
-            {
-                return subFormat;
-            }
-        }
+        public Guid SubFormat => subFormat;
 
         /// <summary>
         /// Parameterless constructor for marshalling

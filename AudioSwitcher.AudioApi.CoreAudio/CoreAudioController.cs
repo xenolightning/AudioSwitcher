@@ -39,13 +39,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             RefreshSystemDevices();
         }
 
-        internal SystemEventNotifcationClient SystemEvents
-        {
-            get
-            {
-                return _systemEvents;
-            }
-        }
+        internal SystemEventNotifcationClient SystemEvents => _systemEvents;
 
         private void OnDeviceAdded(string deviceId)
         {

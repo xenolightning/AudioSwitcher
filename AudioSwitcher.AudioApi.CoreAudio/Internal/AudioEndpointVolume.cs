@@ -42,46 +42,22 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         ///     VolumeChanged Range
         /// </summary>
-        public AudioEndpointVolumeVolumeRange VolumeRange
-        {
-            get
-            {
-                return _volumeRange;
-            }
-        }
+        public AudioEndpointVolumeVolumeRange VolumeRange => _volumeRange;
 
         /// <summary>
         ///     Hardware Support
         /// </summary>
-        public EndpointHardwareSupport HardwareSupport
-        {
-            get
-            {
-                return _hardwareSupport;
-            }
-        }
+        public EndpointHardwareSupport HardwareSupport => _hardwareSupport;
 
         /// <summary>
         ///     Step Information
         /// </summary>
-        public AudioEndpointVolumeStepInformation StepInformation
-        {
-            get
-            {
-                return _stepInformation;
-            }
-        }
+        public AudioEndpointVolumeStepInformation StepInformation => _stepInformation;
 
         /// <summary>
         ///     Channels
         /// </summary>
-        public AudioEndpointVolumeChannels Channels
-        {
-            get
-            {
-                return _channels;
-            }
-        }
+        public AudioEndpointVolumeChannels Channels => _channels;
 
         /// <summary>
         ///     Master VolumeChanged Level

@@ -50,21 +50,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         }
 
-        public IObservable<IAudioSession> SessionCreated
-        {
-            get
-            {
-                return _sessionCreated.AsObservable();
-            }
-        }
+        public IObservable<IAudioSession> SessionCreated => _sessionCreated.AsObservable();
 
-        public IObservable<string> SessionDisconnected
-        {
-            get
-            {
-                return _sessionDisconnected.AsObservable();
-            }
-        }
+        public IObservable<string> SessionDisconnected => _sessionDisconnected.AsObservable();
 
         public IEnumerable<IAudioSession> All()
         {

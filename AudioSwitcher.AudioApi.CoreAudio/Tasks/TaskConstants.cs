@@ -13,79 +13,37 @@ namespace Nito.AsyncEx
         /// <summary>
         /// A task that has been completed with the value <c>true</c>.
         /// </summary>
-        public static Task<bool> BooleanTrue
-        {
-            get
-            {
-                return booleanTrue;
-            }
-        }
+        public static Task<bool> BooleanTrue => booleanTrue;
 
         /// <summary>
         /// A task that has been completed with the value <c>false</c>.
         /// </summary>
-        public static Task<bool> BooleanFalse
-        {
-            get
-            {
-                return TaskConstants<bool>.Default;
-            }
-        }
+        public static Task<bool> BooleanFalse => TaskConstants<bool>.Default;
 
         /// <summary>
         /// A task that has been completed with the value <c>0</c>.
         /// </summary>
-        public static Task<int> Int32Zero
-        {
-            get
-            {
-                return TaskConstants<int>.Default;
-            }
-        }
+        public static Task<int> Int32Zero => TaskConstants<int>.Default;
 
         /// <summary>
         /// A task that has been completed with the value <c>-1</c>.
         /// </summary>
-        public static Task<int> Int32NegativeOne
-        {
-            get
-            {
-                return intNegativeOne;
-            }
-        }
+        public static Task<int> Int32NegativeOne => intNegativeOne;
 
         /// <summary>
         /// A <see cref="Task"/> that has been completed.
         /// </summary>
-        public static Task Completed
-        {
-            get
-            {
-                return booleanTrue;
-            }
-        }
+        public static Task Completed => booleanTrue;
 
         /// <summary>
         /// A <see cref="Task"/> that will never complete.
         /// </summary>
-        public static Task Never
-        {
-            get
-            {
-                return TaskConstants<bool>.Never;
-            }
-        }
+        public static Task Never => TaskConstants<bool>.Never;
 
         /// <summary>
         /// A task that has been canceled.
         /// </summary>
-        public static Task Canceled
-        {
-            get
-            {
-                return TaskConstants<bool>.Canceled;
-            }
-        }
+        public static Task Canceled => TaskConstants<bool>.Canceled;
     }
 
     /// <summary>
@@ -94,12 +52,6 @@ namespace Nito.AsyncEx
     /// <typeparam name="T">The type of the task result.</typeparam>
     public static class TaskConstants<T>
     {
-        private static readonly Task<T> defaultValue = Task.FromResult(default(T));
-
-        private static readonly Task<T> never = new TaskCompletionSource<T>().Task;
-
-        private static readonly Task<T> canceled = CanceledTask();
-
         private static Task<T> CanceledTask()
         {
             var tcs = new TaskCompletionSource<T>();
@@ -110,34 +62,16 @@ namespace Nito.AsyncEx
         /// <summary>
         /// A task that has been completed with the default value of <typeparamref name="T"/>.
         /// </summary>
-        public static Task<T> Default
-        {
-            get
-            {
-                return defaultValue;
-            }
-        }
+        public static Task<T> Default { get; } = Task.FromResult(default(T));
 
         /// <summary>
         /// A <see cref="Task"/> that will never complete.
         /// </summary>
-        public static Task<T> Never
-        {
-            get
-            {
-                return never;
-            }
-        }
+        public static Task<T> Never { get; } = new TaskCompletionSource<T>().Task;
 
         /// <summary>
         /// A task that has been canceled.
         /// </summary>
-        public static Task<T> Canceled
-        {
-            get
-            {
-                return canceled;
-            }
-        }
+        public static Task<T> Canceled { get; } = CanceledTask();
     }
 }

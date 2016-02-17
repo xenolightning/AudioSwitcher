@@ -77,62 +77,29 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             RefreshVolume();
         }
 
-        public IDevice Device { get; private set; }
+        public IDevice Device { get; }
 
-        public IObservable<SessionVolumeChangedArgs> VolumeChanged
-        {
-            get { return _volumeChanged.AsObservable(); }
-        }
+        public IObservable<SessionVolumeChangedArgs> VolumeChanged => _volumeChanged.AsObservable();
 
-        public IObservable<SessionPeakValueChangedArgs> PeakValueChanged
-        {
-            get { return _peakValueChanged.AsObservable(); }
-        }
+        public IObservable<SessionPeakValueChangedArgs> PeakValueChanged => _peakValueChanged.AsObservable();
 
-        public IObservable<SessionMuteChangedArgs> MuteChanged
-        {
-            get { return _muteChanged.AsObservable(); }
-        }
+        public IObservable<SessionMuteChangedArgs> MuteChanged => _muteChanged.AsObservable();
 
-        public IObservable<SessionStateChangedArgs> StateChanged
-        {
-            get { return _stateChanged.AsObservable(); }
-        }
+        public IObservable<SessionStateChangedArgs> StateChanged => _stateChanged.AsObservable();
 
-        public IObservable<SessionDisconnectedArgs> Disconnected
-        {
-            get { return _disconnected.AsObservable(); }
-        }
+        public IObservable<SessionDisconnectedArgs> Disconnected => _disconnected.AsObservable();
 
-        public string Id
-        {
-            get { return _id; }
-        }
+        public string Id  => _id;
 
-        public int ProcessId
-        {
-            get { return _processId; }
-        }
+        public int ProcessId => _processId;
 
-        public string DisplayName
-        {
-            get { return String.IsNullOrWhiteSpace(_displayName) ? _fileDescription : _displayName; }
-        }
+        public string DisplayName => String.IsNullOrWhiteSpace(_displayName) ? _fileDescription : _displayName;
 
-        public string IconPath
-        {
-            get { return _iconPath; }
-        }
+        public string IconPath => _iconPath;
 
-        public string ExecutablePath
-        {
-            get { return _executablePath; }
-        }
+        public string ExecutablePath => _executablePath;
 
-        public bool IsSystemSession
-        {
-            get { return _isSystemSession; }
-        }
+        public bool IsSystemSession => _isSystemSession;
 
         public double Volume
         {
@@ -169,10 +136,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public AudioSessionState SessionState
-        {
-            get { return _state; }
-        }
+        public AudioSessionState SessionState => _state;
 
         int IAudioSessionEvents.OnDisplayNameChanged(string displayName, ref Guid eventContext)
         {

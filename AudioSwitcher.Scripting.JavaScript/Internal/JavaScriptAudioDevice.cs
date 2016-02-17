@@ -80,10 +80,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             internal set;
         }
 
-        public bool IsMuted
-        {
-            get { return Device.IsMuted; }
-        }
+        public bool IsMuted => Device.IsMuted;
 
         private IAudioController Controller
         {
@@ -91,14 +88,6 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
             set;
         }
 
-        private IDevice Device
-        {
-            get
-            {
-                //Ensures that the AudioController is always referencing the correct device
-                //instance
-                return Controller.GetDevice(new Guid(Id));
-            }
-        }
+        private IDevice Device => Controller.GetDevice(new Guid(Id));
     }
 }

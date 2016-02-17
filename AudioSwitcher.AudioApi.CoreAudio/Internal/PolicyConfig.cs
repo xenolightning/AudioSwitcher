@@ -27,9 +27,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     policyConfigVista.SetDefaultEndpoint(devId, eRole);
                 }
-                else if(policyConfigX != null)
+                else
                 {
-                    policyConfigX.SetDefaultEndpoint(devId, eRole);
+                    policyConfigX?.SetDefaultEndpoint(devId, eRole);
                 }
             }
             finally

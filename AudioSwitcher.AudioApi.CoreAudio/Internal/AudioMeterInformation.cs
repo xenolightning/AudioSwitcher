@@ -39,24 +39,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         ///     Peak Values
         /// </summary>
-        public AudioMeterInformationChannels PeakValues
-        {
-            get
-            {
-                return _channels;
-            }
-        }
+        public AudioMeterInformationChannels PeakValues => _channels;
 
         /// <summary>
         ///     Hardware Support
         /// </summary>
-        public EndpointHardwareSupport HardwareSupport
-        {
-            get
-            {
-                return _hardwareSupport;
-            }
-        }
+        public EndpointHardwareSupport HardwareSupport => _hardwareSupport;
 
         /// <summary>
         ///     Master Peak Value

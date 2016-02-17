@@ -14,13 +14,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private static readonly Broadcaster<int> _processTerminated;
         private static IEnumerable<int> _lastProcesses = new List<int>();
 
-        public static IObservable<int> ProcessTerminated
-        {
-            get
-            {
-                return _processTerminated.AsObservable();
-            }
-        }
+        public static IObservable<int> ProcessTerminated => _processTerminated.AsObservable();
 
         static ProcessMonitor()
         {

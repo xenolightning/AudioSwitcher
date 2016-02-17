@@ -17,42 +17,15 @@ namespace AudioSwitcher.AudioApi
             _audioDeviceChanged = new AsyncBroadcaster<DeviceChangedArgs>();
         }
 
-        public virtual IDevice DefaultPlaybackDevice
-        {
-            get
-            {
-                return GetDefaultDevice(DeviceType.Playback, Role.Console | Role.Multimedia);
-            }
-        }
+        public virtual IDevice DefaultPlaybackDevice => GetDefaultDevice(DeviceType.Playback, Role.Console | Role.Multimedia);
 
-        public virtual IDevice DefaultPlaybackCommunicationsDevice
-        {
-            get
-            {
-                return GetDefaultDevice(DeviceType.Playback, Role.Communications);
-            }
-        }
+        public virtual IDevice DefaultPlaybackCommunicationsDevice => GetDefaultDevice(DeviceType.Playback, Role.Communications);
 
-        public virtual IDevice DefaultCaptureDevice
-        {
-            get
-            {
-                return GetDefaultDevice(DeviceType.Capture, Role.Console | Role.Multimedia);
-            }
-        }
+        public virtual IDevice DefaultCaptureDevice => GetDefaultDevice(DeviceType.Capture, Role.Console | Role.Multimedia);
 
-        public virtual IDevice DefaultCaptureCommunicationsDevice
-        {
-            get
-            {
-                return GetDefaultDevice(DeviceType.Capture, Role.Communications);
-            }
-        }
+        public virtual IDevice DefaultCaptureCommunicationsDevice => GetDefaultDevice(DeviceType.Capture, Role.Communications);
 
-        public IObservable<DeviceChangedArgs> AudioDeviceChanged
-        {
-            get { return _audioDeviceChanged.AsObservable(); }
-        }
+        public IObservable<DeviceChangedArgs> AudioDeviceChanged => _audioDeviceChanged.AsObservable();
 
         public abstract IDevice GetDevice(Guid id);
 

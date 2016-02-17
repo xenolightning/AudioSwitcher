@@ -10,31 +10,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
     {
         private readonly Thread _thread;
         private readonly CancellationTokenSource _cancellationToken;
-        private BlockingCollection<Task> _tasks;
+        private readonly BlockingCollection<Task> _tasks;
 
-        public int ThreadId
-        {
-            get
-            {
-                return _thread == null ? -1 : _thread.ManagedThreadId;
-            }
-        }
+        public int ThreadId => _thread?.ManagedThreadId ?? -1;
 
-        public override int MaximumConcurrencyLevel
-        {
-            get
-            {
-                return 1;
-            }
-        }
+        public override int MaximumConcurrencyLevel => 1;
 
         public ComTaskScheduler()
         {
             _tasks = new BlockingCollection<Task>();
             _cancellationToken = new CancellationTokenSource();
 
-            _thread = new Thread(ThreadStart);
-            _thread.IsBackground = true;
+            _thread = new Thread(ThreadStart)
+            {
+                IsBackground = true
+            };
             _thread.TrySetApartmentState(ApartmentState.STA);
 
             _thread.Start();

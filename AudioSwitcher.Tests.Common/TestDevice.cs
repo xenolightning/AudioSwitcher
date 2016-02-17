@@ -19,15 +19,9 @@ namespace AudioSwitcher.Tests.Common
             _controller = controller;
         }
 
-        public override Guid Id
-        {
-            get { return _id; }
-        }
+        public override Guid Id => _id;
 
-        public override string InterfaceName
-        {
-            get { return Id.ToString(); }
-        }
+        public override string InterfaceName => Id.ToString();
 
         public override string Name
         {
@@ -35,55 +29,23 @@ namespace AudioSwitcher.Tests.Common
             set { }
         }
 
-        public override string FullName
-        {
-            get { return Id.ToString(); }
-        }
+        public override string FullName => Id.ToString();
 
-        public override DeviceIcon Icon
-        {
-            get { return DeviceIcon.Unknown; }
-        }
+        public override DeviceIcon Icon => DeviceIcon.Unknown;
 
-        public override string IconPath {
-            get
-            {
-                return "";
-            }
-        }
+        public override string IconPath => "";
 
-        public override bool IsDefaultDevice
-        {
-            get
-            {
-                return (Controller.DefaultPlaybackDevice != null && Controller.DefaultPlaybackDevice.Id == Id)
-                       || (Controller.DefaultCaptureDevice != null && Controller.DefaultCaptureDevice.Id == Id);
-            }
-        }
+        public override bool IsDefaultDevice => (Controller.DefaultPlaybackDevice != null && Controller.DefaultPlaybackDevice.Id == Id)
+                                                || (Controller.DefaultCaptureDevice != null && Controller.DefaultCaptureDevice.Id == Id);
 
-        public override bool IsDefaultCommunicationsDevice
-        {
-            get
-            {
-                return (Controller.DefaultPlaybackCommunicationsDevice != null && Controller.DefaultPlaybackCommunicationsDevice.Id == Id)
-                       || (Controller.DefaultCaptureCommunicationsDevice != null && Controller.DefaultCaptureCommunicationsDevice.Id == Id);
-            }
-        }
+        public override bool IsDefaultCommunicationsDevice => (Controller.DefaultPlaybackCommunicationsDevice != null && Controller.DefaultPlaybackCommunicationsDevice.Id == Id)
+                                                              || (Controller.DefaultCaptureCommunicationsDevice != null && Controller.DefaultCaptureCommunicationsDevice.Id == Id);
 
-        public override DeviceState State
-        {
-            get { return DeviceState.Active; }
-        }
+        public override DeviceState State => DeviceState.Active;
 
-        public override DeviceType DeviceType
-        {
-            get { return _deviceType; }
-        }
+        public override DeviceType DeviceType => _deviceType;
 
-        public override bool IsMuted
-        {
-            get { return _muted; }
-        }
+        public override bool IsMuted => _muted;
 
         public override double Volume
         {

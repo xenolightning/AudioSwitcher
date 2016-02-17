@@ -23,21 +23,9 @@ namespace AudioSwitcher.AudioApi.Observables
             }
         }
 
-        public override bool IsDisposed
-        {
-            get
-            {
-                return _isDisposed;
-            }
-        }
+        public override bool IsDisposed => _isDisposed;
 
-        public override bool IsComplete
-        {
-            get
-            {
-                return _isComplete;
-            }
-        }
+        public override bool IsComplete => _isComplete;
 
         public AsyncBroadcaster()
         {

@@ -10,13 +10,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private static readonly Timer _peakValueTimer;
         private static readonly Broadcaster<long> _peakValueTick;
 
-        public static IObservable<long> PeakValueTick
-        {
-            get
-            {
-                return _peakValueTick;
-            }
-        }
+        public static IObservable<long> PeakValueTick => _peakValueTick;
 
         static PeakValueTimer()
         {

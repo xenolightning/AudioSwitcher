@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.Observables;
 
@@ -54,55 +53,25 @@ namespace AudioSwitcher.AudioApi
 
         public abstract DeviceType DeviceType { get; }
 
-        public virtual bool IsPlaybackDevice
-        {
-            get
-            {
-                return DeviceType == DeviceType.Playback || DeviceType == DeviceType.All;
-            }
-        }
+        public virtual bool IsPlaybackDevice => DeviceType == DeviceType.Playback || DeviceType == DeviceType.All;
 
-        public virtual bool IsCaptureDevice
-        {
-            get
-            {
-                return DeviceType == DeviceType.Capture || DeviceType == DeviceType.All;
-            }
-        }
+        public virtual bool IsCaptureDevice => DeviceType == DeviceType.Capture || DeviceType == DeviceType.All;
 
         public abstract bool IsMuted { get; }
 
         public abstract double Volume { get; set; }
 
-        public IObservable<DeviceVolumeChangedArgs> VolumeChanged
-        {
-            get { return _volumeChanged.AsObservable(); }
-        }
+        public IObservable<DeviceVolumeChangedArgs> VolumeChanged => _volumeChanged.AsObservable();
 
-        public IObservable<DeviceMuteChangedArgs> MuteChanged
-        {
-            get { return _muteChanged.AsObservable(); }
-        }
+        public IObservable<DeviceMuteChangedArgs> MuteChanged => _muteChanged.AsObservable();
 
-        public IObservable<DevicePropertyChangedArgs> PropertyChanged
-        {
-            get { return _propertyChanged.AsObservable(); }
-        }
+        public IObservable<DevicePropertyChangedArgs> PropertyChanged => _propertyChanged.AsObservable();
 
-        public IObservable<DefaultDeviceChangedArgs> DefaultChanged
-        {
-            get { return _defaultChanged.AsObservable(); }
-        }
+        public IObservable<DefaultDeviceChangedArgs> DefaultChanged => _defaultChanged.AsObservable();
 
-        public IObservable<DeviceStateChangedArgs> StateChanged
-        {
-            get { return _stateChanged.AsObservable(); }
-        }
+        public IObservable<DeviceStateChangedArgs> StateChanged => _stateChanged.AsObservable();
 
-        public IObservable<DevicePeakValueChangedArgs> PeakValueChanged
-        {
-            get { return _peakValueChanged.AsObservable(); }
-        }
+        public IObservable<DevicePeakValueChangedArgs> PeakValueChanged => _peakValueChanged.AsObservable();
 
         public abstract bool SetAsDefault();
         public abstract Task<bool> SetAsDefaultAsync();
@@ -142,11 +111,6 @@ namespace AudioSwitcher.AudioApi
         protected virtual void OnPropertyChanged(string propertyName)
         {
             _propertyChanged.OnNext(new DevicePropertyChangedArgs(this, propertyName));
-        }
-
-        protected virtual void OnPropertyChanged<T>(Expression<Func<IDevice, object>> expression)
-        {
-            _propertyChanged.OnNext(DevicePropertyChangedArgs.FromExpression(this, expression));
         }
 
         protected virtual void OnDefaultChanged()

@@ -180,13 +180,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         ///     Gets the type of data in this PropVariant
         /// </summary>
-        public VarEnum DataType
-        {
-            get
-            {
-                return (VarEnum)vt;
-            }
-        }
+        public VarEnum DataType => (VarEnum)vt;
 
         /// <summary>
         ///     Property value

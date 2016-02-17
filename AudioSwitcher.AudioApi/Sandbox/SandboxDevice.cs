@@ -16,21 +16,9 @@ namespace AudioSwitcher.AudioApi.Sandbox
         public DeviceType type;
         private SandboxAudioController _controller;
 
-        public override Guid Id
-        {
-            get
-            {
-                return id;
-            }
-        }
+        public override Guid Id => id;
 
-        public override string InterfaceName
-        {
-            get
-            {
-                return interfaceName;
-            }
-        }
+        public override string InterfaceName => interfaceName;
 
         public override string Name
         {
@@ -43,71 +31,23 @@ namespace AudioSwitcher.AudioApi.Sandbox
             }
         }
 
-        public override string FullName
-        {
-            get
-            {
-                return fullName;
-            }
-        }
+        public override string FullName => fullName;
 
-        public override DeviceIcon Icon
-        {
-            get
-            {
-                return icon;
-            }
-        }
+        public override DeviceIcon Icon => icon;
 
-        public override string IconPath
-        {
-            get
-            {
-                return iconPath;
-            }
-        }
+        public override string IconPath => iconPath;
 
-        public override bool IsDefaultDevice
-        {
-            get
-            {
-                return (Controller.DefaultPlaybackDevice != null && Controller.DefaultPlaybackDevice.Id == Id)
-                       || (Controller.DefaultCaptureDevice != null && Controller.DefaultCaptureDevice.Id == Id);
-            }
-        }
+        public override bool IsDefaultDevice => (Controller.DefaultPlaybackDevice != null && Controller.DefaultPlaybackDevice.Id == Id)
+                                                || (Controller.DefaultCaptureDevice != null && Controller.DefaultCaptureDevice.Id == Id);
 
-        public override bool IsDefaultCommunicationsDevice
-        {
-            get
-            {
-                return (Controller.DefaultPlaybackCommunicationsDevice != null && Controller.DefaultPlaybackCommunicationsDevice.Id == Id)
-                       || (Controller.DefaultCaptureCommunicationsDevice != null && Controller.DefaultCaptureCommunicationsDevice.Id == Id);
-            }
-        }
+        public override bool IsDefaultCommunicationsDevice => (Controller.DefaultPlaybackCommunicationsDevice != null && Controller.DefaultPlaybackCommunicationsDevice.Id == Id)
+                                                              || (Controller.DefaultCaptureCommunicationsDevice != null && Controller.DefaultCaptureCommunicationsDevice.Id == Id);
 
-        public override DeviceState State
-        {
-            get
-            {
-                return state;
-            }
-        }
+        public override DeviceState State => state;
 
-        public override DeviceType DeviceType
-        {
-            get
-            {
-                return type;
-            }
-        }
+        public override DeviceType DeviceType => type;
 
-        public override bool IsMuted
-        {
-            get
-            {
-                return isMuted;
-            }
-        }
+        public override bool IsMuted => isMuted;
 
         public override double Volume { get; set; }
 

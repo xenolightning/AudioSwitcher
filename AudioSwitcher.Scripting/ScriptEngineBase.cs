@@ -9,10 +9,7 @@ namespace AudioSwitcher.Scripting
         protected readonly Dictionary<string, Func<IExecutionContext, IScriptLibrary>> ScriptLibraries;
         protected Action<IExecutionContext> ContextCreationAction;
 
-        public string FriendlyName
-        {
-            get { return "JavaScript Engine"; }
-        }
+        public string FriendlyName => "JavaScript Engine";
 
         public ScriptEngineBase()
         {

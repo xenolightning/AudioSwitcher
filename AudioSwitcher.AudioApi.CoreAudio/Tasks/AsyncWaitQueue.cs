@@ -117,10 +117,7 @@ namespace Nito.AsyncEx
             get { lock (_queue) { return _queue.Count; } }
         }
 
-        bool IAsyncWaitQueue<T>.IsEmpty
-        {
-            get { return Count == 0; }
-        }
+        bool IAsyncWaitQueue<T>.IsEmpty => Count == 0;
 
         Task<T> IAsyncWaitQueue<T>.Enqueue()
         {

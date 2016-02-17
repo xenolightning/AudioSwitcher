@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Nito.AsyncEx.Synchronous;
@@ -22,11 +21,6 @@ namespace Nito.AsyncEx
         /// The current state of the event.
         /// </summary>
         private bool _set;
-
-        /// <summary>
-        /// The semi-unique identifier for this instance. This is 0 if the id has not yet been created.
-        /// </summary>
-        private int _id;
 
         /// <summary>
         /// The object used for mutual exclusion.
@@ -163,8 +157,7 @@ namespace Nito.AsyncEx
                 else
                     finish = _queue.Dequeue();
             }
-            if (finish != null)
-                finish.Dispose();
+            finish?.Dispose();
         }
 
     }

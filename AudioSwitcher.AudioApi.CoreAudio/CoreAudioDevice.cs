@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
@@ -13,14 +12,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public sealed partial class CoreAudioDevice : Device
     {
-        private static readonly int DefaultComTimeout = 300;
-        private static readonly Dictionary<PropertyKey, Expression<Func<IDevice, object>>> PropertykeyToLambdaMap = new Dictionary
-            <PropertyKey, Expression<Func<IDevice, object>>>
+        private const int DEFAULT_COM_TIMEOUT = 500;
+
+        private static readonly Dictionary<PropertyKey, HashSet<string>> PropertykeyToPropertyMap = new Dictionary<PropertyKey, HashSet<string>>
         {
-            {PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME, x => x.InterfaceName},
-            {PropertyKeys.PKEY_DEVICE_DESCRIPTION, x => x.Name},
-            {PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME, x => x.FullName},
-            {PropertyKeys.PKEY_DEVICE_ICON, x => x.Icon}
+            {PropertyKeys.PKEY_DEVICE_INTERFACE_FRIENDLY_NAME, new HashSet<string>{ nameof(InterfaceName) }},
+            {PropertyKeys.PKEY_DEVICE_DESCRIPTION, new HashSet<string>{ nameof(Name), nameof(FullName) }},
+            {PropertyKeys.PKEY_DEVICE_FRIENDLY_NAME, new HashSet<string>{ nameof(FullName) }},
+            {PropertyKeys.PKEY_DEVICE_ICON, new HashSet<string>{ nameof(Icon), nameof(IconPath) }},
         };
 
         private readonly AsyncAutoResetEvent _muteChangedResetEvent = new AsyncAutoResetEvent(false);
@@ -69,13 +68,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public string RealId
-        {
-            get
-            {
-                return _realId;
-            }
-        }
+        public string RealId => _realId;
 
         public override string InterfaceName
         {
@@ -116,13 +109,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public override DeviceIcon Icon
-        {
-            get
-            {
-                return IconStringToDeviceIcon(IconPath);
-            }
-        }
+        public override DeviceIcon Icon => IconStringToDeviceIcon(IconPath);
 
         public override string IconPath
         {
@@ -135,45 +122,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public override bool IsDefaultDevice
-        {
-            get
-            {
-                return _isDefaultDevice;
-            }
-        }
+        public override bool IsDefaultDevice => _isDefaultDevice;
 
-        public override bool IsDefaultCommunicationsDevice
-        {
-            get
-            {
-                return _isDefaultCommDevice;
-            }
-        }
+        public override bool IsDefaultCommunicationsDevice => _isDefaultCommDevice;
 
-        public override DeviceState State
-        {
-            get
-            {
-                return _state.AsDeviceState();
-            }
-        }
+        public override DeviceState State => _state.AsDeviceState();
 
-        public override DeviceType DeviceType
-        {
-            get
-            {
-                return _dataFlow.AsDeviceType();
-            }
-        }
+        public override DeviceType DeviceType => _dataFlow.AsDeviceType();
 
-        public override bool IsMuted
-        {
-            get
-            {
-                return _isMuted;
-            }
-        }
+        public override bool IsMuted => _isMuted;
 
         /// <summary>
         ///     The volume level on a scale between 0-100. Returns -1 if end point does not have volume
@@ -231,9 +188,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                                         if (!x.DataFlow.HasFlag(_dataFlow))
                                             return false;
 
-                                        return  _isDefaultCommDevice || _isDefaultDevice;
+                                        return _isDefaultCommDevice || _isDefaultDevice;
                                     })
-                                    .Subscribe(x => OnDefaultChanged(x.DataFlow, x.DeviceRole));
+                                    .Subscribe(x => OnDefaultChanged(x.DeviceRole));
 
             controller.SystemEvents.PropertyChanged
                                     .When(x => String.Equals(x.DeviceId, RealId, StringComparison.OrdinalIgnoreCase))
@@ -278,7 +235,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return true;
 
             AudioEndpointVolume.Mute = mute;
-            _muteChangedResetEvent.Wait(DefaultComTimeout);
+            _muteChangedResetEvent.Wait(DEFAULT_COM_TIMEOUT);
 
             return _isMuted;
         }
@@ -292,14 +249,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return true;
 
             AudioEndpointVolume.Mute = mute;
-            await _muteChangedResetEvent.WaitAsync(DefaultComTimeout);
+            await _muteChangedResetEvent.WaitAsync(DEFAULT_COM_TIMEOUT);
 
             return _isMuted;
         }
 
         public override async Task<double> SetVolumeAsync(double volume)
         {
-            if (_volume == volume)
+            if (Math.Abs(_volume - volume) < 0.1)
                 return _volume;
 
             if (AudioEndpointVolume == null)
@@ -313,7 +270,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 volume += 0.0001F;
 
             AudioEndpointVolume.MasterVolumeLevelScalar = (float)(volume / 100);
-            await _volumeResetEvent.WaitAsync(DefaultComTimeout);
+            await _volumeResetEvent.WaitAsync(DEFAULT_COM_TIMEOUT);
 
             return _volume;
         }
@@ -326,7 +283,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             try
             {
                 PolicyConfig.SetDefaultEndpoint(RealId, ERole.Console | ERole.Multimedia);
-                _defaultResetEvent.Wait(DefaultComTimeout);
+                _defaultResetEvent.Wait(DEFAULT_COM_TIMEOUT);
 
                 return IsDefaultDevice;
             }
@@ -344,7 +301,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             try
             {
                 PolicyConfig.SetDefaultEndpoint(RealId, ERole.Console | ERole.Multimedia);
-                await _defaultResetEvent.WaitAsync(DefaultComTimeout);
+                await _defaultResetEvent.WaitAsync(DEFAULT_COM_TIMEOUT);
 
                 return IsDefaultDevice;
             }
@@ -362,7 +319,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             try
             {
                 PolicyConfig.SetDefaultEndpoint(RealId, ERole.Communications);
-                _defaultCommResetEvent.Wait(DefaultComTimeout);
+                _defaultCommResetEvent.Wait(DEFAULT_COM_TIMEOUT);
 
                 return IsDefaultCommunicationsDevice;
             }
@@ -380,7 +337,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             try
             {
                 PolicyConfig.SetDefaultEndpoint(RealId, ERole.Communications);
-                await _defaultCommResetEvent.WaitAsync(DefaultComTimeout);
+                await _defaultCommResetEvent.WaitAsync(DEFAULT_COM_TIMEOUT);
 
                 return IsDefaultCommunicationsDevice;
             }
@@ -389,7 +346,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return false;
             }
         }
-        private void OnDefaultChanged(EDataFlow dataFlow, ERole deviceRole)
+        private void OnDefaultChanged(ERole deviceRole)
         {
             if (deviceRole == ERole.Communications)
             {
@@ -442,12 +399,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             .ContinueWith(x =>
             {
                 //Ignore the properties we don't care about
-                if (!PropertykeyToLambdaMap.ContainsKey(propertyKey))
+                if (!PropertykeyToPropertyMap.ContainsKey(propertyKey))
                     return;
 
-                var propertyName = DevicePropertyChangedArgs.FromExpression(this, PropertykeyToLambdaMap[propertyKey]).PropertyName;
+                foreach (var propName in PropertykeyToPropertyMap[propertyKey])
+                    OnPropertyChanged(propName);
 
-                OnPropertyChanged(propertyName);
             });
         }
 

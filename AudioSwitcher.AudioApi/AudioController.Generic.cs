@@ -67,10 +67,7 @@ namespace AudioSwitcher.AudioApi
             }
         }
 
-        public IObservable<DeviceChangedArgs> AudioDeviceChanged
-        {
-            get { return _audioDeviceChanged.AsObservable(); }
-        }
+        public IObservable<DeviceChangedArgs> AudioDeviceChanged => _audioDeviceChanged.AsObservable();
 
         public virtual T GetDevice(Guid id)
         {
@@ -203,37 +200,13 @@ namespace AudioSwitcher.AudioApi
             return Task.FromResult(GetDevice(id) as IDevice);
         }
 
-        IDevice IAudioController.DefaultPlaybackDevice
-        {
-            get
-            {
-                return DefaultPlaybackDevice;
-            }
-        }
+        IDevice IAudioController.DefaultPlaybackDevice => DefaultPlaybackDevice;
 
-        IDevice IAudioController.DefaultPlaybackCommunicationsDevice
-        {
-            get
-            {
-                return DefaultPlaybackCommunicationsDevice;
-            }
-        }
+        IDevice IAudioController.DefaultPlaybackCommunicationsDevice => DefaultPlaybackCommunicationsDevice;
 
-        IDevice IAudioController.DefaultCaptureDevice
-        {
-            get
-            {
-                return DefaultCaptureDevice;
-            }
-        }
+        IDevice IAudioController.DefaultCaptureDevice => DefaultCaptureDevice;
 
-        IDevice IAudioController.DefaultCaptureCommunicationsDevice
-        {
-            get
-            {
-                return DefaultCaptureCommunicationsDevice;
-            }
-        }
+        IDevice IAudioController.DefaultCaptureCommunicationsDevice => DefaultCaptureCommunicationsDevice;
 
 
         IDevice IAudioController.GetDevice(Guid id)

@@ -21,13 +21,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public AccessMode Mode { get; private set; }
 
-        public int Count
-        {
-            get
-            {
-                return _properties == null ? 0 : _properties.Count;
-            }
-        }
+        public int Count => _properties?.Count ?? 0;
 
         public object this[PropertyKey key]
         {

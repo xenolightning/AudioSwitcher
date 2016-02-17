@@ -19,7 +19,6 @@ namespace HookingSample
         private DefaultDeviceHook _hook;
         private Process _selectedProcess;
         private CoreAudioDevice _selectedAudioDevice;
-        private Timer _hookCheckTimer;
 
         public ObservableCollection<Process> Processes
         {
@@ -53,13 +52,7 @@ namespace HookingSample
             }
         }
 
-        public bool IsHookSet
-        {
-            get
-            {
-                return Hook != null;
-            }
-        }
+        public bool IsHookSet => Hook != null;
 
         public CoreAudioController Controller
         {

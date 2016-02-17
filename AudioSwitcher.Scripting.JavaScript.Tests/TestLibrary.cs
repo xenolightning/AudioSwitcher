@@ -4,10 +4,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
 {
     public class ClrObject
     {
-        public int Field
-        {
-            get { return 1; }
-        }
+        public int Field => 1;
     }
 
     public sealed class TestLibrary : IScriptLibrary

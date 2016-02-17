@@ -21,19 +21,8 @@ namespace Nito.AsyncEx
         /// </summary>
         private TaskCompletionSource<object> _tcs;
 
-        /// <summary>
-        /// The semi-unique identifier for this instance. This is 0 if the id has not yet been created.
-        /// </summary>
-        private int _id;
-
         [DebuggerNonUserCode]
-        private bool GetStateForDebugger
-        {
-            get
-            {
-                return _tcs.Task.IsCompleted;
-            }
-        }
+        private bool GetStateForDebugger => _tcs.Task.IsCompleted;
 
         /// <summary>
         /// Creates an async-compatible manual-reset event.

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using AudioSwitcher.Tests.Common;
 using Moq;
 using Xunit;
@@ -168,25 +167,6 @@ namespace AudioSwitcher.AudioApi.Tests
             Assert.NotNull(args.Device);
             Assert.Equal(DeviceChangedType.PropertyChanged, args.ChangedType);
             Assert.Equal(propertyName, args.PropertyName);
-        }
-
-        [Fact]
-        public void DevicePropertyChangedArgs_FromExpression_Sets_Device_And_Type()
-        {
-            var device = new Mock<IDevice>();
-            var args = DevicePropertyChangedArgs.FromExpression(device.Object, x => x.Controller);
-
-            Assert.NotNull(args);
-            Assert.NotNull(args.Device);
-            Assert.Equal(DeviceChangedType.PropertyChanged, args.ChangedType);
-            Assert.Equal("Controller", args.PropertyName);
-        }
-
-        [Fact]
-        public void DevicePropertyChangedArgs_FromExpression_Invalid_Sets_Device_And_Type()
-        {
-            var device = new Mock<IDevice>();
-            Assert.ThrowsAny<Exception>(() => DevicePropertyChangedArgs.FromExpression(device.Object, x => x.SetAsDefault()));
         }
 
         [Fact]

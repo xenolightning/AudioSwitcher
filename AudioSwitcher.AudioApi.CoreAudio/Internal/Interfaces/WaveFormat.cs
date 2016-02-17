@@ -14,61 +14,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         private readonly WaveFormatEncoding waveFormatTag;
         private readonly int sampleRate;
 
-        public WaveFormatEncoding Encoding
-        {
-            get
-            {
-                return waveFormatTag;
-            }
-        }
+        public WaveFormatEncoding Encoding => waveFormatTag;
 
-        public int Channels
-        {
-            get
-            {
-                return channels;
-            }
-        }
+        public int Channels => channels;
 
-        public int SampleRate
-        {
-            get
-            {
-                return sampleRate;
-            }
-        }
+        public int SampleRate => sampleRate;
 
-        public int AverageBytesPerSecond
-        {
-            get
-            {
-                return averageBytesPerSecond;
-            }
-        }
+        public int AverageBytesPerSecond => averageBytesPerSecond;
 
-        public virtual int BlockAlign
-        {
-            get
-            {
-                return blockAlign;
-            }
-        }
+        public virtual int BlockAlign => blockAlign;
 
-        public int BitsPerSample
-        {
-            get
-            {
-                return bitsPerSample;
-            }
-        }
+        public int BitsPerSample => bitsPerSample;
 
-        public int ExtraSize
-        {
-            get
-            {
-                return extraSize;
-            }
-        }
+        public int ExtraSize => extraSize;
 
         protected WaveFormat()
         {

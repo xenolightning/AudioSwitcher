@@ -17,29 +17,11 @@ namespace AudioSwitcher.Scripting.JavaScript
         private readonly Dictionary<string, object> _libraries;
         private readonly Engine _engine;
 
-        public override bool IsDebug
-        {
-            get
-            {
-                return _isDebug;
-            }
-        }
+        public override bool IsDebug => _isDebug;
 
-        public override IDictionary<string, object> Libraries
-        {
-            get
-            {
-                return _libraries;
-            }
-        }
+        public override IDictionary<string, object> Libraries => _libraries;
 
-        internal Engine InternalEngine
-        {
-            get
-            {
-                return _engine;
-            }
-        }
+        internal Engine InternalEngine => _engine;
 
         public JsExecutionContext(bool isDebug, CancellationToken cancellationToken)
             : this(isDebug, Enumerable.Empty<string>(), cancellationToken)

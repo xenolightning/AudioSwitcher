@@ -44,45 +44,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly Broadcaster<PropertyChangedArgs> _propertyChanged;
         private bool _isDisposed;
 
-        public IObservable<DeviceStateChangedArgs> DeviceStateChanged
-        {
-            get
-            {
-                return _deviceStateChanged.AsObservable();
-            }
-        }
+        public IObservable<DeviceStateChangedArgs> DeviceStateChanged => _deviceStateChanged.AsObservable();
 
-        public IObservable<DeviceAddedArgs> DeviceAdded
-        {
-            get
-            {
-                return _deviceAdded.AsObservable();
-            }
-        }
+        public IObservable<DeviceAddedArgs> DeviceAdded => _deviceAdded.AsObservable();
 
-        public IObservable<DeviceRemovedArgs> DeviceRemoved
-        {
-            get
-            {
-                return _deviceRemoved.AsObservable();
-            }
-        }
+        public IObservable<DeviceRemovedArgs> DeviceRemoved => _deviceRemoved.AsObservable();
 
-        public IObservable<DefaultChangedArgs> DefaultDeviceChanged
-        {
-            get
-            {
-                return _defaultDeviceChanged.AsObservable();
-            }
-        }
+        public IObservable<DefaultChangedArgs> DefaultDeviceChanged => _defaultDeviceChanged.AsObservable();
 
-        public IObservable<PropertyChangedArgs> PropertyChanged
-        {
-            get
-            {
-                return _propertyChanged.AsObservable();
-            }
-        }
+        public IObservable<PropertyChangedArgs> PropertyChanged => _propertyChanged.AsObservable();
 
         public SystemEventNotifcationClient(IMultimediaDeviceEnumerator enumerator)
         {

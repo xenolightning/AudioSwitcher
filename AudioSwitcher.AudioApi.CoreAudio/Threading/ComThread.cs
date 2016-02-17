@@ -8,21 +8,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
     {
         private static readonly ComTaskScheduler COM_SCHEDULER = new ComTaskScheduler();
 
-        private static bool InvokeRequired
-        {
-            get
-            {
-                return Thread.CurrentThread.ManagedThreadId != Scheduler.ThreadId;
-            }
-        }
+        private static bool InvokeRequired => Thread.CurrentThread.ManagedThreadId != Scheduler.ThreadId;
 
-        private static ComTaskScheduler Scheduler
-        {
-            get
-            {
-                return COM_SCHEDULER;
-            }
-        }
+        private static ComTaskScheduler Scheduler => COM_SCHEDULER;
 
         /// <summary>
         /// Asserts that the execution following this statement is running on the ComThreads

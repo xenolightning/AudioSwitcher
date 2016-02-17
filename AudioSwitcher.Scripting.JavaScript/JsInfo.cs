@@ -21,34 +21,16 @@
             _mediaType = "text/javascript";
         }
 
-        public string CommonName
-        {
-            get { return _commonName; }
-        }
+        public string CommonName => _commonName;
 
-        public string OfficialName
-        {
-            get { return _officialName; }
-        }
+        public string OfficialName => _officialName;
 
-        public string VersionString
-        {
-            get { return _versionString; }
-        }
+        public string VersionString => _versionString;
 
-        public string MediaType
-        {
-            get { return _mediaType; }
-        }
+        public string MediaType => _mediaType;
 
-        public string SyntaxHighlightingCode
-        {
-            get { return _syntaxHighlightingCode; }
-        }
+        public string SyntaxHighlightingCode => _syntaxHighlightingCode;
 
-        public string FileExtension
-        {
-            get { return _fileExtension; }
-        }
+        public string FileExtension => _fileExtension;
     }
 }

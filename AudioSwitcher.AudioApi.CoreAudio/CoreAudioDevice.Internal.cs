@@ -8,7 +8,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public sealed partial class CoreAudioDevice
     {
-        private static readonly Dictionary<string, DeviceIcon> ICON_MAP = new Dictionary<string, DeviceIcon>
+        private static readonly Dictionary<string, DeviceIcon> IconMap = new Dictionary<string, DeviceIcon>
         {
             {"0", DeviceIcon.Speakers},
             {"1", DeviceIcon.Speakers},
@@ -77,13 +77,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         /// Audio Endpoint VolumeChanged
         /// </summary>
-        private AudioEndpointVolume AudioEndpointVolume
-        {
-            get
-            {
-                return _audioEndpointVolume;
-            }
-        }
+        private AudioEndpointVolume AudioEndpointVolume => _audioEndpointVolume;
 
         private void GetPropertyInformation(IMultimediaDevice device)
         {
@@ -187,7 +181,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             try
             {
                 var imageKey = iconStr.Substring(iconStr.IndexOf(",", StringComparison.InvariantCultureIgnoreCase) + 1).Replace("-", "");
-                return ICON_MAP[imageKey];
+                return IconMap[imageKey];
             }
             catch
             {

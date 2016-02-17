@@ -38,35 +38,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         ///     Minimum Decibels
         /// </summary>
-        public float MinDecibels
-        {
-            get
-            {
-                return _volumeMindB;
-            }
-        }
+        public float MinDecibels => _volumeMindB;
 
         /// <summary>
         ///     Maximum Decibels
         /// </summary>
-        public float MaxDecibels
-        {
-            get
-            {
-                return _volumeMaxdB;
-            }
-        }
+        public float MaxDecibels => _volumeMaxdB;
 
         /// <summary>
         ///     Increment Decibels
         /// </summary>
-        public float IncrementDecibels
-        {
-            get
-            {
-                return _volumeIncrementdB;
-            }
-        }
+        public float IncrementDecibels => _volumeIncrementdB;
 
         internal AudioEndpointVolumeVolumeRange(IAudioEndpointVolume parent)
         {

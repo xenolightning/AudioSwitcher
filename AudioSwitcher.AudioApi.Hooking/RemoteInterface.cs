@@ -14,13 +14,7 @@ namespace AudioSwitcher.AudioApi.Hooking
         private readonly Action<int, Exception> _errorHandler;
         private int _messageCount;
 
-        public int MessageCount
-        {
-            get
-            {
-                return _messageCount;
-            }
-        }
+        public int MessageCount => _messageCount;
 
         public RemoteInterface(
             Func<DataFlow, Role, string> systemId,
