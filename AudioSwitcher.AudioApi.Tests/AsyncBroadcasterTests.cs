@@ -344,7 +344,7 @@ namespace AudioSwitcher.AudioApi.Tests
         public void DelegateDisposable_Create()
         {
             int count = 0;
-            var disposable = DelegateDisposable.Create(() => count = 1);
+            var disposable = new DelegateDisposable(() => count = 1);
 
             Assert.NotNull(disposable);
             Assert.IsAssignableFrom<IDisposable>(disposable);
@@ -352,6 +352,32 @@ namespace AudioSwitcher.AudioApi.Tests
             disposable.Dispose();
 
             Assert.Equal(1, count);
+        }
+
+        [Fact]
+        public void AsyncBroadcaster_Completed_Subscribe_Does_Not_Add_Observer()
+        {
+            var b = new AsyncBroadcaster<int>();
+            b.OnCompleted();
+
+            b.Subscribe(x => { });
+
+            Assert.True(b.IsComplete);
+            Assert.False(b.HasObservers);
+        }
+
+        [Fact]
+        public void AsyncBroadcaster_Disposed_Subscribe_Throws_Exception()
+        {
+            var b = new AsyncBroadcaster<int>();
+            b.Dispose();
+
+            Assert.True(b.IsComplete);
+            Assert.True(b.IsDisposed);
+
+            Assert.Throws<ObjectDisposedException>(() => b.Subscribe(x => { }));
+
+            Assert.False(b.HasObservers);
         }
     }
 }

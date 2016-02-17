@@ -109,7 +109,6 @@ namespace AudioSwitcher.AudioApi
 
         Task<IEnumerable<IDevice>> IAudioController.GetDevicesAsync(DeviceType deviceType)
         {
-            // ReSharper disable once RedundantEnumerableCastCall
             return Task.FromResult(GetDevices(deviceType).Cast<IDevice>());
         }
 

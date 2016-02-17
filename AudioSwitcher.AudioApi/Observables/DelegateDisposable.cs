@@ -15,10 +15,5 @@ namespace AudioSwitcher.AudioApi.Observables
         {
             _disposeAction();
         }
-
-        public static DelegateDisposable Create(Action disposeAction)
-        {
-            return new DelegateDisposable(disposeAction);
-        }
     }
 }

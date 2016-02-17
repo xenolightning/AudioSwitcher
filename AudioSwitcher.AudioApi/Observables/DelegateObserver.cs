@@ -11,6 +11,8 @@ namespace AudioSwitcher.AudioApi.Observables
 
         private int _isStopped;
 
+        internal bool IsDisposed => _isStopped == 1;
+
         public DelegateObserver(Action<T> onNext, Action<Exception> onError, Action onCompleted)
         {
             if (onNext == null) throw new ArgumentNullException(nameof(onNext));

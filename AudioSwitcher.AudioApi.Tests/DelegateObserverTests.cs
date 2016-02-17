@@ -26,6 +26,78 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
+        public void DelegateObserver_Disposed_Does_Not_Send_OnNext()
+        {
+            int result = -1;
+
+            var b = new DelegateObserver<int>(
+                i =>
+                {
+                    result = 1;
+                },
+                exception =>
+                {
+
+                },
+                () =>
+                {
+
+                });
+
+            b.Dispose();
+
+            Assert.True(b.IsDisposed);
+            Assert.Equal(-1, result);
+        }
+
+        [Fact]
+        public void DelegateObserver_Disposed_Does_Not_Send_OnError()
+        {
+            int result = -1;
+
+            var b = new DelegateObserver<int>(
+                i =>
+                {
+                },
+                exception =>
+                {
+                    result = 1;
+                },
+                () =>
+                {
+
+                });
+
+            b.Dispose();
+
+            Assert.True(b.IsDisposed);
+            Assert.Equal(-1, result);
+        }
+
+        [Fact]
+        public void DelegateObserver_Disposed_Does_Not_Send_OnComplete()
+        {
+            int result = -1;
+
+            var b = new DelegateObserver<int>(
+                i =>
+                {
+                },
+                exception =>
+                {
+                },
+                () =>
+                {
+                    result = 1;
+                });
+
+            b.Dispose();
+
+            Assert.True(b.IsDisposed);
+            Assert.Equal(-1, result);
+        }
+
+        [Fact]
         public void DelegateObserver_Disposed_Does_Not_Fire_OnNext()
         {
             var b = new Broadcaster<int>();
@@ -49,10 +121,10 @@ namespace AudioSwitcher.AudioApi.Tests
             var b = new Broadcaster<int>();
             int result = 0;
 
-            var sub = b.Subscribe(x =>{}, () =>
-            {
-                result = 5;
-            });
+            var sub = b.Subscribe(x => { }, () =>
+              {
+                  result = 5;
+              });
 
             sub.Dispose();
 

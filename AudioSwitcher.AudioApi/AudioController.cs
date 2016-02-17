@@ -113,31 +113,19 @@ namespace AudioSwitcher.AudioApi
             return Task.FromResult(GetCaptureDevices(deviceState));
         }
 
-        //public abstract bool SetDefaultDevice(IDevice dev);
-
-        //public virtual Task<bool> SetDefaultDeviceAsync(IDevice dev)
-        //{
-        //    return Task.FromResult(SetDefaultDevice(dev));
-        //}
-
-        //public abstract bool SetDefaultCommunicationsDevice(IDevice dev);
-
-        //public virtual Task<bool> SetDefaultCommunicationsDeviceAsync(IDevice dev)
-        //{
-        //    return Task.FromResult(SetDefaultDevice(dev));
-        //}
-
         public void Dispose()
         {
             Dispose(true);
         }
 
-        protected virtual void OnAudioDeviceChanged(object sender, DeviceChangedArgs e)
+        protected virtual void OnAudioDeviceChanged(DeviceChangedArgs e)
         {
+            _audioDeviceChanged.OnNext(e);
         }
 
         protected virtual void Dispose(bool disposing)
         {
+            _audioDeviceChanged.Dispose();
         }
     }
 }

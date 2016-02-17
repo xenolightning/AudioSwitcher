@@ -85,6 +85,12 @@ namespace AudioSwitcher.AudioApi.Observables
             if (IsDisposed)
                 throw new ObjectDisposedException("Observable is disposed");
 
+            if (IsComplete)
+            {
+                observer.OnCompleted();
+                return Disposable.Empty;
+            }
+
             lock (_observerLock)
             {
                 _observers.Add(observer);
