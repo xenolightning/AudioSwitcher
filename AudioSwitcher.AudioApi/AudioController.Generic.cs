@@ -19,51 +19,35 @@ namespace AudioSwitcher.AudioApi
             _audioDeviceChanged = new Broadcaster<DeviceChangedArgs>();
         }
 
-        public T DefaultPlaybackDevice
+        public virtual T DefaultPlaybackDevice
         {
             get
             {
                 return GetDefaultDevice(DeviceType.Playback, Role.Console | Role.Multimedia);
             }
-            set
-            {
-                SetDefaultDevice(value);
-            }
         }
 
-        public T DefaultPlaybackCommunicationsDevice
+        public virtual T DefaultPlaybackCommunicationsDevice
         {
             get
             {
                 return GetDefaultDevice(DeviceType.Playback, Role.Communications);
             }
-            set
-            {
-                SetDefaultCommunicationsDevice(value);
-            }
         }
 
-        public T DefaultCaptureDevice
+        public virtual T DefaultCaptureDevice
         {
             get
             {
                 return GetDefaultDevice(DeviceType.Capture, Role.Console | Role.Multimedia);
             }
-            set
-            {
-                SetDefaultDevice(value);
-            }
         }
 
-        public T DefaultCaptureCommunicationsDevice
+        public virtual T DefaultCaptureCommunicationsDevice
         {
             get
             {
                 return GetDefaultDevice(DeviceType.Capture, Role.Communications);
-            }
-            set
-            {
-                SetDefaultCommunicationsDevice(value);
             }
         }
 
@@ -181,20 +165,6 @@ namespace AudioSwitcher.AudioApi
             return Task.FromResult(GetCaptureDevices(deviceState));
         }
 
-        public abstract bool SetDefaultDevice(T dev);
-
-        public virtual Task<bool> SetDefaultDeviceAsync(T dev)
-        {
-            return Task.FromResult(SetDefaultDevice(dev));
-        }
-
-        public abstract bool SetDefaultCommunicationsDevice(T dev);
-
-        public virtual Task<bool> SetDefaultCommunicationsDeviceAsync(T dev)
-        {
-            return Task.FromResult(SetDefaultCommunicationsDevice(dev));
-        }
-
         Task<IDevice> IAudioController.GetDeviceAsync(Guid id)
         {
             return Task.FromResult(GetDevice(id) as IDevice);
@@ -302,34 +272,6 @@ namespace AudioSwitcher.AudioApi
         Task<IEnumerable<IDevice>> IAudioController.GetCaptureDevicesAsync(DeviceState deviceState)
         {
             return Task.FromResult(GetCaptureDevices(deviceState).OfType<IDevice>());
-        }
-
-        public virtual bool SetDefaultDevice(IDevice dev)
-        {
-            var device = dev as T;
-            if (device != null)
-                return SetDefaultDevice(device);
-
-            return false;
-        }
-
-        public virtual Task<bool> SetDefaultDeviceAsync(IDevice dev)
-        {
-            return Task.FromResult(SetDefaultDevice(dev));
-        }
-
-        public virtual bool SetDefaultCommunicationsDevice(IDevice dev)
-        {
-            var device = dev as T;
-            if (device != null)
-                return SetDefaultCommunicationsDevice(device);
-
-            return false;
-        }
-
-        public virtual Task<bool> SetDefaultCommunicationsDeviceAsync(IDevice dev)
-        {
-            return Task.FromResult(SetDefaultCommunicationsDevice(dev));
         }
 
         public void Dispose()

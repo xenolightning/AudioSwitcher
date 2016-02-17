@@ -76,6 +76,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             })
             .ContinueWith(x =>
             {
+                foreach (var device in _deviceCache)
+                {
+                    device.Dispose();
+                }
                 _deviceCache?.Clear();
                 _lock?.Dispose();
             });
@@ -220,38 +224,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 return false;
             }
-        }
-
-        public override bool SetDefaultDevice(CoreAudioDevice dev)
-        {
-            if (dev == null)
-                return false;
-
-            return dev.SetAsDefault();
-        }
-
-        public override bool SetDefaultCommunicationsDevice(CoreAudioDevice dev)
-        {
-            if (dev == null)
-                return false;
-
-            return dev.SetAsDefaultCommunications();
-        }
-
-        public override async Task<bool> SetDefaultDeviceAsync(CoreAudioDevice dev)
-        {
-            if (dev == null)
-                return false;
-
-            return await dev.SetAsDefaultAsync();
-        }
-
-        public override async Task<bool> SetDefaultCommunicationsDeviceAsync(CoreAudioDevice dev)
-        {
-            if (dev == null)
-                return false;
-
-            return await dev.SetAsDefaultCommunicationsAsync();
         }
 
         internal string GetDefaultDeviceId(DeviceType deviceType, Role role)

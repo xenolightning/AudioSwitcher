@@ -60,12 +60,5 @@ namespace AudioSwitcher.AudioApi
 
         Task<IEnumerable<IDevice>> GetCaptureDevicesAsync(DeviceState deviceState);
 
-        //bool SetDefaultDevice(IDevice dev);
-
-        //bool SetDefaultCommunicationsDevice(IDevice dev);
-
-        //Task<bool> SetDefaultDeviceAsync(IDevice dev);
-
-        //Task<bool> SetDefaultCommunicationsDeviceAsync(IDevice dev);
     }
 }

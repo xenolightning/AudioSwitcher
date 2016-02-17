@@ -1,6 +1,9 @@
 ﻿using System.Linq;
+using AudioSwitcher.AudioApi.Observables;
+using AudioSwitcher.AudioApi.Tests.Stubs;
 using AudioSwitcher.Tests.Common;
 using Moq;
+using Moq.Protected;
 using Xunit;
 
 namespace AudioSwitcher.AudioApi.Tests
@@ -195,7 +198,6 @@ namespace AudioSwitcher.AudioApi.Tests
             Assert.Equal(isMuted, args.IsMuted);
         }
 
-
         [Fact]
         public void DevicePeakVolumeChangedArgs_Sets_Device_And_Type()
         {
@@ -207,6 +209,104 @@ namespace AudioSwitcher.AudioApi.Tests
             Assert.NotNull(args.Device);
             Assert.Equal(DeviceChangedType.PeakValueChanged, args.ChangedType);
             Assert.Equal(peakValue, args.PeakValue);
+        }
+
+        [Fact]
+        public void Device_Property_Changed_Raises_Event()
+        {
+            var mockDevice = new Mock<DeviceStub> { CallBase = true };
+            var device = mockDevice.Object;
+            const string propertyName = "TestProperty";
+            string reflectedProperty = null;
+
+            device.PropertyChanged.Subscribe(x =>
+            {
+                reflectedProperty = x.PropertyName;
+            });
+
+            device.FirePropertyChanged(propertyName);
+
+            Assert.Equal(propertyName, reflectedProperty);
+        }
+
+        [Fact]
+        public void Device_Volume_Changed_Raises_Event()
+        {
+            var mockDevice = new Mock<DeviceStub> { CallBase = true };
+            var device = mockDevice.Object;
+            const double volume = 30;
+            double reflectedVolume = -1;
+
+            device.VolumeChanged.Subscribe(x =>
+            {
+                reflectedVolume = x.Volume;
+            });
+
+            device.FireVolumeChanged(volume);
+
+            Assert.Equal(volume, reflectedVolume);
+        }
+
+        [Fact]
+        public void Device_Peak_Volume_Changed_Raises_Event()
+        {
+            var mockDevice = new Mock<DeviceStub> { CallBase = true };
+            var device = mockDevice.Object;
+            const double volume = 30;
+            double reflectedVolume = -1;
+
+            device.PeakValueChanged.Subscribe(x =>
+            {
+                reflectedVolume = x.PeakValue;
+            });
+
+            device.FirePeakChanged(volume);
+
+            Assert.Equal(volume, reflectedVolume);
+        }
+
+        [Fact]
+        public void Device_Default_Changed_Raises_Event()
+        {
+            var mockDevice = new Mock<DeviceStub> { CallBase = true };
+            var device = mockDevice.Object;
+            var reflectedCallback = false;
+
+            device.DefaultChanged.Subscribe(x =>
+            {
+                reflectedCallback = true;
+            });
+
+            device.FireDefaultChanged();
+
+            Assert.True(reflectedCallback);
+        }
+
+        [Fact]
+        public void Device_State_Changed_Raises_Event()
+        {
+            var mockDevice = new Mock<DeviceStub> { CallBase = true };
+            var device = mockDevice.Object;
+            const DeviceState state = DeviceState.Disabled;
+            var reflectedState = DeviceState.NotPresent;
+
+            device.StateChanged.Subscribe(x =>
+            {
+                reflectedState = x.State;
+            });
+
+            device.FireStateChanged(state);
+
+            Assert.Equal(state, reflectedState);
+        }
+
+        [Fact]
+        public void Device_Dispose_Works()
+        {
+            var mockDevice = new Mock<DeviceStub> { CallBase = true };
+            var device = mockDevice.Object;
+
+            device.Dispose();
         }
 
     }

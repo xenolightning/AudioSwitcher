@@ -59,40 +59,28 @@ namespace AudioSwitcher.AudioApi.Sandbox
 
         public override bool SetAsDefault()
         {
-            if (IsPlaybackDevice)
-                _controller.DefaultPlaybackDevice = this;
-            else
-                _controller.DefaultCaptureDevice = this;
+            _controller.SetDefaultDevice(this);
 
             return IsDefaultDevice;
         }
 
         public override Task<bool> SetAsDefaultAsync()
         {
-            if (IsPlaybackDevice)
-                _controller.DefaultPlaybackDevice = this;
-            else
-                _controller.DefaultCaptureDevice = this;
+            _controller.SetDefaultDevice(this);
 
             return Task.FromResult(IsDefaultDevice);
         }
 
         public override bool SetAsDefaultCommunications()
         {
-            if (IsPlaybackDevice)
-                _controller.DefaultPlaybackCommunicationsDevice = this;
-            else
-                _controller.DefaultCaptureCommunicationsDevice = this;
+            _controller.SetDefaultCommunicationsDevice(this);
 
             return IsDefaultCommunicationsDevice;
         }
 
         public override Task<bool> SetAsDefaultCommunicationsAsync()
         {
-            if (IsPlaybackDevice)
-                _controller.DefaultPlaybackCommunicationsDevice = this;
-            else
-                _controller.DefaultCaptureCommunicationsDevice = this;
+            _controller.SetDefaultCommunicationsDevice(this);
 
             return Task.FromResult(IsDefaultCommunicationsDevice);
         }
@@ -105,6 +93,11 @@ namespace AudioSwitcher.AudioApi.Sandbox
         public override Task<bool> MuteAsync(bool mute)
         {
             return Task.FromResult(isMuted = mute);
+        }
+
+        public override Task<double> SetVolumeAsync(double volume)
+        {
+            return Task.FromResult(Volume = volume);
         }
     }
 }

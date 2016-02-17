@@ -84,6 +84,7 @@
     <Compile Include="FilteredObservableTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SessionTests.cs" />
+    <Compile Include="Stubs\DeviceStub.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -204,6 +204,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             Dispose(false);
         }
 
+        internal void Dispose()
+        {
+            Dispose(true);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (!_isDisposed)

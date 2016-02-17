@@ -108,7 +108,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
             return _devices.Where(x => state.HasFlag(x.State));
         }
 
-        public override bool SetDefaultDevice(SandboxDevice dev)
+        internal bool SetDefaultDevice(SandboxDevice dev)
         {
             if (dev.IsPlaybackDevice)
             {
@@ -125,7 +125,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
             return false;
         }
 
-        public override bool SetDefaultCommunicationsDevice(SandboxDevice dev)
+        internal bool SetDefaultCommunicationsDevice(SandboxDevice dev)
         {
             if (dev.IsPlaybackDevice)
             {
@@ -142,40 +142,9 @@ namespace AudioSwitcher.AudioApi.Sandbox
             return false;
         }
 
-        public override bool SetDefaultDevice(IDevice dev)
-        {
-            var device = dev as SandboxDevice;
-            if (device != null)
-                return SetDefaultDevice(device);
-
-            return false;
-        }
-
-        public override bool SetDefaultCommunicationsDevice(IDevice dev)
-        {
-            var device = dev as SandboxDevice;
-            if (device != null)
-                return SetDefaultCommunicationsDevice(device);
-
-            return false;
-        }
-
-        public override Task<bool> SetDefaultDeviceAsync(IDevice dev)
-        {
-            return Task.Run(() => SetDefaultDevice(dev));
-        }
-
-        public override Task<bool> SetDefaultCommunicationsDeviceAsync(IDevice dev)
-        {
-            return Task.Run(() => SetDefaultCommunicationsDevice(dev));
-        }
-
         protected override void Dispose(bool disposing)
         {
-            if (_devices != null)
-            {
-                _devices.Clear();
-            }
+            _devices?.Clear();
         }
     }
 }

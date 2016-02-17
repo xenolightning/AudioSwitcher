@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.Observables;
 using Xunit;
@@ -30,8 +31,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
                 for (var i = 0; i < 50; i++)
                 {
-
                     controller.DefaultPlaybackDevice.SetAsDefault();
+
+                    Thread.Sleep(20);
                 }
 
                 var newHandles = Process.GetCurrentProcess().HandleCount;

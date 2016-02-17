@@ -27,10 +27,6 @@ namespace AudioSwitcher.AudioApi
             _propertyChanged = new Broadcaster<DevicePropertyChangedArgs>();
             _peakValueChanged = new Broadcaster<DevicePeakValueChangedArgs>();
         }
-        ~Device()
-        {
-            Dispose(false);
-        }
 
         public IAudioController Controller { get; private set; }
 
@@ -92,11 +88,7 @@ namespace AudioSwitcher.AudioApi
             return MuteAsync(!IsMuted);
         }
 
-        public virtual Task<double> SetVolumeAsync(double volume)
-        {
-            return Task.Run(() => Volume = volume);
-        }
-
+        public abstract Task<double> SetVolumeAsync(double volume);
 
         protected virtual void OnMuteChanged(bool isMuted)
         {
@@ -126,12 +118,6 @@ namespace AudioSwitcher.AudioApi
         protected virtual void OnPeakValueChanged(double peakValue)
         {
             _peakValueChanged.OnNext(new DevicePeakValueChangedArgs(this, peakValue));
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
