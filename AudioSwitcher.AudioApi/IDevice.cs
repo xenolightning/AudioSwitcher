@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi
@@ -48,12 +49,16 @@ namespace AudioSwitcher.AudioApi
         IObservable<DevicePeakValueChangedArgs> PeakValueChanged { get; }
 
         bool SetAsDefault();
+        bool SetAsDefault(CancellationToken cancellationToken);
 
         Task<bool> SetAsDefaultAsync();
+        Task<bool> SetAsDefaultAsync(CancellationToken cancellationToken);
 
         bool SetAsDefaultCommunications();
+        bool SetAsDefaultCommunications(CancellationToken cancellationToken);
 
         Task<bool> SetAsDefaultCommunicationsAsync();
+        Task<bool> SetAsDefaultCommunicationsAsync(CancellationToken cancellationToken);
 
         bool Mute(bool mute);
 

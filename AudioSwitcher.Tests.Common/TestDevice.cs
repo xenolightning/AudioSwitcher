@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi;
 
@@ -53,28 +54,28 @@ namespace AudioSwitcher.Tests.Common
             set;
         }
 
-        public override bool SetAsDefault()
+        public override bool SetAsDefault(CancellationToken cancellationToken)
         {
             _controller.SetDefaultDevice(this);
 
             return IsDefaultDevice;
         }
 
-        public override Task<bool> SetAsDefaultAsync()
+        public override Task<bool> SetAsDefaultAsync(CancellationToken cancellationToken)
         {
             _controller.SetDefaultDevice(this);
 
             return Task.FromResult(IsDefaultDevice);
         }
 
-        public override bool SetAsDefaultCommunications()
+        public override bool SetAsDefaultCommunications(CancellationToken cancellationToken)
         {
             _controller.SetDefaultCommunicationsDevice(this);
 
             return IsDefaultCommunicationsDevice;
         }
 
-        public override Task<bool> SetAsDefaultCommunicationsAsync()
+        public override Task<bool> SetAsDefaultCommunicationsAsync(CancellationToken cancellationToken)
         {
             _controller.SetDefaultCommunicationsDevice(this);
 

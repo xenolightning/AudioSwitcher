@@ -41,7 +41,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
                 //*15 for each device and the handles it requires
                 //*3 because that should cater for at least 2 copies of each device
-                var maxHandles = controller.GetDevices().Count()*20*3;
+                var maxHandles = controller.GetDevices().Count() * 20 * 3;
 
                 //Ensure it doesn't blow out the handles
                 Assert.True(newHandles - originalHandles < maxHandles);
@@ -75,10 +75,64 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
                 //*15 for each device and the handles it requires
                 //*3 because that should cater for at least 2 copies of each device
-                var maxHandles = controller.GetDevices().Count()*20*3;
+                var maxHandles = controller.GetDevices().Count() * 20 * 3;
 
                 //Ensure it doesn't blow out the handles
                 Assert.True(newHandles - originalHandles < maxHandles);
+            }
+        }
+
+        [Fact]
+        public async Task CoreAudio_SetDefaultCommPlayback()
+        {
+            using (var controller = CreateTestController())
+            {
+
+                var dev = controller.DefaultPlaybackCommunicationsDevice;
+                var devices = await controller.GetPlaybackDevicesAsync();
+
+                foreach (var d in devices)
+                {
+                    var isDefault = await d.SetAsDefaultCommunicationsAsync();
+                    Assert.Equal(isDefault, d.IsDefaultCommunicationsDevice);
+
+                    if (dev.Id != d.Id && isDefault)
+                    {
+                        Debug.WriteLine("Asserting Default Update");
+                        Assert.False(dev.IsDefaultCommunicationsDevice);
+                    }
+                }
+
+                var isDefault2 = await dev.SetAsDefaultCommunicationsAsync();
+                Assert.True(isDefault2);
+                Assert.True(dev.IsDefaultCommunicationsDevice);
+            }
+        }
+
+        [Fact]
+        public async Task CoreAudio_SetDefaultCommCapture()
+        {
+            using (var controller = CreateTestController())
+            {
+                var dev = controller.DefaultCaptureCommunicationsDevice;
+                var devices = await controller.GetCaptureDevicesAsync();
+                bool success;
+
+                foreach (var d in devices)
+                {
+                    success = await d.SetAsDefaultCommunicationsAsync();
+                    Assert.Equal(success, d.IsDefaultCommunicationsDevice);
+
+                    if (dev.Id != d.Id && success)
+                    {
+                        Debug.WriteLine("Asserting Default Update");
+                        Assert.False(dev.IsDefaultDevice);
+                    }
+                }
+
+                success = await dev.SetAsDefaultCommunicationsAsync();
+                Assert.True(dev.IsDefaultCommunicationsDevice);
+                Assert.True(success);
             }
         }
 
@@ -103,7 +157,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
                     }
                 }
 
-                await dev.SetAsDefaultAsync();
+                var isDefault2 = await dev.SetAsDefaultAsync();
+                Assert.True(isDefault2);
                 Assert.True(dev.IsDefaultDevice);
             }
         }
@@ -115,22 +170,40 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             {
                 var dev = controller.DefaultCaptureDevice;
                 var devices = await controller.GetCaptureDevicesAsync();
-                bool sucess;
 
                 foreach (var d in devices)
                 {
-                    sucess = await d.SetAsDefaultAsync();
-                    Assert.Equal(sucess, d.IsDefaultDevice);
+                    var isDefault = await d.SetAsDefaultAsync();
+                    Assert.Equal(isDefault, d.IsDefaultDevice);
 
-                    if (dev.Id != d.Id && sucess)
+                    if (dev.Id != d.Id && isDefault)
                     {
                         Debug.WriteLine("Asserting Default Update");
                         Assert.False(dev.IsDefaultDevice);
                     }
                 }
 
-                sucess = await dev.SetAsDefaultAsync();
-                Assert.Equal(sucess, dev.IsDefaultDevice);
+                var isDefault2 = await dev.SetAsDefaultAsync();
+                Assert.True(isDefault2);
+                Assert.True(dev.IsDefaultDevice);
+            }
+        }
+
+        [Fact]
+        public async Task CoreAudio_SetDefaultCapture_3()
+        {
+            using (var controller = CreateTestController())
+            {
+                var dev = controller.DefaultCaptureDevice;
+                var dev2 = controller.DefaultCaptureCommunicationsDevice;
+
+                var success = await dev.SetAsDefaultCommunicationsAsync();
+                Assert.True(dev.IsDefaultCommunicationsDevice);
+                Assert.True(success);
+
+                success = await dev2.SetAsDefaultCommunicationsAsync();
+                Assert.True(dev.IsDefaultCommunicationsDevice);
+                Assert.True(success);
             }
         }
 

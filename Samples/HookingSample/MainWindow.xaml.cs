@@ -84,7 +84,7 @@ namespace HookingSample
 
             Controller.AudioDeviceChanged.Subscribe(x =>
             {
-                Console.WriteLine("{0} - {1}", x.Device.Id, x.ChangedType.ToString());
+                Console.WriteLine("{0} - {1}", x.Device.Name, x.ChangedType.ToString());
             });
 
             Controller.DefaultPlaybackDevice.SetAsDefault();
@@ -170,6 +170,8 @@ namespace HookingSample
 
         private void HookProcess(object sender, RoutedEventArgs e)
         {
+            Controller.DefaultCaptureDevice.SetAsDefaultAsync();
+
             if (Hook != null)
             {
                 UnHook();

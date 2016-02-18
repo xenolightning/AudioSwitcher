@@ -29,6 +29,22 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         }
 
         [Fact]
+        public void Device_Set_Volume_2()
+        {
+            using (var controller = CreateTestController())
+            {
+                var currentVolume = controller.DefaultPlaybackDevice.Volume;
+
+                controller.DefaultPlaybackDevice.Volume = 20;
+
+                Assert.Equal(20, (int)controller.DefaultPlaybackDevice.Volume);
+
+                controller.DefaultPlaybackDevice.Volume = currentVolume;
+            }
+
+        }
+
+        [Fact]
         public async Task Device_Set_Volume_Async()
         {
             using (var controller = CreateTestController())
@@ -38,6 +54,22 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
                 await controller.DefaultPlaybackDevice.SetVolumeAsync(0);
 
                 Assert.Equal(0, (int)controller.DefaultPlaybackDevice.Volume);
+
+                await controller.DefaultPlaybackDevice.SetVolumeAsync(currentVolume);
+            }
+
+        }
+
+        [Fact]
+        public async Task Device_Set_Volume_Async_2()
+        {
+            using (var controller = CreateTestController())
+            {
+                var currentVolume = controller.DefaultPlaybackDevice.Volume;
+
+                await controller.DefaultPlaybackDevice.SetVolumeAsync(20);
+
+                Assert.Equal(20, (int)controller.DefaultPlaybackDevice.Volume);
 
                 await controller.DefaultPlaybackDevice.SetVolumeAsync(currentVolume);
             }

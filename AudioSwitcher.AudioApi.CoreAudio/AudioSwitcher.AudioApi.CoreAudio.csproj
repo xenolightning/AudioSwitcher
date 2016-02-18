@@ -111,6 +111,7 @@
     <Compile Include="Internal\PropVariant.cs" />
     <Compile Include="Internal\ERole.cs" />
     <Compile Include="Internal\SystemEventNotifcationClient.cs" />
+    <Compile Include="Tasks\CancellationTokenExtensions.cs" />
     <Compile Include="Tasks\AsyncAutoResetEvent.cs" />
     <Compile Include="Tasks\AsyncManualResetEvent.cs" />
     <Compile Include="Tasks\AsyncWaitQueue.cs" />

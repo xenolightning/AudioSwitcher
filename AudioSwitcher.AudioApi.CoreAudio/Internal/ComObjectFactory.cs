@@ -10,15 +10,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid(ComIIds.DEVICE_ENUMERATOR_CID))) as IMultimediaDeviceEnumerator;
         }
 
-
         public static object GetPolicyConfig()
         {
             return Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid(ComIIds.POLICY_CONFIG_CID)));
         }
 
-        public static T GetPolicyConfig<T>() where T : class 
-        {
-            return Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid(ComIIds.POLICY_CONFIG_CID))) as T;
-        }
     }
 }
