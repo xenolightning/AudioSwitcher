@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
     <metadata>
         <id>AudioSwitcher.AudioApi</id>
-        <version>3.0.0-beta5</version>
+        <version>3.1.0-beta4</version>
         <title>Audio Switcher Api</title>
         <authors>Sean Chapman</authors>
         <owners>Sean Chapman</owners>
@@ -21,7 +21,6 @@
         <tags>audio default device switch audioswitcher</tags>
     </metadata>
     <files>
-        <file src="..\..\bin\Release\AudioSwitcher.AudioApi.dll" target="lib\net40\AudioSwitcher.AudioApi.dll" />
-        <file src="lib\net452\_._" target="lib\net452\_._" />
+        <file src="..\..\bin\Release\AudioSwitcher.AudioApi.dll" target="lib\net452\AudioSwitcher.AudioApi.dll" />
     </files>
 </package>

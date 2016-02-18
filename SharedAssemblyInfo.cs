@@ -5,7 +5,7 @@ using System.Reflection;
 // associated with an assembly.
 
 [assembly: AssemblyCompany("Forty One Limited")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
 
 // Version information for an assembly consists of the following four values:
 //
