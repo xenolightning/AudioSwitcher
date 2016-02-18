@@ -141,7 +141,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         {
             using (var controller = CreateTestController())
             {
-
                 var dev = controller.DefaultPlaybackDevice;
                 var devices = await controller.GetPlaybackDevicesAsync();
 

@@ -406,7 +406,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
             catch
             {
-                throw new TimeoutException("COM operation 'SetDefaultDevice' did not complete in the requested time period.");
+                throw new TimeoutException("COM operation 'SetAsDefaultCommunications' did not complete in the requested time period.");
             }
             finally
             {
@@ -439,8 +439,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
             catch
             {
-                throw new TimeoutException(
-                    "COM operation 'SetDefaultDevice' did not complete in the requested time period.");
+                throw new TimeoutException("COM operation 'SetAsDefaultCommunications' did not complete in the requested time period.");
             }
             finally
             {
