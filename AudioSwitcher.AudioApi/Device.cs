@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.Observables;
@@ -113,6 +114,12 @@ namespace AudioSwitcher.AudioApi
         }
 
         public abstract Task<double> SetVolumeAsync(double volume);
+
+        public abstract bool HasCapability<TCapability>() where TCapability : IDeviceCapability;
+
+        public abstract TCapability GetCapability<TCapability>() where TCapability : IDeviceCapability;
+
+        public abstract IEnumerable<IDeviceCapability> GetAllCapabilities();
 
         protected virtual void OnMuteChanged(bool isMuted)
         {

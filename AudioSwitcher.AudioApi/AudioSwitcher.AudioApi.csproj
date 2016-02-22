@@ -52,9 +52,13 @@
     <Compile Include="AudioController.cs" />
     <Compile Include="AudioController.Generic.cs" />
     <Compile Include="BitDepth.cs" />
+    <Compile Include="Capabilities\IDefaultDeviceFormat.cs" />
+    <Compile Include="Capabilities\IMicrophoneBoost.cs" />
+    <Compile Include="Capabilities\ISpeakerConfiguration.cs" />
     <Compile Include="DeviceChangedType.cs" />
     <Compile Include="DeviceMuteChangedArgs.cs" />
     <Compile Include="DevicePeakValueChangedArgs.cs" />
+    <Compile Include="IDeviceCapability.cs" />
     <Compile Include="Observables\DefaultDisposable.cs" />
     <Compile Include="Observables\DelegateDisposable.cs" />
     <Compile Include="Device.cs" />
@@ -98,6 +102,7 @@
   <ItemGroup>
     <None Include="api.pfx" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

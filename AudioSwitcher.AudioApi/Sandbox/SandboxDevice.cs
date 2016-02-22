@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -99,6 +100,21 @@ namespace AudioSwitcher.AudioApi.Sandbox
         public override Task<double> SetVolumeAsync(double volume)
         {
             return Task.FromResult(Volume = volume);
+        }
+
+        public override bool HasCapability<TCapability>()
+        {
+            return false;
+        }
+
+        public override TCapability GetCapability<TCapability>()
+        {
+            return default(TCapability);
+        }
+
+        public override IEnumerable<IDeviceCapability> GetAllCapabilities()
+        {
+            yield return null;
         }
     }
 }

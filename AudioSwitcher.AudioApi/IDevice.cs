@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -69,5 +70,12 @@ namespace AudioSwitcher.AudioApi
         Task<bool> ToggleMuteAsync();
 
         Task<double> SetVolumeAsync(double volume);
+
+        bool HasCapability<TCapability>() where TCapability : IDeviceCapability;
+
+        TCapability GetCapability<TCapability>() where TCapability : IDeviceCapability;
+
+        IEnumerable<IDeviceCapability> GetAllCapabilities();
+
     }
 }

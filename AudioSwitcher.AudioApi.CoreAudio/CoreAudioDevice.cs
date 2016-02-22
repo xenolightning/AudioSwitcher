@@ -279,6 +279,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return _volume;
         }
 
+        public override bool HasCapability<TCapability>()
+        {
+            return false;
+        }
+
+        public override TCapability GetCapability<TCapability>()
+        {
+            return default(TCapability);
+        }
+
+        public override IEnumerable<IDeviceCapability> GetAllCapabilities()
+        {
+            yield return null;
+        }
+
         private static float NormailizeVolume(double volume)
         {
             if (volume <= 0)
