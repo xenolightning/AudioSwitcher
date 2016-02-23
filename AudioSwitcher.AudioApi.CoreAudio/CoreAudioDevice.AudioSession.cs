@@ -37,9 +37,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     //It's not an HR exception, but bubbles up through the .net call stack
                     try
                     {
-                        var clsGuid = new Guid(ComIIds.AUDIO_SESSION_MANAGER2_IID);
+                        var clsGuid = new Guid(ComInterfaceIds.AUDIO_SESSION_MANAGER2_IID);
                         object result;
-                        Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
+                        Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClassContext.Inproc, IntPtr.Zero, out result));
 
                         //This is scoped into the managed object, so disposal is taken care of there.
                         var audioSessionManager = result as IAudioSessionManager2;

@@ -19,7 +19,7 @@ namespace AudioSwitcher.AudioApi.Capabilities
             get;
         }
 
-        bool DeviceFormatIsValid(SampleRate sampleRate, BitDepth bitDepth);
+        bool IsSupported(SampleRate sampleRate, BitDepth bitDepth);
 
         void SetDeviceFormat(SampleRate sampleRate, BitDepth bitDepth);
 

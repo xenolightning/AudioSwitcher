@@ -104,9 +104,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //It's not an HR exception, but bubbles up through the .net call stack
             try
             {
-                var clsGuid = new Guid(ComIIds.AUDIO_METER_INFORMATION_IID);
+                var clsGuid = new Guid(ComInterfaceIds.AUDIO_METER_INFORMATION_IID);
                 object result;
-                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
+                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClassContext.Inproc, IntPtr.Zero, out result));
                 _audioMeterInformation = result as IAudioMeterInformation;
             }
             catch (Exception e)
@@ -137,8 +137,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //It's not an HR exception, but bubbles up through the .net call stack
             try
             {
-                var clsGuid = new Guid(ComIIds.AUDIO_ENDPOINT_VOLUME_IID);
-                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
+                var clsGuid = new Guid(ComInterfaceIds.AUDIO_ENDPOINT_VOLUME_IID);
+                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClassContext.Inproc, IntPtr.Zero, out result));
             }
             catch (Exception e)
             {

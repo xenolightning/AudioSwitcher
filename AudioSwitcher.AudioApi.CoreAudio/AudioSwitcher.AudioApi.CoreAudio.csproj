@@ -80,8 +80,8 @@
     <Compile Include="Internal\Interfaces\ISimpleAudioVolume.cs" />
     <Compile Include="Internal\Interfaces\AudioVolumeNotificationDataStruct.cs" />
     <Compile Include="Internal\Interfaces\Blob.cs" />
-    <Compile Include="Internal\Interfaces\ClsCtx.cs" />
-    <Compile Include="Internal\Interfaces\ComIIds.cs" />
+    <Compile Include="Internal\Interfaces\ClassContext.cs" />
+    <Compile Include="Internal\Interfaces\ComInterfaceIds.cs" />
     <Compile Include="Internal\Interfaces\IAudioEndpointVolume.cs" />
     <Compile Include="Internal\Interfaces\IAudioEndpointVolumeCallback.cs" />
     <Compile Include="Internal\Interfaces\IAudioEndpointVolumeEx.cs" />
