@@ -6,11 +6,6 @@ namespace AudioSwitcher.Scripting
 {
     public interface IScriptEngine
     {
-        string FriendlyName
-        {
-            get;
-        }
-
         /// <summary>
         /// Adds this library to each execution context that is created from this engine
         /// </summary>

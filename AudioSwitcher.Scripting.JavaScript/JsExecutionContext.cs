@@ -42,7 +42,7 @@ namespace AudioSwitcher.Scripting.JavaScript
                 //Set cancellation token
             });
 
-            var lArgs = args != null ? args.ToArray() : new string[] { };
+            var lArgs = args?.ToArray() ?? new string[] { };
             if (lArgs.Any())
                 _engine.SetValue("args", lArgs);
 
