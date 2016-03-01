@@ -48,8 +48,11 @@ namespace AudioSwitcher.AudioApi.Hooking
         {
             Interlocked.Increment(ref _messageCount);
 
-            if (_hookInstalled != null)
-                _hookInstalled();
+            ThreadPool.QueueUserWorkItem(x =>
+            {
+                if (_hookInstalled != null)
+                    _hookInstalled();
+            });
 
             return true;
         }
@@ -58,15 +61,22 @@ namespace AudioSwitcher.AudioApi.Hooking
         {
             Interlocked.Increment(ref _messageCount);
 
-            if (_hookUninstalled != null)
-                _hookUninstalled(processId);
+            ThreadPool.QueueUserWorkItem(x =>
+            {
+                if (_hookUninstalled != null)
+                    _hookUninstalled(processId);
+            });
         }
 
         public void ReportError(int processId, Exception e)
         {
             Interlocked.Increment(ref _messageCount);
-            if (_errorHandler != null)
-                _errorHandler(processId, e);
+
+            ThreadPool.QueueUserWorkItem(x =>
+            {
+                if (_errorHandler != null)
+                    _errorHandler(processId, e);
+            });
         }
 
         public string GetDefaultDevice(DataFlow dataFlow, Role role)
