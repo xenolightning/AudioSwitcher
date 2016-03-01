@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using AudioSwitcher.AudioApi.Hooking.ComObjects;
@@ -62,8 +61,7 @@ namespace AudioSwitcher.AudioApi.Hooking
 
         }
 
-        private static int GetDefaultAudioEndpoint(IMultimediaDeviceEnumerator self, DataFlow dataflow, Role role,
-            out IntPtr ppendpoint)
+        private static int GetDefaultAudioEndpoint(IMultimediaDeviceEnumerator self, DataFlow dataflow, Role role, out IntPtr ppendpoint)
         {
             var entryPoint = HookRuntimeInfo.Callback as EntryPoint;
 
@@ -75,7 +73,10 @@ namespace AudioSwitcher.AudioApi.Hooking
             try
             {
                 var devId = remoteInterface.GetDefaultDevice(dataflow, role);
-                return self.GetDevice(devId, out ppendpoint);
+
+                var result = self.GetDevice(devId, out ppendpoint);
+                if (ppendpoint != IntPtr.Zero)
+                    return result;
             }
             catch (Exception ex)
             {

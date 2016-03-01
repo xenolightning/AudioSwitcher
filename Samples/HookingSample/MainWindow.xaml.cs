@@ -8,6 +8,7 @@ using System.Windows;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
 using AudioSwitcher.AudioApi.Hooking;
+using Role = AudioSwitcher.AudioApi.Hooking.ComObjects.Role;
 
 namespace HookingSample
 {
@@ -183,7 +184,13 @@ namespace HookingSample
 
             var sId = SelectedAudioDevice.RealId;
 
-            Hook = new DefaultDeviceHook((dataFlow, role) => sId);
+            Hook = new DefaultDeviceHook((dataFlow, role) =>
+            {
+                if (role != Role.Communications)
+                    return sId;
+
+                return null;
+            });
 
             if (Hook.Hook(SelectedProcess.Id))
             {
