@@ -28,7 +28,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioLibrary")]
+        [Trait("MediaType", "AudioLibrary")]
         public void AudioSwitcher_getAudioDevices()
         {
             var eng = new JsEngine();
@@ -42,7 +42,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioLibrary")]
+        [Trait("MediaType", "AudioLibrary")]
         public void AudioSwitcher_getAudioDevices_All()
         {
             var eng = new JsEngine();
@@ -56,7 +56,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioLibrary")]
+        [Trait("MediaType", "AudioLibrary")]
         public void AudioSwitcher_getAudioDevices_Playback()
         {
             var eng = new JsEngine();
@@ -70,7 +70,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioLibrary")]
+        [Trait("MediaType", "AudioLibrary")]
         public void AudioSwitcher_getAudioDevices_Playback_IsPlayback()
         {
             var eng = new JsEngine();
@@ -86,7 +86,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioLibrary")]
+        [Trait("MediaType", "AudioLibrary")]
         public void AudioSwitcher_getAudioDevices_Playback_IsPlayback_Enum()
         {
             var eng = new JsEngine();
@@ -102,7 +102,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioLibrary")]
+        [Trait("MediaType", "AudioLibrary")]
         public void AudioSwitcher_getAudioDevices_Capture()
         {
             var eng = new JsEngine();
@@ -116,7 +116,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioLibrary")]
+        [Trait("MediaType", "AudioLibrary")]
         public void AudioSwitcher_getAudioDevices_Capture_IsCapture()
         {
             var eng = new JsEngine();
@@ -132,7 +132,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioLibrary")]
+        [Trait("MediaType", "AudioLibrary")]
         public void AudioSwitcher_getAudioDevices_Capture_IsCapture_Enum()
         {
             var eng = new JsEngine();
@@ -148,7 +148,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioLibrary")]
+        [Trait("MediaType", "AudioLibrary")]
         public void AudioSwitcher_getAudioDevices_Capture_IsCapture_IList()
         {
             var eng = new JsEngine();
@@ -165,7 +165,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioLibrary")]
+        [Trait("MediaType", "AudioLibrary")]
         public void AudioSwitcher_getAudioDevices_Capture_IsCapture_List()
         {
             var eng = new JsEngine();
@@ -184,7 +184,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioLibrary")]
+        [Trait("MediaType", "AudioLibrary")]
         public void AudioSwitcher_getAudioDevices_Capture_IsCapture_ICollection()
         {
             var eng = new JsEngine();
@@ -201,7 +201,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioLibrary")]
+        [Trait("MediaType", "AudioLibrary")]
         public void AudioSwitcher_getAudioDeviceById()
         {
             const string js = @"AudioSwitcher.getAudioDevice(AudioSwitcher.getAudioDevices()[0].id);";
@@ -227,7 +227,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioLibrary")]
+        [Trait("MediaType", "AudioLibrary")]
         public void AudioSwitcher_getAudioDeviceById_Playback_Flags()
         {
             var eng = new JsEngine();
@@ -253,7 +253,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioLibrary")]
+        [Trait("MediaType", "AudioLibrary")]
         public void AudioSwitcher_getAudioDeviceById_Capture_Flags()
         {
             var eng = new JsEngine();
@@ -279,7 +279,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioLibrary")]
+        [Trait("MediaType", "AudioLibrary")]
         public void AudioSwitcher_getAudioDeviceByName()
         {
             const string js = @"AudioSwitcher.getAudioDevice(AudioSwitcher.getAudioDevices()[0].name);";
@@ -305,7 +305,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioLibrary")]
+        [Trait("MediaType", "AudioLibrary")]
         public void AudioSwitcher_getAudioDeviceByName_Playback_Flags()
         {
             var eng = new JsEngine();
@@ -331,7 +331,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioLibrary")]
+        [Trait("MediaType", "AudioLibrary")]
         public void AudioSwitcher_getAudioDeviceByName_Capture_Flags()
         {
             var eng = new JsEngine();
@@ -357,7 +357,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioDevice")]
+        [Trait("MediaType", "AudioDevice")]
         public void AudioSwitcher_AudioDevice_Exists()
         {
             var eng = new JsEngine();
@@ -396,7 +396,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioDevice")]
+        [Trait("MediaType", "AudioDevice")]
         [Trait("Function", "Mute")]
         public void AudioSwitcher_AudioDevice_setMute_true()
         {
@@ -414,7 +414,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioDevice")]
+        [Trait("MediaType", "AudioDevice")]
         [Trait("Function", "Mute")]
         public void AudioSwitcher_AudioDevice_setMute_false()
         {
@@ -427,7 +427,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioDevice")]
+        [Trait("MediaType", "AudioDevice")]
         [Trait("Function", "VolumeChanged")]
         public void AudioSwitcher_AudioDevice_getVolume()
         {
@@ -448,7 +448,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioDevice")]
+        [Trait("MediaType", "AudioDevice")]
         [Trait("Function", "VolumeChanged")]
         public void AudioSwitcher_AudioDevice_setVolume()
         {
@@ -470,7 +470,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioDevice")]
+        [Trait("MediaType", "AudioDevice")]
         [Trait("Function", "Name")]
         public void AudioSwitcher_AudioDevice_getName()
         {
@@ -489,7 +489,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioDevice")]
+        [Trait("MediaType", "AudioDevice")]
         [Trait("Function", "ID")]
         public void AudioSwitcher_AudioDevice_getID()
         {
@@ -508,7 +508,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioDevice")]
+        [Trait("MediaType", "AudioDevice")]
         [Trait("Function", "ID")]
         public void AudioSwitcher_AudioDevice_getFlags()
         {
@@ -527,7 +527,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioDevice")]
+        [Trait("MediaType", "AudioDevice")]
         [Trait("Function", "SetDefault")]
         public void AudioSwitcher_AudioDevice_setDefault_Playback()
         {
@@ -547,7 +547,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioDevice")]
+        [Trait("MediaType", "AudioDevice")]
         [Trait("Function", "SetDefaultComm")]
         public void AudioSwitcher_AudioDevice_setDefault_Playback_Comm()
         {
@@ -567,7 +567,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioDevice")]
+        [Trait("MediaType", "AudioDevice")]
         [Trait("Function", "SetDefault")]
         public void AudioSwitcher_AudioDevice_setDefault_Capture()
         {
@@ -587,7 +587,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
         }
 
         [Fact]
-        [Trait("Type", "AudioDevice")]
+        [Trait("MediaType", "AudioDevice")]
         [Trait("Function", "SetDefaultComm")]
         public void AudioSwitcher_AudioDevice_setDefault_Capture_Comm()
         {

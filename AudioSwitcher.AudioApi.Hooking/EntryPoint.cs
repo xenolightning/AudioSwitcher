@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using AudioSwitcher.AudioApi.Hooking.ComObjects;
@@ -12,7 +13,7 @@ namespace AudioSwitcher.AudioApi.Hooking
         [return: MarshalAs(UnmanagedType.U4)]
         public delegate int DGetDefaultAudioEndpoint(IMultimediaDeviceEnumerator self, DataFlow dataFlow, Role role, out IntPtr ppEndpoint);
 
-        public readonly RemoteInterface Interface;
+        private readonly RemoteInterface Interface;
 
         public EntryPoint(RemoteHooking.IContext inContext, string inChannelName)
         {
@@ -21,14 +22,13 @@ namespace AudioSwitcher.AudioApi.Hooking
 
         public void Run(RemoteHooking.IContext inContext, string inChannelName)
         {
-            LocalHook hook = null;
             try
             {
                 //Create the DefaultDevice Hook
                 var cci = new COMClassInfo(Type.GetTypeFromCLSID(new Guid(ComIIds.DEVICE_ENUMERATOR_CID)), typeof(IMultimediaDeviceEnumerator), "GetDefaultAudioEndpoint");
                 cci.Query();
 
-                hook = LocalHook.Create(cci.MethodPointers[0], new DGetDefaultAudioEndpoint(GetDefaultAudioEndpoint), this);
+                var hook = LocalHook.Create(cci.MethodPointers[0], new DGetDefaultAudioEndpoint(GetDefaultAudioEndpoint), this);
 
                 hook.ThreadACL.SetExclusiveACL(new[] { 0 });
 
@@ -43,6 +43,7 @@ namespace AudioSwitcher.AudioApi.Hooking
             catch (Exception e)
             {
                 ReportError(Interface, e);
+                return;
             }
 
             try
@@ -59,8 +60,6 @@ namespace AudioSwitcher.AudioApi.Hooking
                 ReportError(Interface, e);
             }
 
-            if (hook != null)
-                hook.Dispose();
         }
 
         private static int GetDefaultAudioEndpoint(IMultimediaDeviceEnumerator self, DataFlow dataflow, Role role,

@@ -35,7 +35,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ConsoleScriptOutput.cs" />
-    <Compile Include="FileScriptSource.cs" />
     <Compile Include="IExecutionContext.cs" />
     <Compile Include="IScriptEngine.cs" />
     <Compile Include="ExecutionResult.cs" />
@@ -43,12 +42,10 @@
     <Compile Include="IScriptInfo.cs" />
     <Compile Include="IScriptLibrary.cs" />
     <Compile Include="IScriptOutput.cs" />
-    <Compile Include="IScriptSource.cs" />
     <Compile Include="NullScriptOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DefaultExecutionContext.cs" />
     <Compile Include="ScriptEngineBase.cs" />
-    <Compile Include="StringScriptSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

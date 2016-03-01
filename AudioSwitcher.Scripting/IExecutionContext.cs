@@ -22,16 +22,9 @@ namespace AudioSwitcher.Scripting
 
         Task<ExecutionResult> ExecuteAsync(string script, IEnumerable<string> args = null);
 
-        ExecutionResult Execute(IScriptSource scriptSource, IEnumerable<string> args = null);
-
-        Task<ExecutionResult> ExecuteAsync(IScriptSource scriptSource, IEnumerable<string> args = null);
-
         ExecutionResult<TReturn> Evaluate<TReturn>(string script, IEnumerable<string> args = null);
 
         Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(string script, IEnumerable<string> args = null);
 
-        ExecutionResult<TReturn> Evaluate<TReturn>(IScriptSource scriptSource, IEnumerable<string> args = null);
-
-        Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(IScriptSource scriptSource, IEnumerable<string> args = null);
     }
 }

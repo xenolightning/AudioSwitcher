@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AudioSwitcher.AudioApi.Capabilities
+﻿namespace AudioSwitcher.AudioApi.Capabilities
 {
     public interface IMicrophoneBoost
     {
+
+
     }
 }
