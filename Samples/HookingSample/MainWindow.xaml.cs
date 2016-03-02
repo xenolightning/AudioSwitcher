@@ -8,6 +8,7 @@ using System.Windows;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
 using AudioSwitcher.AudioApi.Hooking;
+using AudioSwitcher.AudioApi.Session;
 using Role = AudioSwitcher.AudioApi.Hooking.ComObjects.Role;
 
 namespace HookingSample
@@ -90,7 +91,7 @@ namespace HookingSample
 
             Controller.DefaultPlaybackDevice.SetAsDefault();
 
-            Controller.DefaultPlaybackDevice.SessionController.All();
+            Controller.DefaultPlaybackDevice.GetCapability<IAudioSessionController>();
 
             Controller.DefaultCaptureDevice.PeakValueChanged.Subscribe(x =>
             {
@@ -104,7 +105,7 @@ namespace HookingSample
 
             Thread.Sleep(100);
 
-            foreach (var audioSession in Controller.DefaultPlaybackDevice.SessionController.All())
+            foreach (var audioSession in Controller.DefaultPlaybackDevice.GetCapability<IAudioSessionController>())
             {
                 Console.WriteLine(audioSession.Id);
             }
@@ -127,7 +128,7 @@ namespace HookingSample
             //    });
             //}
 
-            Controller.DefaultPlaybackDevice.SessionController.SessionCreated.Subscribe(x =>
+            Controller.DefaultPlaybackDevice.GetCapability<IAudioSessionController>()?.SessionCreated.Subscribe(x =>
             {
                 Console.WriteLine("{0} - {1}", x.DisplayName, x.Volume);
                 //x.VolumeChanged.Subscribe(v =>
@@ -135,11 +136,11 @@ namespace HookingSample
                 //});
             });
 
-            Controller.DefaultPlaybackDevice.SessionController.SessionDisconnected.Subscribe(x =>
+            Controller.DefaultPlaybackDevice.GetCapability<IAudioSessionController>()?.SessionDisconnected.Subscribe(x =>
             {
                 Console.WriteLine(x);
 
-                foreach (var session in Controller.DefaultPlaybackDevice.SessionController)
+                foreach (var session in Controller.DefaultPlaybackDevice.GetCapability<IAudioSessionController>())
                 {
                     Console.WriteLine("{0} - {1}", session.DisplayName, session.Volume);
                 }

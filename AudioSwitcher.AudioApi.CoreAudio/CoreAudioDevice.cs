@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Observables;
+using AudioSwitcher.AudioApi.Session;
 using Nito.AsyncEx;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
@@ -23,19 +24,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {PropertyKeys.PKEY_DEVICE_ICON, new HashSet<string>{ nameof(Icon), nameof(IconPath) }},
         };
 
+        private readonly IDisposable _peakValueTimerSubscription;
         private readonly SemaphoreSlim _setDefaultSemaphore = new SemaphoreSlim(1);
         private readonly SemaphoreSlim _setDefaultCommSemaphore = new SemaphoreSlim(1);
-
         private readonly AsyncAutoResetEvent _muteChangedResetEvent = new AsyncAutoResetEvent(false);
         private readonly AsyncAutoResetEvent _volumeResetEvent = new AsyncAutoResetEvent(false);
         private readonly AsyncManualResetEvent _defaultResetEvent = new AsyncManualResetEvent(false);
         private readonly AsyncManualResetEvent _defaultCommResetEvent = new AsyncManualResetEvent(false);
-        private readonly IDisposable _peakValueTimerSubscription;
+
         private EDataFlow _dataFlow;
         private IMultimediaDevice _device;
         private readonly CoreAudioController _controller;
         private Guid? _id;
-
         private double _volume;
         private float _peakValue = -1;
         private CachedPropertyDictionary _properties;
@@ -53,7 +53,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get
             {
                 if (_isDisposed)
-                    throw new ObjectDisposedException("");
+                    throw new ObjectDisposedException("COM Device Disposed");
 
                 return _device;
             }
@@ -230,11 +230,30 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     _device = null;
                 });
 
-
                 _isDisposed = true;
             }
 
             base.Dispose(disposing);
+        }
+        public override bool HasCapability<TCapability>()
+        {
+            if (typeof(TCapability) == typeof(IAudioSessionController))
+                return true;
+
+            return false;
+        }
+
+        public override TCapability GetCapability<TCapability>()
+        {
+            if (_sessionController.Value is TCapability)
+                return (TCapability)(_sessionController.Value as IDeviceCapability);
+
+            return default(TCapability);
+        }
+
+        public override IEnumerable<IDeviceCapability> GetAllCapabilities()
+        {
+            yield return _sessionController?.Value;
         }
 
         public override bool Mute(bool mute)
@@ -277,21 +296,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             await _volumeResetEvent.WaitAsync(DEFAULT_COM_TIMEOUT);
 
             return _volume;
-        }
-
-        public override bool HasCapability<TCapability>()
-        {
-            return false;
-        }
-
-        public override TCapability GetCapability<TCapability>()
-        {
-            return default(TCapability);
-        }
-
-        public override IEnumerable<IDeviceCapability> GetAllCapabilities()
-        {
-            yield return null;
         }
 
         private static float NormailizeVolume(double volume)

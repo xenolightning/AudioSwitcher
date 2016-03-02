@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AudioSwitcher.AudioApi.Tests.Stubs
+﻿namespace AudioSwitcher.AudioApi.Tests.Stubs
 {
     public abstract class DeviceStub : Device
     {

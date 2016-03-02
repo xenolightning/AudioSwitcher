@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
-using AudioSwitcher.AudioApi.Session;
+using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    public partial class CoreAudioDevice : IAudioSessionEndpoint
+    public partial class CoreAudioDevice
     {
-        private Lazy<CoreAudioSessionController> _sessionController;
 
-        public IAudioSessionController SessionController => _sessionController?.Value;
+        private Lazy<CoreAudioSessionController> _sessionController;
 
         private void ClearAudioSession()
         {
@@ -22,12 +20,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void LoadAudioSessionController(IMultimediaDevice device)
         {
-            if (SessionController != null)
+            if (_sessionController?.IsValueCreated == true)
                 return;
-
-            //This should be all on the COM thread to avoid any
-            //weird lookups on the result COM object not on an STA Thread
-            //ComThread.Assert();
 
             _sessionController = new Lazy<CoreAudioSessionController>(() =>
             {

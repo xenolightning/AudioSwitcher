@@ -9,8 +9,7 @@ namespace AudioSwitcher.AudioApi
     public abstract class AudioController<T> : IAudioController<T>
         where T : class, IDevice
     {
-        protected const DeviceState DEFAULT_DEVICE_STATE_FILTER =
-            DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled;
+        private const DeviceState DEFAULT_DEVICE_STATE_FILTER = DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled;
 
         private readonly Broadcaster<DeviceChangedArgs> _audioDeviceChanged;
 
@@ -19,37 +18,21 @@ namespace AudioSwitcher.AudioApi
             _audioDeviceChanged = new Broadcaster<DeviceChangedArgs>();
         }
 
-        public virtual T DefaultPlaybackDevice
-        {
-            get
-            {
-                return GetDefaultDevice(DeviceType.Playback, Role.Console | Role.Multimedia);
-            }
-        }
+        public virtual T DefaultPlaybackDevice => GetDefaultDevice(DeviceType.Playback, Role.Console | Role.Multimedia);
 
-        public virtual T DefaultPlaybackCommunicationsDevice
-        {
-            get
-            {
-                return GetDefaultDevice(DeviceType.Playback, Role.Communications);
-            }
-        }
+        public virtual T DefaultPlaybackCommunicationsDevice => GetDefaultDevice(DeviceType.Playback, Role.Communications);
 
-        public virtual T DefaultCaptureDevice
-        {
-            get
-            {
-                return GetDefaultDevice(DeviceType.Capture, Role.Console | Role.Multimedia);
-            }
-        }
+        public virtual T DefaultCaptureDevice => GetDefaultDevice(DeviceType.Capture, Role.Console | Role.Multimedia);
 
-        public virtual T DefaultCaptureCommunicationsDevice
-        {
-            get
-            {
-                return GetDefaultDevice(DeviceType.Capture, Role.Communications);
-            }
-        }
+        public virtual T DefaultCaptureCommunicationsDevice => GetDefaultDevice(DeviceType.Capture, Role.Communications);
+
+        IDevice IAudioController.DefaultPlaybackDevice => DefaultPlaybackDevice;
+
+        IDevice IAudioController.DefaultPlaybackCommunicationsDevice => DefaultPlaybackCommunicationsDevice;
+
+        IDevice IAudioController.DefaultCaptureDevice => DefaultCaptureDevice;
+
+        IDevice IAudioController.DefaultCaptureCommunicationsDevice => DefaultCaptureCommunicationsDevice;
 
         public IObservable<DeviceChangedArgs> AudioDeviceChanged => _audioDeviceChanged.AsObservable();
 
@@ -168,15 +151,6 @@ namespace AudioSwitcher.AudioApi
         {
             return Task.FromResult(GetDevice(id) as IDevice);
         }
-
-        IDevice IAudioController.DefaultPlaybackDevice => DefaultPlaybackDevice;
-
-        IDevice IAudioController.DefaultPlaybackCommunicationsDevice => DefaultPlaybackCommunicationsDevice;
-
-        IDevice IAudioController.DefaultCaptureDevice => DefaultCaptureDevice;
-
-        IDevice IAudioController.DefaultCaptureCommunicationsDevice => DefaultCaptureCommunicationsDevice;
-
 
         IDevice IAudioController.GetDevice(Guid id)
         {

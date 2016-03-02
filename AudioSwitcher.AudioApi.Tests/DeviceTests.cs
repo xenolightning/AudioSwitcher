@@ -3,7 +3,6 @@ using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Tests.Stubs;
 using AudioSwitcher.Tests.Common;
 using Moq;
-using Moq.Protected;
 using Xunit;
 
 namespace AudioSwitcher.AudioApi.Tests

@@ -93,7 +93,6 @@
     <Compile Include="Session\SessionStateChangedArgs.cs" />
     <Compile Include="Session\IAudioSession.cs" />
     <Compile Include="Session\IAudioSessionController.cs" />
-    <Compile Include="Session\IAudioSessionEndpoint.cs" />
     <Compile Include="Session\SessionPeakValueChangedArgs.cs" />
     <Compile Include="Session\SessionVolumeChangedArgs.cs" />
     <Compile Include="SpeakerConfiguration.cs" />

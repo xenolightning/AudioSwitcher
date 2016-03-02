@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi.Sandbox
 {
@@ -20,21 +19,12 @@ namespace AudioSwitcher.AudioApi.Sandbox
             //Get a copy of the current system audio devices
             //then create a copy of the current state of the system
             //this allows us to "debug" macros against a "test" system
-            _defaultPlaybackDeviceId = source.DefaultPlaybackDevice == null
-                ? Guid.Empty
-                : source.DefaultPlaybackDevice.Id;
-            _defaultPlaybackCommDeviceId = source.DefaultPlaybackCommunicationsDevice == null
-                ? Guid.Empty
-                : source.DefaultPlaybackCommunicationsDevice.Id;
-            _defaultCaptureDeviceId = source.DefaultCaptureDevice == null ? Guid.Empty : source.DefaultCaptureDevice.Id;
-            _defaultCaptureCommDeviceId = source.DefaultCaptureCommunicationsDevice == null
-                ? Guid.Empty
-                : source.DefaultCaptureCommunicationsDevice.Id;
+            _defaultPlaybackDeviceId = source.DefaultPlaybackDevice?.Id ?? Guid.Empty;
+            _defaultPlaybackCommDeviceId = source.DefaultPlaybackCommunicationsDevice?.Id ?? Guid.Empty;
+            _defaultCaptureDeviceId = source.DefaultCaptureDevice?.Id ?? Guid.Empty;
+            _defaultCaptureCommDeviceId = source.DefaultCaptureCommunicationsDevice?.Id ?? Guid.Empty;
 
-            foreach (
-                var sourceDev in
-                    source.GetDevices(DeviceType.All,
-                        DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled))
+            foreach (var sourceDev in source.GetDevices(DeviceType.All, DeviceState.All))
             {
                 var dev = new SandboxDevice(this)
                 {

@@ -128,7 +128,7 @@
   <ItemGroup>
     <None Include="api.pfx" />
     <Compile Include="CoreAudioDevice.Internal.cs" />
-    <Compile Include="CoreAudioDevice.AudioSession.cs" />
+    <Compile Include="CoreAudioDevice.SessionController.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj">
