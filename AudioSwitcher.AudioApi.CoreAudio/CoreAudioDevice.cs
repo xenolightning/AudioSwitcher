@@ -578,7 +578,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void Timer_UpdatePeakValue(long ticks)
         {
-            if (_isUpdatingPeakValue)
+            if (_isUpdatingPeakValue || AudioMeterInformation == null)
                 return;
 
             _isUpdatingPeakValue = true;
