@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
     <metadata>
         <id>AudioSwitcher.AudioApi</id>
-        <version>3.1.0-beta4</version>
+        <version>4.0.0-alpha1</version>
         <title>Audio Switcher Api</title>
         <authors>Sean Chapman</authors>
         <owners>Sean Chapman</owners>
@@ -11,14 +11,12 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>.NET Library which facilitates interacting with Audio Devices</description>
         <summary>.NET Library which facilitates interacting with Audio Devices</summary>
-        <releaseNotes>- Removed standard C# events in favour of IObservable
-- Added assistant classes for the IObservable implementation
-- Implemented AudioSession support
-- Supports changing bit depth, sample rate 
-- Supports changing speaker configuration</releaseNotes>
+        <releaseNotes>- Added device capabilities to express extra functionality that is optionally available to some devices
+- Proper async/await
+- .net452</releaseNotes>
         <copyright />
         <language>en-US</language>
-        <tags>audio default device switch audioswitcher</tags>
+        <tags>audio default device switch audioswitcher sound</tags>
     </metadata>
     <files>
         <file src="..\..\bin\Release\AudioSwitcher.AudioApi.dll" target="lib\net452\AudioSwitcher.AudioApi.dll" />

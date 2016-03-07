@@ -207,7 +207,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ComThread.BeginInvoke(() =>
             {
                 _audioSessionControl.UnregisterAudioSessionNotification(this);
-            }).ContinueWith(x =>
+            })
+            .ContinueWith(x =>
             {
                 _audioSessionControl = null;
             });

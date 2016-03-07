@@ -38,6 +38,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.JavaScript.Tests", "AudioSwitcher.Scripting.JavaScript.Tests\AudioSwitcher.Scripting.JavaScript.Tests.csproj", "{7395D2F2-2FCA-4F16-8903-3C9E565CF976}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.Lua", "AudioSwitcher.Scripting.Lua\AudioSwitcher.Scripting.Lua.csproj", "{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -172,6 +174,22 @@ Global
 		{7395D2F2-2FCA-4F16-8903-3C9E565CF976}.Release|x64.Build.0 = Release|Any CPU
 		{7395D2F2-2FCA-4F16-8903-3C9E565CF976}.Release|x86.ActiveCfg = Release|Any CPU
 		{7395D2F2-2FCA-4F16-8903-3C9E565CF976}.Release|x86.Build.0 = Release|Any CPU
+		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Debug|ARM.Build.0 = Debug|Any CPU
+		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Debug|x64.Build.0 = Debug|Any CPU
+		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Debug|x86.Build.0 = Debug|Any CPU
+		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|ARM.ActiveCfg = Release|Any CPU
+		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|ARM.Build.0 = Release|Any CPU
+		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|x64.ActiveCfg = Release|Any CPU
+		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|x64.Build.0 = Release|Any CPU
+		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|x86.ActiveCfg = Release|Any CPU
+		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -186,5 +204,6 @@ Global
 		{4270A872-8A0F-4092-8873-71581C1BDDFB} = {4F8309BD-D3FD-4903-8054-0B1EED7D385E}
 		{9A82713C-6B21-4312-9294-454C50FAC5ED} = {A1D8776F-71F0-4ECF-8EBE-AB1BD671E0B7}
 		{7395D2F2-2FCA-4F16-8903-3C9E565CF976} = {4F8309BD-D3FD-4903-8054-0B1EED7D385E}
+		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7} = {67E65805-9072-4B61-8D6C-DB3AA4A14BAC}
 	EndGlobalSection
 EndGlobal

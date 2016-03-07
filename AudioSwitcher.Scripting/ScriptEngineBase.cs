@@ -43,7 +43,21 @@ namespace AudioSwitcher.Scripting
             return CreateExecutionContext(isDebug, args, CancellationToken.None);
         }
 
-        public abstract IExecutionContext CreateExecutionContext(bool isDebug, IEnumerable<string> args, CancellationToken cancellationToken);
+        public IExecutionContext CreateExecutionContext(bool isDebug, IEnumerable<string> args, CancellationToken cancellationToken)
+        {
+            var ctx = GetNewContext(isDebug, args, cancellationToken);
+
+            foreach (var lib in ScriptLibraries)
+            {
+                ctx.AddLibrary(lib.Key, lib.Value);
+            }
+
+            ContextCreationAction(ctx);
+
+            return ctx;
+        }
+
+        protected abstract IExecutionContext GetNewContext(bool isDebug, IEnumerable<string> args, CancellationToken cancellationToken);
 
         public void OnExecutionContextCreation(Action<IExecutionContext> contextCreationAction)
         {
