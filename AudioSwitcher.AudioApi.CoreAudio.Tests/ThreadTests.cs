@@ -188,23 +188,5 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             }
         }
 
-        [Fact]
-        public async Task CoreAudio_SetDefaultCapture_3()
-        {
-            using (var controller = CreateTestController())
-            {
-                var dev = controller.DefaultCaptureDevice;
-                var dev2 = controller.DefaultCaptureCommunicationsDevice;
-
-                var success = await dev.SetAsDefaultCommunicationsAsync();
-                Assert.True(dev.IsDefaultCommunicationsDevice);
-                Assert.True(success);
-
-                success = await dev2.SetAsDefaultCommunicationsAsync();
-                Assert.True(dev.IsDefaultCommunicationsDevice);
-                Assert.True(success);
-            }
-        }
-
     }
 }
