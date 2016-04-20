@@ -245,8 +245,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public override TCapability GetCapability<TCapability>()
         {
-            if (_sessionController.Value is TCapability)
-                return (TCapability)(_sessionController.Value as IDeviceCapability);
+            if (_sessionController?.Value is TCapability)
+                return (TCapability)(_sessionController?.Value as IDeviceCapability);
 
             return default(TCapability);
         }

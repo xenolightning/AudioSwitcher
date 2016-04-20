@@ -128,10 +128,7 @@ namespace AudioSwitcher.AudioApi.Observables
                 _observers.Add(observer);
             }
 
-            return new DelegateDisposable(() =>
-            {
-                ObserverDisposal(observer);
-            });
+            return new DelegateDisposable(() => { ObserverDisposal(observer); });
         }
 
         protected virtual void ObserverDisposal(IObserver<T> observer)

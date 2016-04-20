@@ -76,6 +76,5 @@ namespace AudioSwitcher.AudioApi
         TCapability GetCapability<TCapability>() where TCapability : IDeviceCapability;
 
         IEnumerable<IDeviceCapability> GetAllCapabilities();
-
     }
 }

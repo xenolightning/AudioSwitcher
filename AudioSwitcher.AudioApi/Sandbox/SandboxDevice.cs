@@ -39,11 +39,17 @@ namespace AudioSwitcher.AudioApi.Sandbox
 
         public override string IconPath => iconPath;
 
-        public override bool IsDefaultDevice => (Controller.DefaultPlaybackDevice != null && Controller.DefaultPlaybackDevice.Id == Id)
-                                                || (Controller.DefaultCaptureDevice != null && Controller.DefaultCaptureDevice.Id == Id);
+        public override bool IsDefaultDevice
+            => (Controller.DefaultPlaybackDevice != null && Controller.DefaultPlaybackDevice.Id == Id)
+               || (Controller.DefaultCaptureDevice != null && Controller.DefaultCaptureDevice.Id == Id);
 
-        public override bool IsDefaultCommunicationsDevice => (Controller.DefaultPlaybackCommunicationsDevice != null && Controller.DefaultPlaybackCommunicationsDevice.Id == Id)
-                                                              || (Controller.DefaultCaptureCommunicationsDevice != null && Controller.DefaultCaptureCommunicationsDevice.Id == Id);
+        public override bool IsDefaultCommunicationsDevice
+            =>
+                (Controller.DefaultPlaybackCommunicationsDevice != null &&
+                 Controller.DefaultPlaybackCommunicationsDevice.Id == Id)
+                ||
+                (Controller.DefaultCaptureCommunicationsDevice != null &&
+                 Controller.DefaultCaptureCommunicationsDevice.Id == Id);
 
         public override DeviceState State => state;
 

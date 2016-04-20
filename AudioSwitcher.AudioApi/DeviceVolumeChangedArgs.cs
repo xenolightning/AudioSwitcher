@@ -2,13 +2,9 @@
 {
     public class DeviceVolumeChangedArgs : DeviceChangedArgs
     {
-        public double Volume
-        {
-            get;
-            private set;
-        }
+        public double Volume { get; private set; }
 
-        public DeviceVolumeChangedArgs(IDevice device, double volume) 
+        public DeviceVolumeChangedArgs(IDevice device, double volume)
             : base(device, DeviceChangedType.VolumeChanged)
         {
             Volume = volume;

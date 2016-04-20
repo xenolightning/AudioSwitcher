@@ -13,5 +13,6 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCulture("")]
 
 #if DEBUG
+
 [assembly: InternalsVisibleTo("AudioSwitcher.AudioApi.Tests")]
 #endif
