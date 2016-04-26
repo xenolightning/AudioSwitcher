@@ -1,6 +1,6 @@
 ﻿namespace AudioSwitcher.AudioApi.Capabilities
 {
-    public interface IMicrophoneBoost
+    public interface IMicrophoneBoost : IDeviceCapability
     {
         int Level { get; }
 
