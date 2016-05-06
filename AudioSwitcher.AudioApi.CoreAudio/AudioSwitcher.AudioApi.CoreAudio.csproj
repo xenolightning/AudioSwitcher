@@ -100,6 +100,15 @@
     <Compile Include="Internal\Interfaces\WaveFormatEncoding.cs" />
     <Compile Include="Internal\Interfaces\WaveFormatExtensible.cs" />
     <Compile Include="Internal\IPropertyDictionary.cs" />
+    <Compile Include="Internal\Topology\ConnectorType.cs" />
+    <Compile Include="Internal\Topology\IConnector.cs" />
+    <Compile Include="Internal\Topology\IControlChangeNotify.cs" />
+    <Compile Include="Internal\Topology\IControlInterface.cs" />
+    <Compile Include="Internal\Topology\IDeviceTopology.cs" />
+    <Compile Include="Internal\Topology\IPart.cs" />
+    <Compile Include="Internal\Topology\IPartsList.cs" />
+    <Compile Include="Internal\Topology\ISubunit.cs" />
+    <Compile Include="Internal\Topology\PartType.cs" />
     <Compile Include="LockExtensions.cs" />
     <Compile Include="Internal\MultimediaDeviceCollection.cs" />
     <Compile Include="Internal\NativeMethods.cs" />
