@@ -21,12 +21,12 @@ namespace Nito
         /// <summary>
         /// The circular buffer that holds the view.
         /// </summary>
-        private T[] buffer;
+        private T[] _buffer;
 
         /// <summary>
-        /// The offset into <see cref="buffer"/> where the view begins.
+        /// The offset into <see cref="_buffer"/> where the view begins.
         /// </summary>
-        private int offset;
+        private int _offset;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Deque&lt;T&gt;"/> class with the specified capacity.
@@ -36,7 +36,7 @@ namespace Nito
         {
             if (capacity < 1)
                 throw new ArgumentOutOfRangeException(nameof(capacity), "Capacity must be greater than 0.");
-            buffer = new T[capacity];
+            _buffer = new T[capacity];
         }
 
         /// <summary>
@@ -48,12 +48,12 @@ namespace Nito
             int count = collection.Count();
             if (count > 0)
             {
-                buffer = new T[count];
+                _buffer = new T[count];
                 DoInsertRange(0, collection, count);
             }
             else
             {
-                buffer = new T[DefaultCapacity];
+                _buffer = new T[DefaultCapacity];
             }
         }
 
@@ -384,9 +384,9 @@ namespace Nito
         private bool IsFull => Count == Capacity;
 
         /// <summary>
-        /// Gets a value indicating whether the buffer is "split" (meaning the beginning of the view is at a later index in <see cref="buffer"/> than the end).
+        /// Gets a value indicating whether the buffer is "split" (meaning the beginning of the view is at a later index in <see cref="_buffer"/> than the end).
         /// </summary>
-        private bool IsSplit => offset > Capacity - Count;
+        private bool IsSplit => _offset > Capacity - Count;
 
         /// <summary>
         /// Gets or sets the capacity for this deque. This value must always be greater than zero, and this property cannot be set to a value less than <see cref="Count"/>.
@@ -396,7 +396,7 @@ namespace Nito
         {
             get
             {
-                return buffer.Length;
+                return _buffer.Length;
             }
 
             set
@@ -407,7 +407,7 @@ namespace Nito
                 if (value < Count)
                     throw new InvalidOperationException("Capacity cannot be set to a value less than Count");
 
-                if (value == buffer.Length)
+                if (value == _buffer.Length)
                     return;
 
                 // Create the new buffer and copy our existing range.
@@ -415,19 +415,19 @@ namespace Nito
                 if (IsSplit)
                 {
                     // The existing buffer is split, so we have to copy it in parts
-                    int length = Capacity - offset;
-                    Array.Copy(buffer, offset, newBuffer, 0, length);
-                    Array.Copy(buffer, 0, newBuffer, length, Count - length);
+                    int length = Capacity - _offset;
+                    Array.Copy(_buffer, _offset, newBuffer, 0, length);
+                    Array.Copy(_buffer, 0, newBuffer, length, Count - length);
                 }
                 else
                 {
                     // The existing buffer is whole
-                    Array.Copy(buffer, offset, newBuffer, 0, Count);
+                    Array.Copy(_buffer, _offset, newBuffer, 0, Count);
                 }
 
                 // Set up to use the new buffer.
-                buffer = newBuffer;
-                offset = 0;
+                _buffer = newBuffer;
+                _offset = 0;
             }
         }
 
@@ -444,7 +444,7 @@ namespace Nito
         /// <returns>The buffer index.</returns>
         private int DequeIndexToBufferIndex(int index)
         {
-            return (index + offset) % Capacity;
+            return (index + _offset) % Capacity;
         }
 
         /// <summary>
@@ -454,7 +454,7 @@ namespace Nito
         /// <returns>The element at the specified index.</returns>
         private T DoGetItem(int index)
         {
-            return buffer[DequeIndexToBufferIndex(index)];
+            return _buffer[DequeIndexToBufferIndex(index)];
         }
 
         /// <summary>
@@ -464,7 +464,7 @@ namespace Nito
         /// <param name="item">The element to store in the list.</param>
         private void DoSetItem(int index, T item)
         {
-            buffer[DequeIndexToBufferIndex(index)] = item;
+            _buffer[DequeIndexToBufferIndex(index)] = item;
         }
 
         /// <summary>
@@ -511,29 +511,29 @@ namespace Nito
         }
 
         /// <summary>
-        /// Increments <see cref="offset"/> by <paramref name="value"/> using modulo-<see cref="Capacity"/> arithmetic.
+        /// Increments <see cref="_offset"/> by <paramref name="value"/> using modulo-<see cref="Capacity"/> arithmetic.
         /// </summary>
-        /// <param name="value">The value by which to increase <see cref="offset"/>. May not be negative.</param>
-        /// <returns>The value of <see cref="offset"/> after it was incremented.</returns>
+        /// <param name="value">The value by which to increase <see cref="_offset"/>. May not be negative.</param>
+        /// <returns>The value of <see cref="_offset"/> after it was incremented.</returns>
         private int PostIncrement(int value)
         {
-            int ret = offset;
-            offset += value;
-            offset %= Capacity;
+            int ret = _offset;
+            _offset += value;
+            _offset %= Capacity;
             return ret;
         }
 
         /// <summary>
-        /// Decrements <see cref="offset"/> by <paramref name="value"/> using modulo-<see cref="Capacity"/> arithmetic.
+        /// Decrements <see cref="_offset"/> by <paramref name="value"/> using modulo-<see cref="Capacity"/> arithmetic.
         /// </summary>
-        /// <param name="value">The value by which to reduce <see cref="offset"/>. May not be negative or greater than <see cref="Capacity"/>.</param>
-        /// <returns>The value of <see cref="offset"/> before it was decremented.</returns>
+        /// <param name="value">The value by which to reduce <see cref="_offset"/>. May not be negative or greater than <see cref="Capacity"/>.</param>
+        /// <returns>The value of <see cref="_offset"/> before it was decremented.</returns>
         private int PreDecrement(int value)
         {
-            offset -= value;
-            if (offset < 0)
-                offset += Capacity;
-            return offset;
+            _offset -= value;
+            if (_offset < 0)
+                _offset += Capacity;
+            return _offset;
         }
 
         /// <summary>
@@ -542,7 +542,7 @@ namespace Nito
         /// <param name="value">The element to insert.</param>
         private void DoAddToBack(T value)
         {
-            buffer[DequeIndexToBufferIndex(Count)] = value;
+            _buffer[DequeIndexToBufferIndex(Count)] = value;
             ++Count;
         }
 
@@ -552,7 +552,7 @@ namespace Nito
         /// <param name="value">The element to insert.</param>
         private void DoAddToFront(T value)
         {
-            buffer[PreDecrement(1)] = value;
+            _buffer[PreDecrement(1)] = value;
             ++Count;
         }
 
@@ -562,7 +562,7 @@ namespace Nito
         /// <returns>The former last element.</returns>
         private T DoRemoveFromBack()
         {
-            T ret = buffer[DequeIndexToBufferIndex(Count - 1)];
+            T ret = _buffer[DequeIndexToBufferIndex(Count - 1)];
             --Count;
             return ret;
         }
@@ -574,7 +574,7 @@ namespace Nito
         private T DoRemoveFromFront()
         {
             --Count;
-            return buffer[PostIncrement(1)];
+            return _buffer[PostIncrement(1)];
         }
 
         /// <summary>
@@ -596,7 +596,7 @@ namespace Nito
                 int copyCount = index;
                 int writeIndex = Capacity - collectionCount;
                 for (int j = 0; j != copyCount; ++j)
-                    buffer[DequeIndexToBufferIndex(writeIndex + j)] = buffer[DequeIndexToBufferIndex(j)];
+                    _buffer[DequeIndexToBufferIndex(writeIndex + j)] = _buffer[DequeIndexToBufferIndex(j)];
 
                 // Rotate to the new view
                 PreDecrement(collectionCount);
@@ -609,14 +609,14 @@ namespace Nito
                 int copyCount = Count - index;
                 int writeIndex = index + collectionCount;
                 for (int j = copyCount - 1; j != -1; --j)
-                    buffer[DequeIndexToBufferIndex(writeIndex + j)] = buffer[DequeIndexToBufferIndex(index + j)];
+                    _buffer[DequeIndexToBufferIndex(writeIndex + j)] = _buffer[DequeIndexToBufferIndex(index + j)];
             }
 
             // Copy new items into place
             int i = index;
             foreach (T item in collection)
             {
-                buffer[DequeIndexToBufferIndex(i)] = item;
+                _buffer[DequeIndexToBufferIndex(i)] = item;
                 ++i;
             }
 
@@ -653,7 +653,7 @@ namespace Nito
                 int copyCount = index;
                 int writeIndex = collectionCount;
                 for (int j = copyCount - 1; j != -1; --j)
-                    buffer[DequeIndexToBufferIndex(writeIndex + j)] = buffer[DequeIndexToBufferIndex(j)];
+                    _buffer[DequeIndexToBufferIndex(writeIndex + j)] = _buffer[DequeIndexToBufferIndex(j)];
 
                 // Rotate to new view
                 PostIncrement(collectionCount);
@@ -666,7 +666,7 @@ namespace Nito
                 int copyCount = Count - collectionCount - index;
                 int readIndex = index + collectionCount;
                 for (int j = 0; j != copyCount; ++j)
-                    buffer[DequeIndexToBufferIndex(index + j)] = buffer[DequeIndexToBufferIndex(readIndex + j)];
+                    _buffer[DequeIndexToBufferIndex(index + j)] = _buffer[DequeIndexToBufferIndex(readIndex + j)];
             }
 
             // Adjust valid count
@@ -779,18 +779,18 @@ namespace Nito
         /// </summary>
         public void Clear()
         {
-            offset = 0;
+            _offset = 0;
             Count = 0;
         }
 
         [DebuggerNonUserCode]
         private sealed class DebugView
         {
-            private readonly Deque<T> deque;
+            private readonly Deque<T> _deque;
 
             public DebugView(Deque<T> deque)
             {
-                this.deque = deque;
+                this._deque = deque;
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
@@ -798,8 +798,8 @@ namespace Nito
             {
                 get
                 {
-                    var array = new T[deque.Count];
-                    ((ICollection<T>)deque).CopyTo(array, 0);
+                    var array = new T[_deque.Count];
+                    ((ICollection<T>)_deque).CopyTo(array, 0);
                     return array;
                 }
             }

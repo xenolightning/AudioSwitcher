@@ -7,7 +7,7 @@ namespace AudioSwitcher.AudioApi
 {
     public abstract class AudioController : IAudioController
     {
-        protected const DeviceState DEFAULT_DEVICE_STATE_FILTER =
+        protected const DeviceState DefaultDeviceStateFilter =
             DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled;
 
         private readonly AsyncBroadcaster<DeviceChangedArgs> _audioDeviceChanged;
@@ -50,7 +50,7 @@ namespace AudioSwitcher.AudioApi
 
         public virtual IEnumerable<IDevice> GetDevices()
         {
-            return GetDevices(DEFAULT_DEVICE_STATE_FILTER);
+            return GetDevices(DefaultDeviceStateFilter);
         }
 
         public virtual Task<IEnumerable<IDevice>> GetDevicesAsync()
@@ -65,12 +65,12 @@ namespace AudioSwitcher.AudioApi
 
         public IEnumerable<IDevice> GetDevices(DeviceType deviceType)
         {
-            return GetDevices(deviceType, DEFAULT_DEVICE_STATE_FILTER);
+            return GetDevices(deviceType, DefaultDeviceStateFilter);
         }
 
         public Task<IEnumerable<IDevice>> GetDevicesAsync(DeviceType deviceType)
         {
-            return GetDevicesAsync(deviceType, DEFAULT_DEVICE_STATE_FILTER);
+            return GetDevicesAsync(deviceType, DefaultDeviceStateFilter);
         }
 
         public virtual IEnumerable<IDevice> GetDevices(DeviceState state)

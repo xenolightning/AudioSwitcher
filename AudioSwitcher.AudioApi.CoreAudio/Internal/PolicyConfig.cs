@@ -36,8 +36,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 if (policyConfig != null && Marshal.IsComObject(policyConfig))
                     Marshal.FinalReleaseComObject(policyConfig);
-
-                GC.Collect();
             }
         }
     }

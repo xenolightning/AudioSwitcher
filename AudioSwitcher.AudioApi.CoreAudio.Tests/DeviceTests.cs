@@ -45,6 +45,22 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         }
 
         [Fact]
+        public void Device_Set_Volume_Negative_Is_Zero()
+        {
+            using (var controller = CreateTestController())
+            {
+                var currentVolume = controller.DefaultPlaybackDevice.Volume;
+
+                controller.DefaultPlaybackDevice.Volume = -5;
+
+                Assert.Equal(0, (int)controller.DefaultPlaybackDevice.Volume);
+
+                controller.DefaultPlaybackDevice.Volume = currentVolume;
+            }
+
+        }
+
+        [Fact]
         public async Task Device_Set_Volume_Async()
         {
             using (var controller = CreateTestController())
@@ -70,6 +86,22 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
                 await controller.DefaultPlaybackDevice.SetVolumeAsync(20);
 
                 Assert.Equal(20, (int)controller.DefaultPlaybackDevice.Volume);
+
+                await controller.DefaultPlaybackDevice.SetVolumeAsync(currentVolume);
+            }
+
+        }
+
+        [Fact]
+        public async Task Device_Set_Volume_Async_Negative_Is_Zero()
+        {
+            using (var controller = CreateTestController())
+            {
+                var currentVolume = controller.DefaultPlaybackDevice.Volume;
+
+                await controller.DefaultPlaybackDevice.SetVolumeAsync(-5);
+
+                Assert.Equal(0, (int)controller.DefaultPlaybackDevice.Volume);
 
                 await controller.DefaultPlaybackDevice.SetVolumeAsync(currentVolume);
             }
@@ -191,28 +223,26 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             {
                 var order = new ConcurrentQueue<int>();
                 var device = controller.DefaultPlaybackCommunicationsDevice;
+                var current = 1;
 
                 var t1 = device.SetAsDefaultCommunicationsAsync().ContinueWith(x =>
                 {
-                    order.Enqueue(1);
+                    order.Enqueue(current++);
                 });
 
-                await Task.Delay(5);
                 var t2 = device.SetAsDefaultCommunicationsAsync().ContinueWith(x =>
                 {
-                    order.Enqueue(2);
+                    order.Enqueue(current++);
                 });
 
-                await Task.Delay(5);
                 var t3 = device.SetAsDefaultCommunicationsAsync().ContinueWith(x =>
                 {
-                    order.Enqueue(3);
+                    order.Enqueue(current++);
                 });
 
-                await Task.Delay(5);
                 var t4 = device.SetAsDefaultCommunicationsAsync().ContinueWith(x =>
                 {
-                    order.Enqueue(4);
+                    order.Enqueue(current++);
                 });
 
                 await Task.WhenAll(t1, t2, t3, t4);

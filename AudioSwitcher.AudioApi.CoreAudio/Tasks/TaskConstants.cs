@@ -8,7 +8,7 @@ namespace Nito.AsyncEx
     public static class TaskConstants
     {
         private static readonly Task<bool> booleanTrue = Task.FromResult(true);
-        private static readonly Task<int> intNegativeOne = Task.FromResult(-1);
+        private static readonly Task<int> IntNegativeOne = Task.FromResult(-1);
 
         /// <summary>
         /// A task that has been completed with the value <c>true</c>.
@@ -28,7 +28,7 @@ namespace Nito.AsyncEx
         /// <summary>
         /// A task that has been completed with the value <c>-1</c>.
         /// </summary>
-        public static Task<int> Int32NegativeOne => intNegativeOne;
+        public static Task<int> Int32NegativeOne => IntNegativeOne;
 
         /// <summary>
         /// A <see cref="Task"/> that has been completed.

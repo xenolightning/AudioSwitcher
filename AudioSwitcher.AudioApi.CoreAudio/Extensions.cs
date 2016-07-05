@@ -7,7 +7,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public static class Extensions
     {
-        private const string GUID_REGEX =
+        private const string GuidRegex =
             @"([a-fA-F0-9]{8}[-][a-fA-F0-9]{4}[-][a-fA-F0-9]{4}[-][a-fA-F0-9]{4}[-][a-fA-F0-9]{12})";
 
         internal static EDataFlow AsEDataFlow(this DeviceType type)
@@ -110,7 +110,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         internal static IEnumerable<Guid> ExtractGuids(this string str)
         {
-            var r = new Regex(GUID_REGEX);
+            var r = new Regex(GuidRegex);
             var matches = r.Matches(str);
 
             if (matches.Count == 0)

@@ -12,11 +12,11 @@ namespace AudioSwitcher.AudioApi.Hooking
         [return: MarshalAs(UnmanagedType.U4)]
         public delegate int DGetDefaultAudioEndpoint(IMultimediaDeviceEnumerator self, DataFlow dataFlow, Role role, out IntPtr ppEndpoint);
 
-        private readonly RemoteInterface Interface;
+        private readonly RemoteInterface _interface;
 
         public EntryPoint(RemoteHooking.IContext inContext, string inChannelName)
         {
-            Interface = RemoteHooking.IpcConnectClient<RemoteInterface>(inChannelName);
+            _interface = RemoteHooking.IpcConnectClient<RemoteInterface>(inChannelName);
         }
 
         public void Run(RemoteHooking.IContext inContext, string inChannelName)
@@ -35,28 +35,28 @@ namespace AudioSwitcher.AudioApi.Hooking
                 Thread.Sleep(50);
 
                 //Signal the hook installed, and get the response from the server
-                if (!Interface.HookInstalled())
+                if (!_interface.HookInstalled())
                     return;
 
             }
             catch (Exception e)
             {
-                ReportError(Interface, e);
+                ReportError(_interface, e);
                 return;
             }
 
             try
             {
-                while (!Interface.CanUnload())
+                while (!_interface.CanUnload())
                 {
                     Thread.Sleep(200);
                 }
 
-                Interface.HookUninstalled(RemoteHooking.GetCurrentProcessId());
+                _interface.HookUninstalled(RemoteHooking.GetCurrentProcessId());
             }
             catch (Exception e)
             {
-                ReportError(Interface, e);
+                ReportError(_interface, e);
             }
 
         }
@@ -65,10 +65,10 @@ namespace AudioSwitcher.AudioApi.Hooking
         {
             var entryPoint = HookRuntimeInfo.Callback as EntryPoint;
 
-            if (entryPoint == null || entryPoint.Interface == null)
+            if (entryPoint == null || entryPoint._interface == null)
                 return self.GetDefaultAudioEndpoint(dataflow, role, out ppendpoint);
 
-            var remoteInterface = entryPoint.Interface;
+            var remoteInterface = entryPoint._interface;
 
             try
             {

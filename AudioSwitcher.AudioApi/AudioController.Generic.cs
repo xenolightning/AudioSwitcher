@@ -9,7 +9,7 @@ namespace AudioSwitcher.AudioApi
     public abstract class AudioController<T> : IAudioController<T>
         where T : class, IDevice
     {
-        private const DeviceState DEFAULT_DEVICE_STATE_FILTER = DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled;
+        private const DeviceState DefaultDeviceStateFilter = DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled;
 
         private readonly Broadcaster<DeviceChangedArgs> _audioDeviceChanged;
 
@@ -38,7 +38,7 @@ namespace AudioSwitcher.AudioApi
 
         public virtual T GetDevice(Guid id)
         {
-            return GetDevice(id, DEFAULT_DEVICE_STATE_FILTER);
+            return GetDevice(id, DefaultDeviceStateFilter);
         }
 
         public virtual Task<T> GetDeviceAsync(Guid id)
@@ -62,7 +62,7 @@ namespace AudioSwitcher.AudioApi
 
         public virtual IEnumerable<T> GetDevices()
         {
-            return GetDevices(DEFAULT_DEVICE_STATE_FILTER);
+            return GetDevices(DefaultDeviceStateFilter);
         }
 
         public virtual Task<IEnumerable<T>> GetDevicesAsync()
@@ -77,12 +77,12 @@ namespace AudioSwitcher.AudioApi
 
         public IEnumerable<T> GetDevices(DeviceType deviceType)
         {
-            return GetDevices(deviceType, DEFAULT_DEVICE_STATE_FILTER);
+            return GetDevices(deviceType, DefaultDeviceStateFilter);
         }
 
         public Task<IEnumerable<T>> GetDevicesAsync(DeviceType deviceType)
         {
-            return GetDevicesAsync(deviceType, DEFAULT_DEVICE_STATE_FILTER);
+            return GetDevicesAsync(deviceType, DefaultDeviceStateFilter);
         }
 
         IEnumerable<IDevice> IAudioController.GetDevices(DeviceType deviceType)
@@ -109,7 +109,7 @@ namespace AudioSwitcher.AudioApi
 
         public virtual IEnumerable<T> GetPlaybackDevices()
         {
-            return GetPlaybackDevices(DEFAULT_DEVICE_STATE_FILTER);
+            return GetPlaybackDevices(DefaultDeviceStateFilter);
         }
 
         public virtual IEnumerable<T> GetPlaybackDevices(DeviceState state)
@@ -119,7 +119,7 @@ namespace AudioSwitcher.AudioApi
 
         public virtual Task<IEnumerable<T>> GetPlaybackDevicesAsync()
         {
-            return GetPlaybackDevicesAsync(DEFAULT_DEVICE_STATE_FILTER);
+            return GetPlaybackDevicesAsync(DefaultDeviceStateFilter);
         }
 
         public virtual Task<IEnumerable<T>> GetPlaybackDevicesAsync(DeviceState deviceState)
@@ -129,12 +129,12 @@ namespace AudioSwitcher.AudioApi
 
         public virtual IEnumerable<T> GetCaptureDevices()
         {
-            return GetCaptureDevices(DEFAULT_DEVICE_STATE_FILTER);
+            return GetCaptureDevices(DefaultDeviceStateFilter);
         }
 
         public virtual Task<IEnumerable<T>> GetCaptureDevicesAsync()
         {
-            return Task.FromResult(GetCaptureDevices(DEFAULT_DEVICE_STATE_FILTER));
+            return Task.FromResult(GetCaptureDevices(DefaultDeviceStateFilter));
         }
 
         public virtual IEnumerable<T> GetCaptureDevices(DeviceState state)
