@@ -25,17 +25,24 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 // ReSharper disable once SuspiciousTypeConversion.Global
                 _innerEnumerator = ComObjectFactory.GetDeviceEnumerator();
+                _systemEvents = new SystemEventNotifcationClient(_innerEnumerator);
 
                 if (_innerEnumerator == null)
                     return;
 
-                _systemEvents = new SystemEventNotifcationClient(_innerEnumerator);
-
                 _systemEvents.DeviceAdded.Subscribe(x => OnDeviceAdded(x.DeviceId));
                 _systemEvents.DeviceRemoved.Subscribe(x => OnDeviceRemoved(x.DeviceId));
-            });
 
-            RefreshSystemDevices();
+                _deviceCache = new HashSet<CoreAudioDevice>();
+                IMultimediaDeviceCollection collection;
+                _innerEnumerator.EnumAudioEndpoints(EDataFlow.All, EDeviceState.All, out collection);
+
+                using (var coll = new MultimediaDeviceCollection(collection))
+                {
+                    foreach (var mDev in coll)
+                        CacheDevice(mDev);
+                }
+            });
         }
 
         internal SystemEventNotifcationClient SystemEvents => _systemEvents;
@@ -63,25 +70,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         protected override void Dispose(bool disposing)
         {
-            ComThread.BeginInvoke(() =>
+            if (_systemEvents != null)
             {
-                if (_systemEvents != null)
-                {
-                    _systemEvents.Dispose();
-                    _systemEvents = null;
-                }
+                _systemEvents.Dispose();
+                _systemEvents = null;
+            }
 
-                _innerEnumerator = null;
-            })
-            .ContinueWith(x =>
+            foreach (var device in _deviceCache)
             {
-                foreach (var device in _deviceCache)
-                {
-                    device.Dispose();
-                }
-                _deviceCache?.Clear();
-                _lock?.Dispose();
-            });
+                device.Dispose();
+            }
+
+            _deviceCache?.Clear();
+            _lock?.Dispose();
+            _innerEnumerator = null;
 
             base.Dispose(disposing);
 
@@ -118,22 +120,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (acquiredLock)
                     _lock.ExitReadLock();
             }
-        }
-
-        private void RefreshSystemDevices()
-        {
-            ComThread.Invoke(() =>
-            {
-                _deviceCache = new HashSet<CoreAudioDevice>();
-                IMultimediaDeviceCollection collection;
-                _innerEnumerator.EnumAudioEndpoints(EDataFlow.All, EDeviceState.All, out collection);
-
-                using (var coll = new MultimediaDeviceCollection(collection))
-                {
-                    foreach (var mDev in coll)
-                        CacheDevice(mDev);
-                }
-            });
         }
 
         private CoreAudioDevice GetOrAddDeviceFromRealId(string deviceId)

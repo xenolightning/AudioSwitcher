@@ -2,10 +2,10 @@
 {
     public interface ISpeakerConfiguration : IDeviceCapability
     {
-        SpeakerConfiguration SpeakerConfiguration { get; }
+        bool IsSupported(SpeakerConfiguration configuration);
 
-        void IsSupported(SpeakerConfiguration configuration);
+        SpeakerConfiguration Get();
 
-        void SetSpeakerConfiguration(SpeakerConfiguration configuration);
+        void Set(SpeakerConfiguration configuration);
     }
 }

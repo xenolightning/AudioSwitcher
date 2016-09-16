@@ -104,6 +104,8 @@ namespace AudioSwitcher.AudioApi.Tests
         {
             var b = new Broadcaster<int>().When(x => x == 2) as FilteredBroadcaster<int>;
 
+            Assert.NotNull(b);
+
             b.Dispose();
 
             Assert.True(b.IsDisposed);

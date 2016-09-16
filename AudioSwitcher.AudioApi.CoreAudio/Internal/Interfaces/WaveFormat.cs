@@ -47,8 +47,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
             {
                 throw new ArgumentOutOfRangeException(nameof(channelMask), "Channels must be 1 or greater");
             }
-            // minimum 16 bytes, sometimes 18 for PCM
-            waveFormatTag = WaveFormatEncoding.Pcm;
 
             sampleRate = (int)rate;
             bitsPerSample = (short)bits;

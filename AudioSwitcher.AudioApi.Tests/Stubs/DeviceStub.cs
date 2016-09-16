@@ -8,7 +8,7 @@
 
         internal void Dispose()
         {
-            Dispose(true);
+            base.Dispose(true);
         }
 
         public void FirePropertyChanged(string name)

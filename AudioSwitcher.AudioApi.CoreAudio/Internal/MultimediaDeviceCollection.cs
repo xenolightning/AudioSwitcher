@@ -54,11 +54,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public void Dispose()
         {
-            if (_multimediaDeviceCollection != null)
-            {
-                Marshal.FinalReleaseComObject(_multimediaDeviceCollection);
-                _multimediaDeviceCollection = null;
-            }
+            _multimediaDeviceCollection = null;
         }
 
         public IEnumerator<IMultimediaDevice> GetEnumerator()

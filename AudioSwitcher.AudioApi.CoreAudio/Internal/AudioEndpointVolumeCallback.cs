@@ -46,43 +46,50 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public int OnNotify(IntPtr notifyData)
         {
-            //Since AUDIO_VOLUME_NOTIFICATION_DATA is dynamic in length based on the
-            //number of audio channels available we cannot just call PtrToStructure 
-            //to get all data, thats why it is split up into two steps, first the static
-            //data is marshalled into the data structure, then with some IntPtr math the
-            //remaining floats are read from memory.
-            //
-            var data =
-                (AudioVolumeNotificationDataStruct)
-                    Marshal.PtrToStructure(notifyData, typeof (AudioVolumeNotificationDataStruct));
-
-            //Determine offset in structure of the first float
-            var offset = Marshal.OffsetOf(typeof (AudioVolumeNotificationDataStruct), "ChannelVolume");
-            //Determine offset in memory of the first float
-            var firstFloatPtr = (IntPtr) ((long) notifyData + (long) offset);
-
-            //Something weird happened, better to ignore it and move on
-            if (data.Channels > 100)
-                return 0;
-
-            var voldata = new float[data.Channels];
-
-            //Read all floats from memory.
-            for (var i = 0; i < data.Channels; i++)
+            try
             {
-                voldata[i] = (float) Marshal.PtrToStructure(firstFloatPtr, typeof (float));
+                //Since AUDIO_VOLUME_NOTIFICATION_DATA is dynamic in length based on the
+                //number of audio channels available we cannot just call PtrToStructure 
+                //to get all data, thats why it is split up into two steps, first the static
+                //data is marshalled into the data structure, then with some IntPtr math the
+                //remaining floats are read from memory.
+                //
+                var data =
+                    (AudioVolumeNotificationDataStruct)
+                        Marshal.PtrToStructure(notifyData, typeof(AudioVolumeNotificationDataStruct));
+
+                //Determine offset in structure of the first float
+                var offset = Marshal.OffsetOf(typeof(AudioVolumeNotificationDataStruct), "ChannelVolume");
+                //Determine offset in memory of the first float
+                var firstFloatPtr = (IntPtr) ((long) notifyData + (long) offset);
+
+                //Something weird happened, better to ignore it and move on
+                if (data.Channels > 100)
+                    return 0;
+
+                var voldata = new float[data.Channels];
+
+                //Read all floats from memory.
+                for (var i = 0; i < data.Channels; i++)
+                {
+                    voldata[i] = (float) Marshal.PtrToStructure(firstFloatPtr, typeof(float));
+                }
+
+                //Create combined structure and Fire Event in parent class.
+                var notificationData = new AudioVolumeNotificationData(data.EventContext, data.Muted,
+                    data.MasterVolume, voldata);
+
+                var p = _handler.Target as AudioEndpointVolume;
+
+                if (_handler.IsAlive)
+                    p?.FireNotification(notificationData);
+            }
+            catch(Exception ex)
+            {
+                return ex.HResult;
             }
 
-            //Create combined structure and Fire Event in parent class.
-            var notificationData = new AudioVolumeNotificationData(data.EventContext, data.Muted,
-                data.MasterVolume, voldata);
-
-            var p = _handler.Target as AudioEndpointVolume;
-
-            if (_handler.IsAlive)
-                p?.FireNotification(notificationData);
-
-            return 0;
+            return 0; //success
         }
     }
 }

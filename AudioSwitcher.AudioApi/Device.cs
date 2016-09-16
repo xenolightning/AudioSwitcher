@@ -160,5 +160,11 @@ namespace AudioSwitcher.AudioApi
             _propertyChanged.Dispose();
             _peakValueChanged.Dispose();
         }
+
+        ~Device()
+        {
+            Dispose(false);
+        }
+
     }
 }

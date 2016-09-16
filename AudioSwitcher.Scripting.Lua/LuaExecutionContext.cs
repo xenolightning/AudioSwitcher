@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MoonSharp.Interpreter;
 
 namespace AudioSwitcher.Scripting.Lua
 {
     public sealed class LuaExecutionContext : IExecutionContext
     {
-        private bool _isDebug;
+        private readonly bool _isDebug;
         private CancellationToken _cancellationToken;
-        private Dictionary<string, object> _libraries;
+        private readonly Dictionary<string, object> _libraries;
 
         public LuaExecutionContext(bool isDebug, CancellationToken cancellationToken)
             : this(isDebug, Enumerable.Empty<string>(), cancellationToken)
@@ -47,13 +47,13 @@ namespace AudioSwitcher.Scripting.Lua
 
         public bool IsDebug
         {
-            get;
+            get
+            {
+                return _isDebug;
+            }
         }
 
-        public IDictionary<string, object> Libraries
-        {
-            get;
-        }
+        public IDictionary<string, object> Libraries => new ReadOnlyDictionary<string, object>(_libraries);
 
         public void SetOutput(IScriptOutput output)
         {
