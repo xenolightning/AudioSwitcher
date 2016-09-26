@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -6,9 +7,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 {
     internal static class ComThread
     {
-        private static readonly ComTaskScheduler ComScheduler = new ComTaskScheduler();
+        private static readonly ComTaskScheduler ComScheduler = new ComTaskScheduler(10);
 
-        private static bool InvokeRequired => Thread.CurrentThread.ManagedThreadId != Scheduler.ThreadId;
+        private static bool InvokeRequired => !Scheduler.ThreadIds.Contains(Thread.CurrentThread.ManagedThreadId);
 
         private static ComTaskScheduler Scheduler => ComScheduler;
 
@@ -19,7 +20,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
         public static void Assert()
         {
             if (InvokeRequired)
-                throw new InvalidThreadException($"This operation must be run on the ComThread ThreadId: {Scheduler.ThreadId}");
+                throw new InvalidThreadException("This operation must be run on a STA COM Thread");
         }
 
         public static void Invoke(Action action)

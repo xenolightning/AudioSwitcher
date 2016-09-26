@@ -26,7 +26,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public IObservable<PropertyChangedArgs> PropertyChanged => _propertyChanged.AsObservable();
 
-        public SystemEventNotifcationClient(IMultimediaDeviceEnumerator enumerator)
+        public SystemEventNotifcationClient(Func<IMultimediaDeviceEnumerator> enumerator)
         {
             _deviceStateChanged = new Broadcaster<DeviceStateChangedArgs>();
             _deviceAdded = new Broadcaster<DeviceAddedArgs>();
@@ -34,7 +34,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _defaultDeviceChanged = new Broadcaster<DefaultChangedArgs>();
             _propertyChanged = new Broadcaster<PropertyChangedArgs>();
 
-            _innerClient = new ComMultimediaNotificationClient(this, enumerator);
+            _innerClient = new ComMultimediaNotificationClient(this);
+            _innerClient.RegisterEvents(enumerator);
         }
 
         public void Dispose()
@@ -42,7 +43,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (_isDisposed)
                 return;
 
-            _innerClient.Dispose();
+            _innerClient.Unregister();
             _deviceStateChanged.Dispose();
             _deviceAdded.Dispose();
             _deviceRemoved.Dispose();
@@ -83,19 +84,40 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             public PropertyKey PropertyKey { get; set; }
         }
 
-        private sealed class ComMultimediaNotificationClient : IMultimediaNotificationClient, IDisposable
+        private sealed class ComMultimediaNotificationClient : IMultimediaNotificationClient
         {
             private readonly SystemEventNotifcationClient _client;
-            private readonly IMultimediaDeviceEnumerator _enumerator;
+            private Func<IMultimediaDeviceEnumerator> _enumeratorFunc;
+            private bool _isRegistered;
 
-            public ComMultimediaNotificationClient(SystemEventNotifcationClient client, IMultimediaDeviceEnumerator enumerator)
+            public ComMultimediaNotificationClient(SystemEventNotifcationClient client)
             {
+                _client = client;
+            }
+
+            public void RegisterEvents(Func<IMultimediaDeviceEnumerator> enumerator)
+            {
+                //Possible race condition
+                if (_isRegistered)
+                    return;
+
                 ComThread.Assert();
 
-                _client = client;
-                _enumerator = enumerator;
+                _enumeratorFunc = enumerator;
 
-                enumerator.RegisterEndpointNotificationCallback(this);
+                _enumeratorFunc().RegisterEndpointNotificationCallback(this);
+
+                _isRegistered = true;
+            }
+
+            public void Unregister()
+            {
+                if (!_isRegistered)
+                    return;
+
+                ComThread.Assert();
+
+                _enumeratorFunc().UnregisterEndpointNotificationCallback(this);
             }
 
             void IMultimediaNotificationClient.OnDeviceStateChanged(string deviceId, EDeviceState newState)
@@ -139,14 +161,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     DeviceId = deviceId,
                     PropertyKey = propertyKey
-                });
-            }
-
-            public void Dispose()
-            {
-                ComThread.BeginInvoke(() =>
-                {
-                    _enumerator.UnregisterEndpointNotificationCallback(this);
                 });
             }
         }

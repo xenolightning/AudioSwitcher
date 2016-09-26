@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Observables;
@@ -8,18 +9,18 @@ using AudioSwitcher.AudioApi.Session;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    internal sealed class CoreAudioSession : IAudioSession, IAudioSessionEvents, IDisposable
+    internal sealed class CoreAudioSession : IAudioSession, IAudioSessionEvents
     {
         private readonly IDisposable _deviceMutedSubscription;
-        private readonly IAudioMeterInformation _meterInformation;
-        private readonly ISimpleAudioVolume _simpleAudioVolume;
+        private readonly ThreadLocal<IAudioMeterInformation> _meterInformation;
+        private readonly ThreadLocal<ISimpleAudioVolume> _simpleAudioVolume;
+        private readonly ThreadLocal<IAudioSessionControl2> _audioSessionControl;
         private readonly IDisposable _timerSubscription;
         private readonly Broadcaster<SessionDisconnectedArgs> _disconnected;
         private readonly Broadcaster<SessionMuteChangedArgs> _muteChanged;
         private readonly Broadcaster<SessionPeakValueChangedArgs> _peakValueChanged;
         private readonly Broadcaster<SessionStateChangedArgs> _stateChanged;
         private readonly Broadcaster<SessionVolumeChangedArgs> _volumeChanged;
-        private IAudioSessionControl2 _audioSessionControl;
         private string _displayName;
         private string _executablePath;
         private string _fileDescription;
@@ -28,6 +29,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private bool _isDisposed;
         private bool _isMuted;
         private bool _isSystemSession;
+        private volatile IntPtr _controlPtr;
 
         private float _peakValue = -1;
         private int _processId;
@@ -39,6 +41,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             ComThread.Assert();
 
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            var audioSessionControl = control as IAudioSessionControl2;
+
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            var simpleAudioVolume = control as ISimpleAudioVolume;
+
+            if (audioSessionControl == null || simpleAudioVolume == null)
+                throw new InvalidComObjectException("control");
+
+            _controlPtr = Marshal.GetIUnknownForObject(control);
+            _audioSessionControl = new ThreadLocal<IAudioSessionControl2>(() => Marshal.GetUniqueObjectForIUnknown(_controlPtr) as IAudioSessionControl2, true);
+            _meterInformation = new ThreadLocal<IAudioMeterInformation>(() => Marshal.GetUniqueObjectForIUnknown(_controlPtr) as IAudioMeterInformation, true);
+            _simpleAudioVolume = new ThreadLocal<ISimpleAudioVolume>(() => Marshal.GetUniqueObjectForIUnknown(_controlPtr) as ISimpleAudioVolume, true);
+
+
             Device = device;
 
             _deviceMutedSubscription = Device.MuteChanged.Subscribe(x =>
@@ -46,18 +63,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 OnMuteChanged(_isMuted);
             });
 
-
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            _audioSessionControl = control as IAudioSessionControl2;
-
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            _simpleAudioVolume = control as ISimpleAudioVolume;
-
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            _meterInformation = control as IAudioMeterInformation;
-
-            if (_audioSessionControl == null || _simpleAudioVolume == null)
-                throw new InvalidComObjectException("control");
 
             if (_meterInformation != null)
             {
@@ -71,7 +76,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _muteChanged = new Broadcaster<SessionMuteChangedArgs>();
             _peakValueChanged = new Broadcaster<SessionPeakValueChangedArgs>();
 
-            _audioSessionControl.RegisterAudioSessionNotification(this);
+            AudioSessionControl.RegisterAudioSessionNotification(this);
 
             RefreshProperties();
             RefreshVolume();
@@ -112,7 +117,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (_isDisposed)
                     return;
 
-                ComThread.Invoke(() => _simpleAudioVolume.SetMasterVolume((float)(value / 100), Guid.Empty));
+                ComThread.Invoke(() => SimpleAudioVolume.SetMasterVolume((float)(value / 100), Guid.Empty));
                 _volume = value;
                 OnVolumeChanged(_volume);
             }
@@ -129,7 +134,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (_isMuted == value || _isDisposed)
                     return;
 
-                ComThread.Invoke(() => _simpleAudioVolume.SetMute(value, Guid.Empty));
+                ComThread.Invoke(() => SimpleAudioVolume.SetMute(value, Guid.Empty));
 
                 _isMuted = value;
                 OnMuteChanged(IsMuted);
@@ -137,6 +142,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         }
 
         public AudioSessionState SessionState => _state;
+
+        private IAudioMeterInformation MeterInformation => _meterInformation.Value;
+
+        private ISimpleAudioVolume SimpleAudioVolume => _simpleAudioVolume.Value;
+
+        private IAudioSessionControl2 AudioSessionControl => _audioSessionControl.Value;
 
         int IAudioSessionEvents.OnDisplayNameChanged(string displayName, ref Guid eventContext)
         {
@@ -190,12 +201,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return 0;
         }
 
-        public void Dispose()
+        internal void Dispose()
+        {
+            Dispose(true);
+        }
+
+        private void Dispose(bool disposing)
         {
             if (_isDisposed)
                 return;
 
             _timerSubscription?.Dispose();
+            _audioSessionControl.Dispose();
+            _meterInformation.Dispose();
+            _simpleAudioVolume.Dispose();
             _deviceMutedSubscription.Dispose();
             _muteChanged.Dispose();
             _stateChanged.Dispose();
@@ -203,14 +222,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _volumeChanged.Dispose();
             _peakValueChanged.Dispose();
 
-            //Run this on the com thread to ensure it's diposed correctly
+            //Run this on the com thread to ensure it's disposed correctly
             ComThread.BeginInvoke(() =>
             {
-                _audioSessionControl.UnregisterAudioSessionNotification(this);
-            })
-            .ContinueWith(x =>
-            {
-                _audioSessionControl = null;
+                AudioSessionControl.UnregisterAudioSessionNotification(this);
             });
 
             GC.SuppressFinalize(this);
@@ -235,7 +250,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 if (_meterInformation == null)
                     return;
 
-                _meterInformation.GetPeakValue(out peakValue);
+                MeterInformation.GetPeakValue(out peakValue);
             }
             catch (InvalidComObjectException)
             {
@@ -253,7 +268,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         ~CoreAudioSession()
         {
-            Dispose();
+            Dispose(false);
         }
 
         private void RefreshVolume()
@@ -264,11 +279,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ComThread.Invoke(() =>
             {
                 float vol;
-                _simpleAudioVolume.GetMasterVolume(out vol);
+                SimpleAudioVolume.GetMasterVolume(out vol);
                 _volume = vol * 100;
 
                 bool isMuted;
-                _simpleAudioVolume.GetMute(out isMuted);
+                SimpleAudioVolume.GetMute(out isMuted);
 
                 _isMuted = isMuted;
             });
@@ -281,20 +296,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             ComThread.Invoke(() =>
             {
-                _isSystemSession = _audioSessionControl.IsSystemSoundsSession() == 0;
-                _audioSessionControl.GetDisplayName(out _displayName);
+                _isSystemSession = AudioSessionControl.IsSystemSoundsSession() == 0;
+                AudioSessionControl.GetDisplayName(out _displayName);
 
-                _audioSessionControl.GetIconPath(out _iconPath);
+                AudioSessionControl.GetIconPath(out _iconPath);
 
                 EAudioSessionState state;
-                _audioSessionControl.GetState(out state);
+                AudioSessionControl.GetState(out state);
                 _state = state.AsAudioSessionState();
 
                 uint processId;
-                _audioSessionControl.GetProcessId(out processId);
+                AudioSessionControl.GetProcessId(out processId);
                 _processId = (int)processId;
 
-                _audioSessionControl.GetSessionIdentifier(out _id);
+                AudioSessionControl.GetSessionIdentifier(out _id);
 
                 try
                 {

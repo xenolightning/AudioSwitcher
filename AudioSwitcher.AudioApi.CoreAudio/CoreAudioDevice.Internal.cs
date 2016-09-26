@@ -93,7 +93,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _properties.TryLoadFrom(device);
         }
 
-        private void LoadAudioMeterInformation(IMultimediaDevice device)
+        private void LoadAudioMeterInformation(Func<IMultimediaDevice> device)
         {
             //This should be all on the COM thread to avoid any
             //weird lookups on the result COM object not on an STA Thread
@@ -106,7 +106,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 var clsGuid = new Guid(ComInterfaceIds.AUDIO_METER_INFORMATION_IID);
                 object result;
-                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClassContext.Inproc, IntPtr.Zero, out result));
+                ex = Marshal.GetExceptionForHR(device().Activate(ref clsGuid, ClassContext.Inproc, IntPtr.Zero, out result));
                 _audioMeterInformation = result as IAudioMeterInformation;
             }
             catch (Exception e)
@@ -118,7 +118,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 ClearAudioMeterInformation();
         }
 
-        private void LoadAudioEndpointVolume(IMultimediaDevice device)
+        private void LoadAudioEndpointVolume(Func<IMultimediaDevice> device)
         {
             //Don't even bother looking up volume for disconnected devices
             if (!State.HasFlag(DeviceState.Active))
@@ -138,7 +138,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             try
             {
                 var clsGuid = new Guid(ComInterfaceIds.AUDIO_ENDPOINT_VOLUME_IID);
-                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClassContext.Inproc, IntPtr.Zero, out result));
+                ex = Marshal.GetExceptionForHR(Device.Activate(ref clsGuid, ClassContext.Inproc, IntPtr.Zero, out result));
             }
             catch (Exception e)
             {

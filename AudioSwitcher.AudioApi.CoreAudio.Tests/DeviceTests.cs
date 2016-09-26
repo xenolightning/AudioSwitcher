@@ -216,7 +216,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             }
         }
 
-        [Fact]
+        [Fact(Skip = "The order is not guranteed, so skipping for now")]
         public async Task Device_Set_Default_Communications_Async_Returns_In_Order()
         {
             using (var controller = CreateTestController())

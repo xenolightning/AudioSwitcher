@@ -144,19 +144,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return GetEnumerator();
         }
 
-        public int OnSessionCreated(IAudioSessionControl sessionControl)
+        int IAudioSessionNotification.OnSessionCreated(IAudioSessionControl sessionControl)
         {
-            ComThread.BeginInvoke(() =>
-            {
-                return CacheSessionWrapper(sessionControl);
-            })
-            .ContinueWith(x =>
-            {
-                if (x.Result != null)
-                    OnSessionCreated(x.Result);
-            });
+            Task.Run(async () => await CreateSession(sessionControl));
 
             return 0;
+        }
+
+        private async Task CreateSession(IAudioSessionControl sessionControl)
+        {
+            var managedSession = await ComThread.BeginInvoke(() => CacheSessionWrapper(sessionControl)).ConfigureAwait(false);
+
+            if (managedSession != null)
+                OnSessionCreated(managedSession);
         }
 
         public void Dispose()
@@ -165,6 +165,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             _sessionCreated.Dispose();
             _sessionDisconnected.Dispose();
+            _lock.Dispose();
 
             Marshal.FinalReleaseComObject(_audioSessionManager);
         }

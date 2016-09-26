@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
@@ -16,26 +17,33 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
         private HashSet<CoreAudioDevice> _deviceCache = new HashSet<CoreAudioDevice>();
-        private IMultimediaDeviceEnumerator _innerEnumerator;
+        private volatile IntPtr _innerEnumeratorPtr;
+        private readonly ThreadLocal<IMultimediaDeviceEnumerator> _innerEnumerator;
         private SystemEventNotifcationClient _systemEvents;
+
+        private IMultimediaDeviceEnumerator InnerEnumerator => _innerEnumerator.Value;
 
         public CoreAudioController()
         {
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            var innerEnumerator = ComObjectFactory.GetDeviceEnumerator();
+            _innerEnumeratorPtr = Marshal.GetIUnknownForObject(innerEnumerator);
+
+            if (innerEnumerator == null)
+                throw new InvalidComObjectException("No Device Enumerator");
+
+            _innerEnumerator = new ThreadLocal<IMultimediaDeviceEnumerator>(() => Marshal.GetUniqueObjectForIUnknown(_innerEnumeratorPtr) as IMultimediaDeviceEnumerator, true);
+
             ComThread.Invoke(() =>
             {
-                // ReSharper disable once SuspiciousTypeConversion.Global
-                _innerEnumerator = ComObjectFactory.GetDeviceEnumerator();
-                _systemEvents = new SystemEventNotifcationClient(_innerEnumerator);
-
-                if (_innerEnumerator == null)
-                    return;
+                _systemEvents = new SystemEventNotifcationClient(() => InnerEnumerator);
 
                 _systemEvents.DeviceAdded.Subscribe(x => OnDeviceAdded(x.DeviceId));
                 _systemEvents.DeviceRemoved.Subscribe(x => OnDeviceRemoved(x.DeviceId));
 
                 _deviceCache = new HashSet<CoreAudioDevice>();
                 IMultimediaDeviceCollection collection;
-                _innerEnumerator.EnumAudioEndpoints(EDataFlow.All, EDeviceState.All, out collection);
+                InnerEnumerator.EnumAudioEndpoints(EDataFlow.All, EDeviceState.All, out collection);
 
                 using (var coll = new MultimediaDeviceCollection(collection))
                 {
@@ -70,24 +78,26 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         protected override void Dispose(bool disposing)
         {
-            if (_systemEvents != null)
+            ComThread.BeginInvoke(() =>
             {
-                _systemEvents.Dispose();
+                _systemEvents?.Dispose();
                 _systemEvents = null;
-            }
-
-            foreach (var device in _deviceCache)
+            })
+            .ContinueWith(x =>
             {
-                device.Dispose();
-            }
+                foreach (var device in _deviceCache)
+                {
+                    device.Dispose();
+                }
 
-            _deviceCache?.Clear();
-            _lock?.Dispose();
-            _innerEnumerator = null;
+                _deviceCache?.Clear();
+                _lock?.Dispose();
+                _innerEnumerator?.Dispose();
 
-            base.Dispose(disposing);
+                base.Dispose(disposing);
 
-            GC.SuppressFinalize(this);
+                GC.SuppressFinalize(this);
+            });
         }
 
         public override CoreAudioDevice GetDevice(Guid id, DeviceState state)
@@ -132,7 +142,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return ComThread.Invoke(() =>
             {
                 IMultimediaDevice mDevice;
-                _innerEnumerator.GetDevice(deviceId, out mDevice);
+                InnerEnumerator.GetDevice(deviceId, out mDevice);
 
                 if (mDevice == null)
                     return null;
@@ -214,7 +224,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         internal string GetDefaultDeviceId(DeviceType deviceType, Role role)
         {
             IMultimediaDevice dev;
-            _innerEnumerator.GetDefaultAudioEndpoint(deviceType.AsEDataFlow(), role.AsERole(), out dev);
+            InnerEnumerator.GetDefaultAudioEndpoint(deviceType.AsEDataFlow(), role.AsERole(), out dev);
             if (dev == null)
                 return null;
 

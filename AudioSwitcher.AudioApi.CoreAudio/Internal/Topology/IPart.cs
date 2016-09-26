@@ -39,7 +39,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Topology
         int GetTopologyObject([Out] [MarshalAs(UnmanagedType.Interface)] out IDeviceTopology deviceTopology);
 
         [PreserveSig]
-        int Activate([In] ClassContext classContext, [In] ref Guid interfaceId, [Out, Optional] [MarshalAs(UnmanagedType.IUnknown)] out object instancePtr);
+        int Activate([In] ClassContext classContext, [In] ref Guid interfaceId, [Out] [MarshalAs(UnmanagedType.IUnknown)] out object instancePtr);
 
         [PreserveSig]
         int RegisterControlChangeCallback([In] ref Guid interfaceId, [In] IControlChangeNotify client);

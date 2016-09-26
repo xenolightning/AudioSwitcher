@@ -54,6 +54,7 @@ namespace AudioSwitcher.AudioApi.Hooking
         public void Dispose()
         {
             UnHook();
+            _unhookWaitEvent.Close();
         }
 
         public bool Hook(int processId)

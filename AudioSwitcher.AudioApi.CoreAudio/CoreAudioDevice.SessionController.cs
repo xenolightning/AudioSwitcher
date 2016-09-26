@@ -18,7 +18,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _sessionController = null;
         }
 
-        private void LoadAudioSessionController(IMultimediaDevice device)
+        private void LoadAudioSessionController(Func<IMultimediaDevice> device)
         {
             if (_sessionController?.IsValueCreated == true)
                 return;
@@ -33,7 +33,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     {
                         var clsGuid = new Guid(ComInterfaceIds.AUDIO_SESSION_MANAGER2_IID);
                         object result;
-                        Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClassContext.Inproc, IntPtr.Zero, out result));
+                        Marshal.GetExceptionForHR(device().Activate(ref clsGuid, ClassContext.Inproc, IntPtr.Zero, out result));
 
                         //This is scoped into the managed object, so disposal is taken care of there.
                         var audioSessionManager = result as IAudioSessionManager2;

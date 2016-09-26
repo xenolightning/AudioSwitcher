@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,26 +9,34 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 {
     internal sealed class ComTaskScheduler : TaskScheduler, IDisposable
     {
-        private readonly Thread _thread;
+        private readonly List<Thread> _threads;
         private readonly CancellationTokenSource _cancellationToken;
         private readonly BlockingCollection<Task> _tasks;
 
-        public int ThreadId => _thread?.ManagedThreadId ?? -1;
+        public IEnumerable<int> ThreadIds => _threads.Select(x => x.ManagedThreadId);
 
-        public override int MaximumConcurrencyLevel => 1;
+        public override int MaximumConcurrencyLevel => _threads.Count;
 
-        public ComTaskScheduler()
+        public ComTaskScheduler(int numberOfThreads)
         {
+            if (numberOfThreads < 1)
+                throw new ArgumentOutOfRangeException(nameof(numberOfThreads));
+
+            // Initialize the tasks collection
             _tasks = new BlockingCollection<Task>();
             _cancellationToken = new CancellationTokenSource();
 
-            _thread = new Thread(ThreadStart)
+            // Create the threads to be used by this scheduler
+            _threads = Enumerable.Range(0, numberOfThreads).Select(i =>
             {
-                IsBackground = true
-            };
-            _thread.TrySetApartmentState(ApartmentState.STA);
+                var thread = new Thread(ThreadStart);
+                thread.IsBackground = true;
+                thread.SetApartmentState(ApartmentState.STA);
+                return thread;
+            }).ToList();
 
-            _thread.Start();
+            // Start all of the threads
+            _threads.ForEach(t => t.Start());
         }
 
         public void Dispose()
@@ -36,7 +45,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
                 return;
 
             _cancellationToken.Cancel();
+            _cancellationToken.Dispose();
             _tasks.CompleteAdding();
+            _tasks.Dispose();
         }
 
         protected override void QueueTask(Task task)
@@ -57,7 +68,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
         {
             VerifyNotDisposed();
 
-            if (_thread != Thread.CurrentThread)
+            if (!ThreadIds.Contains(Thread.CurrentThread.ManagedThreadId))
                 return false;
 
             if (_cancellationToken.Token.IsCancellationRequested)

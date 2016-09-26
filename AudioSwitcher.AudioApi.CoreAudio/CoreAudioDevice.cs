@@ -33,7 +33,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly AsyncManualResetEvent _defaultCommResetEvent = new AsyncManualResetEvent(false);
 
         private EDataFlow _dataFlow;
-        private IMultimediaDevice _device;
+        private ThreadLocal<IMultimediaDevice> _device;
         private readonly CoreAudioController _controller;
         private Guid? _id;
         private double _volume;
@@ -47,15 +47,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private volatile bool _isUpdatingPeakValue;
         private volatile bool _isDefaultDevice;
         private volatile bool _isDefaultCommDevice;
+        private volatile IntPtr _devicePtr;
 
         private IMultimediaDevice Device
         {
             get
             {
+                //ComThread.Assert();
+
                 if (_isDisposed)
                     throw new ObjectDisposedException("COM Device Disposed");
 
-                return _device;
+                return _device.Value;
             }
         }
 
@@ -169,17 +172,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             ComThread.Assert();
 
-            _device = device;
+            _devicePtr = Marshal.GetIUnknownForObject(device);
+            _device = new ThreadLocal<IMultimediaDevice>(() => Marshal.GetUniqueObjectForIUnknown(_devicePtr) as IMultimediaDevice, true);
+
             _controller = controller;
 
             if (device == null)
                 throw new ArgumentNullException(nameof(device));
 
-            LoadProperties(device);
+            LoadProperties();
 
-            ReloadAudioMeterInformation(device);
-            ReloadAudioEndpointVolume(device);
-            ReloadAudioSessionController(device);
+            ReloadAudioMeterInformation();
+            ReloadAudioEndpointVolume();
+            ReloadAudioSessionController();
 
             controller.SystemEvents.DeviceStateChanged
                                     .When(x => String.Equals(x.DeviceId, RealId, StringComparison.OrdinalIgnoreCase))
@@ -251,15 +256,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public override TCapability GetCapability<TCapability>()
         {
-            if (_sessionController?.Value is TCapability)
-                return (TCapability)(_sessionController?.Value as IDeviceCapability);
+            return ComThread.Invoke(() =>
+            {
+                if (_sessionController?.Value is TCapability)
+                    return (TCapability)(_sessionController?.Value as IDeviceCapability);
 
-            return default(TCapability);
+                return default(TCapability);
+            });
         }
 
         public override IEnumerable<IDeviceCapability> GetAllCapabilities()
         {
-            yield return _sessionController?.Value;
+            yield return ComThread.Invoke(() => _sessionController?.Value);
         }
 
         public override bool Mute(bool mute)
@@ -491,20 +499,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             OnDefaultChanged();
         }
 
-        private void LoadProperties(IMultimediaDevice device)
+        private void LoadProperties()
         {
-            ComThread.Assert();
-
             //Load values
-            Marshal.ThrowExceptionForHR(device.GetId(out _realId));
-            Marshal.ThrowExceptionForHR(device.GetState(out _state));
+            Marshal.ThrowExceptionForHR(Device.GetId(out _realId));
+            Marshal.ThrowExceptionForHR(Device.GetState(out _state));
 
             // ReSharper disable once SuspiciousTypeConversion.Global
-            var ep = device as IMultimediaEndpoint;
+            var ep = Device as IMultimediaEndpoint;
             if (ep != null)
                 ep.GetDataFlow(out _dataFlow);
 
-            GetPropertyInformation(device);
+            GetPropertyInformation(Device);
 
             //load the initial default state. Have to query using device id because this device is not cached until after creation
             _isDefaultCommDevice = _controller.GetDefaultDeviceId(DeviceType, Role.Communications) == RealId;
@@ -514,11 +520,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void OnPropertyChanged(PropertyKey propertyKey)
         {
-            ComThread.BeginInvoke(() =>
-            {
-                LoadProperties(Device);
-            })
-            .ContinueWith(x =>
+            ComThread.BeginInvoke(LoadProperties).ContinueWith(x =>
             {
                 //Ignore the properties we don't care about
                 if (!PropertykeyToPropertyMap.ContainsKey(propertyKey))
@@ -526,7 +528,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
                 foreach (var propName in PropertykeyToPropertyMap[propertyKey])
                     OnPropertyChanged(propName);
-
             });
         }
 
@@ -534,34 +535,34 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             _state = deviceState;
 
-            ReloadAudioEndpointVolume(Device);
-            ReloadAudioMeterInformation(Device);
-            ReloadAudioSessionController(Device);
+            ReloadAudioEndpointVolume();
+            ReloadAudioMeterInformation();
+            ReloadAudioSessionController();
 
             OnStateChanged(deviceState.AsDeviceState());
         }
 
-        private void ReloadAudioMeterInformation(IMultimediaDevice device)
+        private void ReloadAudioMeterInformation()
         {
             ComThread.Invoke(() =>
             {
-                LoadAudioMeterInformation(device);
+                LoadAudioMeterInformation(() => Device);
             });
         }
 
-        private void ReloadAudioSessionController(IMultimediaDevice device)
+        private void ReloadAudioSessionController()
         {
             ComThread.Invoke(() =>
             {
-                LoadAudioSessionController(device);
+                LoadAudioSessionController(() => Device);
             });
         }
 
-        private void ReloadAudioEndpointVolume(IMultimediaDevice device)
+        private void ReloadAudioEndpointVolume()
         {
             ComThread.Invoke(() =>
             {
-                LoadAudioEndpointVolume(device);
+                LoadAudioEndpointVolume(() => Device);
 
                 if (AudioEndpointVolume != null)
                     AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;

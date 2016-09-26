@@ -86,13 +86,11 @@ namespace AudioSwitcher.AudioApi.Tests
         public void Filtered_Broadcaster_Dispose_Subscription()
         {
             var b = new Broadcaster<int>();
-            var count = 0;
 
             var fo = b.When(x => true) as FilteredBroadcaster<int>;
 
             var sub  = fo.Subscribe(x =>
             {
-                count++;
             });
 
             sub.Dispose();
