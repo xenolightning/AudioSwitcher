@@ -16,6 +16,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
         public string name;
         public DeviceState state;
         public DeviceType type;
+        public double volume;
         private SandboxAudioController _controller;
 
         public override Guid Id => id;
@@ -56,8 +57,8 @@ namespace AudioSwitcher.AudioApi.Sandbox
         public override DeviceType DeviceType => type;
 
         public override bool IsMuted => isMuted;
+        public override double Volume { get { return volume; } }
 
-        public override double Volume { get; set; }
 
         public SandboxDevice(SandboxAudioController controller)
             : base(controller)
@@ -93,19 +94,19 @@ namespace AudioSwitcher.AudioApi.Sandbox
             return Task.FromResult(IsDefaultCommunicationsDevice);
         }
 
-        public override bool Mute(bool mute)
-        {
-            return isMuted = mute;
-        }
-
-        public override Task<bool> MuteAsync(bool mute)
+        public override Task<bool> SetMuteAsync(bool mute, CancellationToken cancellationToken)
         {
             return Task.FromResult(isMuted = mute);
         }
 
-        public override Task<double> SetVolumeAsync(double volume)
+        public override Task<double> GetVolumeAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult(Volume = volume);
+            return Task.FromResult(volume);
+        }
+
+        public override Task<double> SetVolumeAsync(double ivol, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(volume = ivol);
         }
 
         public override bool HasCapability<TCapability>()

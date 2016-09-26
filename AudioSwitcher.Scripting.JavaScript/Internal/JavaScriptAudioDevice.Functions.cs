@@ -5,8 +5,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
     {
         public double Volume(double level)
         {
-            Device.Volume = (int)level;
-            return Device.Volume;
+            return Device.SetVolumeAsync(level).Result;
         }
 
         public double Volume()
@@ -16,8 +15,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
 
         public bool Mute(bool mute)
         {
-            Device.Mute(mute);
-            return Device.IsMuted;
+            return Device.SetMuteAsync(mute).Result;
         }
 
         public bool SetAsDefault()
@@ -33,8 +31,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal
 
         public bool ToggleMute()
         {
-            Device.ToggleMute();
-            return Device.IsMuted;
+            return Device.ToggleMuteAsync().Result;
         }
     }
 }

@@ -152,19 +152,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
                 return _volume;
             }
-            set
-            {
-                if (AudioEndpointVolume == null)
-                    return;
-
-                var normalizedVolume = NormalizeVolume(value);
-
-                if (Math.Abs(_volume - normalizedVolume) < 0.1)
-                    return;
-
-                AudioEndpointVolume.MasterVolumeLevelScalar = normalizedVolume;
-                _volumeResetEvent.Wait(DefaultComTimeout);
-            }
         }
 
         internal CoreAudioDevice(IMultimediaDevice device, CoreAudioController controller)
@@ -270,7 +257,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             yield return ComThread.Invoke(() => _sessionController?.Value);
         }
 
-        public override bool Mute(bool mute)
+        public override async Task<bool> SetMuteAsync(bool mute, CancellationToken cancellationToken)
         {
             if (_isMuted == mute)
                 return _isMuted;
@@ -279,28 +266,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return true;
 
             AudioEndpointVolume.Mute = mute;
-            _muteChangedResetEvent.Wait(DefaultComTimeout);
+            await _muteChangedResetEvent.WaitAsync(cancellationToken);
 
             return _isMuted;
         }
 
-        public override async Task<bool> MuteAsync(bool mute)
+        public override Task<double> GetVolumeAsync(CancellationToken cancellationToken)
         {
-            if (_isMuted == mute)
-                return _isMuted;
-
-            if (AudioEndpointVolume == null)
-                return true;
-
-            AudioEndpointVolume.Mute = mute;
-            await _muteChangedResetEvent.WaitAsync(DefaultComTimeout);
-
-            return _isMuted;
+            return Task.FromResult(_volume);
         }
 
-        public override async Task<double> SetVolumeAsync(double volume)
+        public override async Task<double> SetVolumeAsync(double volume, CancellationToken cancellationToken)
         {
-            var normalizedVolume = NormalizeVolume(volume);
+            var normalizedVolume = volume.NormalizeVolume();
 
             if (Math.Abs(_volume - normalizedVolume) < 0.1)
                 return _volume;
@@ -309,21 +287,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return -1;
 
             AudioEndpointVolume.MasterVolumeLevelScalar = normalizedVolume;
-            await _volumeResetEvent.WaitAsync(DefaultComTimeout);
+            await _volumeResetEvent.WaitAsync(cancellationToken);
 
             return _volume;
-        }
-
-        private static float NormalizeVolume(double volume)
-        {
-            if (volume <= 0)
-                volume = 0;
-            else if (volume >= 100)
-                volume = 100;
-            else
-                volume += 0.0001F;
-
-            return (float)(volume / 100);
         }
 
         public override bool SetAsDefault()

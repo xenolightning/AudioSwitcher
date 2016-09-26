@@ -57,7 +57,7 @@ namespace AudioSwitcher.AudioApi
 
         public abstract bool IsMuted { get; }
 
-        public abstract double Volume { get; set; }
+        public abstract double Volume { get; }
 
         public IObservable<DeviceVolumeChangedArgs> VolumeChanged => _volumeChanged.AsObservable();
 
@@ -99,21 +99,36 @@ namespace AudioSwitcher.AudioApi
 
         public abstract Task<bool> SetAsDefaultCommunicationsAsync(CancellationToken cancellationToken);
 
-        public abstract bool Mute(bool mute);
-
-        public abstract Task<bool> MuteAsync(bool mute);
-
-        public virtual bool ToggleMute()
+        public virtual Task<bool> SetMuteAsync(bool mute)
         {
-            return Mute(!IsMuted);
+            return SetMuteAsync(mute, CancellationToken.None);
         }
+
+        public abstract Task<bool> SetMuteAsync(bool mute, CancellationToken cancellationToken);
 
         public virtual Task<bool> ToggleMuteAsync()
         {
-            return MuteAsync(!IsMuted);
+            return ToggleMuteAsync(CancellationToken.None);
         }
 
-        public abstract Task<double> SetVolumeAsync(double volume);
+        public Task<bool> ToggleMuteAsync(CancellationToken cancellationToken)
+        {
+            return SetMuteAsync(!IsMuted, cancellationToken);
+        }
+
+        public virtual Task<double> GetVolumeAsync()
+        {
+            return GetVolumeAsync(CancellationToken.None);
+        }
+
+        public abstract Task<double> GetVolumeAsync(CancellationToken cancellationToken);
+
+        public virtual Task<double> SetVolumeAsync(double volume)
+        {
+            return SetVolumeAsync(volume, CancellationToken.None);
+        }
+
+        public abstract Task<double> SetVolumeAsync(double volume, CancellationToken cancellationToken);
 
         public abstract bool HasCapability<TCapability>() where TCapability : IDeviceCapability;
 

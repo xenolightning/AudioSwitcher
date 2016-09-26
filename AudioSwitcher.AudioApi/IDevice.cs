@@ -35,7 +35,7 @@ namespace AudioSwitcher.AudioApi
 
         bool IsMuted { get; }
 
-        double Volume { get; set; }
+        double Volume { get; }
 
         IObservable<DeviceVolumeChangedArgs> VolumeChanged { get; }
 
@@ -61,15 +61,17 @@ namespace AudioSwitcher.AudioApi
         Task<bool> SetAsDefaultCommunicationsAsync();
         Task<bool> SetAsDefaultCommunicationsAsync(CancellationToken cancellationToken);
 
-        bool Mute(bool mute);
-
-        Task<bool> MuteAsync(bool mute);
-
-        bool ToggleMute();
+        Task<bool> SetMuteAsync(bool mute);
+        Task<bool> SetMuteAsync(bool mute, CancellationToken cancellationToken);
 
         Task<bool> ToggleMuteAsync();
+        Task<bool> ToggleMuteAsync(CancellationToken cancellationToken);
+
+        Task<double> GetVolumeAsync();
+        Task<double> GetVolumeAsync(CancellationToken cancellationToken);
 
         Task<double> SetVolumeAsync(double volume);
+        Task<double> SetVolumeAsync(double volume, CancellationToken cancellationToken);
 
         bool HasCapability<TCapability>() where TCapability : IDeviceCapability;
 

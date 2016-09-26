@@ -151,5 +151,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
             }
         }
+
+        internal static float NormalizeVolume(this double volume)
+        {
+            if (volume <= 0)
+                volume = 0;
+            else if (volume >= 100)
+                volume = 100;
+            else
+                volume += 0.0001F;
+
+            return (float)(volume / 100);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.Session;
 using Xunit;
 
@@ -19,7 +20,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         }
 
         [Fact]
-        public void CoreAudioSession_IsMuted_When_Device_Is_Muted()
+        public async Task CoreAudioSession_IsMuted_When_Device_Is_Muted()
         {
             using (var controller = new CoreAudioController())
             {
@@ -29,13 +30,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
                 var oldDMute = device.IsMuted;
                 var oldSMute = session.IsMuted;
 
-                session.IsMuted = false;
-                device.Mute(true);
+                await session.SetMuteAsync(false);
+                await device.SetMuteAsync(true);
 
                 Assert.True(session.IsMuted);
 
-                device.Mute(oldDMute);
-                session.IsMuted = oldSMute;
+                await device.SetMuteAsync(oldDMute);
+                await session.SetMuteAsync(oldSMute);
             }
         }
 

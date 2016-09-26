@@ -12,6 +12,7 @@ namespace AudioSwitcher.Tests.Common
         private readonly TestDeviceController _controller;
         private Guid _id;
         private bool _muted;
+        private double _volume;
 
         public TestDevice(Guid id, DeviceType dFlow, TestDeviceController controller)
             : base(controller)
@@ -49,11 +50,7 @@ namespace AudioSwitcher.Tests.Common
 
         public override bool IsMuted => _muted;
 
-        public override double Volume
-        {
-            get;
-            set;
-        }
+        public override double Volume => _volume;
 
         public override bool SetAsDefault(CancellationToken cancellationToken)
         {
@@ -83,19 +80,19 @@ namespace AudioSwitcher.Tests.Common
             return Task.FromResult(IsDefaultCommunicationsDevice);
         }
 
-        public override bool Mute(bool mute)
-        {
-            return _muted = mute;
-        }
-
-        public override Task<bool> MuteAsync(bool mute)
+        public override Task<bool> SetMuteAsync(bool mute, CancellationToken cancellationToken)
         {
             return Task.FromResult(_muted = mute);
         }
 
-        public override Task<double> SetVolumeAsync(double volume)
+        public override Task<double> GetVolumeAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult(Volume = volume);
+            return Task.FromResult(_volume);
+        }
+
+        public override Task<double> SetVolumeAsync(double volume, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(_volume = volume);
         }
 
         public override bool HasCapability<TCapability>()
