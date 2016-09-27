@@ -17,7 +17,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly ThreadLocal<IAudioMeterInformation> _meterInformation;
         private readonly ThreadLocal<ISimpleAudioVolume> _simpleAudioVolume;
         private readonly ThreadLocal<IAudioSessionControl2> _audioSessionControl;
-        private readonly IDisposable _timerSubscription;
         private readonly Broadcaster<SessionDisconnectedArgs> _disconnected;
         private readonly Broadcaster<SessionMuteChangedArgs> _muteChanged;
         private readonly Broadcaster<SessionPeakValueChangedArgs> _peakValueChanged;
@@ -25,6 +24,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly Broadcaster<SessionVolumeChangedArgs> _volumeChanged;
         private readonly AsyncAutoResetEvent _volumeResetEvent = new AsyncAutoResetEvent(false);
         private readonly AsyncAutoResetEvent _muteResetEvent = new AsyncAutoResetEvent(false);
+        private IDisposable _timerSubscription;
         private string _displayName;
         private string _executablePath;
         private string _fileDescription;
@@ -34,7 +34,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private bool _isMuted;
         private bool _isSystemSession;
         private volatile IntPtr _controlPtr;
-
         private float _peakValue = -1;
         private int _processId;
         private AudioSessionState _state;
@@ -66,13 +65,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 OnMuteChanged(_isMuted);
             });
-
-
-            if (_meterInformation != null)
-            {
-                //start a timer to poll for peak value changes
-                _timerSubscription = PeakValueTimer.PeakValueTick.Subscribe(Timer_UpdatePeakValue);
-            }
 
             _stateChanged = new Broadcaster<SessionStateChangedArgs>();
             _disconnected = new Broadcaster<SessionDisconnectedArgs>();
@@ -127,13 +119,51 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public IObservable<SessionVolumeChangedArgs> VolumeChanged => _volumeChanged.AsObservable();
 
-        public IObservable<SessionPeakValueChangedArgs> PeakValueChanged => _peakValueChanged.AsObservable();
+        public IObservable<SessionPeakValueChangedArgs> PeakValueChanged
+        {
+            get
+            {
+                //only initialize the timer subscription when peak value is requested
+                if (MeterInformation != null && _timerSubscription == null)
+                {
+                    //start a timer to poll for peak value changes
+                    _timerSubscription = PeakValueTimer.PeakValueTick.Subscribe(Timer_UpdatePeakValue);
+                }
+
+                return _peakValueChanged.AsObservable();
+            }
+        }
 
         public IObservable<SessionMuteChangedArgs> MuteChanged => _muteChanged.AsObservable();
 
         public IObservable<SessionStateChangedArgs> StateChanged => _stateChanged.AsObservable();
 
         public IObservable<SessionDisconnectedArgs> Disconnected => _disconnected.AsObservable();
+
+        public string Id => _id;
+
+        public int ProcessId => _processId;
+
+        public string DisplayName => String.IsNullOrWhiteSpace(_displayName) ? _fileDescription : _displayName;
+
+        public string IconPath => _iconPath;
+
+        public string ExecutablePath => _executablePath;
+
+        public bool IsSystemSession => _isSystemSession;
+
+        public double Volume => _volume;
+
+        public bool IsMuted => _isMuted || Device.IsMuted;
+
+        public AudioSessionState SessionState => _state;
+
+        private IAudioMeterInformation MeterInformation => _meterInformation.Value;
+
+        private ISimpleAudioVolume SimpleAudioVolume => _simpleAudioVolume.Value;
+
+        private IAudioSessionControl2 AudioSessionControl => _audioSessionControl.Value;
+
         public Task<double> GetVolumeAsync()
         {
             return GetVolumeAsync(CancellationToken.None);
@@ -190,30 +220,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             return _isMuted;
         }
-
-        public string Id => _id;
-
-        public int ProcessId => _processId;
-
-        public string DisplayName => String.IsNullOrWhiteSpace(_displayName) ? _fileDescription : _displayName;
-
-        public string IconPath => _iconPath;
-
-        public string ExecutablePath => _executablePath;
-
-        public bool IsSystemSession => _isSystemSession;
-
-        public double Volume => _volume;
-
-        public bool IsMuted => _isMuted || Device.IsMuted;
-
-        public AudioSessionState SessionState => _state;
-
-        private IAudioMeterInformation MeterInformation => _meterInformation.Value;
-
-        private ISimpleAudioVolume SimpleAudioVolume => _simpleAudioVolume.Value;
-
-        private IAudioSessionControl2 AudioSessionControl => _audioSessionControl.Value;
 
         int IAudioSessionEvents.OnDisplayNameChanged(string displayName, ref Guid eventContext)
         {
@@ -285,7 +291,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             try
             {
-                if (_meterInformation == null)
+                if (MeterInformation == null)
                     return;
 
                 MeterInformation.GetPeakValue(out peakValue);
