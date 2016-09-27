@@ -183,10 +183,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             ThrowIfDisposed();
 
+            if (Math.Abs(_volume - volume) < 0.1)
+                return _volume;
+
             var normalizedVolume = volume.NormalizeVolume();
-
             ComThread.Invoke(() => SimpleAudioVolume.SetMasterVolume(normalizedVolume, Guid.Empty));
-
             await _volumeResetEvent.WaitAsync(cancellationToken);
 
             return _volume;
@@ -235,7 +236,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         int IAudioSessionEvents.OnSimpleVolumeChanged(float volume, bool isMuted, ref Guid eventContext)
         {
-            var adjustedVolume = volume*100;
+            var adjustedVolume = volume.DeNormalizeVolume();
+
             if (Math.Abs(_volume - adjustedVolume) > 0)
             {
                 _volume = adjustedVolume;

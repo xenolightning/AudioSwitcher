@@ -155,13 +155,17 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         internal static float NormalizeVolume(this double volume)
         {
             if (volume <= 0)
-                volume = 0;
-            else if (volume >= 100)
-                volume = 100;
-            else
-                volume += 0.0001F;
+                return 0;
 
-            return (float)(volume / 100);
+            if (volume >= 100)
+                return  1;
+
+            return (float)((volume + 0.0001F) / 100);
+        }
+
+        internal static double DeNormalizeVolume(this float volume)
+        {
+            return volume * 100;
         }
     }
 }
