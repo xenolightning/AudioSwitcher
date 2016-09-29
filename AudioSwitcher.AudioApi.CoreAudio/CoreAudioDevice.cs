@@ -167,6 +167,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (device == null)
                 throw new ArgumentNullException(nameof(device));
 
+            //Get the id and initial state of the device
+            Marshal.ThrowExceptionForHR(Device.GetState(out _state));
+            Marshal.ThrowExceptionForHR(Device.GetId(out _realId));
+
             LoadProperties();
 
             ReloadAudioMeterInformation();
@@ -466,9 +470,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void LoadProperties()
         {
-            //Load values
-            Marshal.ThrowExceptionForHR(Device.GetId(out _realId));
-            Marshal.ThrowExceptionForHR(Device.GetState(out _state));
+            //Throw away variables
+            EDeviceState lState;
+            string lId;
+
+            //If either of these error, assume that the device is in an unusable state
+            Marshal.ThrowExceptionForHR(Device.GetId(out lId));
+            Marshal.ThrowExceptionForHR(Device.GetState(out lState));
 
             // ReSharper disable once SuspiciousTypeConversion.Global
             var ep = Device as IMultimediaEndpoint;
@@ -499,6 +507,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private void OnStateChanged(EDeviceState deviceState)
         {
             _state = deviceState;
+
+            //Attempt to reload properties if the device has become active.
+            //A fail-safe incase the device doesn't fire property changed events
+            //when it becomes "active"
+            ComThread.BeginInvoke(LoadProperties);
 
             ReloadAudioEndpointVolume();
             ReloadAudioMeterInformation();
