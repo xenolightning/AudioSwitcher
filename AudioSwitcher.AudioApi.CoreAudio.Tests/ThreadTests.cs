@@ -31,9 +31,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
                 for (var i = 0; i < 50; i++)
                 {
-                    controller.DefaultPlaybackDevice.SetAsDefault();
-
-                    Thread.Sleep(20);
+                    controller.DefaultPlaybackDevice.SetAsDefault(CancellationToken.None);
                 }
 
                 var newHandles = Process.GetCurrentProcess().HandleCount;
@@ -89,7 +87,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             {
 
                 var dev = controller.DefaultPlaybackCommunicationsDevice;
-                var devices = await controller.GetPlaybackDevicesAsync();
+                var devices = await controller.GetPlaybackDevicesAsync(DeviceState.Active);
 
                 foreach (var d in devices)
                 {
@@ -115,7 +113,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             using (var controller = CreateTestController())
             {
                 var dev = controller.DefaultCaptureCommunicationsDevice;
-                var devices = await controller.GetCaptureDevicesAsync();
+                var devices = await controller.GetCaptureDevicesAsync(DeviceState.Active);
                 bool success;
 
                 foreach (var d in devices)
@@ -142,7 +140,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             using (var controller = CreateTestController())
             {
                 var dev = controller.DefaultPlaybackDevice;
-                var devices = await controller.GetPlaybackDevicesAsync();
+                var devices = await controller.GetPlaybackDevicesAsync(DeviceState.Active);
 
                 foreach (var d in devices)
                 {
@@ -168,7 +166,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             using (var controller = CreateTestController())
             {
                 var dev = controller.DefaultCaptureDevice;
-                var devices = await controller.GetCaptureDevicesAsync();
+                var devices = await controller.GetCaptureDevicesAsync(DeviceState.Active);
 
                 foreach (var d in devices)
                 {

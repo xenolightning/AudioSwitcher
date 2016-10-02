@@ -1,16 +1,19 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Nito.AsyncEx.Synchronous;
 
 // Original idea by Stephen Toub: http://blogs.msdn.com/b/pfxteam/archive/2012/02/11/10266923.aspx
 
+// ReSharper disable once CheckNamespace
 namespace Nito.AsyncEx
 {
     /// <summary>
     /// An async-compatible auto-reset event.
     /// </summary>
-    public sealed class AsyncAutoResetEvent
+    [DebuggerNonUserCode]
+    internal sealed class AsyncAutoResetEvent
     {
         /// <summary>
         /// The queue of TCSs that other tasks are awaiting.

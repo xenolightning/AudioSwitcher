@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
+// ReSharper disable once CheckNamespace
 namespace Nito.AsyncEx.Synchronous
 {
     /// <summary>
     /// Provides synchronous extension methods for tasks.
     /// </summary>
-    public static class TaskExtensions
+    [DebuggerNonUserCode]
+    internal static class TaskExtensions
     {
         /// <summary>
         /// Waits for the task to complete, unwrapping any exceptions.

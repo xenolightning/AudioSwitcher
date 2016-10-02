@@ -18,12 +18,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return ComThread.Invoke(() =>
-                {
-                    uint result;
-                    Marshal.ThrowExceptionForHR(_multimediaDeviceCollection.GetCount(out result));
-                    return Convert.ToInt32(result);
-                });
+                ComThread.Assert();
+                uint result;
+                Marshal.ThrowExceptionForHR(_multimediaDeviceCollection.GetCount(out result));
+                return Convert.ToInt32(result);
             }
         }
 
@@ -36,23 +34,30 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                return ComThread.Invoke(() =>
-                {
-                    IMultimediaDevice result;
-                    _multimediaDeviceCollection.Item(Convert.ToUInt32(index), out result);
-                    return result;
-                });
+                ComThread.Assert();
+                IMultimediaDevice result;
+                _multimediaDeviceCollection.Item(Convert.ToUInt32(index), out result);
+                return result;
             }
         }
 
         internal MultimediaDeviceCollection(IMultimediaDeviceCollection parent)
         {
             ComThread.Assert();
-
             _multimediaDeviceCollection = parent;
         }
 
+        ~MultimediaDeviceCollection()
+        {
+            Dispose(false);
+        }
+
         public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected void Dispose(bool disposing)
         {
             _multimediaDeviceCollection = null;
         }

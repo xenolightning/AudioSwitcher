@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+// ReSharper disable once CheckNamespace
 namespace Nito.AsyncEx
 {
     /// <summary>
@@ -51,7 +52,8 @@ namespace Nito.AsyncEx
     /// <summary>
     /// Provides extension methods for wait queues.
     /// </summary>
-    public static class AsyncWaitQueueExtensions
+    [DebuggerNonUserCode]
+    internal static class AsyncWaitQueueExtensions
     {
         /// <summary>
         /// Creates a new entry and queues it to this wait queue. If the cancellation token is already canceled, this method immediately returns a canceled task without modifying the wait queue.
@@ -108,7 +110,8 @@ namespace Nito.AsyncEx
     /// <typeparam name="T">The type of the results. If this isn't needed, use <see cref="Object"/>.</typeparam>
     [DebuggerDisplay("Count = {Count}")]
     [DebuggerTypeProxy(typeof(DefaultAsyncWaitQueue<>.DebugView))]
-    public sealed class DefaultAsyncWaitQueue<T> : IAsyncWaitQueue<T>
+    [DebuggerNonUserCode]
+    internal sealed class DefaultAsyncWaitQueue<T> : IAsyncWaitQueue<T>
     {
         private readonly Deque<TaskCompletionSource<T>> _queue = new Deque<TaskCompletionSource<T>>();
 

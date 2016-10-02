@@ -1,15 +1,16 @@
-﻿using System.Threading;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 // Original idea by Stephen Toub: http://blogs.msdn.com/b/pfxteam/archive/2012/02/11/10266920.aspx
 
-namespace Nito.AsyncEx
+namespace AudioSwitcher.AudioApi.CoreAudio.Tasks
 {
     /// <summary>
     /// An async-compatible manual-reset event.
     /// </summary>
-    public sealed class AsyncManualResetEvent
+    [DebuggerNonUserCode]
+    internal sealed class AsyncManualResetEvent
     {
         /// <summary>
         /// The object used for synchronization.

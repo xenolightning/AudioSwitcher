@@ -20,6 +20,9 @@ namespace AudioSwitcher.AudioApi.Observables
 
         public void Dispose()
         {
+            if (IsDisposed)
+                return;
+
             Dispose(true);
             GC.SuppressFinalize(this);
             IsDisposed = true;

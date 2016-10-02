@@ -1,11 +1,14 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using System.Threading.Tasks;
 
+// ReSharper disable once CheckNamespace
 namespace Nito.AsyncEx
 {
     /// <summary>
     /// Provides completed task constants.
     /// </summary>
-    public static class TaskConstants
+    [DebuggerNonUserCode]
+    internal static class TaskConstants
     {
         private static readonly Task<bool> booleanTrue = Task.FromResult(true);
         private static readonly Task<int> IntNegativeOne = Task.FromResult(-1);
@@ -50,7 +53,8 @@ namespace Nito.AsyncEx
     /// Provides completed task constants.
     /// </summary>
     /// <typeparam name="T">The type of the task result.</typeparam>
-    public static class TaskConstants<T>
+    [DebuggerNonUserCode]
+    internal static class TaskConstants<T>
     {
         private static Task<T> CanceledTask()
         {

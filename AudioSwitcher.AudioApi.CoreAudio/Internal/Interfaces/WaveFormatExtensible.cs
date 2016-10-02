@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 2)]
-    public class WaveFormatExtensible : WaveFormat
+    internal class WaveFormatExtensible : WaveFormat
     {
         private readonly int dwChannelMask;
         private readonly Guid subFormat;
@@ -19,6 +19,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         /// <summary>
         /// Parameterless constructor for marshalling
         /// </summary>
+        // ReSharper disable once UnusedMember.Local
         private WaveFormatExtensible()
         {
         }

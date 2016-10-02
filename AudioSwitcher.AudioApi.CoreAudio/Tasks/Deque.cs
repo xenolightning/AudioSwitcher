@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
+// ReSharper disable once CheckNamespace
 namespace Nito
 {
     /// <summary>
@@ -11,6 +12,7 @@ namespace Nito
     /// <typeparam name="T">The type of elements contained in the deque.</typeparam>
     [DebuggerDisplay("Count = {Count}, Capacity = {Capacity}")]
     [DebuggerTypeProxy(typeof(Deque<>.DebugView))]
+    [DebuggerNonUserCode]
     internal sealed class Deque<T> : IList<T>, System.Collections.IList
     {
         /// <summary>

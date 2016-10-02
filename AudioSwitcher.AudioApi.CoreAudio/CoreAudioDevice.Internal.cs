@@ -118,7 +118,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 ClearAudioMeterInformation();
         }
 
-        private void LoadAudioEndpointVolume(Func<IMultimediaDevice> device)
+        private void LoadAudioEndpointVolume()
         {
             //Don't even bother looking up volume for disconnected devices
             if (!State.HasFlag(DeviceState.Active))

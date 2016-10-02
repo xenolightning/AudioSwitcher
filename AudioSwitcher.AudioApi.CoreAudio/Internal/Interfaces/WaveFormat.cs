@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 2)]
-    public class WaveFormat
+    internal class WaveFormat
     {
         private readonly int averageBytesPerSecond;
         private readonly short bitsPerSample;

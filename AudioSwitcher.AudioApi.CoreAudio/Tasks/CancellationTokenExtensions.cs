@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
+// ReSharper disable once CheckNamespace
 namespace Nito.AsyncEx
 {
     /// <summary>
     /// Provides extension methods for <see cref="CancellationToken"/>.
     /// </summary>
-    public static class CancellationTokenExtensions
+    [DebuggerNonUserCode]
+    internal static class CancellationTokenExtensions
     {
         /// <summary>
         /// Returns a <see cref="Task"/> that is canceled when this <see cref="CancellationToken"/> is canceled. This method will leak resources if the cancellation token is long-lived; use <see cref="ToCancellationTokenTaskSource"/> for a similar approach with proper resource management.
@@ -37,7 +40,7 @@ namespace Nito.AsyncEx
         /// <summary>
         /// Holds the task for a cancellation token, as well as the token registration. The registration is disposed when this instance is disposed.
         /// </summary>
-        public sealed class CancellationTokenTaskSource : IDisposable
+        internal sealed class CancellationTokenTaskSource : IDisposable
         {
             /// <summary>
             /// The cancellation token registration, if any. This is <c>null</c> if the registration was not necessary.

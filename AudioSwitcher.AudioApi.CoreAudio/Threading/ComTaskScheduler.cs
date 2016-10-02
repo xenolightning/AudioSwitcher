@@ -12,8 +12,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
         private readonly List<Thread> _threads;
         private readonly CancellationTokenSource _cancellationToken;
         private readonly BlockingCollection<Task> _tasks;
-
-        public IEnumerable<int> ThreadIds => _threads.Select(x => x.ManagedThreadId);
+        public readonly List<int> ThreadIds;
 
         public override int MaximumConcurrencyLevel => _threads.Count;
 
@@ -37,6 +36,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 
             // Start all of the threads
             _threads.ForEach(t => t.Start());
+
+            ThreadIds = _threads.Select(x => x.ManagedThreadId).ToList();
         }
 
         public void Dispose()
@@ -52,21 +53,21 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 
         protected override void QueueTask(Task task)
         {
-            VerifyNotDisposed();
+            ThrowIfDisposed();
 
             _tasks.Add(task, _cancellationToken.Token);
         }
 
         protected override IEnumerable<Task> GetScheduledTasks()
         {
-            VerifyNotDisposed();
+            ThrowIfDisposed();
 
             return _tasks.ToArray();
         }
 
         protected override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)
         {
-            VerifyNotDisposed();
+            ThrowIfDisposed();
 
             if (!ThreadIds.Contains(Thread.CurrentThread.ManagedThreadId))
                 return false;
@@ -85,7 +86,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
                 TryExecuteTask(task);
         }
 
-        private void VerifyNotDisposed()
+        private void ThrowIfDisposed()
         {
             if (_cancellationToken.IsCancellationRequested || _tasks.IsAddingCompleted)
                 throw new ObjectDisposedException(typeof(ComTaskScheduler).Name);

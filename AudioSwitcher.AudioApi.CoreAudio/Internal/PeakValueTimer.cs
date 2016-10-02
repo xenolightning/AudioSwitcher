@@ -5,7 +5,7 @@ using Timer = System.Timers.Timer;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    public static class PeakValueTimer
+    internal static class PeakValueTimer
     {
         private static readonly Timer _peakValueTimer;
         private static readonly Broadcaster<long> _peakValueTick;

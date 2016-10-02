@@ -7,7 +7,7 @@ using AudioSwitcher.AudioApi.Observables;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    public static class ProcessMonitor
+    internal static class ProcessMonitor
     {
 
         private static readonly Timer _processExitTimer;

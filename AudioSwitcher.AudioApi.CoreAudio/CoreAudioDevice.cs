@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
+using AudioSwitcher.AudioApi.CoreAudio.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
@@ -480,8 +481,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             // ReSharper disable once SuspiciousTypeConversion.Global
             var ep = Device as IMultimediaEndpoint;
-            if (ep != null)
-                ep.GetDataFlow(out _dataFlow);
+            ep?.GetDataFlow(out _dataFlow);
 
             GetPropertyInformation(Device);
 
@@ -540,7 +540,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             ComThread.Invoke(() =>
             {
-                LoadAudioEndpointVolume(() => Device);
+                LoadAudioEndpointVolume();
 
                 if (AudioEndpointVolume != null)
                     AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
