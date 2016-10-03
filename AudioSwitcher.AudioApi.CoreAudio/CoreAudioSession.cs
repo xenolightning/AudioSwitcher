@@ -160,11 +160,32 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public AudioSessionState SessionState => _state;
 
-        private IAudioMeterInformation MeterInformation => _meterInformation.Value;
+        private IAudioMeterInformation MeterInformation
+        {
+            get
+            {
+                ComThread.Assert();
+                return _meterInformation.Value;
+            }
+        }
 
-        private ISimpleAudioVolume SimpleAudioVolume => _simpleAudioVolume.Value;
+        private ISimpleAudioVolume SimpleAudioVolume
+        {
+            get
+            {
+                ComThread.Assert();
+                return _simpleAudioVolume.Value;
+            }
+        }
 
-        private IAudioSessionControl2 AudioSessionControl => _audioSessionControl.Value;
+        private IAudioSessionControl2 AudioSessionControl
+        {
+            get
+            {
+                ComThread.Assert();
+                return _audioSessionControl.Value;
+            }
+        }
 
         public Task<double> GetVolumeAsync()
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
@@ -47,15 +48,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         };
 
         private AudioEndpointVolume _audioEndpointVolume;
-        private IAudioMeterInformation _audioMeterInformation;
+        private ThreadLocal<IAudioMeterInformation> _audioMeterInformation;
+        private IntPtr _audioMeterInformationPtr;
 
         private IPropertyDictionary Properties
         {
             get
             {
-                if(_isDisposed)
-                    throw new ObjectDisposedException("");
-
+                ThrowIfDisposed();
                 return _properties;
             }
         }
@@ -67,17 +67,22 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (_isDisposed)
-                    throw new ObjectDisposedException("");
-
-                return _audioMeterInformation;
+                ThrowIfDisposed();
+                return _audioMeterInformation?.Value;
             }
         }
 
         /// <summary>
         /// Audio Endpoint VolumeChanged
         /// </summary>
-        private AudioEndpointVolume AudioEndpointVolume => _audioEndpointVolume;
+        private AudioEndpointVolume AudioEndpointVolume
+        {
+            get
+            {
+                ThrowIfDisposed();
+                return _audioEndpointVolume;
+            }
+        }
 
         private void GetPropertyInformation(IMultimediaDevice device)
         {
@@ -93,7 +98,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _properties.TryLoadFrom(device);
         }
 
-        private void LoadAudioMeterInformation(Func<IMultimediaDevice> device)
+        private void LoadAudioMeterInformation()
         {
             //This should be all on the COM thread to avoid any
             //weird lookups on the result COM object not on an STA Thread
@@ -106,8 +111,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 var clsGuid = new Guid(ComInterfaceIds.AUDIO_METER_INFORMATION_IID);
                 object result;
-                ex = Marshal.GetExceptionForHR(device().Activate(ref clsGuid, ClassContext.Inproc, IntPtr.Zero, out result));
-                _audioMeterInformation = result as IAudioMeterInformation;
+                ex = Marshal.GetExceptionForHR(Device.Activate(ref clsGuid, ClassContext.Inproc, IntPtr.Zero, out result));
+                _audioMeterInformationPtr = Marshal.GetIUnknownForObject(result);
+
+                _audioMeterInformation = new ThreadLocal<IAudioMeterInformation>(() => Marshal.GetUniqueObjectForIUnknown(_audioMeterInformationPtr) as IAudioMeterInformation);
             }
             catch (Exception e)
             {
@@ -153,7 +160,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             _audioEndpointVolume = new AudioEndpointVolume(result as IAudioEndpointVolume);
             _isMuted = _audioEndpointVolume.Mute;
-            _volume = _audioEndpointVolume.MasterVolumeLevelScalar*100;
+            _volume = _audioEndpointVolume.MasterVolumeLevelScalar.DeNormalizeVolume();
         }
 
         private void ClearAudioEndpointVolume()
@@ -169,11 +176,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void ClearAudioMeterInformation()
         {
-            if (_audioMeterInformation != null)
-            {
-                Marshal.FinalReleaseComObject(_audioMeterInformation);
-                _audioMeterInformation = null;
-            }
+            _audioMeterInformation?.Dispose();
+            _audioMeterInformation = null;
         }
 
         private static DeviceIcon IconStringToDeviceIcon(string iconStr)

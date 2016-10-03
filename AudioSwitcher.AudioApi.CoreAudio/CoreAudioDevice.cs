@@ -54,8 +54,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                //ComThread.Assert();
-
                 if (_isDisposed)
                     throw new ObjectDisposedException("COM Device Disposed");
 
@@ -248,18 +246,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public override TCapability GetCapability<TCapability>()
         {
-            return ComThread.Invoke(() =>
-            {
-                if (_sessionController?.Value is TCapability)
-                    return (TCapability)(_sessionController?.Value as IDeviceCapability);
+            if (_sessionController?.Value is TCapability)
+                return (TCapability)(_sessionController?.Value as IDeviceCapability);
 
-                return default(TCapability);
-            });
+            return default(TCapability);
         }
 
         public override IEnumerable<IDeviceCapability> GetAllCapabilities()
         {
-            yield return ComThread.Invoke(() => _sessionController?.Value);
+            yield return _sessionController?.Value;
         }
 
         public override async Task<bool> SetMuteAsync(bool mute, CancellationToken cancellationToken)
@@ -522,18 +517,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void ReloadAudioMeterInformation()
         {
-            ComThread.Invoke(() =>
-            {
-                LoadAudioMeterInformation(() => Device);
-            });
+            ComThread.Invoke(LoadAudioMeterInformation);
         }
 
         private void ReloadAudioSessionController()
         {
-            ComThread.Invoke(() =>
-            {
-                LoadAudioSessionController(() => Device);
-            });
+            ComThread.Invoke(LoadAudioSessionController);
         }
 
         private void ReloadAudioEndpointVolume()
@@ -601,6 +590,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private static Guid SystemIdToGuid(string systemDeviceId)
         {
             return systemDeviceId.ExtractGuids().First();
+        }
+
+        private void ThrowIfDisposed()
+        {
+            if(_isDisposed)
+                throw new ObjectDisposedException("CoreAudioDevice");
         }
     }
 }
