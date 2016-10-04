@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
     <metadata>
         <id>AudioSwitcher.AudioApi</id>
-        <version>4.0.0-alpha1</version>
+        <version>4.0.0-alpha2</version>
         <title>Audio Switcher Api</title>
         <authors>Sean Chapman</authors>
         <owners>Sean Chapman</owners>
@@ -13,7 +13,10 @@
         <summary>.NET Library which facilitates interacting with Audio Devices</summary>
         <releaseNotes>- Added device capabilities to express extra functionality that is optionally available to some devices
 - Proper async/await
-- .net452</releaseNotes>
+- .net452
+
+BREAKING CHANGES:
+- A bunch of synchronous functions have been removed</releaseNotes>
         <copyright />
         <language>en-US</language>
         <tags>audio default device switch audioswitcher sound</tags>

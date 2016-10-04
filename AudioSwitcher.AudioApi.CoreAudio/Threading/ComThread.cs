@@ -30,7 +30,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
                 return;
             }
 
-            BeginInvoke(action).Wait();
+            BeginInvoke(action).GetAwaiter().GetResult();
         }
 
         public static Task BeginInvoke(Action action)
@@ -43,7 +43,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
             if (!InvokeRequired)
                 return func();
 
-            return BeginInvoke(func).Result;
+            return BeginInvoke(func).GetAwaiter().GetResult();
         }
 
         public static Task<T> BeginInvoke<T>(Func<T> func)

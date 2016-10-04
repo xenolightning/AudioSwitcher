@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>AudioSwitcher.AudioApi.CoreAudio</id>
-        <version>4.0.0-alpha1</version>
+        <version>4.0.0-alpha3</version>
         <title>Audio Switcher Core Audio</title>
         <authors>xenolightning</authors>
         <owners>xenolightning</owners>
@@ -27,7 +27,7 @@ This library can be used on any PC running Windows Vista and above. Supports bot
         <tags>wasapi audioswitcher audio api volume sound</tags>
         <dependencies>
             <group targetFramework=".NETFramework4.5.2">
-                <dependency id="AudioSwitcher.AudioApi" version="4.0.0-alpha1" />
+                <dependency id="AudioSwitcher.AudioApi" version="4.0.0.0-alpha2" />
             </group>
         </dependencies>
     </metadata>
