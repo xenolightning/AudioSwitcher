@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
-using Nito.AsyncEx;
 using Xunit;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Tests

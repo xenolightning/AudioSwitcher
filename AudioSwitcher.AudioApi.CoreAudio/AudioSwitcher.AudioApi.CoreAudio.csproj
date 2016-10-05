@@ -48,6 +48,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ComInteropTimeoutException.cs" />
     <Compile Include="CoreAudioSession.cs" />
     <Compile Include="CoreAudioSessionController.cs" />
     <Compile Include="Extensions.cs" />
@@ -120,13 +121,6 @@
     <Compile Include="Internal\PropVariant.cs" />
     <Compile Include="Internal\ERole.cs" />
     <Compile Include="Internal\SystemEventNotifcationClient.cs" />
-    <Compile Include="Tasks\CancellationTokenExtensions.cs" />
-    <Compile Include="Tasks\AsyncAutoResetEvent.cs" />
-    <Compile Include="Tasks\AsyncManualResetEvent.cs" />
-    <Compile Include="Tasks\AsyncWaitQueue.cs" />
-    <Compile Include="Tasks\Deque.cs" />
-    <Compile Include="Tasks\TaskConstants.cs" />
-    <Compile Include="Tasks\TaskExtensions.cs" />
     <Compile Include="Threading\InvalidThreadException.cs" />
     <Compile Include="Threading\ComThread.cs" />
     <Compile Include="CoreAudioDevice.cs" />

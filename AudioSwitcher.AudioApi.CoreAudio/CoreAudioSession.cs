@@ -7,7 +7,6 @@ using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
-using Nito.AsyncEx;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
@@ -22,8 +21,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly Broadcaster<SessionPeakValueChangedArgs> _peakValueChanged;
         private readonly Broadcaster<SessionStateChangedArgs> _stateChanged;
         private readonly Broadcaster<SessionVolumeChangedArgs> _volumeChanged;
-        private readonly AsyncAutoResetEvent _volumeResetEvent = new AsyncAutoResetEvent(false);
-        private readonly AsyncAutoResetEvent _muteResetEvent = new AsyncAutoResetEvent(false);
+        private readonly AutoResetEvent _volumeResetEvent = new AutoResetEvent(false);
+        private readonly AutoResetEvent _muteResetEvent = new AutoResetEvent(false);
         private IDisposable _timerSubscription;
         private string _displayName;
         private string _executablePath;
@@ -211,7 +210,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             var normalizedVolume = volume.NormalizeVolume();
             ComThread.Invoke(() => SimpleAudioVolume.SetMasterVolume(normalizedVolume, Guid.Empty));
-            await _volumeResetEvent.WaitAsync(cancellationToken);
+            await _volumeResetEvent.WaitOneAsync(cancellationToken);
 
             return _volume;
         }
@@ -240,7 +239,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             ComThread.Invoke(() => SimpleAudioVolume.SetMute(muted, Guid.Empty));
 
-            await _muteResetEvent.WaitAsync(cancellationToken);
+            await _muteResetEvent.WaitOneAsync(cancellationToken);
 
             return _isMuted;
         }

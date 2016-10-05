@@ -5,11 +5,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
-using AudioSwitcher.AudioApi.CoreAudio.Tasks;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 using AudioSwitcher.AudioApi.Observables;
 using AudioSwitcher.AudioApi.Session;
-using Nito.AsyncEx;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
@@ -28,10 +26,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly IDisposable _peakValueTimerSubscription;
         private readonly SemaphoreSlim _setDefaultSemaphore = new SemaphoreSlim(1);
         private readonly SemaphoreSlim _setDefaultCommSemaphore = new SemaphoreSlim(1);
-        private readonly AsyncAutoResetEvent _muteChangedResetEvent = new AsyncAutoResetEvent(false);
-        private readonly AsyncAutoResetEvent _volumeResetEvent = new AsyncAutoResetEvent(false);
-        private readonly AsyncManualResetEvent _defaultResetEvent = new AsyncManualResetEvent(false);
-        private readonly AsyncManualResetEvent _defaultCommResetEvent = new AsyncManualResetEvent(false);
+        private readonly AutoResetEvent _muteChangedResetEvent = new AutoResetEvent(false);
+        private readonly AutoResetEvent _volumeResetEvent = new AutoResetEvent(false);
+        private readonly ManualResetEvent _defaultResetEvent = new ManualResetEvent(false);
+        private readonly ManualResetEvent _defaultCommResetEvent = new ManualResetEvent(false);
+        private readonly string _globalId;
 
         private EDataFlow _dataFlow;
         private ThreadLocal<IMultimediaDevice> _device;
@@ -40,7 +39,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private double _volume;
         private float _peakValue = -1;
         private CachedPropertyDictionary _properties;
-        private string _realId;
         private EDeviceState _state;
 
         private volatile bool _isDisposed;
@@ -75,7 +73,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public string RealId => _realId;
+        public string RealId => _globalId;
 
         public override string InterfaceName
         {
@@ -168,7 +166,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             //Get the id and initial state of the device
             Marshal.ThrowExceptionForHR(Device.GetState(out _state));
-            Marshal.ThrowExceptionForHR(Device.GetId(out _realId));
+            Marshal.ThrowExceptionForHR(Device.GetId(out _globalId));
 
             LoadProperties();
 
@@ -266,7 +264,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 return true;
 
             AudioEndpointVolume.Mute = mute;
-            await _muteChangedResetEvent.WaitAsync(cancellationToken);
+            await _muteChangedResetEvent.WaitOneAsync(cancellationToken);
 
             return _isMuted;
         }
@@ -286,7 +284,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             var normalizedVolume = volume.NormalizeVolume();
             AudioEndpointVolume.MasterVolumeLevelScalar = normalizedVolume;
-            await _volumeResetEvent.WaitAsync(cancellationToken);
+            await _volumeResetEvent.WaitOneAsync(cancellationToken);
 
             return _volume;
         }
@@ -304,29 +302,28 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (State != DeviceState.Active)
                 return _isDefaultDevice = false;
 
-            if (!_setDefaultSemaphore.Wait(0, cancellationToken))
-            {
-                _defaultResetEvent.Wait(cancellationToken);
-                return _isDefaultDevice;
-            }
+            var acquiredSemaphore = _setDefaultSemaphore.Wait(0, cancellationToken);
 
             try
             {
-                _defaultResetEvent.Reset();
+                if (acquiredSemaphore)
+                {
+                    _defaultResetEvent.Reset();
+                    PolicyConfig.SetDefaultEndpoint(RealId, ERole.Console | ERole.Multimedia);
+                }
 
-                PolicyConfig.SetDefaultEndpoint(RealId, ERole.Console | ERole.Multimedia);
-                _defaultResetEvent.Wait(cancellationToken);
+                _defaultResetEvent.WaitOne(cancellationToken);
+                return _isDefaultDevice;
             }
-            catch
+            catch (Exception ex) when (ex is OperationCanceledException || ex is TimeoutException)
             {
-                throw new TimeoutException("COM operation 'SetDefaultDevice' did not complete in the requested time period.");
+                throw new ComInteropTimeoutException(ex);
             }
             finally
             {
-                _setDefaultSemaphore.Release();
+                if (acquiredSemaphore)
+                    _setDefaultSemaphore.Release();
             }
-
-            return _isDefaultDevice;
         }
 
         public override Task<bool> SetAsDefaultAsync()
@@ -342,32 +339,28 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (State != DeviceState.Active)
                 return _isDefaultDevice = false;
 
-            if (!await _setDefaultSemaphore.WaitAsync(0, cancellationToken))
-            {
-                _defaultResetEvent.Wait(cancellationToken);
-                return _isDefaultDevice;
-            }
+            var acquiredSemaphore = await _setDefaultSemaphore.WaitAsync(0, cancellationToken);
 
             try
             {
-                _defaultResetEvent.Reset();
-
-                PolicyConfig.SetDefaultEndpoint(RealId, ERole.Console | ERole.Multimedia);
-                using (var ctts = cancellationToken.ToCancellationTokenTaskSource())
+                if (acquiredSemaphore)
                 {
-                    await Task.WhenAny(_defaultResetEvent.WaitAsync(), ctts.Task);
+                    _defaultResetEvent.Reset();
+                    PolicyConfig.SetDefaultEndpoint(RealId, ERole.Console | ERole.Multimedia);
                 }
+
+                await _defaultResetEvent.WaitOneAsync(cancellationToken);
+                return _isDefaultDevice;
             }
-            catch
+            catch (Exception ex) when (ex is OperationCanceledException || ex is TimeoutException)
             {
-                throw new TimeoutException("COM operation 'SetDefaultDevice' did not complete in the requested time period.");
+                throw new ComInteropTimeoutException(ex);
             }
             finally
             {
-                _setDefaultSemaphore.Release();
+                if (acquiredSemaphore)
+                    _setDefaultSemaphore.Release();
             }
-
-            return _isDefaultDevice;
         }
 
         public override bool SetAsDefaultCommunications()
@@ -378,6 +371,35 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return SetAsDefaultCommunications(cts.Token);
         }
 
+        public override bool SetAsDefaultCommunications(CancellationToken cancellationToken)
+        {
+            if (State != DeviceState.Active)
+                return _isDefaultCommDevice = false;
+
+            var acquiredSemaphore = _setDefaultCommSemaphore.Wait(0, cancellationToken);
+
+            try
+            {
+                if (acquiredSemaphore)
+                {
+                    _defaultCommResetEvent.Reset();
+                    PolicyConfig.SetDefaultEndpoint(RealId, ERole.Communications);
+                }
+
+                _defaultCommResetEvent.WaitOne(cancellationToken);
+                return _isDefaultCommDevice;
+            }
+            catch (Exception ex) when (ex is OperationCanceledException || ex is TimeoutException)
+            {
+                throw new ComInteropTimeoutException(ex);
+            }
+            finally
+            {
+                if (acquiredSemaphore)
+                    _setDefaultCommSemaphore.Release();
+            }
+        }
+
         public override Task<bool> SetAsDefaultCommunicationsAsync()
         {
             var cts = new CancellationTokenSource();
@@ -386,67 +408,33 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return SetAsDefaultCommunicationsAsync(cts.Token);
         }
 
-        public override bool SetAsDefaultCommunications(CancellationToken cancellationToken)
-        {
-            if (State != DeviceState.Active)
-                return _isDefaultCommDevice = false;
-
-            if (!_setDefaultCommSemaphore.Wait(0, cancellationToken))
-            {
-                _defaultCommResetEvent.Wait(cancellationToken);
-                return _isDefaultCommDevice;
-            }
-
-            try
-            {
-                _defaultCommResetEvent.Reset();
-
-                PolicyConfig.SetDefaultEndpoint(RealId, ERole.Communications);
-                _defaultCommResetEvent.Wait(cancellationToken);
-            }
-            catch
-            {
-                throw new TimeoutException("COM operation 'SetAsDefaultCommunications' did not complete in the requested time period.");
-            }
-            finally
-            {
-                _setDefaultCommSemaphore.Release();
-            }
-
-            return _isDefaultCommDevice;
-        }
-
         public override async Task<bool> SetAsDefaultCommunicationsAsync(CancellationToken cancellationToken)
         {
             if (State != DeviceState.Active)
                 return _isDefaultCommDevice = false;
 
-            if (!await _setDefaultCommSemaphore.WaitAsync(0, cancellationToken))
-            {
-                _defaultCommResetEvent.Wait(cancellationToken);
-                return _isDefaultCommDevice;
-            }
+            var acquiredSemaphore = await _setDefaultCommSemaphore.WaitAsync(0, cancellationToken);
 
             try
             {
-                _defaultCommResetEvent.Reset();
-                PolicyConfig.SetDefaultEndpoint(RealId, ERole.Communications);
-
-                using (var ctts = cancellationToken.ToCancellationTokenTaskSource())
+                if (acquiredSemaphore)
                 {
-                    await Task.WhenAny(_defaultCommResetEvent.WaitAsync(), ctts.Task);
+                    _defaultCommResetEvent.Reset();
+                    PolicyConfig.SetDefaultEndpoint(RealId, ERole.Communications);
                 }
+
+                await _defaultCommResetEvent.WaitOneAsync(cancellationToken);
+                return _isDefaultCommDevice;
             }
-            catch
+            catch (Exception ex) when (ex is OperationCanceledException || ex is TimeoutException)
             {
-                throw new TimeoutException("COM operation 'SetAsDefaultCommunications' did not complete in the requested time period.");
+                throw new ComInteropTimeoutException(ex);
             }
             finally
             {
-                _setDefaultCommSemaphore.Release();
+                if (acquiredSemaphore)
+                    _setDefaultCommSemaphore.Release();
             }
-
-            return _isDefaultCommDevice;
         }
         private void OnDefaultChanged(string deviceId, ERole deviceRole)
         {
@@ -594,7 +582,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void ThrowIfDisposed()
         {
-            if(_isDisposed)
+            if (_isDisposed)
                 throw new ObjectDisposedException("CoreAudioDevice");
         }
     }

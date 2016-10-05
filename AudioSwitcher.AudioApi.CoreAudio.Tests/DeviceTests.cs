@@ -139,6 +139,56 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         }
 
         [Fact]
+        public void Device_Set_All_Default()
+        {
+            using (var controller = CreateTestController())
+            {
+                var originalCommDevice = controller.DefaultPlaybackDevice;
+
+                foreach (var device in controller.GetPlaybackDevices(DeviceState.Active))
+                {
+                    try
+                    {
+                        var isDefault = device.SetAsDefault();
+                        Assert.Equal(isDefault, device.IsDefaultDevice);
+                    }
+                    catch (ComInteropTimeoutException)
+                    {
+                        //Can't set the default, don't fail the test
+                    }
+                }
+
+                var originalIsDefault = originalCommDevice.SetAsDefault();
+                Assert.True(originalIsDefault);
+            }
+        }
+
+        [Fact]
+        public async Task Device_Set_All_Default_Async()
+        {
+            using (var controller = CreateTestController())
+            {
+                var originalCommDevice = controller.DefaultPlaybackDevice;
+
+                foreach (var device in await controller.GetPlaybackDevicesAsync(DeviceState.Active))
+                {
+                    try
+                    {
+                        var isDefault = await device.SetAsDefaultAsync();
+                        Assert.Equal(isDefault, device.IsDefaultDevice);
+                    }
+                    catch (ComInteropTimeoutException)
+                    {
+                        //Can't set the default, don't fail the test
+                    }
+                }
+
+                var originalIsDefault = await originalCommDevice.SetAsDefaultAsync();
+                Assert.True(originalIsDefault);
+            }
+        }
+
+        [Fact(Skip = "The order is not guranteed, so skipping for now")]
         public async Task Device_Set_Default_Async_Returns_In_Order()
         {
             using (var controller = CreateTestController())
@@ -213,6 +263,56 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
                 Assert.True(device.IsDefaultCommunicationsDevice);
                 Assert.Equal(isDefault, device.IsDefaultCommunicationsDevice);
+            }
+        }
+
+        [Fact]
+        public void Device_Set_All_Default_Communications()
+        {
+            using (var controller = CreateTestController())
+            {
+                var originalCommDevice = controller.DefaultPlaybackCommunicationsDevice;
+
+                foreach (var device in controller.GetPlaybackDevices(DeviceState.Active))
+                {
+                    try
+                    {
+                        var isDefault = device.SetAsDefaultCommunications();
+                        Assert.Equal(isDefault, device.IsDefaultCommunicationsDevice);
+                    }
+                    catch (ComInteropTimeoutException)
+                    {
+                        //Can't set the default, don't fail the test
+                    }
+                }
+
+                var originalIsDefault = originalCommDevice.SetAsDefaultCommunications();
+                Assert.True(originalIsDefault);
+            }
+        }
+
+        [Fact]
+        public async Task Device_Set_All_Default_Communications_Async()
+        {
+            using (var controller = CreateTestController())
+            {
+                var originalCommDevice = controller.DefaultPlaybackCommunicationsDevice;
+
+                foreach (var device in await controller.GetPlaybackDevicesAsync(DeviceState.Active))
+                {
+                    try
+                    {
+                        var isDefault = await device.SetAsDefaultCommunicationsAsync();
+                        Assert.Equal(isDefault, device.IsDefaultCommunicationsDevice);
+                    }
+                    catch (ComInteropTimeoutException)
+                    {
+                        //Can't set the default, don't fail the test
+                    }
+                }
+
+                var originalIsDefault = await originalCommDevice.SetAsDefaultCommunicationsAsync();
+                Assert.True(originalIsDefault);
             }
         }
 
