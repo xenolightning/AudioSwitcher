@@ -65,7 +65,6 @@
   <ItemGroup />
   <ItemGroup>
     <None Include="api.pfx" />
-    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
