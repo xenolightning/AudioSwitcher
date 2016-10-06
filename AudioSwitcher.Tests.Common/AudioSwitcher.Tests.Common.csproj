@@ -42,9 +42,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj">
-      <Project>{8fc5a778-2a85-4cc8-a445-b9f2019a945b}</Project>
-      <Name>AudioSwitcher.AudioApi</Name>
+    <ProjectReference Include="..\AudioSwitcher.AudioApi %28NET45%29\AudioSwitcher.AudioApi %28NET45%29.csproj">
+      <Project>{26373899-cb07-4ace-9ac2-1c19fdbedce3}</Project>
+      <Name>AudioSwitcher.AudioApi %28NET45%29</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -43,21 +43,21 @@ namespace AudioSwitcher.AudioApi
 
         public virtual Task<T> GetDeviceAsync(Guid id)
         {
-            return Task.FromResult(GetDevice(id));
+            return TaskShim.FromResult(GetDevice(id));
         }
 
         public abstract T GetDevice(Guid id, DeviceState state);
 
         public virtual Task<T> GetDeviceAsync(Guid id, DeviceState state)
         {
-            return Task.FromResult(GetDevice(id, state));
+            return TaskShim.FromResult(GetDevice(id, state));
         }
 
         public abstract T GetDefaultDevice(DeviceType deviceType, Role role);
 
         public virtual Task<T> GetDefaultDeviceAsync(DeviceType deviceType, Role role)
         {
-            return Task.FromResult(GetDefaultDevice(deviceType, role));
+            return TaskShim.FromResult(GetDefaultDevice(deviceType, role));
         }
 
         public virtual IEnumerable<T> GetDevices()
@@ -67,12 +67,12 @@ namespace AudioSwitcher.AudioApi
 
         public virtual Task<IEnumerable<T>> GetDevicesAsync()
         {
-            return Task.FromResult(GetDevices());
+            return TaskShim.FromResult(GetDevices());
         }
 
         public virtual Task<IEnumerable<T>> GetDevicesAsync(DeviceState state)
         {
-            return Task.FromResult(GetDevices(state));
+            return TaskShim.FromResult(GetDevices(state));
         }
 
         public IEnumerable<T> GetDevices(DeviceType deviceType)
@@ -92,7 +92,7 @@ namespace AudioSwitcher.AudioApi
 
         Task<IEnumerable<IDevice>> IAudioController.GetDevicesAsync(DeviceType deviceType)
         {
-            return Task.FromResult(GetDevices(deviceType).Cast<IDevice>());
+            return TaskShim.FromResult(GetDevices(deviceType).Cast<IDevice>());
         }
 
         public virtual IEnumerable<T> GetDevices(DeviceState state)
@@ -104,7 +104,7 @@ namespace AudioSwitcher.AudioApi
 
         public virtual Task<IEnumerable<T>> GetDevicesAsync(DeviceType deviceType, DeviceState state)
         {
-            return Task.FromResult(GetDevices(deviceType, state));
+            return TaskShim.FromResult(GetDevices(deviceType, state));
         }
 
         public virtual IEnumerable<T> GetPlaybackDevices()
@@ -124,7 +124,7 @@ namespace AudioSwitcher.AudioApi
 
         public virtual Task<IEnumerable<T>> GetPlaybackDevicesAsync(DeviceState deviceState)
         {
-            return Task.FromResult(GetPlaybackDevices(deviceState));
+            return TaskShim.FromResult(GetPlaybackDevices(deviceState));
         }
 
         public virtual IEnumerable<T> GetCaptureDevices()
@@ -134,7 +134,7 @@ namespace AudioSwitcher.AudioApi
 
         public virtual Task<IEnumerable<T>> GetCaptureDevicesAsync()
         {
-            return Task.FromResult(GetCaptureDevices(DefaultDeviceStateFilter));
+            return TaskShim.FromResult(GetCaptureDevices(DefaultDeviceStateFilter));
         }
 
         public virtual IEnumerable<T> GetCaptureDevices(DeviceState state)
@@ -144,12 +144,12 @@ namespace AudioSwitcher.AudioApi
 
         public virtual Task<IEnumerable<T>> GetCaptureDevicesAsync(DeviceState deviceState)
         {
-            return Task.FromResult(GetCaptureDevices(deviceState));
+            return TaskShim.FromResult(GetCaptureDevices(deviceState));
         }
 
         Task<IDevice> IAudioController.GetDeviceAsync(Guid id)
         {
-            return Task.FromResult(GetDevice(id) as IDevice);
+            return TaskShim.FromResult(GetDevice(id) as IDevice);
         }
 
         IDevice IAudioController.GetDevice(Guid id)
@@ -164,7 +164,7 @@ namespace AudioSwitcher.AudioApi
 
         Task<IDevice> IAudioController.GetDeviceAsync(Guid id, DeviceState state)
         {
-            return Task.FromResult(GetDevice(id, state) as IDevice);
+            return TaskShim.FromResult(GetDevice(id, state) as IDevice);
         }
 
         IDevice IAudioController.GetDefaultDevice(DeviceType deviceType, Role role)
@@ -174,7 +174,7 @@ namespace AudioSwitcher.AudioApi
 
         Task<IDevice> IAudioController.GetDefaultDeviceAsync(DeviceType deviceType, Role role)
         {
-            return Task.FromResult(GetDefaultDevice(deviceType, role) as IDevice);
+            return TaskShim.FromResult(GetDefaultDevice(deviceType, role) as IDevice);
         }
 
         IEnumerable<IDevice> IAudioController.GetDevices()
@@ -184,7 +184,7 @@ namespace AudioSwitcher.AudioApi
 
         Task<IEnumerable<IDevice>> IAudioController.GetDevicesAsync()
         {
-            return Task.FromResult(GetDevices().Cast<IDevice>());
+            return TaskShim.FromResult(GetDevices().Cast<IDevice>());
         }
 
         IEnumerable<IDevice> IAudioController.GetDevices(DeviceState state)
@@ -194,7 +194,7 @@ namespace AudioSwitcher.AudioApi
 
         Task<IEnumerable<IDevice>> IAudioController.GetDevicesAsync(DeviceState state)
         {
-            return Task.FromResult(GetDevices(state).Cast<IDevice>());
+            return TaskShim.FromResult(GetDevices(state).Cast<IDevice>());
         }
 
         IEnumerable<IDevice> IAudioController.GetDevices(DeviceType deviceType, DeviceState state)
@@ -204,7 +204,7 @@ namespace AudioSwitcher.AudioApi
 
         Task<IEnumerable<IDevice>> IAudioController.GetDevicesAsync(DeviceType deviceType, DeviceState state)
         {
-            return Task.FromResult(GetDevices(deviceType, state).Cast<IDevice>());
+            return TaskShim.FromResult(GetDevices(deviceType, state).Cast<IDevice>());
         }
 
         IEnumerable<IDevice> IAudioController.GetPlaybackDevices()
@@ -219,12 +219,12 @@ namespace AudioSwitcher.AudioApi
 
         Task<IEnumerable<IDevice>> IAudioController.GetPlaybackDevicesAsync()
         {
-            return Task.FromResult(GetPlaybackDevices().Cast<IDevice>());
+            return TaskShim.FromResult(GetPlaybackDevices().Cast<IDevice>());
         }
 
         Task<IEnumerable<IDevice>> IAudioController.GetPlaybackDevicesAsync(DeviceState deviceState)
         {
-            return Task.FromResult(GetPlaybackDevices(deviceState).Cast<IDevice>());
+            return TaskShim.FromResult(GetPlaybackDevices(deviceState).Cast<IDevice>());
         }
 
         IEnumerable<IDevice> IAudioController.GetCaptureDevices()
@@ -239,12 +239,12 @@ namespace AudioSwitcher.AudioApi
 
         Task<IEnumerable<IDevice>> IAudioController.GetCaptureDevicesAsync()
         {
-            return Task.FromResult(GetCaptureDevices().OfType<IDevice>());
+            return TaskShim.FromResult(GetCaptureDevices().OfType<IDevice>());
         }
 
         Task<IEnumerable<IDevice>> IAudioController.GetCaptureDevicesAsync(DeviceState deviceState)
         {
-            return Task.FromResult(GetCaptureDevices(deviceState).OfType<IDevice>());
+            return TaskShim.FromResult(GetCaptureDevices(deviceState).OfType<IDevice>());
         }
 
         public void Dispose()

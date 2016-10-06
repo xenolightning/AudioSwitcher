@@ -56,14 +56,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AudioSwitcher.AudioApi.CoreAudio\AudioSwitcher.AudioApi.CoreAudio.csproj">
-      <Project>{63191a1e-af9e-4d3a-9ba8-baa02345b277}</Project>
-      <Name>AudioSwitcher.AudioApi.CoreAudio</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj">
-      <Project>{8fc5a778-2a85-4cc8-a445-b9f2019a945b}</Project>
-      <Name>AudioSwitcher.AudioApi</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\AudioSwitcher.Scripting.JavaScript\AudioSwitcher.Scripting.JavaScript.csproj">
       <Project>{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}</Project>
       <Name>AudioSwitcher.Scripting.JavaScript</Name>

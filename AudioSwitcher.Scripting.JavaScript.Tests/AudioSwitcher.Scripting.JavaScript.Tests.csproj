@@ -78,9 +78,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj">
-      <Project>{7a4e260c-007e-4615-a92b-e849e7b641ab}</Project>
-      <Name>AudioSwitcher.AudioApi</Name>
+    <ProjectReference Include="..\AudioSwitcher.AudioApi %28NET45%29\AudioSwitcher.AudioApi %28NET45%29.csproj">
+      <Project>{26373899-cb07-4ace-9ac2-1c19fdbedce3}</Project>
+      <Name>AudioSwitcher.AudioApi %28NET45%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\AudioSwitcher.Scripting.JavaScript\AudioSwitcher.Scripting.JavaScript.csproj">
       <Project>{a521e1f4-70d0-4e59-abc9-cdd306d18f3f}</Project>

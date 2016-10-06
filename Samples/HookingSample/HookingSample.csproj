@@ -127,17 +127,17 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AudioSwitcher.AudioApi.CoreAudio\AudioSwitcher.AudioApi.CoreAudio.csproj">
-      <Project>{63191a1e-af9e-4d3a-9ba8-baa02345b277}</Project>
-      <Name>AudioSwitcher.AudioApi.CoreAudio</Name>
+    <ProjectReference Include="..\..\AudioSwitcher.AudioApi.CoreAudio %28NET45%29\AudioSwitcher.AudioApi.CoreAudio %28NET45%29.csproj">
+      <Project>{44a1f234-124f-4ce4-b66c-110bca8f6ed5}</Project>
+      <Name>AudioSwitcher.AudioApi.CoreAudio %28NET45%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\AudioSwitcher.AudioApi.Hooking\AudioSwitcher.AudioApi.Hooking.csproj">
       <Project>{B590E447-E7F2-43DE-B3F3-3A60F493DC98}</Project>
       <Name>AudioSwitcher.AudioApi.Hooking</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj">
-      <Project>{7A4E260C-007E-4615-A92B-E849E7B641AB}</Project>
-      <Name>AudioSwitcher.AudioApi</Name>
+    <ProjectReference Include="..\..\AudioSwitcher.AudioApi %28NET45%29\AudioSwitcher.AudioApi %28NET45%29.csproj">
+      <Project>{26373899-cb07-4ace-9ac2-1c19fdbedce3}</Project>
+      <Name>AudioSwitcher.AudioApi %28NET45%29</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

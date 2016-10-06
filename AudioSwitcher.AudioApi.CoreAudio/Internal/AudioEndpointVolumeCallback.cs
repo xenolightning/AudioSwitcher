@@ -86,7 +86,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
             catch(Exception ex)
             {
-                return ex.HResult;
+                return Marshal.GetHRForException(ex);
             }
 
             return 0; //success

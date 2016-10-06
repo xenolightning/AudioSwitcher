@@ -53,9 +53,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 throw new InvalidComObjectException("control");
 
             _controlPtr = Marshal.GetIUnknownForObject(control);
-            _audioSessionControl = new ThreadLocal<IAudioSessionControl2>(() => Marshal.GetUniqueObjectForIUnknown(_controlPtr) as IAudioSessionControl2, true);
-            _meterInformation = new ThreadLocal<IAudioMeterInformation>(() => Marshal.GetUniqueObjectForIUnknown(_controlPtr) as IAudioMeterInformation, true);
-            _simpleAudioVolume = new ThreadLocal<ISimpleAudioVolume>(() => Marshal.GetUniqueObjectForIUnknown(_controlPtr) as ISimpleAudioVolume, true);
+            _audioSessionControl = new ThreadLocal<IAudioSessionControl2>(() => Marshal.GetUniqueObjectForIUnknown(_controlPtr) as IAudioSessionControl2);
+            _meterInformation = new ThreadLocal<IAudioMeterInformation>(() => Marshal.GetUniqueObjectForIUnknown(_controlPtr) as IAudioMeterInformation);
+            _simpleAudioVolume = new ThreadLocal<ISimpleAudioVolume>(() => Marshal.GetUniqueObjectForIUnknown(_controlPtr) as ISimpleAudioVolume);
 
 
             Device = device;
@@ -193,7 +193,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public Task<double> GetVolumeAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult(_volume);
+            return TaskShim.FromResult(_volume);
         }
 
         public async Task<double> SetVolumeAsync(double volume)
@@ -222,7 +222,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public Task<bool> GetMuteAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult(_isMuted);
+            return TaskShim.FromResult(_isMuted);
         }
 
         public async Task<bool> SetMuteAsync(bool muted)

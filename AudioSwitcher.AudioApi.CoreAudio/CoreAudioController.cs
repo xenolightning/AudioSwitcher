@@ -32,7 +32,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (innerEnumerator == null)
                 throw new InvalidComObjectException("No Device Enumerator");
 
-            _innerEnumerator = new ThreadLocal<IMultimediaDeviceEnumerator>(() => Marshal.GetUniqueObjectForIUnknown(_innerEnumeratorPtr) as IMultimediaDeviceEnumerator, true);
+            _innerEnumerator = new ThreadLocal<IMultimediaDeviceEnumerator>(() => Marshal.GetUniqueObjectForIUnknown(_innerEnumeratorPtr) as IMultimediaDeviceEnumerator);
 
             ComThread.Invoke(() =>
             {

@@ -157,7 +157,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             ComThread.Assert();
 
             _devicePtr = Marshal.GetIUnknownForObject(device);
-            _device = new ThreadLocal<IMultimediaDevice>(() => Marshal.GetUniqueObjectForIUnknown(_devicePtr) as IMultimediaDevice, true);
+            _device = new ThreadLocal<IMultimediaDevice>(() => Marshal.GetUniqueObjectForIUnknown(_devicePtr) as IMultimediaDevice);
 
             _controller = controller;
 
@@ -271,7 +271,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public override Task<double> GetVolumeAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult(_volume);
+            return TaskShim.FromResult(_volume);
         }
 
         public override async Task<double> SetVolumeAsync(double volume, CancellationToken cancellationToken)
@@ -339,7 +339,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (State != DeviceState.Active)
                 return _isDefaultDevice = false;
 
-            var acquiredSemaphore = await _setDefaultSemaphore.WaitAsync(0, cancellationToken);
+
+            var acquiredSemaphore = await _setDefaultSemaphore.AvailableWaitHandle.WaitOneAsync(0, cancellationToken);
 
             try
             {
@@ -413,7 +414,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (State != DeviceState.Active)
                 return _isDefaultCommDevice = false;
 
-            var acquiredSemaphore = await _setDefaultCommSemaphore.WaitAsync(0, cancellationToken);
+            var acquiredSemaphore = await _setDefaultCommSemaphore.AvailableWaitHandle.WaitOneAsync(0, cancellationToken);
 
             try
             {

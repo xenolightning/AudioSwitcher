@@ -77,7 +77,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
         {
             _controller.SetDefaultDevice(this);
 
-            return Task.FromResult(IsDefaultDevice);
+            return TaskShim.FromResult(IsDefaultDevice);
         }
 
         public override bool SetAsDefaultCommunications(CancellationToken cancellationToken)
@@ -91,22 +91,22 @@ namespace AudioSwitcher.AudioApi.Sandbox
         {
             _controller.SetDefaultCommunicationsDevice(this);
 
-            return Task.FromResult(IsDefaultCommunicationsDevice);
+            return TaskShim.FromResult(IsDefaultCommunicationsDevice);
         }
 
         public override Task<bool> SetMuteAsync(bool mute, CancellationToken cancellationToken)
         {
-            return Task.FromResult(isMuted = mute);
+            return TaskShim.FromResult(isMuted = mute);
         }
 
         public override Task<double> GetVolumeAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult(volume);
+            return TaskShim.FromResult(volume);
         }
 
         public override Task<double> SetVolumeAsync(double ivol, CancellationToken cancellationToken)
         {
-            return Task.FromResult(volume = ivol);
+            return TaskShim.FromResult(volume = ivol);
         }
 
         public override bool HasCapability<TCapability>()
