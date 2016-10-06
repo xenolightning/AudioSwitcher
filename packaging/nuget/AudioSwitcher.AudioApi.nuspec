@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>AudioSwitcher.AudioApi</id>
-        <version>4.0.0-alpha2</version>
+        <version>4.0.0-alpha4</version>
         <title>Audio Switcher Api</title>
         <authors>Sean Chapman</authors>
         <owners>Sean Chapman</owners>
@@ -12,16 +12,23 @@
         <description>.NET Library which facilitates interacting with Audio Devices</description>
         <summary>.NET Library which facilitates interacting with Audio Devices</summary>
         <releaseNotes>- Added device capabilities to express extra functionality that is optionally available to some devices
-- Proper async/await
-- .net452
+- Proper async/await support
 
 BREAKING CHANGES:
 - A bunch of synchronous functions have been removed</releaseNotes>
         <copyright />
         <language>en-US</language>
         <tags>audio default device switch audioswitcher sound</tags>
+        <dependencies>
+            <group />
+            <group targetFramework=".NETFramework4.0">
+                <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
+            </group>
+            <group targetFramework=".NETFramework4.5" />
+        </dependencies>
     </metadata>
     <files>
-        <file src="..\..\bin\Release\AudioSwitcher.AudioApi.dll" target="lib\net452\AudioSwitcher.AudioApi.dll" />
+        <file src="..\..\bin\Release\NET40\AudioSwitcher.AudioApi.dll" target="lib\net40\AudioSwitcher.AudioApi.dll" />
+        <file src="..\..\bin\Release\NET45\AudioSwitcher.AudioApi.dll" target="lib\net45\AudioSwitcher.AudioApi.dll" />
     </files>
 </package>
