@@ -13,54 +13,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         }
 
         [Fact]
-        public async Task Device_Set_Volume()
-        {
-            using (var controller = CreateTestController())
-            {
-                var currentVolume = controller.DefaultPlaybackDevice.Volume;
-
-                await controller.DefaultPlaybackDevice.SetVolumeAsync(0);
-
-                Assert.Equal(0, (int)controller.DefaultPlaybackDevice.Volume);
-
-                await controller.DefaultPlaybackDevice.SetVolumeAsync(currentVolume);
-            }
-
-        }
-
-        [Fact]
-        public async Task Device_Set_Volume_2()
-        {
-            using (var controller = CreateTestController())
-            {
-                var currentVolume = controller.DefaultPlaybackDevice.Volume;
-
-                await controller.DefaultPlaybackDevice.SetVolumeAsync(20);
-
-                Assert.Equal(20, (int)controller.DefaultPlaybackDevice.Volume);
-
-                await controller.DefaultPlaybackDevice.SetVolumeAsync(currentVolume);
-            }
-
-        }
-
-        [Fact]
-        public async Task Device_Set_Volume_Negative_Is_Zero()
-        {
-            using (var controller = CreateTestController())
-            {
-                var currentVolume = controller.DefaultPlaybackDevice.Volume;
-
-                await controller.DefaultPlaybackDevice.SetVolumeAsync(-5);
-
-                Assert.Equal(0, (int)controller.DefaultPlaybackDevice.Volume);
-
-                await controller.DefaultPlaybackDevice.SetVolumeAsync(currentVolume);
-            }
-
-        }
-
-        [Fact]
         public async Task Device_Set_Volume_Async()
         {
             using (var controller = CreateTestController())
@@ -365,23 +317,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         }
 
         [Fact]
-        public async Task Device_Toggle_Mute()
-        {
-            using (var controller = CreateTestController())
-            {
-                var isMuted = controller.DefaultPlaybackDevice.IsMuted;
-
-                var newMute = await controller.DefaultPlaybackDevice.ToggleMuteAsync();
-
-                Assert.NotEqual(isMuted, newMute);
-
-                newMute = await controller.DefaultPlaybackDevice.ToggleMuteAsync();
-
-                Assert.Equal(isMuted, newMute);
-            }
-        }
-
-        [Fact]
         public async Task Device_Toggle_Mute_Async()
         {
             using (var controller = CreateTestController())
@@ -395,23 +330,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
                 newMute = await controller.DefaultPlaybackDevice.ToggleMuteAsync();
 
                 Assert.Equal(isMuted, newMute);
-            }
-        }
-
-        [Fact]
-        public async Task Device_Mute()
-        {
-            using (var controller = CreateTestController())
-            {
-                var isMuted = controller.DefaultPlaybackDevice.IsMuted;
-
-                var newMute = await controller.DefaultPlaybackDevice.SetMuteAsync(true);
-                Assert.True(newMute);
-
-                newMute = await controller.DefaultPlaybackDevice.SetMuteAsync(false);
-                Assert.False(newMute);
-
-                await controller.DefaultPlaybackDevice.SetMuteAsync(isMuted);
             }
         }
 
