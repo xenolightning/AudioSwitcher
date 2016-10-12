@@ -23,7 +23,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {PropertyKeys.PKEY_DEVICE_ICON, new HashSet<string>{ nameof(Icon), nameof(IconPath) }},
         };
 
-        private readonly IDisposable _peakValueTimerSubscription;
         private readonly SemaphoreSlim _setDefaultSemaphore = new SemaphoreSlim(1);
         private readonly SemaphoreSlim _setDefaultCommSemaphore = new SemaphoreSlim(1);
         private readonly AutoResetEvent _muteChangedResetEvent = new AutoResetEvent(false);
@@ -32,6 +31,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly ManualResetEvent _defaultCommResetEvent = new ManualResetEvent(false);
         private readonly string _globalId;
 
+        private IDisposable _peakValueTimerSubscription;
         private EDataFlow _dataFlow;
         private ThreadLocal<IMultimediaDevice> _device;
         private readonly CoreAudioController _controller;
@@ -137,6 +137,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public override bool IsMuted => _isMuted;
 
+        public override IObservable<DevicePeakValueChangedArgs> PeakValueChanged
+        {
+            get
+            {
+                //Lazy initialization of the peak value timer subscription
+                if (AudioMeterInformation != null && _peakValueTimerSubscription == null)
+                    _peakValueTimerSubscription = PeakValueTimer.PeakValueTick.Subscribe(Timer_UpdatePeakValue);
+
+                return base.PeakValueChanged;
+            }
+        }
+
         /// <summary>
         ///     The volume level on a scale between 0-100. Returns -1 if end point does not have volume
         /// </summary>
@@ -199,8 +211,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             controller.SystemEvents.PropertyChanged
                                     .When(x => String.Equals(x.DeviceId, RealId, StringComparison.OrdinalIgnoreCase))
                                     .Subscribe(x => OnPropertyChanged(x.PropertyKey));
-
-            _peakValueTimerSubscription = PeakValueTimer.PeakValueTick.Subscribe(Timer_UpdatePeakValue);
         }
 
         ~CoreAudioDevice()

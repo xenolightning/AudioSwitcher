@@ -59,17 +59,17 @@ namespace AudioSwitcher.AudioApi
 
         public abstract double Volume { get; }
 
-        public IObservable<DeviceVolumeChangedArgs> VolumeChanged => _volumeChanged.AsObservable();
+        public virtual IObservable<DeviceVolumeChangedArgs> VolumeChanged => _volumeChanged.AsObservable();
 
-        public IObservable<DeviceMuteChangedArgs> MuteChanged => _muteChanged.AsObservable();
+        public virtual IObservable<DeviceMuteChangedArgs> MuteChanged => _muteChanged.AsObservable();
 
-        public IObservable<DevicePropertyChangedArgs> PropertyChanged => _propertyChanged.AsObservable();
+        public virtual IObservable<DevicePropertyChangedArgs> PropertyChanged => _propertyChanged.AsObservable();
 
-        public IObservable<DefaultDeviceChangedArgs> DefaultChanged => _defaultChanged.AsObservable();
+        public virtual IObservable<DefaultDeviceChangedArgs> DefaultChanged => _defaultChanged.AsObservable();
 
-        public IObservable<DeviceStateChangedArgs> StateChanged => _stateChanged.AsObservable();
+        public virtual IObservable<DeviceStateChangedArgs> StateChanged => _stateChanged.AsObservable();
 
-        public IObservable<DevicePeakValueChangedArgs> PeakValueChanged => _peakValueChanged.AsObservable();
+        public virtual IObservable<DevicePeakValueChangedArgs> PeakValueChanged => _peakValueChanged.AsObservable();
 
         public virtual bool SetAsDefault()
         {
