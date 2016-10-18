@@ -2,26 +2,19 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Timers;
 using AudioSwitcher.AudioApi.Observables;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    public static class ProcessMonitor
+    internal static class ProcessMonitor
     {
 
         private static readonly Timer _processExitTimer;
         private static readonly Broadcaster<int> _processTerminated;
         private static IEnumerable<int> _lastProcesses = new List<int>();
 
-        public static IObservable<int> ProcessTerminated
-        {
-            get
-            {
-                return _processTerminated.AsObservable();
-            }
-        }
+        public static IObservable<int> ProcessTerminated => _processTerminated.AsObservable();
 
         static ProcessMonitor()
         {
@@ -47,8 +40,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             _lastProcesses = processIds;
 
-            if (_processExitTimer != null)
-                _processExitTimer.Start();
+            _processExitTimer?.Start();
         }
     }
 }

@@ -38,57 +38,27 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         ///     Event Context
         /// </summary>
-        public Guid EventContext
-        {
-            get
-            {
-                return _eventContext;
-            }
-        }
+        public Guid EventContext => _eventContext;
 
         /// <summary>
         ///     Muted
         /// </summary>
-        public bool Muted
-        {
-            get
-            {
-                return _muted;
-            }
-        }
+        public bool Muted => _muted;
 
         /// <summary>
         ///     Master VolumeChanged
         /// </summary>
-        public float MasterVolume
-        {
-            get
-            {
-                return _masterVolume;
-            }
-        }
+        public float MasterVolume => _masterVolume;
 
         /// <summary>
         ///     Channels
         /// </summary>
-        public int Channels
-        {
-            get
-            {
-                return _channels;
-            }
-        }
+        public int Channels => _channels;
 
         /// <summary>
         ///     Channel VolumeChanged
         /// </summary>
-        public float[] ChannelVolume
-        {
-            get
-            {
-                return _channelVolume;
-            }
-        }
+        public float[] ChannelVolume => _channelVolume;
 
         /// <summary>
         ///     Audio VolumeChanged Notification Data

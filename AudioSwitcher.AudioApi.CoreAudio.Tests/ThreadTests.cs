@@ -1,5 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.Observables;
 using Xunit;
@@ -19,110 +22,182 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         {
             var originalHandles = Process.GetCurrentProcess().HandleCount;
             Debug.WriteLine("Handles Before: " + originalHandles);
-            var controller = CreateTestController();
-
-            for (var i = 0; i < 50; i++)
+            using (var controller = CreateTestController())
             {
-                controller.AudioDeviceChanged.Subscribe(args =>
+                controller.AudioDeviceChanged.Subscribe(x =>
                 {
-                    var eval = controller.GetDevices(DeviceState.Active).ToList();
+                    Console.WriteLine(x.ToString());
                 });
 
-                controller.DefaultPlaybackDevice.SetAsDefault();
-                controller.DefaultPlaybackDevice.SetAsDefault();
+                for (var i = 0; i < 50; i++)
+                {
+                    controller.DefaultPlaybackDevice.SetAsDefault(CancellationToken.None);
+                }
 
+                var newHandles = Process.GetCurrentProcess().HandleCount;
+                Debug.WriteLine("Handles After: " + newHandles);
+
+                //*15 for each device and the handles it requires
+                //*3 because that should cater for at least 2 copies of each device
+                var maxHandles = controller.GetDevices().Count() * 20 * 3;
+
+                //Ensure it doesn't blow out the handles
+                Assert.True(newHandles - originalHandles < maxHandles);
             }
-
-            var newHandles = Process.GetCurrentProcess().HandleCount;
-            Debug.WriteLine("Handles After: " + newHandles);
-
-            //*15 for each device and the handles it requires
-            //*3 because that should cater for at least 2 copies of each device
-            var maxHandles = controller.GetDevices().Count() * 20 * 3;
-
-            //Ensure it doesn't blow out the handles
-            Assert.True(newHandles - originalHandles < maxHandles);
         }
 
-        //This test is broken, something int he async code is failing
-        //[Fact]
-        //public async Task CoreAudio_Attempted_Thread_Deadlock_Async()
-        //{
-        //    var originalHandles = Process.GetCurrentProcess().HandleCount;
-        //    Debug.WriteLine("Handles Before: " + originalHandles);
-        //    var controller = CreateTestController();
-        //    var tasks = new List<Task>();
+        [Fact]
+        public async Task CoreAudio_Attempted_Thread_Deadlock_Async()
+        {
+            var originalHandles = Process.GetCurrentProcess().HandleCount;
+            Debug.WriteLine("Handles Before: " + originalHandles);
+            using (var controller = CreateTestController())
+            {
+                var tasks = new List<Task>();
 
-        //    for (var i = 0; i < 50; i++)
-        //    {
-        //        controller.AudioDeviceChanged.Subscribe(args =>
-        //        {
-        //            var eval = controller.GetDevices(DeviceState.Active).ToList();
-        //        });
+                controller.AudioDeviceChanged.Subscribe(x =>
+                {
+                    Console.WriteLine(x.ToString());
+                });
 
-        //        tasks.Add(controller.DefaultPlaybackDevice.SetAsDefaultAsync());
-        //        tasks.Add(controller.DefaultPlaybackDevice.SetAsDefaultAsync());
-        //    }
+                for (var i = 0; i < 50; i++)
+                {
 
-        //    Task.WaitAll(tasks.ToArray());
+                    tasks.Add(controller.DefaultPlaybackDevice.SetAsDefaultAsync());
+                }
 
-        //    var newHandles = Process.GetCurrentProcess().HandleCount;
-        //    Debug.WriteLine("Handles After: " + newHandles);
+                await Task.WhenAll(tasks.ToArray());
 
-        //    //*15 for each device and the handles it requires
-        //    //*3 because that should cater for at least 2 copies of each device
-        //    var maxHandles = controller.GetDevices().Count() * 20 * 3;
+                var newHandles = Process.GetCurrentProcess().HandleCount;
+                Debug.WriteLine("Handles After: " + newHandles);
 
-        //    //Ensure it doesn't blow out the handles
-        //    Assert.True(newHandles - originalHandles < maxHandles);
-        //}
+                //*15 for each device and the handles it requires
+                //*3 because that should cater for at least 2 copies of each device
+                var maxHandles = controller.GetDevices().Count() * 20 * 3;
+
+                //Ensure it doesn't blow out the handles
+                Assert.True(newHandles - originalHandles < maxHandles);
+            }
+        }
+
+        [Fact]
+        public async Task CoreAudio_SetDefaultCommPlayback()
+        {
+            using (var controller = CreateTestController())
+            {
+
+                var dev = controller.DefaultPlaybackCommunicationsDevice;
+                var devices = await controller.GetPlaybackDevicesAsync(DeviceState.Active);
+
+                foreach (var d in devices)
+                {
+                    var isDefault = await d.SetAsDefaultCommunicationsAsync();
+                    Assert.Equal(isDefault, d.IsDefaultCommunicationsDevice);
+
+                    if (dev.Id != d.Id && isDefault)
+                    {
+                        Debug.WriteLine("Asserting Default Update");
+                        Assert.False(dev.IsDefaultCommunicationsDevice);
+                    }
+                }
+
+                var isDefault2 = await dev.SetAsDefaultCommunicationsAsync();
+                Assert.True(isDefault2);
+                Assert.True(dev.IsDefaultCommunicationsDevice);
+            }
+        }
+
+        [Fact]
+        public async Task CoreAudio_SetDefaultCommCapture()
+        {
+            using (var controller = CreateTestController())
+            {
+                var dev = controller.DefaultCaptureCommunicationsDevice;
+                var devices = await controller.GetCaptureDevicesAsync(DeviceState.Active);
+                bool success;
+
+                foreach (var d in devices)
+                {
+                    success = await d.SetAsDefaultCommunicationsAsync();
+                    Assert.Equal(success, d.IsDefaultCommunicationsDevice);
+
+                    if (dev.Id != d.Id && success)
+                    {
+                        Debug.WriteLine("Asserting Default Update");
+                        Assert.False(dev.IsDefaultDevice);
+                    }
+                }
+
+                success = await dev.SetAsDefaultCommunicationsAsync();
+                Assert.True(dev.IsDefaultCommunicationsDevice);
+                Assert.True(success);
+            }
+        }
 
         [Fact]
         public async Task CoreAudio_SetDefaultPlayback()
         {
-            var controller = CreateTestController();
-
-            var dev = controller.DefaultPlaybackDevice;
-            var devices = await controller.GetPlaybackDevicesAsync();
-
-            foreach (var d in devices)
+            using (var controller = CreateTestController())
             {
-                var isDefault = await d.SetAsDefaultAsync();
-                Assert.Equal(isDefault, d.IsDefaultDevice);
+                var dev = controller.DefaultPlaybackDevice;
+                var devices = await controller.GetPlaybackDevicesAsync(DeviceState.Active);
 
-                if (dev.Id != d.Id && isDefault)
+                foreach (var d in devices)
                 {
-                    Debug.WriteLine("Asserting Default Update");
-                    Assert.False(dev.IsDefaultDevice);
-                }
-            }
+                    try
+                    {
+                        var isDefault = await d.SetAsDefaultAsync();
+                        Assert.Equal(isDefault, d.IsDefaultDevice);
 
-            await dev.SetAsDefaultAsync();
-            Assert.True(dev.IsDefaultDevice);
+                        if (dev.Id != d.Id && isDefault)
+                        {
+                            Debug.WriteLine("Asserting Default Update");
+                            Assert.False(dev.IsDefaultDevice);
+                        }
+                    }
+                    catch (ComInteropTimeoutException)
+                    {
+                        //Can't set the default, don't fail the test
+                    }
+                }
+
+                var isDefault2 = await dev.SetAsDefaultAsync();
+                Assert.True(isDefault2);
+                Assert.True(dev.IsDefaultDevice);
+            }
         }
 
         [Fact]
         public async Task CoreAudio_SetDefaultCapture()
         {
-            var controller = CreateTestController();
-
-            var dev = controller.DefaultCaptureDevice;
-            var devices = await controller.GetCaptureDevicesAsync();
-
-            foreach (var d in devices)
+            using (var controller = CreateTestController())
             {
-                var isDefault = await d.SetAsDefaultAsync();
-                Assert.Equal(isDefault, d.IsDefaultDevice);
+                var dev = controller.DefaultCaptureDevice;
+                var devices = await controller.GetCaptureDevicesAsync(DeviceState.Active);
 
-                if (dev.Id != d.Id && isDefault)
+                foreach (var d in devices)
                 {
-                    Debug.WriteLine("Asserting Default Update");
-                    Assert.False(dev.IsDefaultDevice);
-                }
-            }
+                    try
+                    {
+                        var isDefault = await d.SetAsDefaultAsync();
+                        Assert.Equal(isDefault, d.IsDefaultDevice);
 
-            await dev.SetAsDefaultAsync();
-            Assert.True(dev.IsDefaultDevice);
+                        if (dev.Id != d.Id && isDefault)
+                        {
+                            Debug.WriteLine("Asserting Default Update");
+                            Assert.False(dev.IsDefaultDevice);
+                        }
+                    }
+                    catch (ComInteropTimeoutException)
+                    {
+                        //Can't set the default, don't fail the test
+                    }
+                }
+
+                var isDefault2 = await dev.SetAsDefaultAsync();
+                Assert.True(isDefault2);
+                Assert.True(dev.IsDefaultDevice);
+            }
         }
 
     }

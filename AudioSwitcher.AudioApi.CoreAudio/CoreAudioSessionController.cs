@@ -29,7 +29,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         public CoreAudioSessionController(CoreAudioDevice device, IAudioSessionManager2 audioSessionManager)
         {
             if (audioSessionManager == null)
-                throw new ArgumentNullException("audioSessionManager");
+                throw new ArgumentNullException(nameof(audioSessionManager));
 
             ComThread.Assert();
 
@@ -50,21 +50,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         }
 
-        public IObservable<IAudioSession> SessionCreated
-        {
-            get
-            {
-                return _sessionCreated.AsObservable();
-            }
-        }
+        public IObservable<IAudioSession> SessionCreated => _sessionCreated.AsObservable();
 
-        public IObservable<string> SessionDisconnected
-        {
-            get
-            {
-                return _sessionDisconnected.AsObservable();
-            }
-        }
+        public IObservable<string> SessionDisconnected => _sessionDisconnected.AsObservable();
 
         public IEnumerable<IAudioSession> All()
         {
@@ -83,7 +71,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public Task<IEnumerable<IAudioSession>> AllAsync()
         {
-            return Task.Factory.StartNew(() => All());
+            return TaskShim.FromResult(All());
         }
 
         public IEnumerable<IAudioSession> ActiveSessions()
@@ -103,7 +91,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public Task<IEnumerable<IAudioSession>> ActiveSessionsAsync()
         {
-            return Task.Factory.StartNew(() => ActiveSessions());
+            return TaskShim.FromResult(ActiveSessions());
         }
 
         public IEnumerable<IAudioSession> InactiveSessions()
@@ -123,7 +111,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public Task<IEnumerable<IAudioSession>> InactiveSessionsAsync()
         {
-            return Task.Factory.StartNew(() => InactiveSessions());
+            return TaskShim.FromResult(InactiveSessions());
         }
 
         public IEnumerable<IAudioSession> ExpiredSessions()
@@ -143,7 +131,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public Task<IEnumerable<IAudioSession>> ExpiredSessionsAsync()
         {
-            return Task.Factory.StartNew(() => ExpiredSessions());
+            return TaskShim.FromResult(ExpiredSessions());
         }
 
         public IEnumerator<IAudioSession> GetEnumerator()
@@ -156,19 +144,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return GetEnumerator();
         }
 
-        public int OnSessionCreated(IAudioSessionControl sessionControl)
+        int IAudioSessionNotification.OnSessionCreated(IAudioSessionControl sessionControl)
         {
-            ComThread.BeginInvoke(() =>
-            {
-                return CacheSessionWrapper(sessionControl);
-            })
-            .ContinueWith(x =>
-            {
-                if (x.Result != null)
-                    OnSessionCreated(x.Result);
-            });
+            TaskShim.Run(async () => await CreateSession(sessionControl));
 
             return 0;
+        }
+
+        private async Task CreateSession(IAudioSessionControl sessionControl)
+        {
+            var managedSession = await ComThread.BeginInvoke(() => CacheSessionWrapper(sessionControl)).ConfigureAwait(false);
+
+            if (managedSession != null)
+                OnSessionCreated(managedSession);
         }
 
         public void Dispose()
@@ -177,6 +165,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             _sessionCreated.Dispose();
             _sessionDisconnected.Dispose();
+            _lock.Dispose();
 
             Marshal.FinalReleaseComObject(_audioSessionManager);
         }

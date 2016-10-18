@@ -19,10 +19,9 @@ namespace AudioSwitcher.AudioApi.Observables
                 base.OnNext(value);
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
             _observerSubscription.Dispose();
-            base.Dispose();
         }
     }
 }

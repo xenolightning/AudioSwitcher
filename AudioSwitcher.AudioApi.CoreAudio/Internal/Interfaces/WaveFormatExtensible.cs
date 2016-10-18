@@ -4,39 +4,22 @@ using System.Runtime.InteropServices;
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 2)]
-    public class WaveFormatExtensible : WaveFormat
+    internal class WaveFormatExtensible : WaveFormat
     {
         private readonly int dwChannelMask;
         private readonly Guid subFormat;
         private readonly short wValidBitsPerSample;
 
-        public short ValidBitsPerSample
-        {
-            get
-            {
-                return wValidBitsPerSample;
-            }
-        }
+        public short ValidBitsPerSample => wValidBitsPerSample;
 
-        public SpeakerConfiguration ChannelMask
-        {
-            get
-            {
-                return (SpeakerConfiguration)dwChannelMask;
-            }
-        }
+        public SpeakerConfiguration ChannelMask => (SpeakerConfiguration)dwChannelMask;
 
-        public Guid SubFormat
-        {
-            get
-            {
-                return subFormat;
-            }
-        }
+        public Guid SubFormat => subFormat;
 
         /// <summary>
         /// Parameterless constructor for marshalling
         /// </summary>
+        // ReSharper disable once UnusedMember.Local
         private WaveFormatExtensible()
         {
         }
@@ -63,12 +46,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 
         public override string ToString()
         {
-            return String.Format("{0} wBitsPerSample:{1} dwChannelMask:{2} subFormat:{3} extraSize:{4}",
-                base.ToString(),
-                wValidBitsPerSample,
-                dwChannelMask,
-                subFormat,
-                ExtraSize);
+            return
+                $"{base.ToString()} wBitsPerSample:{wValidBitsPerSample} dwChannelMask:{dwChannelMask} subFormat:{subFormat} extraSize:{ExtraSize}";
         }
     }
 }

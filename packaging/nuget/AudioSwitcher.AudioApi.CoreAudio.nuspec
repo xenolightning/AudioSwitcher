@@ -2,10 +2,10 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>AudioSwitcher.AudioApi.CoreAudio</id>
-        <version>3.0.0-beta5</version>
+        <version>4.0.0-alpha4</version>
         <title>Audio Switcher Core Audio</title>
-        <authors>Sean Chapman</authors>
-        <owners>Sean Chapman</owners>
+        <authors>xenolightning</authors>
+        <owners>xenolightning</owners>
         <licenseUrl>https://github.com/xenolightning/AudioSwitcher/blob/master/README.md</licenseUrl>
         <projectUrl>https://github.com/xenolightning/AudioSwitcher</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -15,23 +15,28 @@ This includes all controllers and devices to access Windows System Devices and m
 
 This library can be used on any PC running Windows Vista and above. Supports both x86/x64 runtimes.</description>
         <summary>Windows WASAPI/Core Audio library extension of the Audio Switcher Audio API.</summary>
-        <releaseNotes>- Windows 10 support
-- Using api 3.0.0 as a base
-- Standard events have been replaced with observables
-- Audio Session support for Windows 7 and above.
-- Session peak value observable
-- SpeakerConfig support
-- bit Depth/sample rate support</releaseNotes>
+        <releaseNotes>- Natural async/await
+- (most) device functions are now fully driven from the system, contributing to proper async behaviour
+- Session Controller is now lazy, so it won't load until requested
+- fixed race conditions and optimized thread blocking
+- device capability support
+- slimmed down a few functions</releaseNotes>
         <copyright>Sean Chapman</copyright>
         <language>en-US</language>
-        <tags>wasapi audioswitcher audio api</tags>
+        <tags>wasapi audioswitcher audio api volume sound</tags>
         <dependencies>
+            <group />
             <group targetFramework=".NETFramework4.0">
-                <dependency id="AudioSwitcher.AudioApi" version="3.0.0-beta5" />
+                <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
+                <dependency id="AudioSwitcher.AudioApi" version="4.0.0-alpha4" />
+            </group>
+            <group targetFramework=".NETFramework4.5">
+                <dependency id="AudioSwitcher.AudioApi" version="4.0.0-alpha4" />
             </group>
         </dependencies>
     </metadata>
     <files>
-        <file src="..\..\bin\Release\AudioSwitcher.AudioApi.CoreAudio.dll" target="lib\net40\AudioSwitcher.AudioApi.CoreAudio.dll" />
+        <file src="..\..\bin\Release\NET40\AudioSwitcher.AudioApi.CoreAudio.dll" target="lib\net40\AudioSwitcher.AudioApi.CoreAudio.dll" />
+        <file src="..\..\bin\Release\NET45\AudioSwitcher.AudioApi.CoreAudio.dll" target="lib\net45\AudioSwitcher.AudioApi.CoreAudio.dll" />
     </files>
 </package>

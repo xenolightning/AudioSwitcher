@@ -9,7 +9,6 @@ namespace AudioSwitcher.AudioApi.Observables
         private readonly object _observerLock = new object();
         private readonly HashSet<IObserver<T>> _observers;
         private bool _isComplete;
-        private bool _isDisposed;
 
         public override bool HasObservers
         {
@@ -22,21 +21,7 @@ namespace AudioSwitcher.AudioApi.Observables
             }
         }
 
-        public override bool IsDisposed
-        {
-            get
-            {
-                return _isDisposed;
-            }
-        }
-
-        public override bool IsComplete
-        {
-            get
-            {
-                return _isComplete;
-            }
-        }
+        public override bool IsComplete => _isComplete;
 
         public Broadcaster()
         {
@@ -140,10 +125,7 @@ namespace AudioSwitcher.AudioApi.Observables
                 _observers.Add(observer);
             }
 
-            return new DelegateDisposable(() =>
-            {
-                ObserverDisposal(observer);
-            });
+            return new DelegateDisposable(() => { ObserverDisposal(observer); });
         }
 
         protected virtual void ObserverDisposal(IObserver<T> observer)
@@ -154,7 +136,7 @@ namespace AudioSwitcher.AudioApi.Observables
             }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
             OnCompleted();
 
@@ -162,8 +144,6 @@ namespace AudioSwitcher.AudioApi.Observables
             {
                 _observers.Clear();
             }
-
-            _isDisposed = true;
         }
     }
 }

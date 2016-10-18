@@ -2,7 +2,7 @@
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid(ComIIds.IMM_DEVICE_COLLECTION_IID)]
+    [Guid(ComInterfaceIds.IMM_DEVICE_COLLECTION_IID)]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IMultimediaDeviceCollection
     {

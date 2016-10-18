@@ -42,46 +42,22 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         ///     VolumeChanged Range
         /// </summary>
-        public AudioEndpointVolumeVolumeRange VolumeRange
-        {
-            get
-            {
-                return _volumeRange;
-            }
-        }
+        public AudioEndpointVolumeVolumeRange VolumeRange => _volumeRange;
 
         /// <summary>
         ///     Hardware Support
         /// </summary>
-        public EndpointHardwareSupport HardwareSupport
-        {
-            get
-            {
-                return _hardwareSupport;
-            }
-        }
+        public EndpointHardwareSupport HardwareSupport => _hardwareSupport;
 
         /// <summary>
         ///     Step Information
         /// </summary>
-        public AudioEndpointVolumeStepInformation StepInformation
-        {
-            get
-            {
-                return _stepInformation;
-            }
-        }
+        public AudioEndpointVolumeStepInformation StepInformation => _stepInformation;
 
         /// <summary>
         ///     Channels
         /// </summary>
-        public AudioEndpointVolumeChannels Channels
-        {
-            get
-            {
-                return _channels;
-            }
-        }
+        public AudioEndpointVolumeChannels Channels => _channels;
 
         /// <summary>
         ///     Master VolumeChanged Level
@@ -99,8 +75,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
             set
             {
-                ComThread.Invoke(
-                    () => Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMasterVolumeLevel(value, Guid.Empty)));
+                ComThread.Invoke(() =>
+                {
+                    Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMasterVolumeLevel(value, Guid.Empty));
+                });
             }
         }
 
@@ -120,9 +98,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
             set
             {
-                ComThread.Invoke(
-                    () =>
-                        Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMasterVolumeLevelScalar(value, Guid.Empty)));
+                ComThread.BeginInvoke(() =>
+                {
+                    Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMasterVolumeLevelScalar(value, Guid.Empty));
+                });
             }
         }
 
@@ -142,7 +121,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
             set
             {
-                ComThread.Invoke(() => Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMute(value, Guid.Empty)));
+                ComThread.BeginInvoke(() => Marshal.ThrowExceptionForHR(_audioEndPointVolume.SetMute(value, Guid.Empty)));
             }
         }
 
@@ -175,8 +154,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 ComThread.BeginInvoke(() =>
                 {
-                    if (_audioEndPointVolume != null)
-                        _audioEndPointVolume.UnregisterControlChangeNotify(_callBack);
+                    _audioEndPointVolume?.UnregisterControlChangeNotify(_callBack);
 
                     _callBack = null;
                     _audioEndPointVolume = null;
@@ -209,11 +187,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         internal void FireNotification(AudioVolumeNotificationData notificationData)
         {
-            var del = OnVolumeNotification;
-            if (del != null)
-            {
-                del(notificationData);
-            }
+            OnVolumeNotification?.Invoke(notificationData);
         }
 
         /// <summary>

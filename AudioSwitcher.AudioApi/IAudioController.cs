@@ -6,13 +6,13 @@ namespace AudioSwitcher.AudioApi
 {
     public interface IAudioController : IDisposable
     {
-        IDevice DefaultPlaybackDevice { get; set; }
+        IDevice DefaultPlaybackDevice { get; }
 
-        IDevice DefaultPlaybackCommunicationsDevice { get; set; }
+        IDevice DefaultPlaybackCommunicationsDevice { get; }
 
-        IDevice DefaultCaptureDevice { get; set; }
+        IDevice DefaultCaptureDevice { get; }
 
-        IDevice DefaultCaptureCommunicationsDevice { get; set; }
+        IDevice DefaultCaptureCommunicationsDevice { get; }
 
         IObservable<DeviceChangedArgs> AudioDeviceChanged { get; }
 
@@ -59,13 +59,5 @@ namespace AudioSwitcher.AudioApi
         Task<IEnumerable<IDevice>> GetCaptureDevicesAsync();
 
         Task<IEnumerable<IDevice>> GetCaptureDevicesAsync(DeviceState deviceState);
-
-        bool SetDefaultDevice(IDevice dev);
-
-        bool SetDefaultCommunicationsDevice(IDevice dev);
-
-        Task<bool> SetDefaultDeviceAsync(IDevice dev);
-
-        Task<bool> SetDefaultCommunicationsDeviceAsync(IDevice dev);
     }
 }

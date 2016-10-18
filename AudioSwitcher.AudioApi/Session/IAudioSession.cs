@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi.Session
 {
@@ -16,9 +18,9 @@ namespace AudioSwitcher.AudioApi.Session
 
         bool IsSystemSession { get; }
 
-        double Volume { get; set; }
+        double Volume { get; }
 
-        bool IsMuted { get; set; }
+        bool IsMuted { get; }
 
         AudioSessionState SessionState { get; }
 
@@ -33,5 +35,18 @@ namespace AudioSwitcher.AudioApi.Session
         IObservable<SessionStateChangedArgs> StateChanged { get; }
 
         IObservable<SessionDisconnectedArgs> Disconnected { get; }
+
+        Task<double> GetVolumeAsync();
+        Task<double> GetVolumeAsync(CancellationToken cancellationToken);
+
+        Task<double> SetVolumeAsync(double volume);
+        Task<double> SetVolumeAsync(double volume, CancellationToken cancellationToken);
+
+        Task<bool> GetMuteAsync();
+        Task<bool> GetMuteAsync(CancellationToken cancellationToken);
+
+        Task<bool> SetMuteAsync(bool muted);
+        Task<bool> SetMuteAsync(bool muted, CancellationToken cancellationToken);
+
     }
 }

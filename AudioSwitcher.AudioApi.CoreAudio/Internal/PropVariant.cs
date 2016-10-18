@@ -165,8 +165,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             var structSize = Marshal.SizeOf(singleInstance);
             if (blobByteLength % structSize != 0)
             {
-                throw new InvalidDataException(string.Format("Blob size {0} not a multiple of struct size {1}",
-                    blobByteLength, structSize));
+                throw new InvalidDataException($"Blob size {blobByteLength} not a multiple of struct size {structSize}");
             }
             var items = blobByteLength / structSize;
             var array = new T[items];
@@ -181,13 +180,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         ///     Gets the type of data in this PropVariant
         /// </summary>
-        public VarEnum DataType
-        {
-            get
-            {
-                return (VarEnum)vt;
-            }
-        }
+        public VarEnum DataType => (VarEnum)vt;
 
         /// <summary>
         ///     Property value

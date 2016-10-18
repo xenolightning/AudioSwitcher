@@ -6,7 +6,7 @@ namespace AudioSwitcher.AudioApi.Observables
     {
         public abstract bool HasObservers { get; }
 
-        public abstract bool IsDisposed { get; }
+        public bool IsDisposed { get; private set; }
 
         public abstract bool IsComplete { get; }
 
@@ -18,6 +18,16 @@ namespace AudioSwitcher.AudioApi.Observables
 
         public abstract IDisposable Subscribe(IObserver<T> observer);
 
-        public abstract void Dispose();
+        public void Dispose()
+        {
+            if (IsDisposed)
+                return;
+
+            Dispose(true);
+            GC.SuppressFinalize(this);
+            IsDisposed = true;
+        }
+
+        protected abstract void Dispose(bool disposing);
     }
 }

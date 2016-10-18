@@ -20,11 +20,9 @@ namespace AudioSwitcher.AudioApi.Hooking.ComObjects
             [Out] [MarshalAs(UnmanagedType.Interface)] out IntPtr properties);
 
         [PreserveSig]
-        int GetId(
-            [Out] [MarshalAs(UnmanagedType.LPWStr)] out string strId);
+        int GetId([Out] [MarshalAs(UnmanagedType.LPWStr)] out string strId);
 
         [PreserveSig]
-        int GetState(
-            [Out] [MarshalAs(UnmanagedType.U4)] out DeviceState deviceState);
+        int GetState([Out] [MarshalAs(UnmanagedType.U4)] out DeviceState deviceState);
     }
 }

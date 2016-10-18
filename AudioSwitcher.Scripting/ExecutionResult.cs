@@ -38,6 +38,7 @@ namespace AudioSwitcher.Scripting
 
     }
 
+    [Serializable]
     public class ExecutionException : Exception
     {
         public int LineNumber

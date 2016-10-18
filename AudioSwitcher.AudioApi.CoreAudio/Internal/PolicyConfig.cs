@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 
 // ReSharper disable SuspiciousTypeConversion.Global
@@ -27,17 +26,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 {
                     policyConfigVista.SetDefaultEndpoint(devId, eRole);
                 }
-                else if(policyConfigX != null)
+                else
                 {
-                    policyConfigX.SetDefaultEndpoint(devId, eRole);
+                    policyConfigX?.SetDefaultEndpoint(devId, eRole);
                 }
             }
             finally
             {
                 if (policyConfig != null && Marshal.IsComObject(policyConfig))
                     Marshal.FinalReleaseComObject(policyConfig);
-
-                GC.Collect();
             }
         }
     }

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid(ComIIds.AUDIO_SESSION_CONTROL_IID)]
+    [Guid(ComInterfaceIds.AUDIO_SESSION_CONTROL_IID)]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IAudioSessionControl
     {

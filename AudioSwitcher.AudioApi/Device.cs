@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Linq.Expressions;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.Observables;
 
@@ -42,127 +43,98 @@ namespace AudioSwitcher.AudioApi
         public abstract DeviceIcon Icon { get; }
         public abstract string IconPath { get; }
 
-        public virtual bool IsDefaultDevice
-        {
-            get
-            {
-                return (Controller.DefaultPlaybackDevice != null && Controller.DefaultPlaybackDevice.Id == Id)
-                       || (Controller.DefaultCaptureDevice != null && Controller.DefaultCaptureDevice.Id == Id);
-            }
-        }
+        public abstract bool IsDefaultDevice { get; }
 
-        public virtual bool IsDefaultCommunicationsDevice
-        {
-            get
-            {
-                return (Controller.DefaultPlaybackCommunicationsDevice != null && Controller.DefaultPlaybackCommunicationsDevice.Id == Id)
-                       || (Controller.DefaultCaptureCommunicationsDevice != null && Controller.DefaultCaptureCommunicationsDevice.Id == Id);
-            }
-        }
+        public abstract bool IsDefaultCommunicationsDevice { get; }
 
         public abstract DeviceState State { get; }
 
         public abstract DeviceType DeviceType { get; }
 
-        public virtual bool IsPlaybackDevice
-        {
-            get
-            {
-                return DeviceType == DeviceType.Playback || DeviceType == DeviceType.All;
-            }
-        }
+        public virtual bool IsPlaybackDevice => DeviceType == DeviceType.Playback || DeviceType == DeviceType.All;
 
-        public virtual bool IsCaptureDevice
-        {
-            get
-            {
-                return DeviceType == DeviceType.Capture || DeviceType == DeviceType.All;
-            }
-        }
+        public virtual bool IsCaptureDevice => DeviceType == DeviceType.Capture || DeviceType == DeviceType.All;
 
         public abstract bool IsMuted { get; }
 
-        public abstract double Volume { get; set; }
+        public abstract double Volume { get; }
 
-        public IObservable<DeviceVolumeChangedArgs> VolumeChanged
-        {
-            get { return _volumeChanged.AsObservable(); }
-        }
+        public virtual IObservable<DeviceVolumeChangedArgs> VolumeChanged => _volumeChanged.AsObservable();
 
-        public IObservable<DeviceMuteChangedArgs> MuteChanged
-        {
-            get { return _muteChanged.AsObservable(); }
-        }
+        public virtual IObservable<DeviceMuteChangedArgs> MuteChanged => _muteChanged.AsObservable();
 
-        public IObservable<DevicePropertyChangedArgs> PropertyChanged
-        {
-            get { return _propertyChanged.AsObservable(); }
-        }
+        public virtual IObservable<DevicePropertyChangedArgs> PropertyChanged => _propertyChanged.AsObservable();
 
-        public IObservable<DefaultDeviceChangedArgs> DefaultChanged
-        {
-            get { return _defaultChanged.AsObservable(); }
-        }
+        public virtual IObservable<DefaultDeviceChangedArgs> DefaultChanged => _defaultChanged.AsObservable();
 
-        public IObservable<DeviceStateChangedArgs> StateChanged
-        {
-            get { return _stateChanged.AsObservable(); }
-        }
+        public virtual IObservable<DeviceStateChangedArgs> StateChanged => _stateChanged.AsObservable();
 
-        public IObservable<DevicePeakValueChangedArgs> PeakValueChanged
-        {
-            get { return _peakValueChanged.AsObservable(); }
-        }
+        public virtual IObservable<DevicePeakValueChangedArgs> PeakValueChanged => _peakValueChanged.AsObservable();
 
-        /// <summary>
-        ///     Set this device as the the default device
-        /// </summary>
         public virtual bool SetAsDefault()
         {
-            return Controller.SetDefaultDevice(this);
+            return SetAsDefault(CancellationToken.None);
         }
 
-        public Task<bool> SetAsDefaultAsync()
+        public abstract bool SetAsDefault(CancellationToken cancellationToken);
+
+        public virtual Task<bool> SetAsDefaultAsync()
         {
-            return Controller.SetDefaultDeviceAsync(this);
+            return SetAsDefaultAsync(CancellationToken.None);
         }
 
-        /// <summary>
-        ///     Set this device as the default communication device
-        /// </summary>
+        public abstract Task<bool> SetAsDefaultAsync(CancellationToken cancellationToken);
+
         public virtual bool SetAsDefaultCommunications()
         {
-            return Controller.SetDefaultCommunicationsDevice(this);
+            return SetAsDefaultCommunications(CancellationToken.None);
         }
 
-        public Task<bool> SetAsDefaultCommunicationsAsync()
+        public abstract bool SetAsDefaultCommunications(CancellationToken cancellationToken);
+
+        public virtual Task<bool> SetAsDefaultCommunicationsAsync()
         {
-            return Controller.SetDefaultCommunicationsDeviceAsync(this);
+            return SetAsDefaultCommunicationsAsync(CancellationToken.None);
         }
 
-        public abstract bool Mute(bool mute);
+        public abstract Task<bool> SetAsDefaultCommunicationsAsync(CancellationToken cancellationToken);
 
-        public virtual Task<bool> MuteAsync(bool mute)
+        public virtual Task<bool> SetMuteAsync(bool mute)
         {
-            return Task.Factory.StartNew(() => Mute(mute));
+            return SetMuteAsync(mute, CancellationToken.None);
         }
 
-        public virtual bool ToggleMute()
-        {
-            Mute(!IsMuted);
-
-            return IsMuted;
-        }
+        public abstract Task<bool> SetMuteAsync(bool mute, CancellationToken cancellationToken);
 
         public virtual Task<bool> ToggleMuteAsync()
         {
-            return Task.Factory.StartNew(() => ToggleMute());
+            return ToggleMuteAsync(CancellationToken.None);
         }
 
-        ~Device()
+        public Task<bool> ToggleMuteAsync(CancellationToken cancellationToken)
         {
-            Dispose(false);
+            return SetMuteAsync(!IsMuted, cancellationToken);
         }
+
+        public virtual Task<double> GetVolumeAsync()
+        {
+            return GetVolumeAsync(CancellationToken.None);
+        }
+
+        public abstract Task<double> GetVolumeAsync(CancellationToken cancellationToken);
+
+        public virtual Task<double> SetVolumeAsync(double volume)
+        {
+            return SetVolumeAsync(volume, CancellationToken.None);
+        }
+
+        public abstract Task<double> SetVolumeAsync(double volume, CancellationToken cancellationToken);
+
+        public abstract bool HasCapability<TCapability>() where TCapability : IDeviceCapability;
+
+        public abstract TCapability GetCapability<TCapability>() where TCapability : IDeviceCapability;
+
+        public abstract IEnumerable<IDeviceCapability> GetAllCapabilities();
 
         protected virtual void OnMuteChanged(bool isMuted)
         {
@@ -177,11 +149,6 @@ namespace AudioSwitcher.AudioApi
         protected virtual void OnPropertyChanged(string propertyName)
         {
             _propertyChanged.OnNext(new DevicePropertyChangedArgs(this, propertyName));
-        }
-
-        protected virtual void OnPropertyChanged<T>(Expression<Func<IDevice, object>> expression)
-        {
-            _propertyChanged.OnNext(DevicePropertyChangedArgs.FromExpression(this, expression));
         }
 
         protected virtual void OnDefaultChanged()
@@ -199,12 +166,6 @@ namespace AudioSwitcher.AudioApi
             _peakValueChanged.OnNext(new DevicePeakValueChangedArgs(this, peakValue));
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             _muteChanged.Dispose();
@@ -214,5 +175,11 @@ namespace AudioSwitcher.AudioApi
             _propertyChanged.Dispose();
             _peakValueChanged.Dispose();
         }
+
+        ~Device()
+        {
+            Dispose(false);
+        }
+
     }
 }

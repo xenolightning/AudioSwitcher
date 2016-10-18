@@ -2,7 +2,7 @@
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid(ComIIds.AUDIO_METER_INFORMATION_IID)]
+    [Guid(ComInterfaceIds.AUDIO_METER_INFORMATION_IID)]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IAudioMeterInformation
     {

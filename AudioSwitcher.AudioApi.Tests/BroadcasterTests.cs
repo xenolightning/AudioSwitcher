@@ -24,7 +24,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Disposed_HasObservers()
+        public void Broadcaster_Disposed_HasObservers()
         {
             var b = new Broadcaster<int>();
 
@@ -38,7 +38,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_SubscriptionDisposed_HasObservers()
+        public void Broadcaster_SubscriptionDisposed_HasObservers()
         {
             var b = new Broadcaster<int>();
 
@@ -52,7 +52,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Subscribe()
+        public void Broadcaster_Subscribe()
         {
             var b = new Broadcaster<int>();
 
@@ -62,7 +62,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Subscribe_HasObservers()
+        public void Broadcaster_Subscribe_HasObservers()
         {
             var b = new Broadcaster<int>();
 
@@ -74,7 +74,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_OnNext()
+        public void Broadcaster_OnNext()
         {
             var b = new Broadcaster<int>();
 
@@ -91,7 +91,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Subscribe_SubscriptionDispose()
+        public void Broadcaster_Subscribe_SubscriptionDispose()
         {
             var b = new Broadcaster<int>();
 
@@ -107,7 +107,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_DisposedSubscription_OnNext()
+        public void Broadcaster_DisposedSubscription_OnNext()
         {
             var b = new Broadcaster<int>();
 
@@ -125,7 +125,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Disposed_OnNext()
+        public void Broadcaster_Disposed_OnNext()
         {
             var b = new Broadcaster<int>();
 
@@ -145,7 +145,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_OnCompleted()
+        public void Broadcaster_OnCompleted()
         {
             var b = new Broadcaster<int>();
 
@@ -161,7 +161,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Disposed_OnCompleted()
+        public void Broadcaster_Disposed_OnCompleted()
         {
             var b = new Broadcaster<int>();
 
@@ -177,7 +177,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_DisposedSubscription_OnCompleted()
+        public void Broadcaster_DisposedSubscription_OnCompleted()
         {
             var b = new Broadcaster<int>();
 
@@ -194,7 +194,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_OnError_FromOnNext()
+        public void Broadcaster_OnError_FromOnNext()
         {
             var b = new Broadcaster<int>();
 
@@ -213,7 +213,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_OnError_FromOnError()
+        public void Broadcaster_OnError_FromOnError()
         {
             var b = new Broadcaster<int>();
 
@@ -232,7 +232,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Disposed_Does_Not_Fire_OnError()
+        public void Broadcaster_Disposed_Does_Not_Fire_OnError()
         {
             var b = new Broadcaster<int>();
 
@@ -250,7 +250,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Disposed_Does_Not_Fire_OnNext()
+        public void Broadcaster_Disposed_Does_Not_Fire_OnNext()
         {
             var b = new Broadcaster<int>();
 
@@ -268,7 +268,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Disposed_Does_Not_Fire_OnCompleted()
+        public void Broadcaster_Disposed_Does_Not_Fire_OnCompleted()
         {
             var b = new Broadcaster<int>();
 
@@ -288,7 +288,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Completed_Does_Not_Fire_OnNext()
+        public void Broadcaster_Completed_Does_Not_Fire_OnNext()
         {
             var b = new Broadcaster<int>();
 
@@ -306,7 +306,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Completed_Does_Not_Fire_OnCompleted()
+        public void Broadcaster_Completed_Does_Not_Fire_OnCompleted()
         {
             var b = new Broadcaster<int>();
 
@@ -325,12 +325,158 @@ namespace AudioSwitcher.AudioApi.Tests
             Assert.Equal(1, count);
         }
 
+        [Fact]
+        public void Broadcaster_Completed_Subscribe_Does_Not_Add_Observer()
+        {
+            var b = new Broadcaster<int>();
+            b.OnCompleted();
+
+            b.Subscribe(x => { });
+
+            Assert.True(b.IsComplete);
+            Assert.False(b.HasObservers);
+        }
+
+        [Fact]
+        public void Broadcaster_Disposed_Subscribe_Throws_Exception()
+        {
+            var b = new Broadcaster<int>();
+            b.Dispose();
+
+            Assert.True(b.IsComplete);
+            Assert.True(b.IsDisposed);
+
+            Assert.Throws<ObjectDisposedException>(() => b.Subscribe(x => { }));
+
+            Assert.False(b.HasObservers);
+        }
+
+        [Fact]
+        public void Broadcaster_Catches_Exception_In_OnNext()
+        {
+            var b = new Broadcaster<int>();
+            var reflectedValue = -1;
+
+            b.Subscribe(
+                x =>
+                {
+                    throw new Exception();
+                },
+                ex =>
+                {
+                    throw new Exception();
+                },
+                () =>
+                {
+                    throw new Exception();
+                });
+
+            b.Subscribe(x =>
+            {
+                reflectedValue = x;
+            });
+
+            //Assert does not throw
+            b.OnNext(1);
+            Assert.Equal(1, reflectedValue);
+        }
+
+        [Fact]
+        public void Broadcaster_Catches_Exception_In_OnComplete()
+        {
+            var b = new Broadcaster<int>();
+            var reflectedValue = -1;
+
+            b.Subscribe(
+                x =>
+                {
+                    throw new Exception();
+                },
+                ex =>
+                {
+                    throw new Exception();
+                },
+                () =>
+                {
+                    reflectedValue = 1;
+                    throw new Exception();
+                });
+
+            b.Subscribe(x =>
+            {
+                reflectedValue = x;
+            });
+
+            b.OnCompleted();
+            Assert.Equal(1, reflectedValue);
+        }
+
+        [Fact]
+        public void Broadcaster_Catches_Exception_In_OnError()
+        {
+            var b = new Broadcaster<int>();
+            var reflectedValue = -1;
+
+            b.Subscribe(
+                x =>
+                {
+                    throw new Exception();
+                },
+                ex =>
+                {
+                    reflectedValue = 1;
+                    throw new Exception();
+                },
+                () =>
+                {
+                    throw new Exception();
+                });
+
+            b.Subscribe(x =>
+            {
+                reflectedValue = x;
+            });
+
+            b.OnError(new Exception());
+            Assert.Equal(1, reflectedValue);
+        }
+
+        [Fact]
+        public void Broadcaster_Catches_Exception_In_Dispose()
+        {
+            var b = new Broadcaster<int>();
+            var reflectedValue = -1;
+
+            b.Subscribe(
+                x =>
+                {
+                    throw new Exception();
+                },
+                ex =>
+                {
+                    throw new Exception();
+                },
+                () =>
+                {
+                    throw new Exception();
+                });
+
+            b.Subscribe(x =>
+            {
+                reflectedValue = x;
+            });
+
+            //Assert does not throw
+            b.OnNext(1);
+            b.Dispose();
+            Assert.Equal(1, reflectedValue);
+        }
 
         [Fact]
         public void DelegateDisposable_Create()
         {
             int count = 0;
-            var disposable = DelegateDisposable.Create(() => count = 1);
+            var disposable = new DelegateDisposable(() => count = 1);
 
             Assert.NotNull(disposable);
             Assert.IsAssignableFrom<IDisposable>(disposable);

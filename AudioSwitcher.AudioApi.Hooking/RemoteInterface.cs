@@ -1,6 +1,5 @@
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using AudioSwitcher.AudioApi.Hooking.ComObjects;
 
 namespace AudioSwitcher.AudioApi.Hooking
@@ -14,13 +13,7 @@ namespace AudioSwitcher.AudioApi.Hooking
         private readonly Action<int, Exception> _errorHandler;
         private int _messageCount;
 
-        public int MessageCount
-        {
-            get
-            {
-                return _messageCount;
-            }
-        }
+        public int MessageCount => _messageCount;
 
         public RemoteInterface(
             Func<DataFlow, Role, string> systemId,
@@ -30,8 +23,8 @@ namespace AudioSwitcher.AudioApi.Hooking
             Action<int, Exception> errorHandler
             )
         {
-            if (systemId == null) throw new ArgumentNullException("systemId");
-            if (canUnload == null) throw new ArgumentNullException("canUnload");
+            if (systemId == null) throw new ArgumentNullException(nameof(systemId));
+            if (canUnload == null) throw new ArgumentNullException(nameof(canUnload));
 
             _systemId = systemId;
             _canUnload = canUnload;
@@ -55,8 +48,11 @@ namespace AudioSwitcher.AudioApi.Hooking
         {
             Interlocked.Increment(ref _messageCount);
 
-            if (_hookInstalled != null)
-                _hookInstalled();
+            ThreadPool.QueueUserWorkItem(x =>
+            {
+                if (_hookInstalled != null)
+                    _hookInstalled();
+            });
 
             return true;
         }
@@ -64,7 +60,8 @@ namespace AudioSwitcher.AudioApi.Hooking
         public void HookUninstalled(int processId)
         {
             Interlocked.Increment(ref _messageCount);
-            Task.Factory.StartNew(() =>
+
+            ThreadPool.QueueUserWorkItem(x =>
             {
                 if (_hookUninstalled != null)
                     _hookUninstalled(processId);
@@ -74,7 +71,8 @@ namespace AudioSwitcher.AudioApi.Hooking
         public void ReportError(int processId, Exception e)
         {
             Interlocked.Increment(ref _messageCount);
-            Task.Factory.StartNew(() =>
+
+            ThreadPool.QueueUserWorkItem(x =>
             {
                 if (_errorHandler != null)
                     _errorHandler(processId, e);

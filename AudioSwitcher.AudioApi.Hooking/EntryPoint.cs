@@ -12,23 +12,22 @@ namespace AudioSwitcher.AudioApi.Hooking
         [return: MarshalAs(UnmanagedType.U4)]
         public delegate int DGetDefaultAudioEndpoint(IMultimediaDeviceEnumerator self, DataFlow dataFlow, Role role, out IntPtr ppEndpoint);
 
-        public readonly RemoteInterface Interface;
+        private readonly RemoteInterface _interface;
 
         public EntryPoint(RemoteHooking.IContext inContext, string inChannelName)
         {
-            Interface = RemoteHooking.IpcConnectClient<RemoteInterface>(inChannelName);
+            _interface = RemoteHooking.IpcConnectClient<RemoteInterface>(inChannelName);
         }
 
         public void Run(RemoteHooking.IContext inContext, string inChannelName)
         {
-            LocalHook hook = null;
             try
             {
                 //Create the DefaultDevice Hook
                 var cci = new COMClassInfo(Type.GetTypeFromCLSID(new Guid(ComIIds.DEVICE_ENUMERATOR_CID)), typeof(IMultimediaDeviceEnumerator), "GetDefaultAudioEndpoint");
                 cci.Query();
 
-                hook = LocalHook.Create(cci.MethodPointers[0], new DGetDefaultAudioEndpoint(GetDefaultAudioEndpoint), this);
+                var hook = LocalHook.Create(cci.MethodPointers[0], new DGetDefaultAudioEndpoint(GetDefaultAudioEndpoint), this);
 
                 hook.ThreadACL.SetExclusiveACL(new[] { 0 });
 
@@ -36,47 +35,48 @@ namespace AudioSwitcher.AudioApi.Hooking
                 Thread.Sleep(50);
 
                 //Signal the hook installed, and get the response from the server
-                if (!Interface.HookInstalled())
+                if (!_interface.HookInstalled())
                     return;
 
             }
             catch (Exception e)
             {
-                ReportError(Interface, e);
+                ReportError(_interface, e);
+                return;
             }
 
             try
             {
-                while (!Interface.CanUnload())
+                while (!_interface.CanUnload())
                 {
                     Thread.Sleep(200);
                 }
 
-                Interface.HookUninstalled(RemoteHooking.GetCurrentProcessId());
+                _interface.HookUninstalled(RemoteHooking.GetCurrentProcessId());
             }
             catch (Exception e)
             {
-                ReportError(Interface, e);
+                ReportError(_interface, e);
             }
 
-            if (hook != null)
-                hook.Dispose();
         }
 
-        private static int GetDefaultAudioEndpoint(IMultimediaDeviceEnumerator self, DataFlow dataflow, Role role,
-            out IntPtr ppendpoint)
+        private static int GetDefaultAudioEndpoint(IMultimediaDeviceEnumerator self, DataFlow dataflow, Role role, out IntPtr ppendpoint)
         {
             var entryPoint = HookRuntimeInfo.Callback as EntryPoint;
 
-            if (entryPoint == null || entryPoint.Interface == null)
+            if (entryPoint == null || entryPoint._interface == null)
                 return self.GetDefaultAudioEndpoint(dataflow, role, out ppendpoint);
 
-            var remoteInterface = entryPoint.Interface;
+            var remoteInterface = entryPoint._interface;
 
             try
             {
                 var devId = remoteInterface.GetDefaultDevice(dataflow, role);
-                return self.GetDevice(devId, out ppendpoint);
+
+                var result = self.GetDevice(devId, out ppendpoint);
+                if (ppendpoint != IntPtr.Zero)
+                    return result;
             }
             catch (Exception ex)
             {

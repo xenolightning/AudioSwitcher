@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
 
@@ -8,7 +9,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 {
     public sealed partial class CoreAudioDevice
     {
-        private static readonly Dictionary<string, DeviceIcon> ICON_MAP = new Dictionary<string, DeviceIcon>
+        private static readonly Dictionary<string, DeviceIcon> IconMap = new Dictionary<string, DeviceIcon>
         {
             {"0", DeviceIcon.Speakers},
             {"1", DeviceIcon.Speakers},
@@ -47,15 +48,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         };
 
         private AudioEndpointVolume _audioEndpointVolume;
-        private IAudioMeterInformation _audioMeterInformation;
+        private ThreadLocal<IAudioMeterInformation> _audioMeterInformation;
+        private IntPtr _audioMeterInformationPtr;
 
         private IPropertyDictionary Properties
         {
             get
             {
-                if(_isDisposed)
-                    throw new ObjectDisposedException("");
-
+                ThrowIfDisposed();
                 return _properties;
             }
         }
@@ -67,10 +67,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                if (_isDisposed)
-                    throw new ObjectDisposedException("");
-
-                return _audioMeterInformation;
+                ThrowIfDisposed();
+                return _audioMeterInformation?.Value;
             }
         }
 
@@ -81,6 +79,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
+                ThrowIfDisposed();
                 return _audioEndpointVolume;
             }
         }
@@ -99,7 +98,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             _properties.TryLoadFrom(device);
         }
 
-        private void LoadAudioMeterInformation(IMultimediaDevice device)
+        private void LoadAudioMeterInformation()
         {
             //This should be all on the COM thread to avoid any
             //weird lookups on the result COM object not on an STA Thread
@@ -110,10 +109,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //It's not an HR exception, but bubbles up through the .net call stack
             try
             {
-                var clsGuid = new Guid(ComIIds.AUDIO_METER_INFORMATION_IID);
+                var clsGuid = new Guid(ComInterfaceIds.AUDIO_METER_INFORMATION_IID);
                 object result;
-                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
-                _audioMeterInformation = result as IAudioMeterInformation;
+                ex = Marshal.GetExceptionForHR(Device.Activate(ref clsGuid, ClassContext.Inproc, IntPtr.Zero, out result));
+                _audioMeterInformationPtr = Marshal.GetIUnknownForObject(result);
+
+                _audioMeterInformation = new ThreadLocal<IAudioMeterInformation>(() => Marshal.GetUniqueObjectForIUnknown(_audioMeterInformationPtr) as IAudioMeterInformation);
             }
             catch (Exception e)
             {
@@ -124,7 +125,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 ClearAudioMeterInformation();
         }
 
-        private void LoadAudioEndpointVolume(IMultimediaDevice device)
+        private void LoadAudioEndpointVolume()
         {
             //Don't even bother looking up volume for disconnected devices
             if (!State.HasFlag(DeviceState.Active))
@@ -143,8 +144,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             //It's not an HR exception, but bubbles up through the .net call stack
             try
             {
-                var clsGuid = new Guid(ComIIds.AUDIO_ENDPOINT_VOLUME_IID);
-                ex = Marshal.GetExceptionForHR(device.Activate(ref clsGuid, ClsCtx.Inproc, IntPtr.Zero, out result));
+                var clsGuid = new Guid(ComInterfaceIds.AUDIO_ENDPOINT_VOLUME_IID);
+                ex = Marshal.GetExceptionForHR(Device.Activate(ref clsGuid, ClassContext.Inproc, IntPtr.Zero, out result));
             }
             catch (Exception e)
             {
@@ -159,6 +160,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
             _audioEndpointVolume = new AudioEndpointVolume(result as IAudioEndpointVolume);
             _isMuted = _audioEndpointVolume.Mute;
+            _volume = _audioEndpointVolume.MasterVolumeLevelScalar.DeNormalizeVolume();
         }
 
         private void ClearAudioEndpointVolume()
@@ -168,16 +170,14 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 _audioEndpointVolume.OnVolumeNotification -= AudioEndpointVolume_OnVolumeNotification;
                 _audioEndpointVolume.Dispose();
                 _audioEndpointVolume = null;
+                _volume = -1;
             }
         }
 
         private void ClearAudioMeterInformation()
         {
-            if (_audioMeterInformation != null)
-            {
-                Marshal.FinalReleaseComObject(_audioMeterInformation);
-                _audioMeterInformation = null;
-            }
+            _audioMeterInformation?.Dispose();
+            _audioMeterInformation = null;
         }
 
         private static DeviceIcon IconStringToDeviceIcon(string iconStr)
@@ -185,7 +185,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             try
             {
                 var imageKey = iconStr.Substring(iconStr.IndexOf(",", StringComparison.InvariantCultureIgnoreCase) + 1).Replace("-", "");
-                return ICON_MAP[imageKey];
+                return IconMap[imageKey];
             }
             catch
             {

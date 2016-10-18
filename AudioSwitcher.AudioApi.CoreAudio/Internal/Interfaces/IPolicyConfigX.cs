@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid(ComIIds.UNKNOWN_IID)]
+    [Guid(ComInterfaceIds.UNKNOWN_IID)]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IPolicyConfigX
     {

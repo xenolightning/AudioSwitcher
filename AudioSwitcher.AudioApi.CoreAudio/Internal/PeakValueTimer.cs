@@ -1,23 +1,16 @@
 ﻿using System;
-using System.Threading;
 using System.Timers;
 using AudioSwitcher.AudioApi.Observables;
 using Timer = System.Timers.Timer;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    public static class PeakValueTimer
+    internal static class PeakValueTimer
     {
         private static readonly Timer _peakValueTimer;
         private static readonly Broadcaster<long> _peakValueTick;
 
-        public static IObservable<long> PeakValueTick
-        {
-            get
-            {
-                return _peakValueTick;
-            }
-        }
+        public static IObservable<long> PeakValueTick => _peakValueTick;
 
         static PeakValueTimer()
         {

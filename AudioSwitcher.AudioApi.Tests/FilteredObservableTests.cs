@@ -3,12 +3,12 @@ using Xunit;
 
 namespace AudioSwitcher.AudioApi.Tests
 {
-    public class FilteredObservableTests
+    public class FilteredBroadcasterTests
     {
 
 
         [Fact]
-        public void FilteredObservable_Filters_Values()
+        public void Filtered_Broadcaster_Filters_Values()
         {
             var b = new Broadcaster<int>();
             var count = 0;
@@ -27,7 +27,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void FilteredObservable_Filters_Values_Complex_Predicate()
+        public void Filtered_Broadcaster_Filters_Values_Complex_Predicate()
         {
             var b = new Broadcaster<int>();
             var count = 0;
@@ -58,7 +58,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void FilteredObservable_Completed_NotDisposed_Intiated_From_Source()
+        public void Filtered_Broadcaster_Completed_NotDisposed_Intiated_From_Source()
         {
             var b = new Broadcaster<int>();
             var count = 0;
@@ -83,19 +83,31 @@ namespace AudioSwitcher.AudioApi.Tests
             Assert.Equal(0, count);
         }
         [Fact]
-        public void FilteredObservable_Dispose_Subscription()
+        public void Filtered_Broadcaster_Dispose_Subscription()
         {
             var b = new Broadcaster<int>();
-            var count = 0;
 
             var fo = b.When(x => true) as FilteredBroadcaster<int>;
 
             var sub  = fo.Subscribe(x =>
             {
-                count++;
             });
 
             sub.Dispose();
+        }
+
+
+        [Fact]
+        public void Filtered_Broadcaster_Is_Disposed()
+        {
+            var b = new Broadcaster<int>().When(x => x == 2) as FilteredBroadcaster<int>;
+
+            Assert.NotNull(b);
+
+            b.Dispose();
+
+            Assert.True(b.IsDisposed);
+
         }
 
     }

@@ -22,5 +22,20 @@ namespace AudioSwitcher.AudioApi.Tests
             Assert.Equal(d1, d2);
         }
 
+        [Fact]
+        public void Default_Disposable_Does_Nothing()
+        {
+            DefaultDisposable.Instance.Dispose();
+        }
+
+        [Fact]
+        public void Default_Disposable_Can_Be_Called_Multiple_Times()
+        {
+            DefaultDisposable.Instance.Dispose();
+            DefaultDisposable.Instance.Dispose();
+            DefaultDisposable.Instance.Dispose();
+            DefaultDisposable.Instance.Dispose();
+        }
+
     }
 }

@@ -2,7 +2,7 @@
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid(ComIIds.AUDIO_SESSION_ENUMERATOR_IID)]
+    [Guid(ComInterfaceIds.AUDIO_SESSION_ENUMERATOR_IID)]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IAudioSessionEnumerator
     {

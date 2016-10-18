@@ -12,7 +12,8 @@ namespace AudioSwitcher.AudioApi.Observables
             return observable.Subscribe(new DelegateObserver<T>(onNext, Throw, Nop));
         }
 
-        public static IDisposable Subscribe<T>(this IObservable<T> observable, Action<T> onNext, Action<Exception> onError)
+        public static IDisposable Subscribe<T>(this IObservable<T> observable, Action<T> onNext,
+            Action<Exception> onError)
         {
             return observable.Subscribe(new DelegateObserver<T>(onNext, onError, Nop));
         }
@@ -22,7 +23,8 @@ namespace AudioSwitcher.AudioApi.Observables
             return observable.Subscribe(new DelegateObserver<T>(onNext, Throw, onCompleted));
         }
 
-        public static IDisposable Subscribe<T>(this IObservable<T> observable, Action<T> onNext, Action<Exception> onError, Action onCompleted)
+        public static IDisposable Subscribe<T>(this IObservable<T> observable, Action<T> onNext,
+            Action<Exception> onError, Action onCompleted)
         {
             return observable.Subscribe(new DelegateObserver<T>(onNext, onError, onCompleted));
         }
@@ -35,7 +37,7 @@ namespace AudioSwitcher.AudioApi.Observables
         public static IObservable<T> AsObservable<T>(this IObservable<T> observable)
         {
             if (observable == null)
-                throw new ArgumentNullException("observable");
+                throw new ArgumentNullException(nameof(observable));
 
             return observable;
         }

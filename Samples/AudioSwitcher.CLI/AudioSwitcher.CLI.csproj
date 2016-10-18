@@ -56,13 +56,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AudioSwitcher.AudioApi.CoreAudio\AudioSwitcher.AudioApi.CoreAudio.csproj">
-      <Project>{63191a1e-af9e-4d3a-9ba8-baa02345b277}</Project>
-      <Name>AudioSwitcher.AudioApi.CoreAudio</Name>
+    <ProjectReference Include="..\..\AudioSwitcher.AudioApi %28NET45%29\AudioSwitcher.AudioApi %28NET45%29.csproj">
+      <Project>{26373899-cb07-4ace-9ac2-1c19fdbedce3}</Project>
+      <Name>AudioSwitcher.AudioApi %28NET45%29</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj">
-      <Project>{8fc5a778-2a85-4cc8-a445-b9f2019a945b}</Project>
-      <Name>AudioSwitcher.AudioApi</Name>
+    <ProjectReference Include="..\..\AudioSwitcher.AudioApi.CoreAudio %28NET45%29\AudioSwitcher.AudioApi.CoreAudio %28NET45%29.csproj">
+      <Project>{44a1f234-124f-4ce4-b66c-110bca8f6ed5}</Project>
+      <Name>AudioSwitcher.AudioApi.CoreAudio %28NET45%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\AudioSwitcher.Scripting.JavaScript\AudioSwitcher.Scripting.JavaScript.csproj">
       <Project>{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}</Project>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace AudioSwitcher.AudioApi.Sandbox
 {
@@ -20,21 +19,12 @@ namespace AudioSwitcher.AudioApi.Sandbox
             //Get a copy of the current system audio devices
             //then create a copy of the current state of the system
             //this allows us to "debug" macros against a "test" system
-            _defaultPlaybackDeviceId = source.DefaultPlaybackDevice == null
-                ? Guid.Empty
-                : source.DefaultPlaybackDevice.Id;
-            _defaultPlaybackCommDeviceId = source.DefaultPlaybackCommunicationsDevice == null
-                ? Guid.Empty
-                : source.DefaultPlaybackCommunicationsDevice.Id;
-            _defaultCaptureDeviceId = source.DefaultCaptureDevice == null ? Guid.Empty : source.DefaultCaptureDevice.Id;
-            _defaultCaptureCommDeviceId = source.DefaultCaptureCommunicationsDevice == null
-                ? Guid.Empty
-                : source.DefaultCaptureCommunicationsDevice.Id;
+            _defaultPlaybackDeviceId = source.DefaultPlaybackDevice?.Id ?? Guid.Empty;
+            _defaultPlaybackCommDeviceId = source.DefaultPlaybackCommunicationsDevice?.Id ?? Guid.Empty;
+            _defaultCaptureDeviceId = source.DefaultCaptureDevice?.Id ?? Guid.Empty;
+            _defaultCaptureCommDeviceId = source.DefaultCaptureCommunicationsDevice?.Id ?? Guid.Empty;
 
-            foreach (
-                var sourceDev in
-                    source.GetDevices(DeviceType.All,
-                        DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled))
+            foreach (var sourceDev in source.GetDevices(DeviceType.All, DeviceState.All))
             {
                 var dev = new SandboxDevice(this)
                 {
@@ -46,7 +36,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
                     fullName = sourceDev.FullName,
                     type = sourceDev.DeviceType,
                     state = sourceDev.State,
-                    Volume = sourceDev.Volume,
+                    volume = sourceDev.Volume,
                     iconPath = sourceDev.IconPath
                 };
                 _devices.Add(dev);
@@ -108,7 +98,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
             return _devices.Where(x => state.HasFlag(x.State));
         }
 
-        public override bool SetDefaultDevice(SandboxDevice dev)
+        internal bool SetDefaultDevice(SandboxDevice dev)
         {
             if (dev.IsPlaybackDevice)
             {
@@ -125,7 +115,7 @@ namespace AudioSwitcher.AudioApi.Sandbox
             return false;
         }
 
-        public override bool SetDefaultCommunicationsDevice(SandboxDevice dev)
+        internal bool SetDefaultCommunicationsDevice(SandboxDevice dev)
         {
             if (dev.IsPlaybackDevice)
             {
@@ -142,40 +132,9 @@ namespace AudioSwitcher.AudioApi.Sandbox
             return false;
         }
 
-        public override bool SetDefaultDevice(IDevice dev)
-        {
-            var device = dev as SandboxDevice;
-            if (device != null)
-                return SetDefaultDevice(device);
-
-            return false;
-        }
-
-        public override bool SetDefaultCommunicationsDevice(IDevice dev)
-        {
-            var device = dev as SandboxDevice;
-            if (device != null)
-                return SetDefaultCommunicationsDevice(device);
-
-            return false;
-        }
-
-        public override Task<bool> SetDefaultDeviceAsync(IDevice dev)
-        {
-            return Task.Factory.StartNew(() => SetDefaultDevice(dev));
-        }
-
-        public override Task<bool> SetDefaultCommunicationsDeviceAsync(IDevice dev)
-        {
-            return Task.Factory.StartNew(() => SetDefaultCommunicationsDevice(dev));
-        }
-
         protected override void Dispose(bool disposing)
         {
-            if (_devices != null)
-            {
-                _devices.Clear();
-            }
+            _devices?.Clear();
         }
     }
 }

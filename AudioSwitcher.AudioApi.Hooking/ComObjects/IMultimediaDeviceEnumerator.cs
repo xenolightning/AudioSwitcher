@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.Hooking.ComObjects
 {
-    [Guid("A95664D2-9614-4F35-A746-DE8DB63617E6"),]
+    [Guid(ComIIds.IMM_DEVICE_ENUMERATOR_IID)]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [ComVisible(true)]
     public interface IMultimediaDeviceEnumerator

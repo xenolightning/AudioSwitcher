@@ -71,7 +71,7 @@ namespace AudioSwitcher.Tests.Common
             return _devices.Where(x => deviceType.HasFlag(x.DeviceType) && state.HasFlag(x.State));
         }
 
-        public override bool SetDefaultDevice(TestDevice dev)
+        internal bool SetDefaultDevice(TestDevice dev)
         {
             if (dev.IsPlaybackDevice)
             {
@@ -90,7 +90,7 @@ namespace AudioSwitcher.Tests.Common
             return false;
         }
 
-        public override bool SetDefaultCommunicationsDevice(TestDevice dev)
+        internal bool SetDefaultCommunicationsDevice(TestDevice dev)
         {
             if (dev.IsPlaybackDevice)
             {
@@ -105,24 +105,6 @@ namespace AudioSwitcher.Tests.Common
                 OnAudioDeviceChanged(new DefaultDeviceChangedArgs(dev));
                 return true;
             }
-
-            return false;
-        }
-
-        public override bool SetDefaultDevice(IDevice dev)
-        {
-            var device = dev as TestDevice;
-            if (device != null)
-                return SetDefaultDevice(device);
-
-            return false;
-        }
-
-        public override bool SetDefaultCommunicationsDevice(IDevice dev)
-        {
-            var device = dev as TestDevice;
-            if (device != null)
-                return SetDefaultCommunicationsDevice(device);
 
             return false;
         }

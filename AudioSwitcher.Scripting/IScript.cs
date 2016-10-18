@@ -8,17 +8,15 @@
             get;
         }
 
-        IScriptSource Source
+        string Body
         {
             get;
         }
 
-        IScriptInfo ScriptInfo
+        string MediaType
         {
             get;
         }
-
-        IScript Clone();
 
     }
 }

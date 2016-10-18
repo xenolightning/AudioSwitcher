@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using AudioSwitcher.AudioApi.CoreAudio.Interfaces;
 using AudioSwitcher.AudioApi.CoreAudio.Threading;
@@ -16,37 +17,45 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     {
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
         private HashSet<CoreAudioDevice> _deviceCache = new HashSet<CoreAudioDevice>();
-        private IMultimediaDeviceEnumerator _innerEnumerator;
+        private volatile IntPtr _innerEnumeratorPtr;
+        private readonly ThreadLocal<IMultimediaDeviceEnumerator> _innerEnumerator;
         private SystemEventNotifcationClient _systemEvents;
+
+        private IMultimediaDeviceEnumerator InnerEnumerator => _innerEnumerator.Value;
 
         public CoreAudioController()
         {
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            var innerEnumerator = ComObjectFactory.GetDeviceEnumerator();
+            _innerEnumeratorPtr = Marshal.GetIUnknownForObject(innerEnumerator);
+
+            if (innerEnumerator == null)
+                throw new InvalidComObjectException("No Device Enumerator");
+
+            _innerEnumerator = new ThreadLocal<IMultimediaDeviceEnumerator>(() => Marshal.GetUniqueObjectForIUnknown(_innerEnumeratorPtr) as IMultimediaDeviceEnumerator);
+
             ComThread.Invoke(() =>
             {
-                // ReSharper disable once SuspiciousTypeConversion.Global
-                _innerEnumerator = ComObjectFactory.GetDeviceEnumerator();
-
-                if (_innerEnumerator == null)
-                    return;
-
-                _systemEvents = new SystemEventNotifcationClient(_innerEnumerator);
+                _systemEvents = new SystemEventNotifcationClient(() => InnerEnumerator);
 
                 _systemEvents.DeviceAdded.Subscribe(x => OnDeviceAdded(x.DeviceId));
                 _systemEvents.DeviceRemoved.Subscribe(x => OnDeviceRemoved(x.DeviceId));
+
+                _deviceCache = new HashSet<CoreAudioDevice>();
+                IMultimediaDeviceCollection collection;
+                InnerEnumerator.EnumAudioEndpoints(EDataFlow.All, EDeviceState.All, out collection);
+
+                using (var coll = new MultimediaDeviceCollection(collection))
+                {
+                    foreach (var mDev in coll)
+                        CacheDevice(mDev);
+                }
             });
-
-            RefreshSystemDevices();
         }
 
-        internal SystemEventNotifcationClient SystemEvents
-        {
-            get
-            {
-                return _systemEvents;
-            }
-        }
+        internal SystemEventNotifcationClient SystemEvents => _systemEvents;
 
-        void OnDeviceAdded(string deviceId)
+        private void OnDeviceAdded(string deviceId)
         {
             var dev = GetOrAddDeviceFromRealId(deviceId);
 
@@ -54,7 +63,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 OnAudioDeviceChanged(new DeviceAddedArgs(dev));
         }
 
-        void OnDeviceRemoved(string deviceId)
+        private void OnDeviceRemoved(string deviceId)
         {
             var devicesRemoved = RemoveFromRealId(deviceId);
 
@@ -71,26 +80,24 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             ComThread.BeginInvoke(() =>
             {
-                if (_systemEvents != null)
-                {
-                    _systemEvents.Dispose();
-                    _systemEvents = null;
-                }
-
-                _innerEnumerator = null;
+                _systemEvents?.Dispose();
+                _systemEvents = null;
             })
             .ContinueWith(x =>
             {
-                if (_deviceCache != null)
-                    _deviceCache.Clear();
+                foreach (var device in _deviceCache)
+                {
+                    device.Dispose();
+                }
 
-                if (_lock != null)
-                    _lock.Dispose();
+                _deviceCache?.Clear();
+                _lock?.Dispose();
+                _innerEnumerator?.Dispose();
+
+                base.Dispose(disposing);
+
+                GC.SuppressFinalize(this);
             });
-
-            base.Dispose(disposing);
-
-            GC.SuppressFinalize(this);
         }
 
         public override CoreAudioDevice GetDevice(Guid id, DeviceState state)
@@ -125,22 +132,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        private void RefreshSystemDevices()
-        {
-            ComThread.Invoke(() =>
-            {
-                _deviceCache = new HashSet<CoreAudioDevice>();
-                IMultimediaDeviceCollection collection;
-                _innerEnumerator.EnumAudioEndpoints(EDataFlow.All, EDeviceState.All, out collection);
-
-                using (var coll = new MultimediaDeviceCollection(collection))
-                {
-                    foreach (var mDev in coll)
-                        CacheDevice(mDev);
-                }
-            });
-        }
-
         private CoreAudioDevice GetOrAddDeviceFromRealId(string deviceId)
         {
             //This pre-check here may prevent more com objects from being created
@@ -151,7 +142,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             return ComThread.Invoke(() =>
             {
                 IMultimediaDevice mDevice;
-                _innerEnumerator.GetDevice(deviceId, out mDevice);
+                InnerEnumerator.GetDevice(deviceId, out mDevice);
 
                 if (mDevice == null)
                     return null;
@@ -230,67 +221,22 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
-        public override bool SetDefaultDevice(CoreAudioDevice dev)
-        {
-            if (dev == null)
-                return false;
-
-            var oldDefault = dev.IsPlaybackDevice ? DefaultPlaybackDevice : DefaultCaptureDevice;
-
-            try
-            {
-                PolicyConfig.SetDefaultEndpoint(dev.RealId, ERole.Console | ERole.Multimedia);
-                return dev.IsDefaultDevice;
-            }
-            catch
-            {
-                return false;
-            }
-            finally
-            {
-                //Raise the default changed event on the old device
-                if (oldDefault != null && !oldDefault.IsDefaultDevice)
-                    OnAudioDeviceChanged(new DefaultDeviceChangedArgs(oldDefault));
-            }
-        }
-
-        public override bool SetDefaultCommunicationsDevice(CoreAudioDevice dev)
-        {
-            if (dev == null)
-                return false;
-
-            var oldDefault = dev.IsPlaybackDevice
-                ? DefaultPlaybackCommunicationsDevice
-                : DefaultCaptureCommunicationsDevice;
-
-            try
-            {
-                PolicyConfig.SetDefaultEndpoint(dev.RealId, ERole.Communications);
-                return dev.IsDefaultCommunicationsDevice;
-            }
-            catch
-            {
-                return false;
-            }
-            finally
-            {
-                //Raise the default changed event on the old device
-                if (oldDefault != null && !oldDefault.IsDefaultCommunicationsDevice)
-                    OnAudioDeviceChanged(new DefaultDeviceChangedArgs(oldDefault));
-            }
-        }
-
-        public override CoreAudioDevice GetDefaultDevice(DeviceType deviceType, Role role)
+        internal string GetDefaultDeviceId(DeviceType deviceType, Role role)
         {
             IMultimediaDevice dev;
-            _innerEnumerator.GetDefaultAudioEndpoint(deviceType.AsEDataFlow(), role.AsERole(), out dev);
+            InnerEnumerator.GetDefaultAudioEndpoint(deviceType.AsEDataFlow(), role.AsERole(), out dev);
             if (dev == null)
                 return null;
 
             string devId;
             dev.GetId(out devId);
-            if (string.IsNullOrEmpty(devId))
-                return null;
+
+            return devId;
+        }
+
+        public override CoreAudioDevice GetDefaultDevice(DeviceType deviceType, Role role)
+        {
+            string devId = GetDefaultDeviceId(deviceType, role);
 
             var acquiredLock = _lock.AcquireReadLockNonReEntrant();
 

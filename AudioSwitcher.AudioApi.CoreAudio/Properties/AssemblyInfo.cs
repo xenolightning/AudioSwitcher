@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
@@ -19,3 +20,7 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("6412F464-C3C0-4240-9DFA-97C6748AE395")]
+
+#if DEBUG
+[assembly: InternalsVisibleTo("AudioSwitcher.AudioApi.CoreAudio.Tests")]
+#endif

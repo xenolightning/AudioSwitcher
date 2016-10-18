@@ -7,15 +7,9 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
 {
     internal sealed partial class AudioSwitcherLibrary
     {
-        public JavaScriptDeviceType DeviceType
-        {
-            get { return _deviceType; }
-        }
+        public JavaScriptDeviceType DeviceType => _deviceType;
 
-        public JavaScriptDeviceState DeviceState
-        {
-            get { return _deviceState; }
-        }
+        public JavaScriptDeviceState DeviceState => _deviceState;
 
         public JavaScriptAudioDevice[] GetAudioDevices()
         {
@@ -31,7 +25,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
         {
             var devices = new List<IDevice>();
 
-            switch (type)
+            switch (type.ToUpper())
             {
                 case JavaScriptDeviceType.ALL:
                     devices.AddRange(AudioController.GetPlaybackDevices());
@@ -103,7 +97,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
             Guid id;
             Guid.TryParse(name, out id);
 
-            switch (type)
+            switch (type.ToUpper())
             {
                 case JavaScriptDeviceType.ALL:
                     device = AudioController.GetDevices().FirstOrDefault(x => 
@@ -150,7 +144,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Internal.Libraries
         /// <returns></returns>
         public JavaScriptAudioDevice GetDefaultCommunicationDevice(string type)
         {
-            switch (type)
+            switch (type.ToUpper())
             {
                 case JavaScriptDeviceType.PLAYBACK:
                     return CreateJavaScriptAudioDevice(AudioController.DefaultPlaybackCommunicationsDevice);

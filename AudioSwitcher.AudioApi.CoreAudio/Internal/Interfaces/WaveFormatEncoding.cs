@@ -427,6 +427,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         /// <summary>WAVE_FORMAT_EXTENSIBLE</summary>
         Extensible = 0xFFFE, // Microsoft 
         /// <summary></summary>
-        WAVE_FORMAT_DEVELOPMENT = 0xFFFF,
+        WAVE_FORMAT_DEVELOPMENT = 0xFFFF
     }
 }

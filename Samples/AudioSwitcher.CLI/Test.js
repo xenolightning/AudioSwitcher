@@ -20,7 +20,7 @@ var defaultDevice;
 for (var i = 0; i < devices.length; i++) {
     console.log(devices[i].id);
     console.log(devices[i].fullName);
-    console.log("    Type: " + devices[i].type);
+    console.log("    MediaType: " + devices[i].type);
     console.log("    State: " + devices[i].state);
     console.log("    Is Playback (property): " + devices[i].isPlayback);
     console.log("    Is Playback (calculated): " + (devices[i].type === AudioSwitcher.DeviceType.PLAYBACK));

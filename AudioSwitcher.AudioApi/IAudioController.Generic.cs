@@ -7,13 +7,13 @@ namespace AudioSwitcher.AudioApi
     public interface IAudioController<T> : IAudioController
         where T : IDevice
     {
-        new T DefaultPlaybackDevice { get; set; }
+        new T DefaultPlaybackDevice { get; }
 
-        new T DefaultPlaybackCommunicationsDevice { get; set; }
+        new T DefaultPlaybackCommunicationsDevice { get; }
 
         new T DefaultCaptureDevice { get; }
 
-        new T DefaultCaptureCommunicationsDevice { get; set; }
+        new T DefaultCaptureCommunicationsDevice { get; }
 
         new T GetDevice(Guid id);
 
@@ -58,13 +58,5 @@ namespace AudioSwitcher.AudioApi
         new Task<IEnumerable<T>> GetCaptureDevicesAsync();
 
         new Task<IEnumerable<T>> GetCaptureDevicesAsync(DeviceState deviceState);
-
-        bool SetDefaultDevice(T dev);
-
-        Task<bool> SetDefaultDeviceAsync(T dev);
-
-        bool SetDefaultCommunicationsDevice(T dev);
-
-        Task<bool> SetDefaultCommunicationsDeviceAsync(T dev);
     }
 }

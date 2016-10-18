@@ -36,24 +36,12 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         /// <summary>
         ///     Step
         /// </summary>
-        public uint Step
-        {
-            get
-            {
-                return _step;
-            }
-        }
+        public uint Step => _step;
 
         /// <summary>
         ///     StepCount
         /// </summary>
-        public uint StepCount
-        {
-            get
-            {
-                return _stepCount;
-            }
-        }
+        public uint StepCount => _stepCount;
 
         internal AudioEndpointVolumeStepInformation(IAudioEndpointVolume parent)
         {

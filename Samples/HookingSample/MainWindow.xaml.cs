@@ -8,6 +8,8 @@ using System.Windows;
 using AudioSwitcher.AudioApi;
 using AudioSwitcher.AudioApi.CoreAudio;
 using AudioSwitcher.AudioApi.Hooking;
+using AudioSwitcher.AudioApi.Session;
+using Role = AudioSwitcher.AudioApi.Hooking.ComObjects.Role;
 
 namespace HookingSample
 {
@@ -19,7 +21,6 @@ namespace HookingSample
         private DefaultDeviceHook _hook;
         private Process _selectedProcess;
         private CoreAudioDevice _selectedAudioDevice;
-        private Timer _hookCheckTimer;
 
         public ObservableCollection<Process> Processes
         {
@@ -53,13 +54,7 @@ namespace HookingSample
             }
         }
 
-        public bool IsHookSet
-        {
-            get
-            {
-                return Hook != null;
-            }
-        }
+        public bool IsHookSet => Hook != null;
 
         public CoreAudioController Controller
         {
@@ -91,12 +86,12 @@ namespace HookingSample
 
             Controller.AudioDeviceChanged.Subscribe(x =>
             {
-                Console.WriteLine("{0} - {1}", x.Device.Id, x.ChangedType.ToString());
+                Console.WriteLine("{0} - {1}", x.Device.Name, x.ChangedType.ToString());
             });
 
             Controller.DefaultPlaybackDevice.SetAsDefault();
 
-            Controller.DefaultPlaybackDevice.SessionController.All();
+            Controller.DefaultPlaybackDevice.GetCapability<IAudioSessionController>();
 
             Controller.DefaultCaptureDevice.PeakValueChanged.Subscribe(x =>
             {
@@ -110,7 +105,7 @@ namespace HookingSample
 
             Thread.Sleep(100);
 
-            foreach (var audioSession in Controller.DefaultPlaybackDevice.SessionController.All())
+            foreach (var audioSession in Controller.DefaultPlaybackDevice.GetCapability<IAudioSessionController>())
             {
                 Console.WriteLine(audioSession.Id);
             }
@@ -133,7 +128,7 @@ namespace HookingSample
             //    });
             //}
 
-            Controller.DefaultPlaybackDevice.SessionController.SessionCreated.Subscribe(x =>
+            Controller.DefaultPlaybackDevice.GetCapability<IAudioSessionController>()?.SessionCreated.Subscribe(x =>
             {
                 Console.WriteLine("{0} - {1}", x.DisplayName, x.Volume);
                 //x.VolumeChanged.Subscribe(v =>
@@ -141,11 +136,11 @@ namespace HookingSample
                 //});
             });
 
-            Controller.DefaultPlaybackDevice.SessionController.SessionDisconnected.Subscribe(x =>
+            Controller.DefaultPlaybackDevice.GetCapability<IAudioSessionController>()?.SessionDisconnected.Subscribe(x =>
             {
                 Console.WriteLine(x);
 
-                foreach (var session in Controller.DefaultPlaybackDevice.SessionController)
+                foreach (var session in Controller.DefaultPlaybackDevice.GetCapability<IAudioSessionController>())
                 {
                     Console.WriteLine("{0} - {1}", session.DisplayName, session.Volume);
                 }
@@ -177,6 +172,8 @@ namespace HookingSample
 
         private void HookProcess(object sender, RoutedEventArgs e)
         {
+            Controller.DefaultCaptureDevice.SetAsDefaultAsync();
+
             if (Hook != null)
             {
                 UnHook();
@@ -188,7 +185,13 @@ namespace HookingSample
 
             var sId = SelectedAudioDevice.RealId;
 
-            Hook = new DefaultDeviceHook((dataFlow, role) => sId);
+            Hook = new DefaultDeviceHook((dataFlow, role) =>
+            {
+                if (role != Role.Communications)
+                    return sId;
+
+                return null;
+            });
 
             if (Hook.Hook(SelectedProcess.Id))
             {

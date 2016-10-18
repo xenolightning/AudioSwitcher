@@ -19,39 +19,19 @@ namespace AudioSwitcher.Scripting
 
         public abstract object Resolve(string name);
 
-        public ExecutionResult Execute(string script, IEnumerable<string> args = null)
-        {
-            return Execute(new StringScriptSource(script), args);
-        }
-
         public Task<ExecutionResult> ExecuteAsync(string script, IEnumerable<string> args = null)
         {
-            return Task.Factory.StartNew(() => Execute(script, args));
+            return Task.Run(() => Execute(script, args));
         }
 
-        public abstract ExecutionResult Execute(IScriptSource scriptSource, IEnumerable<string> args = null);
-
-        public Task<ExecutionResult> ExecuteAsync(IScriptSource scriptSource, IEnumerable<string> args = null)
-        {
-            return Task.Factory.StartNew(() => Execute(scriptSource, args));
-        }
-
-        public ExecutionResult<TReturn> Evaluate<TReturn>(string script, IEnumerable<string> args = null)
-        {
-            return Evaluate<TReturn>(new StringScriptSource(script), args);
-        }
+        public abstract ExecutionResult Execute(string script, IEnumerable<string> args = null);
 
         public Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(string script, IEnumerable<string> args = null)
         {
-            return Task.Factory.StartNew(() => Evaluate<TReturn>(script, args));
+            return Task.Run(() => Evaluate<TReturn>(script, args));
         }
 
-        public abstract ExecutionResult<TReturn> Evaluate<TReturn>(IScriptSource scriptSource, IEnumerable<string> args = null);
-
-        public Task<ExecutionResult<TReturn>> EvaluateAsync<TReturn>(IScriptSource scriptSource, IEnumerable<string> args = null)
-        {
-            return Task.Factory.StartNew(() => Evaluate<TReturn>(scriptSource, args));
-        }
+        public abstract ExecutionResult<TReturn> Evaluate<TReturn>(string script, IEnumerable<string> args = null);
 
         public void Dispose()
         {

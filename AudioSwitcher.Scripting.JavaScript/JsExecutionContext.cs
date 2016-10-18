@@ -17,29 +17,11 @@ namespace AudioSwitcher.Scripting.JavaScript
         private readonly Dictionary<string, object> _libraries;
         private readonly Engine _engine;
 
-        public override bool IsDebug
-        {
-            get
-            {
-                return _isDebug;
-            }
-        }
+        public override bool IsDebug => _isDebug;
 
-        public override IDictionary<string, object> Libraries
-        {
-            get
-            {
-                return _libraries;
-            }
-        }
+        public override IDictionary<string, object> Libraries => _libraries;
 
-        internal Engine InternalEngine
-        {
-            get
-            {
-                return _engine;
-            }
-        }
+        internal Engine InternalEngine => _engine;
 
         public JsExecutionContext(bool isDebug, CancellationToken cancellationToken)
             : this(isDebug, Enumerable.Empty<string>(), cancellationToken)
@@ -60,7 +42,7 @@ namespace AudioSwitcher.Scripting.JavaScript
                 //Set cancellation token
             });
 
-            var lArgs = args != null ? args.ToArray() : new string[] { };
+            var lArgs = args?.ToArray() ?? new string[] { };
             if (lArgs.Any())
                 _engine.SetValue("args", lArgs);
 
@@ -96,17 +78,14 @@ namespace AudioSwitcher.Scripting.JavaScript
             return val.ToObject();
         }
 
-        public override ExecutionResult Execute(IScriptSource scriptSource, IEnumerable<string> args = null)
+        public override ExecutionResult Execute(string script, IEnumerable<string> args = null)
         {
             try
             {
                 if (args != null)
                     _engine.SetValue("args", args.ToArray());
 
-                using (var reader = scriptSource.GetReader())
-                {
-                    _engine.Execute(reader.ReadToEnd());
-                }
+                _engine.Execute(script);
 
                 return new ExecutionResult
                 {
@@ -135,7 +114,7 @@ namespace AudioSwitcher.Scripting.JavaScript
         }
 
 
-        public override ExecutionResult<TReturn> Evaluate<TReturn>(IScriptSource scriptSource, IEnumerable<string> args = null)
+        public override ExecutionResult<TReturn> Evaluate<TReturn>(string script, IEnumerable<string> args = null)
         {
             try
             {
@@ -145,11 +124,11 @@ namespace AudioSwitcher.Scripting.JavaScript
                 TReturn val;
 
                 if (typeof(TReturn).IsArray)
-                    val = EvaluateArray<TReturn>(scriptSource);
+                    val = EvaluateArray<TReturn>(script);
                 else if (typeof(IEnumerable).IsAssignableFrom(typeof(TReturn)) && typeof(TReturn) != typeof(string))
-                    val = EvaluateEnumerable<TReturn>(scriptSource);
+                    val = EvaluateEnumerable<TReturn>(script);
                 else
-                    val = (TReturn)Convert.ChangeType(_engine.Execute(scriptSource.GetReader().ReadToEnd()).GetCompletionValue().ToObject(), typeof(TReturn));
+                    val = (TReturn)Convert.ChangeType(_engine.Execute(script).GetCompletionValue().ToObject(), typeof(TReturn));
 
                 return new ExecutionResult<TReturn>
                 {
@@ -178,7 +157,7 @@ namespace AudioSwitcher.Scripting.JavaScript
             }
         }
 
-        private TReturn EvaluateArray<TReturn>(IScriptSource scriptSource)
+        private TReturn EvaluateArray<TReturn>(string script)
         {
             if (!typeof(TReturn).IsArray)
                 return default(TReturn);
@@ -187,7 +166,7 @@ namespace AudioSwitcher.Scripting.JavaScript
             var toArrayMethod = typeof(Enumerable).GetMethod("ToArray");
 
             var returnType = typeof(TReturn);
-            var obj = _engine.Execute(scriptSource.GetReader().ReadToEnd()).GetCompletionValue().ToObject();
+            var obj = _engine.Execute(script).GetCompletionValue().ToObject();
 
 
             var targetType = returnType.GetElementType();
@@ -195,7 +174,7 @@ namespace AudioSwitcher.Scripting.JavaScript
             return (TReturn)toArrayMethod.MakeGenericMethod(targetType).Invoke(null, new[] { cast });
         }
 
-        private TReturn EvaluateEnumerable<TReturn>(IScriptSource scriptSource)
+        private TReturn EvaluateEnumerable<TReturn>(string script)
         {
             if (!typeof(IEnumerable).IsAssignableFrom(typeof(TReturn)))
                 return default(TReturn);
@@ -204,7 +183,7 @@ namespace AudioSwitcher.Scripting.JavaScript
             var toListMethod = typeof(Enumerable).GetMethod("ToList");
 
             var returnType = typeof(TReturn);
-            var obj = _engine.Execute(scriptSource.GetReader().ReadToEnd()).GetCompletionValue().ToObject();
+            var obj = _engine.Execute(script).GetCompletionValue().ToObject();
 
             var targetType = returnType.GetGenericArguments()[0];
             var cast = castMethod.MakeGenericMethod(targetType).Invoke(null, new[] { obj });

@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 2)]
-    public class WaveFormat
+    internal class WaveFormat
     {
         private readonly int averageBytesPerSecond;
         private readonly short bitsPerSample;
@@ -14,61 +14,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         private readonly WaveFormatEncoding waveFormatTag;
         private readonly int sampleRate;
 
-        public WaveFormatEncoding Encoding
-        {
-            get
-            {
-                return waveFormatTag;
-            }
-        }
+        public WaveFormatEncoding Encoding => waveFormatTag;
 
-        public int Channels
-        {
-            get
-            {
-                return channels;
-            }
-        }
+        public int Channels => channels;
 
-        public int SampleRate
-        {
-            get
-            {
-                return sampleRate;
-            }
-        }
+        public int SampleRate => sampleRate;
 
-        public int AverageBytesPerSecond
-        {
-            get
-            {
-                return averageBytesPerSecond;
-            }
-        }
+        public int AverageBytesPerSecond => averageBytesPerSecond;
 
-        public virtual int BlockAlign
-        {
-            get
-            {
-                return blockAlign;
-            }
-        }
+        public virtual int BlockAlign => blockAlign;
 
-        public int BitsPerSample
-        {
-            get
-            {
-                return bitsPerSample;
-            }
-        }
+        public int BitsPerSample => bitsPerSample;
 
-        public int ExtraSize
-        {
-            get
-            {
-                return extraSize;
-            }
-        }
+        public int ExtraSize => extraSize;
 
         protected WaveFormat()
         {
@@ -87,10 +45,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 
             if (channels < 1)
             {
-                throw new ArgumentOutOfRangeException("channelMask", "Channels must be 1 or greater");
+                throw new ArgumentOutOfRangeException(nameof(channelMask), "Channels must be 1 or greater");
             }
-            // minimum 16 bytes, sometimes 18 for PCM
-            waveFormatTag = WaveFormatEncoding.Pcm;
 
             sampleRate = (int)rate;
             bitsPerSample = (short)bits;
@@ -128,8 +84,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
                 case WaveFormatEncoding.Pcm:
                 case WaveFormatEncoding.Extensible:
                     // formatTag just has some extra bits after the PCM header
-                    return String.Format("{0} bit PCM: {1}kHz {2} channels",
-                        bitsPerSample, sampleRate / 1000, channels);
+                    return $"{bitsPerSample} bit PCM: {sampleRate/1000}kHz {channels} channels";
                 default:
                     return waveFormatTag.ToString();
             }
