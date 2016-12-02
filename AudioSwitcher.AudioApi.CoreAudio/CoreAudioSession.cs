@@ -163,8 +163,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                ComThread.Assert();
-                return _meterInformation.Value;
+                return ComThread.Invoke(() => _meterInformation.Value);
             }
         }
 
@@ -172,8 +171,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                ComThread.Assert();
-                return _simpleAudioVolume.Value;
+                return ComThread.Invoke(() => _simpleAudioVolume.Value);
             }
         }
 
@@ -181,8 +179,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             get
             {
-                ComThread.Assert();
-                return _audioSessionControl.Value;
+                return ComThread.Invoke(() => _audioSessionControl.Value);
             }
         }
 

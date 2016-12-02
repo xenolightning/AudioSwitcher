@@ -189,5 +189,72 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
             }
         }
 
+        [Fact]
+        public async Task CoreAudioSession_Can_Subscribe_To_PeakValueChanged()
+        {
+            using (var controller = new CoreAudioController())
+            {
+                var device = controller.DefaultPlaybackDevice;
+                var session = device.GetCapability<IAudioSessionController>().First();
+
+                var sub = session.PeakValueChanged.Subscribe(x =>
+                {
+                    
+                });
+
+                sub.Dispose();
+            }
+        }
+
+        [Fact]
+        public async Task CoreAudioSession_Can_Subscribe_To_MuteChanged()
+        {
+            using (var controller = new CoreAudioController())
+            {
+                var device = controller.DefaultPlaybackDevice;
+                var session = device.GetCapability<IAudioSessionController>().First();
+
+                var sub = session.MuteChanged.Subscribe(x =>
+                {
+
+                });
+
+                sub.Dispose();
+            }
+        }
+
+        [Fact]
+        public async Task CoreAudioSession_Can_Subscribe_To_StateChanged()
+        {
+            using (var controller = new CoreAudioController())
+            {
+                var device = controller.DefaultPlaybackDevice;
+                var session = device.GetCapability<IAudioSessionController>().First();
+
+                var sub = session.StateChanged.Subscribe(x =>
+                {
+
+                });
+
+                sub.Dispose();
+            }
+        }
+
+        [Fact]
+        public async Task CoreAudioSession_Can_Subscribe_To_VolumeChanged()
+        {
+            using (var controller = new CoreAudioController())
+            {
+                var device = controller.DefaultPlaybackDevice;
+                var session = device.GetCapability<IAudioSessionController>().First();
+
+                var sub = session.VolumeChanged.Subscribe(x =>
+                {
+
+                });
+
+                sub.Dispose();
+            }
+        }
     }
 }
