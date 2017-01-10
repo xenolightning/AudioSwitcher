@@ -10,11 +10,11 @@ namespace AudioSwitcher.AudioApi
         protected const DeviceState DefaultDeviceStateFilter =
             DeviceState.Active | DeviceState.Unplugged | DeviceState.Disabled;
 
-        private readonly AsyncBroadcaster<DeviceChangedArgs> _audioDeviceChanged;
+        private readonly Broadcaster<DeviceChangedArgs> _audioDeviceChanged;
 
         protected AudioController()
         {
-            _audioDeviceChanged = new AsyncBroadcaster<DeviceChangedArgs>();
+            _audioDeviceChanged = new Broadcaster<DeviceChangedArgs>();
         }
 
         public virtual IDevice DefaultPlaybackDevice => GetDefaultDevice(DeviceType.Playback, Role.Console | Role.Multimedia);
