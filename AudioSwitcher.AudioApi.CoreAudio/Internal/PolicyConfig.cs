@@ -14,11 +14,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             {
                 policyConfig = ComObjectFactory.GetPolicyConfig();
 
-                var policyConfigX = policyConfig as IPolicyConfigX;
                 var policyConfig7 = policyConfig as IPolicyConfig;
                 var policyConfigVista = policyConfig as IPolicyConfigVista;
+                var policyConfigX = policyConfig as IPolicyConfigX;
+                var policyConfigRedstone = policyConfig as IPolicyConfigRedstone;
 
-                if (policyConfig7 != null)
+                if (policyConfigRedstone != null)
+                {
+                    policyConfigRedstone.SetDefaultEndpoint(devId, eRole);
+                }
+                else if (policyConfigX != null)
+                {
+                    policyConfigX.SetDefaultEndpoint(devId, eRole);
+                }
+                else if (policyConfig7 != null)
                 {
                     policyConfig7.SetDefaultEndpoint(devId, eRole);
                 }
@@ -28,7 +37,8 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 }
                 else
                 {
-                    policyConfigX?.SetDefaultEndpoint(devId, eRole);
+                    var policyConfigUnknown = policyConfig as IPolicyConfigUnknown;
+                    policyConfigUnknown?.SetDefaultEndpoint(devId, eRole);
                 }
             }
             finally

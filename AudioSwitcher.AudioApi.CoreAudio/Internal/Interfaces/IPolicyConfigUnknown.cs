@@ -3,9 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid(ComInterfaceIds.POLICY_CONFIG_X_IID)]
+    [Guid(ComInterfaceIds.UNKNOWN_IID)]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    internal interface IPolicyConfigX
+    internal interface IPolicyConfigUnknown
     {
         [PreserveSig]
         int GetMixFormat(

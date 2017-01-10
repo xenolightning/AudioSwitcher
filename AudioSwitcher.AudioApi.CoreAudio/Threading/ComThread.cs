@@ -6,7 +6,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Threading
 {
     internal static class ComThread
     {
-        private static readonly ComTaskScheduler ComScheduler = new ComTaskScheduler(5);
+        private static readonly ComTaskScheduler ComScheduler = new ComTaskScheduler(1);
 
         private static bool InvokeRequired => !Scheduler.ThreadIds.Contains(Thread.CurrentThread.ManagedThreadId);
 
