@@ -25,7 +25,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Disposed_HasObservers()
+        public void AsyncBroacaster_Disposed_HasObservers()
         {
             var b = new AsyncBroadcaster<int>();
 
@@ -39,7 +39,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_SubscriptionDisposed_HasObservers()
+        public void AsyncBroacaster_SubscriptionDisposed_HasObservers()
         {
             var b = new AsyncBroadcaster<int>();
 
@@ -53,7 +53,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Subscribe()
+        public void AsyncBroacaster_Subscribe()
         {
             var b = new AsyncBroadcaster<int>();
 
@@ -63,7 +63,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Subscribe_HasObservers()
+        public void AsyncBroacaster_Subscribe_HasObservers()
         {
             var b = new AsyncBroadcaster<int>();
 
@@ -75,7 +75,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_OnNext()
+        public void AsyncBroacaster_OnNext()
         {
             var b = new AsyncBroadcaster<int>();
             var resetEvent = new ManualResetEvent(false);
@@ -98,7 +98,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Subscribe_SubscriptionDispose()
+        public void AsyncBroacaster_Subscribe_SubscriptionDispose()
         {
             var b = new AsyncBroadcaster<int>();
 
@@ -114,7 +114,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_DisposedSubscription_OnNext()
+        public void AsyncBroacaster_DisposedSubscription_OnNext()
         {
             var b = new AsyncBroadcaster<int>();
 
@@ -132,7 +132,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Disposed_OnNext()
+        public void AsyncBroacaster_Disposed_OnNext()
         {
             var b = new AsyncBroadcaster<int>();
 
@@ -152,7 +152,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Disposed_Does_Not_Fire_OnNext()
+        public void AsyncBroacaster_Disposed_Does_Not_Fire_OnNext()
         {
             var b = new AsyncBroadcaster<int>();
 
@@ -170,7 +170,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_OnCompleted()
+        public void AsyncBroacaster_OnCompleted()
         {
             var b = new AsyncBroadcaster<int>();
             var resetEvent = new ManualResetEvent(false);
@@ -192,7 +192,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Dispose_Does_Not_Fire_OnCompleted()
+        public void AsyncBroacaster_Dispose_Does_Not_Fire_OnCompleted()
         {
             var b = new AsyncBroadcaster<int>();
             var resetEvent = new ManualResetEvent(false);
@@ -220,7 +220,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Disposed_OnCompleted()
+        public void AsyncBroacaster_Disposed_OnCompleted()
         {
             var b = new AsyncBroadcaster<int>();
             var resetEvent = new ManualResetEvent(false);
@@ -242,7 +242,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_DisposedSubscription_OnCompleted()
+        public void AsyncBroacaster_DisposedSubscription_OnCompleted()
         {
             var b = new AsyncBroadcaster<int>();
             var resetEvent = new ManualResetEvent(false);
@@ -265,7 +265,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_OnError_FromOnNext()
+        public void AsyncBroacaster_OnError_FromOnNext()
         {
             var b = new AsyncBroadcaster<int>();
             var resetEvent = new ManualResetEvent(false);
@@ -290,7 +290,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_OnError_FromOnError()
+        public void AsyncBroacaster_OnError_FromOnError()
         {
             var b = new AsyncBroadcaster<int>();
             var resetEvent = new ManualResetEvent(false);
@@ -315,7 +315,7 @@ namespace AudioSwitcher.AudioApi.Tests
         }
 
         [Fact]
-        public void Broacaster_Disposed_Does_Not_Fire_OnError()
+        public void AsyncBroacaster_Disposed_Does_Not_Fire_OnError()
         {
             var b = new AsyncBroadcaster<int>();
             var resetEvent = new ManualResetEvent(false);
