@@ -29,7 +29,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private readonly AutoResetEvent _volumeResetEvent = new AutoResetEvent(false);
         private readonly ManualResetEvent _defaultResetEvent = new ManualResetEvent(false);
         private readonly ManualResetEvent _defaultCommResetEvent = new ManualResetEvent(false);
-        private readonly string _globalId;
 
         private IDisposable _peakValueTimerSubscription;
         private EDataFlow _dataFlow;
@@ -40,13 +39,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private float _peakValue = -1;
         private CachedPropertyDictionary _properties;
         private EDeviceState _state;
+        private string _globalId;
 
         private volatile bool _isDisposed;
         private volatile bool _isMuted;
         private volatile bool _isUpdatingPeakValue;
         private volatile bool _isDefaultDevice;
         private volatile bool _isDefaultCommDevice;
-        private volatile IntPtr _devicePtr;
 
         private IMultimediaDevice Device
         {
@@ -168,17 +167,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             ComThread.Assert();
 
-            _devicePtr = Marshal.GetIUnknownForObject(device);
-            _device = new ThreadLocal<IMultimediaDevice>(() => Marshal.GetUniqueObjectForIUnknown(_devicePtr) as IMultimediaDevice);
+            var devicePtr = Marshal.GetIUnknownForObject(device);
+            _device = new ThreadLocal<IMultimediaDevice>(() => Marshal.GetUniqueObjectForIUnknown(devicePtr) as IMultimediaDevice);
 
             _controller = controller;
 
             if (device == null)
                 throw new ArgumentNullException(nameof(device));
-
-            //Get the id and initial state of the device
-            Marshal.ThrowExceptionForHR(Device.GetState(out _state));
-            Marshal.ThrowExceptionForHR(Device.GetId(out _globalId));
 
             LoadProperties();
 
@@ -465,23 +460,19 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private void LoadProperties()
         {
-            //Throw away variables
-            EDeviceState lState;
-            string lId;
-
             //If either of these error, assume that the device is in an unusable state
-            Marshal.ThrowExceptionForHR(Device.GetId(out lId));
-            Marshal.ThrowExceptionForHR(Device.GetState(out lState));
+            Marshal.ThrowExceptionForHR(Device.GetState(out _state));
+            Marshal.ThrowExceptionForHR(Device.GetId(out _globalId));
+
+            //load the initial default state. Have to query using device id because this device is not cached until after creation
+            _isDefaultCommDevice = _controller.GetDefaultDeviceId(DeviceType, Role.Communications) == RealId;
+            _isDefaultDevice = _controller.GetDefaultDeviceId(DeviceType, Role.Multimedia | Role.Console) == RealId;
 
             // ReSharper disable once SuspiciousTypeConversion.Global
             var ep = Device as IMultimediaEndpoint;
             ep?.GetDataFlow(out _dataFlow);
 
             GetPropertyInformation(Device);
-
-            //load the initial default state. Have to query using device id because this device is not cached until after creation
-            _isDefaultCommDevice = _controller.GetDefaultDeviceId(DeviceType, Role.Communications) == RealId;
-            _isDefaultDevice = _controller.GetDefaultDeviceId(DeviceType, Role.Multimedia | Role.Console) == RealId;
         }
 
 
@@ -502,16 +493,20 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             _state = deviceState;
 
-            //Attempt to reload properties if the device has become active.
-            //A fail-safe incase the device doesn't fire property changed events
-            //when it becomes "active"
-            ComThread.BeginInvoke(LoadProperties);
-
             ReloadAudioEndpointVolume();
             ReloadAudioMeterInformation();
             ReloadAudioSessionController();
 
             OnStateChanged(deviceState.AsDeviceState());
+
+            //only load properties if it's active
+            if ((deviceState & EDeviceState.Active) != 0)
+            {
+                //Attempt to reload properties if the device has become active.
+                //A fail-safe incase the device doesn't fire property changed events
+                //when it becomes "active"
+                ComThread.BeginInvoke(LoadProperties);
+            }
         }
 
         private void ReloadAudioMeterInformation()

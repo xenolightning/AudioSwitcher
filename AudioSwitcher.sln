@@ -53,6 +53,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi.CoreAudio (NET4)", "AudioSwitcher.AudioApi.CoreAudio (NET4)\AudioSwitcher.AudioApi.CoreAudio (NET4).csproj", "{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}"
 EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.projitems*{26373899-cb07-4ace-9ac2-1c19fdbedce3}*SharedItemsImports = 4
 		AudioSwitcher.AudioApi.CoreAudio\AudioSwitcher.AudioApi.CoreAudio.projitems*{44a1f234-124f-4ce4-b66c-110bca8f6ed5}*SharedItemsImports = 4

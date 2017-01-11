@@ -33,7 +33,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
             //*15 for each device and the handles it requires
             //*3 because that should cater for at least 2 copies of each device
-            var maxHandles = controller.GetDevices().Count() * 15 * 3;
+            var maxHandles = controller.GetDevices(DeviceState.All).Count() * 8 * 2;
 
             //Ensure it doesn't blow out the handles
             Assert.True(newHandles - originalHandles < maxHandles);
@@ -60,7 +60,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
 
                 //*15 for each device and the handles it requires
                 //*3 because that should cater for at least 2 copies of each device
-                var maxHandles = controller.GetDevices().Count() * 15 * 3;
+                var maxHandles = controller.GetDevices(DeviceState.All).Count() * 8 * 2;
 
                 //Ensure it doesn't blow out the handles
                 Assert.True(newHandles - originalHandles < maxHandles);
