@@ -18,22 +18,25 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         public void CoreAudio_NumberOfHandlesAreWithinAcceptableRange()
         {
             var originalHandles = Process.GetCurrentProcess().HandleCount;
+            int maxHandles, newHandles;
             Debug.WriteLine("Handles Before: " + originalHandles);
-            var controller = CreateTestController();
-
-            for (var i = 0; i < 50; i++)
+            using (var controller = CreateTestController())
             {
-                controller.GetDevices();
-                var isDefault = controller.DefaultPlaybackDevice.SetAsDefault();
-                controller.GetPlaybackDevices();
+
+                for (var i = 0; i < 50; i++)
+                {
+                    controller.GetDevices();
+                    var isDefault = controller.DefaultPlaybackDevice.SetAsDefault();
+                    controller.GetPlaybackDevices();
+                }
+
+                newHandles = Process.GetCurrentProcess().HandleCount;
+                Debug.WriteLine("Handles After: " + newHandles);
+
+                //*15 for each device and the handles it requires
+                //*3 because that should cater for at least 2 copies of each device
+                maxHandles = controller.GetDevices(DeviceState.All).Count() * 8 * 2;
             }
-
-            var newHandles = Process.GetCurrentProcess().HandleCount;
-            Debug.WriteLine("Handles After: " + newHandles);
-
-            //*15 for each device and the handles it requires
-            //*3 because that should cater for at least 2 copies of each device
-            var maxHandles = controller.GetDevices(DeviceState.All).Count() * 8 * 2;
 
             //Ensure it doesn't blow out the handles
             Assert.True(newHandles - originalHandles < maxHandles);
@@ -43,6 +46,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         public async Task CoreAudio_NumberOfHandlesAreWithinAcceptableRange_Async()
         {
             var originalHandles = Process.GetCurrentProcess().HandleCount;
+            int maxHandles, newHandles;
             Debug.WriteLine("Handles Before: " + originalHandles);
             using (var controller = CreateTestController())
             {
@@ -55,16 +59,16 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
                     await controller.GetPlaybackDevicesAsync();
                 }
 
-                var newHandles = Process.GetCurrentProcess().HandleCount;
+                newHandles = Process.GetCurrentProcess().HandleCount;
                 Debug.WriteLine("Handles After: " + newHandles);
 
                 //*15 for each device and the handles it requires
                 //*3 because that should cater for at least 2 copies of each device
-                var maxHandles = controller.GetDevices(DeviceState.All).Count() * 8 * 2;
-
-                //Ensure it doesn't blow out the handles
-                Assert.True(newHandles - originalHandles < maxHandles);
+                maxHandles = controller.GetDevices(DeviceState.All).Count() * 8 * 2;
             }
+
+            //Ensure it doesn't blow out the handles
+            Assert.True(newHandles - originalHandles < maxHandles);
         }
 
         /// <summary>
