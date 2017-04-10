@@ -18,8 +18,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
                 var policyConfigVista = policyConfig as IPolicyConfigVista;
                 var policyConfigX = policyConfig as IPolicyConfigX;
                 var policyConfigRedstone = policyConfig as IPolicyConfigRedstone;
+                var policyConfigRedstone2 = policyConfig as IPolicyConfigRedstone2;
 
-                if (policyConfigRedstone != null)
+                if (policyConfigRedstone2 != null)
+                {
+                    policyConfigRedstone2.SetDefaultEndpoint(devId, eRole);
+                }
+                else if (policyConfigRedstone != null)
                 {
                     policyConfigRedstone.SetDefaultEndpoint(devId, eRole);
                 }
