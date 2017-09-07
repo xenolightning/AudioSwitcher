@@ -17,7 +17,7 @@ An abstracted set of classes that can be extended to interact with any audio sys
 The MMDeviceAPI integration layer. This is the low level COM library that it used to interact with Audio Devices on a PC running Windows Vista or later.
 
 
-### [PowerShell Module](AudioSwitcher.PowerShell.CoreAudio)
+### [PowerShell Module](https://github.com/xenolightning/AudioSwitcher.PowerShell)
 
 A powershell wrapper module over CoreAudioApi.
 Full documentation is in the [README](AudioSwitcher.PowerShell.CoreAudio/README.md).
