@@ -12,7 +12,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
             [In] [MarshalAs(UnmanagedType.U4)] uint streamFlags,
             [In] [MarshalAs(UnmanagedType.I8)] long hnsBufferDuration,
             [In] [MarshalAs(UnmanagedType.I8)] long hnsPeriodicity,
-            [In] WaveFormat pFormat,
+            [In] WaveFormatEx pFormat,
             [In, Out] [MarshalAs(UnmanagedType.LPStruct)] ref Guid audioSessionGuid);
 
         [PreserveSig]
@@ -27,11 +27,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
         [PreserveSig]
         int IsFormatSupported(
             DeviceShareMode shareMode,
-            [In] WaveFormat pFormat,
-            [Out] out WaveFormatExtensible closestMatchFormat);
+            [In] WaveFormatEx pFormat,
+            [Out] out WaveFormatEx closestMatchFormat);
 
         [PreserveSig]
-        int GetMixFormat([Out] out WaveFormatExtensible format);
+        int GetMixFormat([Out] out WaveFormatEx format);
 
         [PreserveSig]
         int GetDevicePeriod(

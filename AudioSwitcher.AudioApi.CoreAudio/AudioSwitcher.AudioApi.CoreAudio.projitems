@@ -60,6 +60,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Internal\Interfaces\IPolicyConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\Interfaces\IPolicyConfigRedstone2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\Interfaces\IPolicyConfigRedstone.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\Interfaces\IPolicyConfigRedstone3.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\Interfaces\IPolicyConfigX.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\Interfaces\IPolicyConfigVista.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\Interfaces\IPolicyConfigUnknown.cs" />

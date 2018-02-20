@@ -3,9 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
-    [Guid(ComInterfaceIds.POLICY_CONFIG_7_IID)]
+    [Guid(ComInterfaceIds.POLICY_CONFIG_X_RS3_IID)]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    internal interface IPolicyConfig
+    internal interface IPolicyConfigRedstone3
     {
         [PreserveSig]
         int GetMixFormat(
