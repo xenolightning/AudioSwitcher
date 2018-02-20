@@ -1,5 +1,8 @@
-﻿namespace AudioSwitcher.AudioApi
+﻿using System;
+
+namespace AudioSwitcher.AudioApi
 {
+    [Flags]
     public enum SpeakerConfiguration
     {
         NotSupported = -1,
@@ -27,7 +30,7 @@
         Stereo = FrontLeft | FrontRight,
         Quad = Stereo | BackLeft | BackRight,
         Surround = Stereo | FrontCenter | BackCenter,
-        FivePointOne = Quad | LowFrequency,
+        FivePointOne = FrontCenter | Quad | LowFrequency,
         FivePointOneSurround = Stereo | FrontCenter | LowFrequency | SideLeft | SideRight,
         SevenPointOne = FivePointOne | FrontLeftOfCenter | FrontRightOfCenter,
         SevenPointOneSurround = FivePointOneSurround | BackLeft | BackRight
