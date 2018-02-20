@@ -4,15 +4,15 @@ using System.Runtime.InteropServices;
 namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 2)]
-    internal class WaveFormat
+    internal class WaveFormatEx
     {
-        private readonly int averageBytesPerSecond;
-        private readonly short bitsPerSample;
-        private readonly short blockAlign;
-        private readonly short channels;
-        private readonly short extraSize;
         private readonly WaveFormatEncoding waveFormatTag;
+        private readonly short channels;
         private readonly int sampleRate;
+        private readonly int averageBytesPerSecond;
+        private readonly short blockAlign;
+        private readonly short bitsPerSample;
+        private readonly short extraSize;
 
         public WaveFormatEncoding Encoding => waveFormatTag;
 
@@ -28,18 +28,18 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
 
         public int ExtraSize => extraSize;
 
-        protected WaveFormat()
+        protected WaveFormatEx()
         {
             
         }
 
-        public WaveFormat(SampleRate rate, BitDepth bits, SpeakerConfiguration channelMask)
-            :this(rate, bits, channelMask, WaveFormatEncoding.Pcm, Marshal.SizeOf(typeof(WaveFormat)))
+        public WaveFormatEx(SampleRate rate, BitDepth bits, SpeakerConfiguration channelMask)
+            :this(rate, bits, channelMask, WaveFormatEncoding.Pcm, Marshal.SizeOf(typeof(WaveFormatEx)))
         {
             
         }
 
-        protected WaveFormat(SampleRate rate, BitDepth bits, SpeakerConfiguration channelMask, WaveFormatEncoding formatTag, int totalSize)
+        protected WaveFormatEx(SampleRate rate, BitDepth bits, SpeakerConfiguration channelMask, WaveFormatEncoding formatTag, int totalSize)
         {
             channels = ChannelsFromMask((int)channelMask);
 
@@ -56,7 +56,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Interfaces
             averageBytesPerSecond = sampleRate * blockAlign;
 
             waveFormatTag = formatTag;
-            extraSize = (short)(totalSize - Marshal.SizeOf(typeof(WaveFormat)));
+            extraSize = (short)(totalSize - Marshal.SizeOf(typeof(WaveFormatEx)));
         }
 
         private short ChannelsFromMask(int channelMask)
