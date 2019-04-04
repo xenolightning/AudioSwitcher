@@ -3,7 +3,7 @@
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
     [Flags]
-    internal enum EDeviceState : uint
+    public enum EDeviceState : uint
     {
         Active = 0x00000001,
         Disabled = 0x00000002,

@@ -23,7 +23,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         private IMultimediaDeviceEnumerator InnerEnumerator => _innerEnumerator.Value;
 
-        public CoreAudioController()
+        public CoreAudioController(EDeviceState stateMask = EDeviceState.All)
         {
             // ReSharper disable once SuspiciousTypeConversion.Global
             var innerEnumerator = ComObjectFactory.GetDeviceEnumerator();
@@ -43,7 +43,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
                 _deviceCache = new HashSet<CoreAudioDevice>();
                 IMultimediaDeviceCollection collection;
-                InnerEnumerator.EnumAudioEndpoints(EDataFlow.All, EDeviceState.All, out collection);
+                InnerEnumerator.EnumAudioEndpoints(EDataFlow.All, stateMask, out collection);
 
                 using (var coll = new MultimediaDeviceCollection(collection))
                 {
