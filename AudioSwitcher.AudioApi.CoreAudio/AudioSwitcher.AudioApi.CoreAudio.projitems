@@ -16,6 +16,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)CoreAudioDevice.SessionController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CoreAudioSession.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CoreAudioSessionController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EDeviceState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\AudioEndpointVolume.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\AudioEndpointVolumeCallback.cs" />
@@ -31,7 +32,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Internal\EAudioSessionDisconnectReason.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\EAudioSessionState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\EDataFlow.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Internal\EDeviceState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\EndpointHardwareSupport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\ERole.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internal\Interfaces\AudioVolumeNotificationDataStruct.cs" />
