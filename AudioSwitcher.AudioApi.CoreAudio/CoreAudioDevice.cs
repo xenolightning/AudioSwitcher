@@ -284,10 +284,11 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (AudioEndpointVolume == null)
                 return -1;
 
-            if (Math.Abs(_volume - volume) < 0.1)
+            var normalizedVolume = volume.NormalizeVolume();
+
+            if (Math.Abs(_volume - normalizedVolume) < 0.1)
                 return _volume;
 
-            var normalizedVolume = volume.NormalizeVolume();
             AudioEndpointVolume.MasterVolumeLevelScalar = normalizedVolume;
             await _volumeResetEvent.WaitOneAsync(cancellationToken);
 
