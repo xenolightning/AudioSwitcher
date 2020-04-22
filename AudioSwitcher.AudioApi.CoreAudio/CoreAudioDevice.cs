@@ -465,13 +465,13 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             Marshal.ThrowExceptionForHR(Device.GetState(out _state));
             Marshal.ThrowExceptionForHR(Device.GetId(out _globalId));
 
-            //load the initial default state. Have to query using device id because this device is not cached until after creation
-            _isDefaultCommDevice = _controller.GetDefaultDeviceId(DeviceType, Role.Communications) == RealId;
-            _isDefaultDevice = _controller.GetDefaultDeviceId(DeviceType, Role.Multimedia | Role.Console) == RealId;
-
             // ReSharper disable once SuspiciousTypeConversion.Global
             var ep = Device as IMultimediaEndpoint;
             ep?.GetDataFlow(out _dataFlow);
+
+            //load the initial default state. Have to query using device id because this device is not cached until after creation
+            _isDefaultCommDevice = _controller.GetDefaultDeviceId(DeviceType, Role.Communications) == RealId;
+            _isDefaultDevice = _controller.GetDefaultDeviceId(DeviceType, Role.Multimedia | Role.Console) == RealId;
 
             GetPropertyInformation(Device);
         }
