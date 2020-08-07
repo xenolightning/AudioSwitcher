@@ -58,9 +58,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AudioSwitcher.AudioApi %28NET45%29\AudioSwitcher.AudioApi %28NET45%29.csproj">
-      <Project>{26373899-cb07-4ace-9ac2-1c19fdbedce3}</Project>
-      <Name>AudioSwitcher.AudioApi %28NET45%29</Name>
+    <ProjectReference Include="..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj">
+      <Project>{6f6a9223-4c92-4351-bd3e-86b3be9ba536}</Project>
+      <Name>AudioSwitcher.AudioApi</Name>
     </ProjectReference>
     <ProjectReference Include="..\AudioSwitcher.Scripting\AudioSwitcher.Scripting.csproj">
       <Project>{99F4CE07-B44F-45C2-AE1D-3732D695D61D}</Project>

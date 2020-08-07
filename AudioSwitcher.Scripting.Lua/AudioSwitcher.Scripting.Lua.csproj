@@ -49,10 +49,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AudioSwitcher.AudioApi %28NET45%29\AudioSwitcher.AudioApi %28NET45%29.csproj">
-      <Project>{26373899-cb07-4ace-9ac2-1c19fdbedce3}</Project>
-      <Name>AudioSwitcher.AudioApi %28NET45%29</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AudioSwitcher.Scripting\AudioSwitcher.Scripting.csproj">
       <Project>{99f4ce07-b44f-45c2-ae1d-3732d695d61d}</Project>
       <Name>AudioSwitcher.Scripting</Name>

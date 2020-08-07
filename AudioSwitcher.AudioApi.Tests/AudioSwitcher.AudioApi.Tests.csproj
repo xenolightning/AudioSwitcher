@@ -3,13 +3,8 @@
     <TargetFrameworks>net452;net472;netcoreapp3.0</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
-    <ProjectReference Include="..\AudioSwitcher.AudioApi %28NET45%29\AudioSwitcher.AudioApi %28NET45%29.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' != 'net452'">
-    <ProjectReference Include="..\AudioSwitcher.AudioApi %28NETStandard2.0%29\AudioSwitcher.AudioApi %28NETStandard2.0%29.csproj" />
-  </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj" />
     <ProjectReference Include="..\AudioSwitcher.Tests.Common\AudioSwitcher.Tests.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
