@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi.Tests", "AudioSwitcher.AudioApi.Tests\AudioSwitcher.AudioApi.Tests.csproj", "{A4170B87-C5B3-48AE-8784-05FCE4E20E0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AudioSwitcher.AudioApi.Tests", "AudioSwitcher.AudioApi.Tests\AudioSwitcher.AudioApi.Tests.csproj", "{A4170B87-C5B3-48AE-8784-05FCE4E20E0E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi.Hooking", "AudioSwitcher.AudioApi.Hooking\AudioSwitcher.AudioApi.Hooking.csproj", "{B590E447-E7F2-43DE-B3F3-3A60F493DC98}"
 EndProject
@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.CLI", "Sample
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4F8309BD-D3FD-4903-8054-0B1EED7D385E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Tests.Common", "AudioSwitcher.Tests.Common\AudioSwitcher.Tests.Common.csproj", "{703D3C14-A63F-4BE1-82FE-8D20A55D9960}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AudioSwitcher.Tests.Common", "AudioSwitcher.Tests.Common\AudioSwitcher.Tests.Common.csproj", "{703D3C14-A63F-4BE1-82FE-8D20A55D9960}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripting", "Scripting", "{67E65805-9072-4B61-8D6C-DB3AA4A14BAC}"
 EndProject
@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.JavaScript", "AudioSwitcher.Scripting.JavaScript\AudioSwitcher.Scripting.JavaScript.csproj", "{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi.CoreAudio.Tests", "AudioSwitcher.AudioApi.CoreAudio.Tests\AudioSwitcher.AudioApi.CoreAudio.Tests.csproj", "{4270A872-8A0F-4092-8873-71581C1BDDFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AudioSwitcher.AudioApi.CoreAudio.Tests", "AudioSwitcher.AudioApi.CoreAudio.Tests\AudioSwitcher.AudioApi.CoreAudio.Tests.csproj", "{4270A872-8A0F-4092-8873-71581C1BDDFB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{66203090-FA68-47B4-B28C-A16029B33903}"
 	ProjectSection(SolutionItems) = preProject
@@ -34,39 +34,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.Jav
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.Lua", "AudioSwitcher.Scripting.Lua\AudioSwitcher.Scripting.Lua.csproj", "{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NET45", "NET45", "{2BC11060-CC95-4555-AA28-39EEC7B89E5B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AudioSwitcher.AudioApi", "AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj", "{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NET40", "NET40", "{374AC676-457C-4DA3-9D2A-39063C90FDA2}"
-EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "AudioSwitcher.AudioApi", "AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.shproj", "{DADCC2DF-7738-4598-A2F3-95E41B5E2C34}"
-EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "AudioSwitcher.AudioApi.CoreAudio", "AudioSwitcher.AudioApi.CoreAudio\AudioSwitcher.AudioApi.CoreAudio.shproj", "{D0D66A7C-BBB0-4EAD-8A0A-8A30671D7FF3}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{2039CDB3-8ED4-48C2-83AE-CC2C14179A4F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi (NET4)", "AudioSwitcher.AudioApi (NET4)\AudioSwitcher.AudioApi (NET4).csproj", "{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi (NET45)", "AudioSwitcher.AudioApi (NET45)\AudioSwitcher.AudioApi (NET45).csproj", "{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi.CoreAudio (NET45)", "AudioSwitcher.AudioApi.CoreAudio (NET45)\AudioSwitcher.AudioApi.CoreAudio (NET45).csproj", "{44A1F234-124F-4CE4-B66C-110BCA8F6ED5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi.CoreAudio (NET4)", "AudioSwitcher.AudioApi.CoreAudio (NET4)\AudioSwitcher.AudioApi.CoreAudio (NET4).csproj", "{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NETStandard2.0", "NETStandard2.0", "{14DB4720-2392-4A43-92DF-76659A93FCF2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi (NETStandard2.0)", "AudioSwitcher.AudioApi (NETStandard2.0)\AudioSwitcher.AudioApi (NETStandard2.0).csproj", "{368F7A93-E675-4137-B288-9E1D87F5ADD9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.AudioApi.CoreAudio (NETStandard2.0)", "AudioSwitcher.AudioApi.CoreAudio (NETStandard2.0)\AudioSwitcher.AudioApi.CoreAudio (NETStandard2.0).csproj", "{647CC750-1A71-462D-A242-93777DCA86EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AudioSwitcher.AudioApi.CoreAudio", "AudioSwitcher.AudioApi.CoreAudio\AudioSwitcher.AudioApi.CoreAudio.csproj", "{14BEA79D-CB08-4E2C-BE60-53CAAC98EAB6}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.projitems*{26373899-cb07-4ace-9ac2-1c19fdbedce3}*SharedItemsImports = 4
-		AudioSwitcher.AudioApi.CoreAudio\AudioSwitcher.AudioApi.CoreAudio.projitems*{44a1f234-124f-4ce4-b66c-110bca8f6ed5}*SharedItemsImports = 4
-		AudioSwitcher.AudioApi.CoreAudio\AudioSwitcher.AudioApi.CoreAudio.projitems*{64fff5aa-2b4e-4d6b-8e3b-f30b0a7e9895}*SharedItemsImports = 4
-		AudioSwitcher.AudioApi.CoreAudio\AudioSwitcher.AudioApi.CoreAudio.projitems*{d0d66a7c-bbb0-4ead-8a0a-8a30671d7ff3}*SharedItemsImports = 13
-		AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.projitems*{d5fa7f71-061d-4cd9-b7e6-8425a152c2d0}*SharedItemsImports = 4
-		AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.projitems*{dadcc2df-7738-4598-a2f3-95e41b5e2c34}*SharedItemsImports = 13
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|ARM = Debug|ARM
@@ -186,102 +158,38 @@ Global
 		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|x64.Build.0 = Release|Any CPU
 		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|x86.ActiveCfg = Release|Any CPU
 		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|x86.Build.0 = Release|Any CPU
-		{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0}.Debug|ARM.Build.0 = Debug|Any CPU
-		{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0}.Debug|x64.Build.0 = Debug|Any CPU
-		{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0}.Debug|x86.Build.0 = Debug|Any CPU
-		{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0}.Release|ARM.ActiveCfg = Release|Any CPU
-		{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0}.Release|ARM.Build.0 = Release|Any CPU
-		{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0}.Release|x64.ActiveCfg = Release|Any CPU
-		{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0}.Release|x64.Build.0 = Release|Any CPU
-		{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0}.Release|x86.ActiveCfg = Release|Any CPU
-		{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0}.Release|x86.Build.0 = Release|Any CPU
-		{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3}.Debug|ARM.Build.0 = Debug|Any CPU
-		{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3}.Debug|x64.Build.0 = Debug|Any CPU
-		{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3}.Debug|x86.Build.0 = Debug|Any CPU
-		{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3}.Release|ARM.ActiveCfg = Release|Any CPU
-		{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3}.Release|ARM.Build.0 = Release|Any CPU
-		{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3}.Release|x64.ActiveCfg = Release|Any CPU
-		{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3}.Release|x64.Build.0 = Release|Any CPU
-		{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3}.Release|x86.ActiveCfg = Release|Any CPU
-		{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3}.Release|x86.Build.0 = Release|Any CPU
-		{44A1F234-124F-4CE4-B66C-110BCA8F6ED5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{44A1F234-124F-4CE4-B66C-110BCA8F6ED5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{44A1F234-124F-4CE4-B66C-110BCA8F6ED5}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{44A1F234-124F-4CE4-B66C-110BCA8F6ED5}.Debug|ARM.Build.0 = Debug|Any CPU
-		{44A1F234-124F-4CE4-B66C-110BCA8F6ED5}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{44A1F234-124F-4CE4-B66C-110BCA8F6ED5}.Debug|x64.Build.0 = Debug|Any CPU
-		{44A1F234-124F-4CE4-B66C-110BCA8F6ED5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{44A1F234-124F-4CE4-B66C-110BCA8F6ED5}.Debug|x86.Build.0 = Debug|Any CPU
-		{44A1F234-124F-4CE4-B66C-110BCA8F6ED5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{44A1F234-124F-4CE4-B66C-110BCA8F6ED5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{44A1F234-124F-4CE4-B66C-110BCA8F6ED5}.Release|ARM.ActiveCfg = Release|Any CPU
-		{44A1F234-124F-4CE4-B66C-110BCA8F6ED5}.Release|ARM.Build.0 = Release|Any CPU
-		{44A1F234-124F-4CE4-B66C-110BCA8F6ED5}.Release|x64.ActiveCfg = Release|Any CPU
-		{44A1F234-124F-4CE4-B66C-110BCA8F6ED5}.Release|x64.Build.0 = Release|Any CPU
-		{44A1F234-124F-4CE4-B66C-110BCA8F6ED5}.Release|x86.ActiveCfg = Release|Any CPU
-		{44A1F234-124F-4CE4-B66C-110BCA8F6ED5}.Release|x86.Build.0 = Release|Any CPU
-		{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}.Debug|ARM.Build.0 = Debug|Any CPU
-		{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}.Debug|x64.Build.0 = Debug|Any CPU
-		{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}.Debug|x86.Build.0 = Debug|Any CPU
-		{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}.Release|Any CPU.Build.0 = Release|Any CPU
-		{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}.Release|ARM.ActiveCfg = Release|Any CPU
-		{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}.Release|ARM.Build.0 = Release|Any CPU
-		{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}.Release|x64.ActiveCfg = Release|Any CPU
-		{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}.Release|x64.Build.0 = Release|Any CPU
-		{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}.Release|x86.ActiveCfg = Release|Any CPU
-		{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895}.Release|x86.Build.0 = Release|Any CPU
-		{368F7A93-E675-4137-B288-9E1D87F5ADD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{368F7A93-E675-4137-B288-9E1D87F5ADD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{368F7A93-E675-4137-B288-9E1D87F5ADD9}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{368F7A93-E675-4137-B288-9E1D87F5ADD9}.Debug|ARM.Build.0 = Debug|Any CPU
-		{368F7A93-E675-4137-B288-9E1D87F5ADD9}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{368F7A93-E675-4137-B288-9E1D87F5ADD9}.Debug|x64.Build.0 = Debug|Any CPU
-		{368F7A93-E675-4137-B288-9E1D87F5ADD9}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{368F7A93-E675-4137-B288-9E1D87F5ADD9}.Debug|x86.Build.0 = Debug|Any CPU
-		{368F7A93-E675-4137-B288-9E1D87F5ADD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{368F7A93-E675-4137-B288-9E1D87F5ADD9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{368F7A93-E675-4137-B288-9E1D87F5ADD9}.Release|ARM.ActiveCfg = Release|Any CPU
-		{368F7A93-E675-4137-B288-9E1D87F5ADD9}.Release|ARM.Build.0 = Release|Any CPU
-		{368F7A93-E675-4137-B288-9E1D87F5ADD9}.Release|x64.ActiveCfg = Release|Any CPU
-		{368F7A93-E675-4137-B288-9E1D87F5ADD9}.Release|x64.Build.0 = Release|Any CPU
-		{368F7A93-E675-4137-B288-9E1D87F5ADD9}.Release|x86.ActiveCfg = Release|Any CPU
-		{368F7A93-E675-4137-B288-9E1D87F5ADD9}.Release|x86.Build.0 = Release|Any CPU
-		{647CC750-1A71-462D-A242-93777DCA86EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{647CC750-1A71-462D-A242-93777DCA86EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{647CC750-1A71-462D-A242-93777DCA86EC}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{647CC750-1A71-462D-A242-93777DCA86EC}.Debug|ARM.Build.0 = Debug|Any CPU
-		{647CC750-1A71-462D-A242-93777DCA86EC}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{647CC750-1A71-462D-A242-93777DCA86EC}.Debug|x64.Build.0 = Debug|Any CPU
-		{647CC750-1A71-462D-A242-93777DCA86EC}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{647CC750-1A71-462D-A242-93777DCA86EC}.Debug|x86.Build.0 = Debug|Any CPU
-		{647CC750-1A71-462D-A242-93777DCA86EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{647CC750-1A71-462D-A242-93777DCA86EC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{647CC750-1A71-462D-A242-93777DCA86EC}.Release|ARM.ActiveCfg = Release|Any CPU
-		{647CC750-1A71-462D-A242-93777DCA86EC}.Release|ARM.Build.0 = Release|Any CPU
-		{647CC750-1A71-462D-A242-93777DCA86EC}.Release|x64.ActiveCfg = Release|Any CPU
-		{647CC750-1A71-462D-A242-93777DCA86EC}.Release|x64.Build.0 = Release|Any CPU
-		{647CC750-1A71-462D-A242-93777DCA86EC}.Release|x86.ActiveCfg = Release|Any CPU
-		{647CC750-1A71-462D-A242-93777DCA86EC}.Release|x86.Build.0 = Release|Any CPU
+		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Debug|ARM.Build.0 = Debug|Any CPU
+		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Debug|x64.Build.0 = Debug|Any CPU
+		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Debug|x86.Build.0 = Debug|Any CPU
+		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Release|ARM.ActiveCfg = Release|Any CPU
+		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Release|ARM.Build.0 = Release|Any CPU
+		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Release|x64.ActiveCfg = Release|Any CPU
+		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Release|x64.Build.0 = Release|Any CPU
+		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Release|x86.ActiveCfg = Release|Any CPU
+		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Release|x86.Build.0 = Release|Any CPU
+		{14BEA79D-CB08-4E2C-BE60-53CAAC98EAB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14BEA79D-CB08-4E2C-BE60-53CAAC98EAB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14BEA79D-CB08-4E2C-BE60-53CAAC98EAB6}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{14BEA79D-CB08-4E2C-BE60-53CAAC98EAB6}.Debug|ARM.Build.0 = Debug|Any CPU
+		{14BEA79D-CB08-4E2C-BE60-53CAAC98EAB6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{14BEA79D-CB08-4E2C-BE60-53CAAC98EAB6}.Debug|x64.Build.0 = Debug|Any CPU
+		{14BEA79D-CB08-4E2C-BE60-53CAAC98EAB6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{14BEA79D-CB08-4E2C-BE60-53CAAC98EAB6}.Debug|x86.Build.0 = Debug|Any CPU
+		{14BEA79D-CB08-4E2C-BE60-53CAAC98EAB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14BEA79D-CB08-4E2C-BE60-53CAAC98EAB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14BEA79D-CB08-4E2C-BE60-53CAAC98EAB6}.Release|ARM.ActiveCfg = Release|Any CPU
+		{14BEA79D-CB08-4E2C-BE60-53CAAC98EAB6}.Release|ARM.Build.0 = Release|Any CPU
+		{14BEA79D-CB08-4E2C-BE60-53CAAC98EAB6}.Release|x64.ActiveCfg = Release|Any CPU
+		{14BEA79D-CB08-4E2C-BE60-53CAAC98EAB6}.Release|x64.Build.0 = Release|Any CPU
+		{14BEA79D-CB08-4E2C-BE60-53CAAC98EAB6}.Release|x86.ActiveCfg = Release|Any CPU
+		{14BEA79D-CB08-4E2C-BE60-53CAAC98EAB6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -296,14 +204,6 @@ Global
 		{4270A872-8A0F-4092-8873-71581C1BDDFB} = {4F8309BD-D3FD-4903-8054-0B1EED7D385E}
 		{7395D2F2-2FCA-4F16-8903-3C9E565CF976} = {4F8309BD-D3FD-4903-8054-0B1EED7D385E}
 		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7} = {67E65805-9072-4B61-8D6C-DB3AA4A14BAC}
-		{DADCC2DF-7738-4598-A2F3-95E41B5E2C34} = {2039CDB3-8ED4-48C2-83AE-CC2C14179A4F}
-		{D0D66A7C-BBB0-4EAD-8A0A-8A30671D7FF3} = {2039CDB3-8ED4-48C2-83AE-CC2C14179A4F}
-		{D5FA7F71-061D-4CD9-B7E6-8425A152C2D0} = {374AC676-457C-4DA3-9D2A-39063C90FDA2}
-		{26373899-CB07-4ACE-9AC2-1C19FDBEDCE3} = {2BC11060-CC95-4555-AA28-39EEC7B89E5B}
-		{44A1F234-124F-4CE4-B66C-110BCA8F6ED5} = {2BC11060-CC95-4555-AA28-39EEC7B89E5B}
-		{64FFF5AA-2B4E-4D6B-8E3B-F30B0A7E9895} = {374AC676-457C-4DA3-9D2A-39063C90FDA2}
-		{368F7A93-E675-4137-B288-9E1D87F5ADD9} = {14DB4720-2392-4A43-92DF-76659A93FCF2}
-		{647CC750-1A71-462D-A242-93777DCA86EC} = {14DB4720-2392-4A43-92DF-76659A93FCF2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2FC977F2-5969-4F48-B649-11142904F7CD}

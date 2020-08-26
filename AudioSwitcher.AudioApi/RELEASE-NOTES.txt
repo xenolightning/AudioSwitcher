@@ -1,0 +1,5 @@
+﻿- Added device capabilities to express extra functionality that is optionally available to some devices
+- Proper async/await support
+
+BREAKING CHANGES:
+- A bunch of synchronous functions have been removed

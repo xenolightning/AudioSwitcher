@@ -1,0 +1,6 @@
+- Natural async/await
+- (most) device functions are now fully driven from the system, contributing to proper async behaviour
+- Session Controller is now lazy, so it won't load until requested
+- fixed race conditions and optimized thread blocking
+- device capability support
+- slimmed down a few functions
