@@ -171,6 +171,10 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         {
             IAudioSessionEnumerator enumerator;
             _audioSessionManager.GetSessionEnumerator(out enumerator);
+
+            if (enumerator == null)
+                return;
+
             int count;
             enumerator.GetCount(out count);
 
