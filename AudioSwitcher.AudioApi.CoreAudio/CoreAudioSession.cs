@@ -125,7 +125,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             get
             {
                 //only initialize the timer subscription when peak value is requested
-                if (MeterInformation != null && _timerSubscription == null)
+                if (_meterInformation != null && _timerSubscription == null)
                 {
                     //start a timer to poll for peak value changes
                     _timerSubscription = PeakValueTimer.PeakValueTick.Subscribe(Timer_UpdatePeakValue);
