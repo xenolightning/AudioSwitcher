@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>AudioSwitcher.AudioApi.CoreAudio</id>
-        <version>3.0.0-beta5</version>
+        <version>3.0.1</version>
         <title>Audio Switcher Core Audio</title>
         <authors>Sean Chapman</authors>
         <owners>Sean Chapman</owners>
