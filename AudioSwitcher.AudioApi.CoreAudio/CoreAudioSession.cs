@@ -190,7 +190,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public Task<double> GetVolumeAsync(CancellationToken cancellationToken)
         {
-            return TaskShim.FromResult(_volume);
+            return Task.FromResult(_volume);
         }
 
         public async Task<double> SetVolumeAsync(double volume)
@@ -219,7 +219,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public Task<bool> GetMuteAsync(CancellationToken cancellationToken)
         {
-            return TaskShim.FromResult(_isMuted);
+            return Task.FromResult(_isMuted);
         }
 
         public async Task<bool> SetMuteAsync(bool muted)

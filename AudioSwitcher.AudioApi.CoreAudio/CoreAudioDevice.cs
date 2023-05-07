@@ -276,7 +276,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public override Task<double> GetVolumeAsync(CancellationToken cancellationToken)
         {
-            return TaskShim.FromResult(_volume);
+            return Task.FromResult(_volume);
         }
 
         public override async Task<double> SetVolumeAsync(double volume, CancellationToken cancellationToken)

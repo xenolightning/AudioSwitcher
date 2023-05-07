@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29509.3
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AudioSwitcher.AudioApi.Tests", "AudioSwitcher.AudioApi.Tests\AudioSwitcher.AudioApi.Tests.csproj", "{A4170B87-C5B3-48AE-8784-05FCE4E20E0E}"
 EndProject
@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AudioSwitcher.Tests.Common"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripting", "Scripting", "{67E65805-9072-4B61-8D6C-DB3AA4A14BAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting", "AudioSwitcher.Scripting\AudioSwitcher.Scripting.csproj", "{99F4CE07-B44F-45C2-AE1D-3732D695D61D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AudioSwitcher.Scripting", "AudioSwitcher.Scripting\AudioSwitcher.Scripting.csproj", "{99F4CE07-B44F-45C2-AE1D-3732D695D61D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.JavaScript", "AudioSwitcher.Scripting.JavaScript\AudioSwitcher.Scripting.JavaScript.csproj", "{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F}"
 EndProject
@@ -31,8 +31,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.JavaScript.Tests", "AudioSwitcher.Scripting.JavaScript.Tests\AudioSwitcher.Scripting.JavaScript.Tests.csproj", "{7395D2F2-2FCA-4F16-8903-3C9E565CF976}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioSwitcher.Scripting.Lua", "AudioSwitcher.Scripting.Lua\AudioSwitcher.Scripting.Lua.csproj", "{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AudioSwitcher.AudioApi", "AudioSwitcher.AudioApi\AudioSwitcher.AudioApi.csproj", "{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}"
 EndProject
@@ -142,22 +140,6 @@ Global
 		{7395D2F2-2FCA-4F16-8903-3C9E565CF976}.Release|x64.Build.0 = Release|Any CPU
 		{7395D2F2-2FCA-4F16-8903-3C9E565CF976}.Release|x86.ActiveCfg = Release|Any CPU
 		{7395D2F2-2FCA-4F16-8903-3C9E565CF976}.Release|x86.Build.0 = Release|Any CPU
-		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Debug|ARM.Build.0 = Debug|Any CPU
-		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Debug|x64.Build.0 = Debug|Any CPU
-		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Debug|x86.Build.0 = Debug|Any CPU
-		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|ARM.ActiveCfg = Release|Any CPU
-		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|ARM.Build.0 = Release|Any CPU
-		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|x64.ActiveCfg = Release|Any CPU
-		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|x64.Build.0 = Release|Any CPU
-		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|x86.ActiveCfg = Release|Any CPU
-		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7}.Release|x86.Build.0 = Release|Any CPU
 		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F6A9223-4C92-4351-BD3E-86B3BE9BA536}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -203,7 +185,6 @@ Global
 		{A521E1F4-70D0-4E59-ABC9-CDD306D18F3F} = {67E65805-9072-4B61-8D6C-DB3AA4A14BAC}
 		{4270A872-8A0F-4092-8873-71581C1BDDFB} = {4F8309BD-D3FD-4903-8054-0B1EED7D385E}
 		{7395D2F2-2FCA-4F16-8903-3C9E565CF976} = {4F8309BD-D3FD-4903-8054-0B1EED7D385E}
-		{8CE9CA8A-A7B7-4EE2-B59D-2A30FC6186A7} = {67E65805-9072-4B61-8D6C-DB3AA4A14BAC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2FC977F2-5969-4F48-B649-11142904F7CD}

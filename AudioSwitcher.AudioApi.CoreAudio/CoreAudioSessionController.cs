@@ -71,7 +71,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public Task<IEnumerable<IAudioSession>> AllAsync()
         {
-            return TaskShim.FromResult(All());
+            return Task.FromResult(All());
         }
 
         public IEnumerable<IAudioSession> ActiveSessions()
@@ -91,7 +91,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public Task<IEnumerable<IAudioSession>> ActiveSessionsAsync()
         {
-            return TaskShim.FromResult(ActiveSessions());
+            return Task.FromResult(ActiveSessions());
         }
 
         public IEnumerable<IAudioSession> InactiveSessions()
@@ -111,7 +111,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public Task<IEnumerable<IAudioSession>> InactiveSessionsAsync()
         {
-            return TaskShim.FromResult(InactiveSessions());
+            return Task.FromResult(InactiveSessions());
         }
 
         public IEnumerable<IAudioSession> ExpiredSessions()
@@ -131,7 +131,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         public Task<IEnumerable<IAudioSession>> ExpiredSessionsAsync()
         {
-            return TaskShim.FromResult(ExpiredSessions());
+            return Task.FromResult(ExpiredSessions());
         }
 
         public IEnumerator<IAudioSession> GetEnumerator()
@@ -146,7 +146,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
 
         int IAudioSessionNotification.OnSessionCreated(IAudioSessionControl sessionControl)
         {
-            TaskShim.Run(async () => await CreateSession(sessionControl));
+            Task.Run(async () => await CreateSession(sessionControl));
 
             return 0;
         }

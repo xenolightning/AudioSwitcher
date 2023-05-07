@@ -190,7 +190,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         }
 
         [Fact]
-        public async Task CoreAudioSession_Can_Subscribe_To_PeakValueChanged()
+        public void CoreAudioSession_Can_Subscribe_To_PeakValueChanged()
         {
             using (var controller = new CoreAudioController())
             {
@@ -207,7 +207,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         }
 
         [Fact]
-        public async Task CoreAudioSession_Can_Subscribe_To_MuteChanged()
+        public void CoreAudioSession_Can_Subscribe_To_MuteChanged()
         {
             using (var controller = new CoreAudioController())
             {
@@ -224,7 +224,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         }
 
         [Fact]
-        public async Task CoreAudioSession_Can_Subscribe_To_StateChanged()
+        public void CoreAudioSession_Can_Subscribe_To_StateChanged()
         {
             using (var controller = new CoreAudioController())
             {
@@ -241,7 +241,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio.Tests
         }
 
         [Fact]
-        public async Task CoreAudioSession_Can_Subscribe_To_VolumeChanged()
+        public void CoreAudioSession_Can_Subscribe_To_VolumeChanged()
         {
             using (var controller = new CoreAudioController())
             {
