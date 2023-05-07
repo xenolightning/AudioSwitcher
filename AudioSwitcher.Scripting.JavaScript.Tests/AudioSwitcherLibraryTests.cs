@@ -220,7 +220,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 var audioDevice = engine.Evaluate<JavaScriptAudioDevice>("AudioSwitcher.getAudioDevices()[0]").Value;
                 var resolvedAudioDevice = engine.Evaluate<JavaScriptAudioDevice>(js).Value;
 
-                Assert.NotEqual(null, resolvedAudioDevice);
+                Assert.NotNull(resolvedAudioDevice);
                 Assert.Equal(audioDevice.Id, resolvedAudioDevice.Id);
                 Assert.IsType<JavaScriptAudioDevice>(resolvedAudioDevice);
             }
@@ -245,7 +245,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 var audioDevice = engine.Evaluate<JavaScriptAudioDevice>("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.PLAYBACK)[0]").Value;
                 var resolvedAudioDevice = engine.Evaluate<JavaScriptAudioDevice>(js).Value;
 
-                Assert.NotEqual(null, resolvedAudioDevice);
+                Assert.NotNull(resolvedAudioDevice);
                 Assert.Equal(audioDevice.Id, resolvedAudioDevice.Id);
                 Assert.IsType<JavaScriptAudioDevice>(resolvedAudioDevice);
                 Assert.True(resolvedAudioDevice.IsPlayback);
@@ -271,7 +271,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 var audioDevice = engine.Evaluate<JavaScriptAudioDevice>("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE)[0]").Value;
                 var resolvedAudioDevice = engine.Evaluate<JavaScriptAudioDevice>(js).Value;
 
-                Assert.NotEqual(null, resolvedAudioDevice);
+                Assert.NotNull(resolvedAudioDevice);
                 Assert.Equal(audioDevice.Id, resolvedAudioDevice.Id);
                 Assert.IsType<JavaScriptAudioDevice>(resolvedAudioDevice);
                 Assert.True(resolvedAudioDevice.IsCapture);
@@ -298,7 +298,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 var audioDevice = engine.Evaluate<JavaScriptAudioDevice>("AudioSwitcher.getAudioDevices()[0]").Value;
                 var resolvedAudioDevice = engine.Evaluate<JavaScriptAudioDevice>(js).Value;
 
-                Assert.NotEqual(null, resolvedAudioDevice);
+                Assert.NotNull(resolvedAudioDevice);
                 Assert.Equal(audioDevice.Id, resolvedAudioDevice.Id);
                 Assert.IsType<JavaScriptAudioDevice>(resolvedAudioDevice);
             }
@@ -323,7 +323,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 var audioDevice = engine.Evaluate<JavaScriptAudioDevice>("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.PLAYBACK)[0]").Value;
                 var resolvedAudioDevice = engine.Evaluate<JavaScriptAudioDevice>(js).Value;
 
-                Assert.NotEqual(null, resolvedAudioDevice);
+                Assert.NotNull(resolvedAudioDevice);
                 Assert.Equal(audioDevice.Id, resolvedAudioDevice.Id);
                 Assert.IsType<JavaScriptAudioDevice>(resolvedAudioDevice);
                 Assert.True(resolvedAudioDevice.IsPlayback);
@@ -349,7 +349,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 var audioDevice = engine.Evaluate<JavaScriptAudioDevice>("AudioSwitcher.getAudioDevices(AudioSwitcher.DeviceType.CAPTURE)[0]").Value;
                 var resolvedAudioDevice = engine.Evaluate<JavaScriptAudioDevice>(js).Value;
 
-                Assert.NotEqual(null, resolvedAudioDevice);
+                Assert.NotNull(resolvedAudioDevice);
                 Assert.Equal(audioDevice.Id, resolvedAudioDevice.Id);
                 Assert.IsType<JavaScriptAudioDevice>(resolvedAudioDevice);
                 Assert.True(resolvedAudioDevice.IsCapture);
@@ -372,7 +372,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 Assert.NotNull(result);
                 Assert.Null(result.ExecutionException);
                 Assert.True(result.Success);
-                Assert.NotEqual(null, engine.Evaluate<JavaScriptAudioDevice>(js));
+                Assert.NotNull(engine.Evaluate<JavaScriptAudioDevice>(js));
                 Assert.IsType<JavaScriptAudioDevice>(engine.Evaluate<JavaScriptAudioDevice>(js).Value);
             }
         }
@@ -409,7 +409,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
                 const string js = @"AudioSwitcher.getAudioDevices()[0].mute(true)";
 
                 //Sets to muted
-                Assert.Equal(true, engine.Evaluate<bool>(js).Value);
+                Assert.True(engine.Evaluate<bool>(js).Value);
             }
         }
 
@@ -422,7 +422,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
             using (var engine = eng.CreateExecutionContext())
             {
                 const string js = @"AudioSwitcher.getAudioDevices()[0].mute(false)";
-                Assert.Equal(false, engine.Evaluate<bool>(js).Value);
+                Assert.False(engine.Evaluate<bool>(js).Value);
             }
         }
 
@@ -542,7 +542,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
 
                 engine.Execute(setDefault);
 
-                Assert.Equal(true, engine.Evaluate<bool>(checkDefault).Value);
+                Assert.True(engine.Evaluate<bool>(checkDefault).Value);
             }
         }
 
@@ -562,7 +562,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
 
                 engine.Execute(setDefault);
 
-                Assert.Equal(true, engine.Evaluate<bool>(checkDefault).Value);
+                Assert.True(engine.Evaluate<bool>(checkDefault).Value);
             }
         }
 
@@ -582,7 +582,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
 
                 engine.Execute(setDefault);
 
-                Assert.Equal(true, engine.Evaluate<bool>(checkDefault).Value);
+                Assert.True(engine.Evaluate<bool>(checkDefault).Value);
             }
         }
 
@@ -602,7 +602,7 @@ namespace AudioSwitcher.Scripting.JavaScript.Tests
 
                 engine.Execute(setDefault);
 
-                Assert.Equal(true, engine.Evaluate<bool>(checkDefault).Value);
+                Assert.True(engine.Evaluate<bool>(checkDefault).Value);
             }
         }
     }
