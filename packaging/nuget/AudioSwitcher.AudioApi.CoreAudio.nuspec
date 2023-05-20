@@ -1,37 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
-    <metadata>
-        <id>AudioSwitcher.AudioApi.CoreAudio</id>
-        <version>3.0.1</version>
-        <title>Audio Switcher Core Audio</title>
-        <authors>Sean Chapman</authors>
-        <owners>Sean Chapman</owners>
-        <licenseUrl>https://github.com/xenolightning/AudioSwitcher/blob/master/README.md</licenseUrl>
-        <projectUrl>https://github.com/xenolightning/AudioSwitcher</projectUrl>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>AudioSwitcher Core Audio Api.
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>AudioSwitcher.AudioApi.CoreAudio</id>
+    <version>3.0.3</version>
+    <title>Audio Switcher Core Audio</title>
+    <authors>Sean Chapman</authors>
+    <owners>Sean Chapman</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/xenolightning/AudioSwitcher/blob/master/README.md</licenseUrl>
+    <projectUrl>https://github.com/xenolightning/AudioSwitcher</projectUrl>
+    <description>AudioSwitcher Core Audio Api.
 
 This includes all controllers and devices to access Windows System Devices and manipulate them.
 
 This library can be used on any PC running Windows Vista and above. Supports both x86/x64 runtimes.</description>
-        <summary>Windows WASAPI/Core Audio library extension of the Audio Switcher Audio API.</summary>
-        <releaseNotes>- Windows 10 support
+    <summary>Windows WASAPI/Core Audio library extension of the Audio Switcher Audio API.</summary>
+    <releaseNotes>- Windows 10 support
 - Using api 3.0.0 as a base
 - Standard events have been replaced with observables
 - Audio Session support for Windows 7 and above.
 - Session peak value observable
 - SpeakerConfig support
 - bit Depth/sample rate support</releaseNotes>
-        <copyright>Sean Chapman</copyright>
-        <language>en-US</language>
-        <tags>wasapi audioswitcher audio api</tags>
-        <dependencies>
-            <group targetFramework=".NETFramework4.0">
-                <dependency id="AudioSwitcher.AudioApi" version="3.0.0-beta5" />
-            </group>
-        </dependencies>
-    </metadata>
-    <files>
-        <file src="..\..\bin\Release\AudioSwitcher.AudioApi.CoreAudio.dll" target="lib\net40\AudioSwitcher.AudioApi.CoreAudio.dll" />
-    </files>
+    <copyright>Sean Chapman</copyright>
+    <language>en-US</language>
+    <tags>wasapi audioswitcher audio api</tags>
+    <dependencies>
+      <dependency id="AudioSwitcher.AudioApi" version="3.0.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\..\bin\Release\AudioSwitcher.AudioApi.CoreAudio.dll" target="lib\net40\AudioSwitcher.AudioApi.CoreAudio.dll" />
+    <file src="..\..\bin\Release\AudioSwitcher.AudioApi.CoreAudio.dll" target="lib\net452\AudioSwitcher.AudioApi.CoreAudio.dll" />
+    <file src="..\..\bin\Release\AudioSwitcher.AudioApi.CoreAudio.dll" target="lib\net472\AudioSwitcher.AudioApi.CoreAudio.dll" />
+    <file src="..\..\bin\Release\AudioSwitcher.AudioApi.CoreAudio.dll" target="lib\net48\AudioSwitcher.AudioApi.CoreAudio.dll" />
+  </files>
 </package>

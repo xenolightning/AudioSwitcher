@@ -5,7 +5,7 @@ using System.Reflection;
 // associated with an assembly.
 
 [assembly: AssemblyCompany("Forty One Limited")]
-[assembly: AssemblyCopyright("Copyright ©  2023")]
+[assembly: AssemblyCopyright("Copyright © 2023")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -18,6 +18,6 @@ using System.Reflection;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("3.0.0.420")]
-[assembly: AssemblyFileVersion("3.0.0.420")]
-[assembly: AssemblyInformationalVersion("3.0.0.420")]
+[assembly: AssemblyVersion("3.0.0.209")]
+[assembly: AssemblyFileVersion("3.0.3.420")]
+[assembly: AssemblyInformationalVersion("3.0.3.420")]
