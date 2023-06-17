@@ -347,24 +347,37 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             if (_isDisposed)
                 return;
 
-            _deviceMutedSubscription.Dispose();
+            if (_deviceMutedSubscription != null)
+                _deviceMutedSubscription.Dispose();
 
             if (_timerSubscription != null)
                 _timerSubscription.Dispose();
 
-            _stateChanged.Dispose();
-            _disconnected.Dispose();
-            _volumeChanged.Dispose();
-            _peakValueChanged.Dispose();
-            _muteChanged.Dispose();
+            if (_stateChanged != null)
+                _stateChanged.Dispose();
 
-            //Run this on the com thread to ensure it's diposed correctly
-            ComThread.BeginInvoke(() =>
+            if (_disconnected != null)
+                _disconnected.Dispose();
+
+            if (_volumeChanged != null)
+                _volumeChanged.Dispose();
+
+            if (_peakValueChanged != null)
+                _peakValueChanged.Dispose();
+
+            if (_muteChanged != null)
+                _muteChanged.Dispose();
+
+            if (_audioSessionControl != null)
             {
-                _audioSessionControl.UnregisterAudioSessionNotification(this);
+                //Run this on the com thread to ensure it's diposed correctly
+                ComThread.BeginInvoke(() =>
+                {
+                    _audioSessionControl.UnregisterAudioSessionNotification(this);
 
-                Marshal.FinalReleaseComObject(_audioSessionControl);
-            });
+                    Marshal.FinalReleaseComObject(_audioSessionControl);
+                });
+            }
 
             GC.SuppressFinalize(this);
 

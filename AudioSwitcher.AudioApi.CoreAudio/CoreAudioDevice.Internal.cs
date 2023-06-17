@@ -83,7 +83,9 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
 
             if (ex != null)
-                ClearAudioMeterInformation();
+            {
+                Dispose();
+            }
         }
 
         private void LoadAudioEndpointVolume(IMultimediaDevice device)
