@@ -51,15 +51,6 @@ namespace AudioSwitcher.AudioApi.CoreAudio
         private ThreadLocal<IAudioMeterInformation> _audioMeterInformation;
         private IntPtr _audioMeterInformationPtr;
 
-        private IPropertyDictionary Properties
-        {
-            get
-            {
-                ThrowIfDisposed();
-                return _properties;
-            }
-        }
-
         /// <summary>
         /// Audio Meter Information - Future support
         /// </summary>

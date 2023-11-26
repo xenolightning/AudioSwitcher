@@ -58,6 +58,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             }
         }
 
+        public IPropertyDictionary Properties
+        {
+            get
+            {
+                ThrowIfDisposed();
+                return _properties;
+            }
+        }
+
         /// <summary>
         ///     Unique identifier for this device
         /// </summary>
