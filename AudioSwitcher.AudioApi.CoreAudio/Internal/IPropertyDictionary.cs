@@ -1,8 +1,9 @@
 using System;
+using System.Collections.Generic;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    public interface IPropertyDictionary : IDisposable
+    public interface IPropertyDictionary : IDisposable, IEnumerable<KeyValuePair<PropertyKey, object>>
     {
         AccessMode Mode { get; }
 

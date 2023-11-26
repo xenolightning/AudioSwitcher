@@ -127,5 +127,15 @@ namespace AudioSwitcher.AudioApi.CoreAudio
             Marshal.ThrowExceptionForHR(_propertyStoreInteface.SetValue(ref key, ref value));
             _propertyStoreInteface.Commit();
         }
+
+        public IEnumerator<KeyValuePair<PropertyKey, object>> GetEnumerator()
+        {
+            return _properties.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }
