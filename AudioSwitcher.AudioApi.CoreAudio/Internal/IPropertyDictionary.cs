@@ -2,7 +2,7 @@ using System;
 
 namespace AudioSwitcher.AudioApi.CoreAudio
 {
-    internal interface IPropertyDictionary : IDisposable
+    public interface IPropertyDictionary : IDisposable
     {
         AccessMode Mode { get; }
 
@@ -14,7 +14,7 @@ namespace AudioSwitcher.AudioApi.CoreAudio
     }
 
     [Flags]
-    internal enum AccessMode
+    public enum AccessMode
     {
         Read,
         Write,
